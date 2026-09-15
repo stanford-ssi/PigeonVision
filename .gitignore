@@ -1,0 +1,12 @@
+.DS_Store
+build/
+output/
+__pycache__/
+.venv/
+node_modules/
+~$*
+*.lck
+*.kicad_prl
+*.kicad_sch-bak
+*.kicad_pcb-bak
+*-backups/
