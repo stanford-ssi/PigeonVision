@@ -10,3 +10,4 @@ node_modules/
 *.kicad_sch-bak
 *.kicad_pcb-bak
 *-backups/
+.history/
