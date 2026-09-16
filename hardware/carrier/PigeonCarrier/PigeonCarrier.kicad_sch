@@ -2,9 +2,193 @@
 	(version 20260306)
 	(generator "eeschema")
 	(generator_version "10.0")
-	(uuid 6c8da0f4-34cf-43b9-a25b-857048b8016b)
+	(uuid "6c8da0f4-34cf-43b9-a25b-857048b8016b")
 	(paper "A4")
 	(lib_symbols)
+	(sheet
+		(at 55.88 75.565)
+		(size 33.655 25.4)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "7986dfff-dfed-4d72-b8d7-0f8819bc467b")
+		(property "Sheetname" "Regulators"
+			(at 55.88 74.8534 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "Regulators.kicad_sch"
+			(at 55.88 101.5496 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "PigeonCarrier"
+				(path "/6c8da0f4-34cf-43b9-a25b-857048b8016b"
+					(page "3")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 123.825 85.09)
+		(size 55.245 53.975)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "941f64ba-cbf9-46f2-b920-2609a7f024e1")
+		(property "Sheetname" "CM5"
+			(at 123.825 84.3784 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "CM5.kicad_sch"
+			(at 123.825 139.6496 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "PigeonCarrier"
+				(path "/6c8da0f4-34cf-43b9-a25b-857048b8016b"
+					(page "2")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 55.88 120.65)
+		(size 34.29 26.035)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "bc6b4cfb-4458-4642-98fd-90f3b1bceecc")
+		(property "Sheetname" "Cameras"
+			(at 55.88 119.9384 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "Cameras.kicad_sch"
+			(at 55.88 147.2696 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "PigeonCarrier"
+				(path "/6c8da0f4-34cf-43b9-a25b-857048b8016b"
+					(page "4")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 126.365 47.625)
+		(size 47.625 17.145)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "cf302cfc-2e3c-4b8c-9d29-89225924cf71")
+		(property "Sheetname" "Sensors"
+			(at 126.365 46.9134 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "Sensors.kicad_sch"
+			(at 126.365 65.3546 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "PigeonCarrier"
+				(path "/6c8da0f4-34cf-43b9-a25b-857048b8016b"
+					(page "5")
+				)
+			)
+		)
+	)
 	(sheet_instances
 		(path "/"
 			(page "1")

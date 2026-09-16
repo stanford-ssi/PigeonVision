@@ -1,0 +1,102 @@
+(footprint "CM5_Mounting_55x40mm"
+	(version 20240108)
+	(generator "pcbnew")
+	(layer "F.Cu")
+	(attr exclude_from_pos_files exclude_from_bom)
+	(property "Reference" "REF**"
+		(at 0 -29 0)
+		(layer "F.Fab")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "CM5 mounting"
+		(at 0 29 0)
+		(layer "F.Fab")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(pad "" np_thru_hole circle
+		(at -16.5 -24.0)
+		(size 2.7 2.7)
+		(drill 2.7)
+		(layers "*.Cu" "*.Mask")
+		(solder_mask_margin 1.7)
+		(clearance 1.7)
+		(uuid "a4a0b273-a5d7-4b89-9183-3a5a0d34483f")
+	)
+	(pad "" np_thru_hole circle
+		(at -16.5 24.0)
+		(size 2.7 2.7)
+		(drill 2.7)
+		(layers "*.Cu" "*.Mask")
+		(solder_mask_margin 1.7)
+		(clearance 1.7)
+		(uuid "0e9ff0ab-be9a-410e-83d3-560aabe41a96")
+	)
+	(pad "" np_thru_hole circle
+		(at 16.5 -24.0)
+		(size 2.7 2.7)
+		(drill 2.7)
+		(layers "*.Cu" "*.Mask")
+		(solder_mask_margin 1.7)
+		(clearance 1.7)
+		(uuid "24644d5b-8a8d-4e6c-81de-1d29e1b2cf87")
+	)
+	(pad "" np_thru_hole circle
+		(at 16.5 24.0)
+		(size 2.7 2.7)
+		(drill 2.7)
+		(layers "*.Cu" "*.Mask")
+		(solder_mask_margin 1.7)
+		(clearance 1.7)
+		(uuid "bbef7c9c-3baf-44f1-a3db-387df8539077")
+	)
+	(fp_rect
+		(start -20 -27.5)
+		(end 20 27.5)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(fill none)
+		(layer "F.Fab")
+	)
+	(fp_rect
+		(start -20.5 -28)
+		(end 20.5 28)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(fill none)
+		(layer "Dwgs.User")
+	)
+	(fp_rect
+		(start -19.5 -9.2)
+		(end -14.5 14.2)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(fill none)
+		(layer "Dwgs.User")
+	)
+	(fp_rect
+		(start 14.5 -9.2)
+		(end 19.5 14.2)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(fill none)
+		(layer "Dwgs.User")
+	)
+)
