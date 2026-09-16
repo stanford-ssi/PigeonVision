@@ -1,0 +1,35 @@
+# Flight camera simulator
+
+Static GitHub Pages site. Open `docs/index.html` through an HTTP server. **Project** links to the repository README.
+
+Two IMX900 cameras sit on opposite sides of a 152.4 mm body. Each CIL212 lens is modeled at an 8 mm pupil offset. The 1552 × 1552 center crops are encoded separately at 30 fps and 4 Mb/s each, then decoded and stitched in the browser. Panning changes viewing direction, not camera position.
+
+The [CIL212 supplier model](https://commonlands.com/pages/camera-field-of-view-calculator) uses `r = 1.1 sin(0.4 θ) / 0.4` mm, with θ in radians. At 2.25 µm pixel pitch, the square crop retains about 197° across each axis and up to 225.8° diagonally. This is predicted coverage, not installed calibration.
+
+The sequence covers the pad, ascent, apogee, separation and early descent. The 10,000 ft trajectory, 4.3 m rocket and recovery motion are illustrative. Lens blur, sensor noise, vibration, attitude errors and RF packet loss are not calibrated or simulated. Simple scenery compresses more easily than real flight footage. This does not establish CM5 throughput or radio performance.
+
+**Controls:** drag to pan, scroll to zoom, or use the direction buttons. With the camera canvas focused, Space toggles playback and comma/period step one frame. Camera crops and the source map show which image supplies each direction. Settings and model notes are below the views.
+
+## Run and check
+
+From the repository root:
+
+```sh
+python3 software/simulator/serve.py
+```
+
+Open `http://127.0.0.1:8767/docs/`. Browser checks require Node, Playwright and Chrome:
+
+```sh
+node software/simulator/check.cjs
+```
+
+To regenerate the clips, also install FFmpeg with libx264:
+
+```sh
+FFMPEG=/path/to/ffmpeg node software/simulator/render_sequence.cjs
+```
+
+Outputs go to `build/simulator/`. Copy `manifest-v3.json` and both `cil212-camera-*.mp4` files into `docs/assets/video/`. Keep transport streams and logs out of the site. The manifest records settings, source hashes, frame counts and transport timing; mismatched clips fall back to the ideal model.
+
+For Pages, publish the repository's `/docs` directory after merging. All site assets use relative paths; no build service or external CDN is required.

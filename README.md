@@ -1,3 +1,5 @@
+<img src="assets/pigeonvision.png" alt="Pigeon wearing two fisheye camera lenses" width="160">
+
 # PigeonVision
 
 Video downlink for Stanford SSI's IREC rocket. Two fisheye cameras record the flight and send video to the ground for stitching and viewing.
@@ -7,7 +9,6 @@ Video downlink for Stanford SSI's IREC rocket. Two fisheye cameras record the fl
 - [Hardware](hardware/README.md): system diagram, carrier and RF frontend.
 - [Software](software/README.md): flight and ground tasks.
 - [Link budget](calculations/link-budget.xlsx): RF and video bitrate calculations.
+- [Simulator](docs/README.md): camera views, flight playback and local setup.
 
-**Next:** KiCad schematics, dual-camera test and E200 bench link. Test before PCB fabrication. Launch simulator to follow.
-
-**Git:** work on short-lived branches and merge through pull requests. Keep commit messages to a few words.
+**Next:** KiCad schematics, dual-camera test and E200 bench link. Test before PCB fabrication.

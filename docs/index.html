@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#f7f9f5" />
+    <title>PigeonVision · Flight simulator</title>
+    <link rel="icon" href="assets/pigeon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css?v=3.1" />
+  </head>
+  <body>
+    <main>
+      <header class="masthead">
+        <a class="brand" href="#" aria-label="PigeonVision home">
+          <img src="assets/pigeonvision.png" alt="" class="brand-pigeon" width="48" height="48" style="max-width:48px;max-height:48px" />
+          <span>Pigeon<span class="brand-light">Vision</span></span>
+          <small>STANFORD SSI / IREC</small>
+        </a>
+        <nav aria-label="Page sections">
+          <a href="#imaging">Camera views</a>
+          <a href="#assumptions">Settings & notes</a>
+          <a href="https://github.com/stanford-ssi/PigeonVision#readme">Project ↗</a>
+        </nav>
+      </header>
+      <section class="intro">
+        <h1>Flight camera simulator</h1>
+        <p class="flight-caption">6-inch airframe · Two fisheyes · 30 fps</p>
+      </section>
+      <section class="flight-deck" aria-label="Flight camera simulator">
+        <div class="view-column">
+          <div class="panel-heading">
+            <div>
+              <h2 id="view-title">Received panorama</h2>
+            </div>
+            <span class="badge" id="source-badge">Loading</span>
+          </div>
+          <div class="viewport">
+            <canvas
+              id="screen"
+              width="1280"
+              height="720"
+              tabindex="0"
+              aria-label="Camera viewport. Drag to look around, scroll to zoom, arrow keys to pan."
+            ></canvas>
+            <div class="view-hud">
+              <span id="view-reference">EARTH FIXED</span
+              ><span id="view-angle">90° VIEW</span>
+            </div>
+            <div class="view-bottom">
+              <span id="stage-label">H.264 / 30 FPS</span
+              ><button id="fullscreen" title="Expand camera view">⤢</button>
+            </div>
+          </div>
+          <div class="view-controls">
+            <div class="segmented" id="source-tabs">
+              <button data-source="received" class="active">Encoded video</button
+              ><button data-source="model">Ideal model</button>
+            </div>
+            <select id="view-mode" aria-label="Projection">
+              <option value="0">Look around</option>
+              <option value="1">Full panorama</option>
+              <option value="4">Camera A perspective</option>
+              <option value="5">Camera B perspective</option>
+              <option value="2">Camera A fisheye</option>
+              <option value="3">Camera B fisheye</option>
+              <option value="7">Source coverage map</option></select
+            ><button
+              id="snapshot"
+              class="icon-button"
+              title="Save current view"
+            >
+              Save frame ↗
+            </button>
+          </div>
+          <div class="view-presets">
+            <button data-look="horizon">Horizon</button
+            ><button data-look="airbrakes">Airbrakes</button
+            ><button data-look="nadir">Straight down</button
+            ><button data-look="canopy">Look up</button
+            ><button data-look="seam">Seam</button
+            ><label
+              ><input id="earth" type="checkbox" checked /> Earth fixed</label
+            >
+          </div>
+          <p class="view-note" id="view-note">
+            Turn your view, not your position. This is a panoramic image, not
+            reconstructed 3D.
+          </p>
+          <div id="error" role="alert" hidden></div>
+        </div>
+      <section class="flight-strip" aria-label="Launch playback">
+        <div class="transport">
+          <button id="play" class="play-button" aria-label="Play launch">
+            ▶
+          </button>
+          <div class="time-readout">
+            <span id="phase-label">ON THE PAD</span
+            ><strong id="time-label">T + 0.00 s</strong>
+          </div>
+          <input
+            id="timeline"
+            aria-label="Flight time"
+            type="range"
+            min="0"
+            max="36.6"
+            step="0.0333333333"
+            value="0"
+          /><select id="rate" aria-label="Playback speed">
+            <option value="0.5">0.5×</option>
+            <option value="1" selected>1×</option>
+            <option value="2">2×</option>
+          </select>
+        </div>
+        <div id="phases" class="phases"></div>
+        <div class="telemetry">
+          <div>
+            <span>Altitude AGL</span
+            ><strong id="flight-alt">0 <small>m</small></strong>
+          </div>
+          <div>
+            <span>Vertical speed</span
+            ><strong id="flight-speed">0 <small>m/s</small></strong>
+          </div>
+          <div>
+            <span>Slant range</span
+            ><strong id="flight-range">0.10 <small>km</small></strong>
+          </div>
+          <div>
+            <span>Link margin after reserve</span
+            ><strong id="flight-margin">pending</strong>
+          </div>
+          <div class="flight-plot">
+            <canvas id="flightplot" aria-label="Altitude profile"></canvas>
+          </div>
+        </div>
+      </section>
+        <aside class="rig-column">
+          <div class="panel-heading">
+            <div>
+              <h2>Camera placement</h2>
+            </div>
+            <span class="badge ghost">Geometry model</span>
+          </div>
+          <div class="rig-surface">
+            <canvas
+              id="rig"
+              aria-label="Orbitable three-dimensional illustration of camera placement. Drag to orbit."
+            ></canvas>
+            <div class="rig-toolbar">
+              <div class="segmented">
+                <button id="ring-view" class="active">Camera ring</button
+                ><button id="full-rig">Full rocket</button>
+              </div>
+              <label
+                ><input id="bubbles" type="checkbox" checked /> FOV
+                shells</label
+              >
+            </div>
+          </div>
+          <div class="rig-caption">
+            <span><i class="eye-dot a"></i>A · outward</span
+            ><span><i class="eye-dot b"></i>B · outward</span
+            ><span>Drag to orbit</span>
+          </div>
+          <p class="small" id="rig-description">
+            152.4 mm body · 8 mm assumed pupil stand-off · 168.4 mm pupil
+            spacing. The shells show viewing angles, not a finite viewing
+            distance. This external view is not transmitted.
+          </p>
+          <div class="rig-settings">
+            <label
+              >Camera & lens<select id="preset">
+                <option value="900">IMX900 + CIL212</option>
+                <option value="676">IMX676 + CIL220 · 215°</option>
+                <option value="matched">IMX676 + L185A · 185° (model)</option>
+              </select></label
+            ><label
+              >Flight target<select id="scenario">
+                <option value="launch.json">10,000 ft · 3,048 m</option>
+                <option value="launch-30kft.json">
+                  30,000 ft · 9,144 m (model)
+                </option>
+                <option value="launch-10km.json">
+                  10 km stress case (model)
+                </option>
+              </select></label
+            >
+          </div>
+        </aside>
+      </section>
+      <section id="imaging" class="imaging">
+        <div class="section-intro">
+          <div>
+            <h2>Camera views</h2>
+          </div>
+          <p id="inspection-status">
+            Pause to inspect the individual source images at the same instant.
+          </p>
+        </div>
+        <div class="pipeline">
+          <article class="sensor-card eye-a">
+            <div class="card-top">
+              <span class="eye-label"><i class="eye-dot a"></i>Camera A</span
+              ><span id="a-spec" class="mono">CIL212 fisheye</span>
+            </div>
+            <div class="sensor-image">
+              <canvas
+                id="raw-a"
+                aria-label="Square camera crop from camera A"
+              ></canvas
+              ><svg
+                class="pixel-marker"
+                id="marker-a"
+                viewBox="0 0 100 100"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+              >
+                <circle cx="50" cy="50" r="2" />
+              </svg>
+            </div>
+
+            <div class="card-actions">
+              <button data-camera="A" data-action="raw">Camera crop ↗</button
+              ><button data-camera="A" data-action="body">
+                Look toward body ↗
+              </button>
+            </div>
+          </article>
+          <article class="sensor-card eye-b">
+            <div class="card-top">
+              <span class="eye-label"><i class="eye-dot b"></i>Camera B</span
+              ><span id="b-spec" class="mono">CIL212 fisheye</span>
+            </div>
+            <div class="sensor-image">
+              <canvas
+                id="raw-b"
+                aria-label="Square camera crop from camera B"
+              ></canvas
+              ><svg
+                class="pixel-marker"
+                id="marker-b"
+                viewBox="0 0 100 100"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+              >
+                <circle cx="50" cy="50" r="2" />
+              </svg>
+            </div>
+
+            <div class="card-actions">
+              <button data-camera="B" data-action="raw">Camera crop ↗</button
+              ><button data-camera="B" data-action="body">
+                Look toward body ↗
+              </button>
+            </div>
+          </article>
+          <article class="panorama-card">
+            <div class="card-top">
+              <span>Reproject & select</span
+              ><button id="toggle-mask" class="text-button">
+                Show source map
+              </button>
+            </div>
+            <canvas
+              id="stitched"
+              aria-label="Panoramic reconstruction from the two simulated source textures"
+            ></canvas
+            ><label
+              >Seam policy<select id="seam-policy">
+                <option value="0">Outward halves · hard seam</option>
+                <option value="1">Feather the overlap</option>
+                <option value="2">Keep A wherever covered</option>
+                <option value="3">Keep B wherever covered</option>
+              </select></label
+            >
+            <p id="seam-description">
+              The outward stitch discards inward-looking body pixels. That is
+              why the cylinder disappears.
+            </p>
+          </article>
+        </div>
+        <div class="inspection-toggle">
+          <label
+            ><input id="live-inspection" type="checkbox" checked /> Animate
+            camera previews <span>(5 fps)</span></label
+          >
+        </div>
+        <div class="chain-footer">
+          <span id="capture-detail">Synthetic source inspection</span
+          ><span
+            ><i class="eye-dot a"></i>A <i class="eye-dot b"></i>B
+            <i class="eye-dot overlap"></i>Both lenses</span
+          ><span>Crosshair = center of your view</span>
+        </div>
+      </section>
+      <section id="assumptions" class="assumptions" aria-label="Settings and model notes">
+            <details>
+              <summary>Settings <span>Camera geometry & timing</span></summary>
+              <p class="small">
+                Edits switch to the source model. They do not change the
+                recorded downlink. Lens projection is nominal; measured calibration is still needed.
+              </p>
+              <label
+                >Pupil stand-off <output id="stand-out">8 mm</output
+                ><input
+                  id="stand"
+                  type="range"
+                  min="1"
+                  max="60"
+                  step="1"
+                  value="8" /></label
+              ><label
+                >Camera height above leaves
+                <output id="height-out">150 mm</output
+                ><input
+                  id="height"
+                  type="range"
+                  min="40"
+                  max="600"
+                  step="5"
+                  value="150" /></label
+              ><label
+                >Exposure <output id="exposure-out">0.5 ms</output
+                ><input
+                  id="exposure"
+                  type="range"
+                  min="0"
+                  max="5"
+                  step="0.1"
+                  value="0.5" /></label
+              ><label
+                >Camera B time offset <output id="skew-out">0 ms</output
+                ><input
+                  id="skew"
+                  type="range"
+                  min="0"
+                  max="15"
+                  step="0.1"
+                  value="0" /></label
+              ><label
+                >Rolling readout assumption
+                <output id="readout-out">0 ms</output
+                ><input
+                  id="readout"
+                  type="range"
+                  min="0"
+                  max="30"
+                  step="1"
+                  value="0" /></label
+              ><button id="reset-geometry">Reset settings</button>
+            </details>
+        <details class="model-notes">
+          <summary>Model notes <span>Image quality, radio & flight assumptions</span></summary>
+          <div class="notes-grid">
+            <article>
+              <h3 id="detail-head">Source sampling</h3>
+              <p id="detail-copy"></p>
+              <p>Lens blur, sensor noise and vibration are not calibrated. Recorded clips assume ideal attitude and camera timing.</p>
+              <p>Stitching selects directions from two camera positions. Nearby hardware can jump or ghost at the seam. Panning cannot reveal hidden surfaces.</p>
+            </article>
+            <article>
+              <h3>Downlink & playback</h3>
+              <dl id="radio-facts"></dl>
+              <p id="codec-status" class="small"></p>
+              <div id="playback-stats" class="diagnostics">Playback diagnostics appear while playing.</div>
+              <p>30 captured frames per second. No simulated RF packet loss.</p>
+            </article>
+            <article>
+              <h3>Flight & geometry</h3>
+              <p>10,000 ft = 3,048 m AGL. The trajectory is fitted to the target altitude, not a motor prediction.</p>
+              <p>The 4.3 m rocket, airbrakes and recovery motion are illustrative. The sequence ends during early descent.</p>
+              <p>The simple synthetic landscape is easier to compress than flight footage. Final quality and link performance need hardware tests.</p>
+              <a href="README.md">Source & reproduction ↗</a>
+            </article>
+          </div>
+        </details>
+      </section>
+      <footer>
+        <span class="footer-brand">PigeonVision</span
+        ><span>Stanford SSI · IREC</span
+        ><a href="README.md">Model notes ↗</a>
+      </footer>
+      <video id="received" muted playsinline preload="auto" hidden></video
+      ><canvas id="work-canvas" hidden></canvas>
+      <script type="module" src="app.js?v=3.1"></script>
+    </main>
+  </body>
+</html>

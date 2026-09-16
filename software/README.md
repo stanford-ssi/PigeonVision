@@ -8,6 +8,6 @@
 
 **Ground:** a second E200 sends I/Q over Ethernet to the Linux PC. Use [gr-dvbs2rx](https://github.com/igorauad/gr-dvbs2rx) to recover the transport, decode both cameras, apply lens calibration and stitch a movable, stabilized view. Retain original streams and telemetry.
 
-Camera test target: two 1344 x 1344 crops at 30 fps and 4 Mb/s each, with recording and sensors on one CM5. Check dropped frames, latency, temperature and power.
+Camera test target: two calibrated 1552 x 1552 crops from the IMX900/CIL212 pair at 30 fps and an initial 4 Mb/s each, with recording and sensors on one CM5. Check dropped frames, latency, temperature and power.
 
 Radio bench test: E200 TX through attenuation to E200 RX, without the PA. Start at 1 MSymbol/s, then reach 8 MSymbol/s with a 9 Mb/s test transport. Run for one hour and check continuity errors, underruns and latency before PCB fabrication. No camera-command uplink is planned.
