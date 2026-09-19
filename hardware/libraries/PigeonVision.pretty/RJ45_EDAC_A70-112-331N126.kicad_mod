@@ -1,0 +1,85 @@
+(footprint "RJ45_EDAC_A70-112-331N126" (version 20221018) (generator pcbnew)
+  (layer "F.Cu")
+  (descr "EDAC A70-112-331N126 drawing R11. Corrected CM5IO Rev2 geometry. Origin midway between locating posts; cable exits +Y. Shield pads19/20 are project numbering. No verified 3D model.")
+  (tags "RJ45 Magjack")
+  (attr through_hole)
+  (fp_text reference "REF**" (at 0.01 -11.32) (layer "F.SilkS")
+      (effects (font (size 1 1) (thickness 0.15)))
+    (tstamp 705b382b-ff69-413e-84e6-0fd86757e863)
+  )
+  (fp_text value "RJ45_EDAC_A70-112-331N126" (at 0 11.58) (layer "F.Fab")
+      (effects (font (size 1 1) (thickness 0.15)))
+    (tstamp 20be6db7-13e5-4234-90c4-c6907cf27ae1)
+  )
+  (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab")
+      (effects (font (size 1 1) (thickness 0.15)))
+    (tstamp 5b57542e-00f6-4cfc-91ee-fb8c112e69a3)
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  (pad "" np_thru_hole circle (at -5.715 0) (size 3.25 3.25) (drill 3.25) (layers "*.Cu" "*.Mask") (tstamp 2709183a-a686-45e9-9cb9-f8037f7fa8f3))
+  (pad "" np_thru_hole circle (at 5.715 0) (size 3.25 3.25) (drill 3.25) (layers "*.Cu" "*.Mask") (tstamp dd808b8f-0d74-4fc3-b38d-5cb7380c8a26))
+  (pad "1" thru_hole roundrect (at -5.715 -8.89) (size 1.5 1.5) (drill 0.9) (layers "*.Cu" "*.Mask") (roundrect_rratio 0.167) (tstamp 4bbdca2e-1700-4b42-af03-7322fcead74c))
+  (pad "2" thru_hole circle (at -4.445 -6.35) (size 1.5 1.5) (drill 0.9) (layers "*.Cu" "*.Mask") (tstamp a1db1da7-05ef-4d7c-bf0e-4c0cb7f79819))
+  (pad "3" thru_hole circle (at -3.175 -8.89) (size 1.5 1.5) (drill 0.9) (layers "*.Cu" "*.Mask") (tstamp 1ccd7ea9-92b2-42ed-8848-5028a5af89ef))
+  (pad "4" thru_hole circle (at -1.905 -6.35) (size 1.5 1.5) (drill 0.9) (layers "*.Cu" "*.Mask") (tstamp 1a53e93d-1cf5-4654-a1d1-32ffc708d838))
+  (pad "5" thru_hole circle (at -0.635 -8.89) (size 1.5 1.5) (drill 0.9) (layers "*.Cu" "*.Mask") (tstamp c2a2c3fb-4c24-4523-acb0-cfc01e4c3543))
+  (pad "6" thru_hole circle (at 0.635 -6.35 90) (size 1.5 1.5) (drill 0.9) (layers "*.Cu" "*.Mask") (tstamp 5d824785-caea-495b-ba61-b14e25f0cf31))
+  (pad "7" thru_hole circle (at 1.905 -8.89) (size 1.5 1.5) (drill 0.9) (layers "*.Cu" "*.Mask") (tstamp 42d18e79-3674-42cd-9cc8-7b9510be6f46))
+  (pad "8" thru_hole circle (at 3.175 -6.35) (size 1.5 1.5) (drill 0.9) (layers "*.Cu" "*.Mask") (tstamp 4d12951d-bf7b-4f07-af16-3da5a678f4ce))
+  (pad "9" thru_hole circle (at 4.445 -8.89) (size 1.5 1.5) (drill 0.9) (layers "*.Cu" "*.Mask") (tstamp b570dd70-d0e0-480f-b783-f720c69681dc))
+  (pad "10" thru_hole circle (at 5.715 -6.35) (size 1.5 1.5) (drill 0.9) (layers "*.Cu" "*.Mask") (tstamp b63704fb-a4f1-48d6-9bb9-2aa2c7420560))
+  (pad "11" thru_hole circle (at -5.715 -3.83) (size 1.5 1.5) (drill 0.9) (layers "*.Cu" "*.Mask") (tstamp bbcfc3bd-7f63-4797-ae24-05f4ee20b4bf))
+  (pad "12" thru_hole circle (at -3.175 -2.56) (size 1.5 1.5) (drill 0.9) (layers "*.Cu" "*.Mask") (tstamp f41410e0-b30e-478c-8395-94758b02f780))
+  (pad "13" thru_hole circle (at 3.175 -2.56) (size 1.5 1.5) (drill 0.9) (layers "*.Cu" "*.Mask") (tstamp b0b75ac4-d2ee-4c3f-bbe3-fff032e7b53f))
+  (pad "14" thru_hole circle (at 5.715 -3.83) (size 1.5 1.5) (drill 0.9) (layers "*.Cu" "*.Mask") (tstamp 989a6b41-a40a-4945-8989-c2df752be7cb))
+  (pad "15" thru_hole circle (at -6.64 4.06) (size 1.5 1.5) (drill 1.02) (layers "*.Cu" "*.Mask") (tstamp ae8e8894-d222-4a3c-aead-6f18e16d9c00))
+  (pad "16" thru_hole circle (at -4.1 4.06) (size 1.5 1.5) (drill 1.02) (layers "*.Cu" "*.Mask") (tstamp 8c07df35-89b6-40a4-a7d9-1796e4b1c98d))
+  (pad "17" thru_hole circle (at 4.1 4.06) (size 1.5 1.5) (drill 1.02) (layers "*.Cu" "*.Mask") (tstamp d4872a15-646c-401a-8c2a-ab18855b1f9c))
+  (pad "18" thru_hole circle (at 6.64 4.06) (size 1.5 1.5) (drill 1.02) (layers "*.Cu" "*.Mask") (tstamp 69f2ea40-d7fc-4326-951c-feb03e3c4520))
+  (pad "19" thru_hole circle (at -7.85 -3.05) (size 2.5 2.5) (drill 1.6) (layers "*.Cu" "*.Mask") (tstamp 290360c5-e72c-49c7-b357-0ee46eebcdd5))
+  (pad "20" thru_hole circle (at 7.85 -3.05) (size 2.5 2.5) (drill 1.6) (layers "*.Cu" "*.Mask") (tstamp b6da9771-4617-45db-9811-02e044609eaf))
+
+
+(fp_line (start -7.95 -10.6) (end 7.95 -10.6) (stroke (width 0.1) (type default)) (layer "F.Fab"))
+(fp_line (start 7.95 -10.6) (end 7.95 10.75) (stroke (width 0.1) (type default)) (layer "F.Fab"))
+(fp_line (start 7.95 10.75) (end -7.95 10.75) (stroke (width 0.1) (type default)) (layer "F.Fab"))
+(fp_line (start -7.95 10.75) (end -7.95 -10.6) (stroke (width 0.1) (type default)) (layer "F.Fab"))
+(fp_line (start -9.6 -11.1) (end 9.6 -11.1) (stroke (width 0.05) (type default)) (layer "F.CrtYd"))
+(fp_line (start 9.6 -11.1) (end 9.6 11.25) (stroke (width 0.05) (type default)) (layer "F.CrtYd"))
+(fp_line (start 9.6 11.25) (end -9.6 11.25) (stroke (width 0.05) (type default)) (layer "F.CrtYd"))
+(fp_line (start -9.6 11.25) (end -9.6 -11.1) (stroke (width 0.05) (type default)) (layer "F.CrtYd"))
+(fp_line (start -8.07 -10.72) (end 8.07 -10.72) (stroke (width 0.12) (type default)) (layer "F.SilkS"))
+(fp_line (start -8.07 10.87) (end 8.07 10.87) (stroke (width 0.12) (type default)) (layer "F.SilkS"))
+(fp_line (start -8.07 -10.72) (end -8.07 -4.55) (stroke (width 0.12) (type default)) (layer "F.SilkS"))
+(fp_line (start 8.07 -10.72) (end 8.07 -4.55) (stroke (width 0.12) (type default)) (layer "F.SilkS"))
+(fp_line (start -8.07 -1.55) (end -8.07 10.87) (stroke (width 0.12) (type default)) (layer "F.SilkS"))
+(fp_line (start 8.07 -1.55) (end 8.07 10.87) (stroke (width 0.12) (type default)) (layer "F.SilkS"))
+(fp_circle (center -5.715 -10.05) (end -5.565 -10.05) (stroke (width 0.1) (type default)) (fill solid) (layer "F.SilkS"))
+(zone (net 0) (net_name "") (layer "F.Cu") (name "Front shield contact") (hatch edge 0.5) (connect_pads (clearance 0)) (min_thickness 0.25) (keepout (tracks not_allowed) (vias not_allowed) (pads not_allowed) (copperpour not_allowed) (footprints allowed)) (fill (thermal_gap 0.5) (thermal_bridge_width 0.5)) (polygon (pts (xy -7.95 8.05) (xy 7.95 8.05) (xy 7.95 10.75) (xy -7.95 10.75))))
+(zone (net 0) (net_name "") (layer "F.Cu") (name "Left shield contact") (hatch edge 0.5) (connect_pads (clearance 0)) (min_thickness 0.25) (keepout (tracks not_allowed) (vias not_allowed) (pads allowed) (copperpour not_allowed) (footprints allowed)) (fill (thermal_gap 0.5) (thermal_bridge_width 0.5)) (polygon (pts (xy -7.95 -2) (xy -6.66 -2) (xy -6.66 0) (xy -7.95 0))))
+(zone (net 0) (net_name "") (layer "F.Cu") (name "Right shield contact") (hatch edge 0.5) (connect_pads (clearance 0)) (min_thickness 0.25) (keepout (tracks not_allowed) (vias not_allowed) (pads allowed) (copperpour not_allowed) (footprints allowed)) (fill (thermal_gap 0.5) (thermal_bridge_width 0.5)) (polygon (pts (xy 6.66 -2) (xy 7.95 -2) (xy 7.95 0) (xy 6.66 0))))
+)
