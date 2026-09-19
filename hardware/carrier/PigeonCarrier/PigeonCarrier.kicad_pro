@@ -439,6 +439,10 @@
     [
       "cf302cfc-2e3c-4b8c-9d29-89225924cf71",
       "Sensors"
+    ],
+    [
+      "975ecfb5-555a-41cb-976d-5877880090a3",
+      "Ethernet"
     ]
   ],
   "text_variables": {},

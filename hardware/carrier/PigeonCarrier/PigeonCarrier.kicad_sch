@@ -98,6 +98,52 @@
 		)
 	)
 	(sheet
+		(at 196.215 85.09)
+		(size 39.37 18.415)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "975ecfb5-555a-41cb-976d-5877880090a3")
+		(property "Sheetname" "Ethernet"
+			(at 196.215 84.3784 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "Ethernet.kicad_sch"
+			(at 196.215 104.0896 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "PigeonCarrier"
+				(path "/6c8da0f4-34cf-43b9-a25b-857048b8016b"
+					(page "6")
+				)
+			)
+		)
+	)
+	(sheet
 		(at 55.88 120.65)
 		(size 34.29 26.035)
 		(exclude_from_sim no)
