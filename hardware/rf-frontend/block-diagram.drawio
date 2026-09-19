@@ -73,7 +73,7 @@
         <mxCell id="pa" value="&lt;b&gt;Final PA&lt;/b&gt;&lt;br&gt;GRF5115" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#ffffff;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=5;" vertex="1" parent="1">
           <mxGeometry x="950" y="385" width="170" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="filter" value="&lt;b&gt;Output LPF&lt;/b&gt;&lt;br&gt;LFCN-1500+" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#ffffff;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=5;" vertex="1" parent="1">
+        <mxCell id="rf_output_filter" value="&lt;b&gt;Output LPF&lt;/b&gt;&lt;br&gt;LFCN-1500+" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#ffffff;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=5;" vertex="1" parent="1">
           <mxGeometry x="1190" y="385" width="185" height="80" as="geometry" />
         </mxCell>
         <mxCell id="out" value="&lt;b&gt;RF output&lt;/b&gt;&lt;br&gt;SMA" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#d4e4f4;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=5;" vertex="1" parent="1">
@@ -99,12 +99,12 @@
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="e26" parent="1" edge="1" source="pa" target="filter" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=0;rounded=0;html=0;strokeColor=#222222;strokeWidth=1.8;endArrow=block;endFill=1;startArrow=none;startFill=1;exitX=1;exitY=0.5;exitPerimeter=0;entryX=0;entryY=0.5;entryPerimeter=0;">
+        <mxCell id="e26" parent="1" edge="1" source="pa" target="rf_output_filter" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=0;rounded=0;html=0;strokeColor=#222222;strokeWidth=1.8;endArrow=block;endFill=1;startArrow=none;startFill=1;exitX=1;exitY=0.5;exitPerimeter=0;entryX=0;entryY=0.5;entryPerimeter=0;">
           <mxGeometry relative="1" as="geometry">
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="e27" parent="1" edge="1" source="filter" target="out" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=0;rounded=0;html=0;strokeColor=#222222;strokeWidth=1.8;endArrow=block;endFill=1;startArrow=none;startFill=1;exitX=1;exitY=0.5;exitPerimeter=0;entryX=0;entryY=0.5;entryPerimeter=0;">
+        <mxCell id="e27" parent="1" edge="1" source="rf_output_filter" target="out" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=0;rounded=0;html=0;strokeColor=#222222;strokeWidth=1.8;endArrow=block;endFill=1;startArrow=none;startFill=1;exitX=1;exitY=0.5;exitPerimeter=0;entryX=0;entryY=0.5;entryPerimeter=0;">
           <mxGeometry relative="1" as="geometry">
             <Array as="points" />
           </mxGeometry>

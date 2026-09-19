@@ -20,6 +20,10 @@ Set usable output from modulation quality, spectrum and receiver performance. P1
 
 SMA input/output; carrier power, enable and temperature connection. Include default-off enable, separate bias feeds and current test points. Provide heatsink mounting. Driver bypass is an assembly option.
 
-Before layout: confirm matching, bias, stackup and filter connections. Verify gain, spectrum and temperature with the DVB-S2 signal.
+Power filtering: the carrier supplies regulated RF 5 V with its required buck output capacitors. Put the final supply filter, local bulk capacitance and each amplifier's reference bias/bypass network on this RF board. Select series impedance for DC current and voltage drop; check filter damping and PA load transients. Supply filtering is separate from the RF output filter.
+
+Start the schematic and PCB from the manufacturers' band-specific reference circuits, with replaceable input/interstage resistor pads and accessible RF test connections. Check matching, bias, stackup and thermal construction before fabrication. Bench testing sets the final pad values and usable DVB-S2 output power; it is not a prerequisite for starting the design.
+
+A pad is a matched resistor attenuator. The input pad reduces drive; the interstage pad reduces drive and reflections between amplifiers. The shown 20 dB and 3 dB values are starting options. Use the E200's transmit attenuation for routine power adjustment; keep a fixed pad sized for the maximum permitted drive. A separate digital step attenuator is optional if SDR control is insufficient. Its setting, like the SDR setting, does not measure output watts. Verify output power, modulation quality, spectrum and temperature during bring-up.
 
 References: [GRF2011](https://www.guerrilla-rf.com/products/detail/sku/GRF2011), [GRF5115 tune](https://www.guerrilla-rf.com/includes/prodFiles/5115/GRF5115%201200-1400%20MHz.pdf), [GRF5115 datasheet](https://www.guerrilla-rf.com/includes/prodFiles/5115/GRF5115DS.pdf), [LFCN-1500+](https://www.minicircuits.com/pdfs/LFCN-1500%2B.pdf).
