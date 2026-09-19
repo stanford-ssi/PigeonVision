@@ -4,6 +4,8 @@
 
 Video downlink for Stanford SSI's IREC rocket. Two fisheye cameras record the flight and send video to the ground for stitching and viewing.
 
+Try the [flight demo](https://stanford-ssi.github.io/PigeonVision/) to see the camera views and stitched panorama.
+
 **Cur Plan:** two IMX900 cameras at 30 fps, one CM5 and an E200 DVB-S2 transmitter. A second E200 and Linux PC receive and stitch the video. Target: 10,000 ft AGL, 6-inch airframe, 0.5 W average PA output.
 
 - [Hardware](hardware/README.md): system diagram, carrier and RF frontend.
