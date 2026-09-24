@@ -1,7 +1,7 @@
 :root {
   --paper: #f3f0e7;
   --ink: #263e35;
-  --muted: #718075;
+  --muted: #606e62;
   --line: #cdd1c2;
   --green: #355d4c;
   --pale: #e7e9da;
@@ -1282,4 +1282,11 @@ footer {
 }
 .view-hud:after {
   display: none;
+}
+.phases button.active {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--green);
+  color: var(--ink);
+  border-radius: 0;
 }

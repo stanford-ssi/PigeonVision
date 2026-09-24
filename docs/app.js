@@ -1,3 +1,4 @@
+import { nominalProfile, finOutline, finAngles, ORK, STATIONS } from "./rocket.js";
 import { CameraRenderer, PRESETS } from "./engine.js";
 import { RigView } from "./rig.js";
 import { opticalState } from "./scene.js";
@@ -189,10 +190,12 @@ function syncUi(force = false) {
     p = PRESETS[preset];
   $("time-label").textContent = `T + ${time.toFixed(2)} s`;
   $("timeline").value = time;
+  const phaseButtons = [...$("phases").children];
+  phaseButtons.forEach((b,i) => b.classList.toggle("active", time >= Number(b.dataset.time) && (!phaseButtons[i+1] || time < Number(phaseButtons[i+1].dataset.time))));
   $("phase-label").textContent =
-    time < 3
+    time < (flight.summary.ignition_time_s ?? 3)
       ? "ON THE PAD"
-      : time < 9
+      : time < (flight.summary.burnout_time_s ?? 9)
         ? "POWERED ASCENT"
         : time < flight.summary.apogee_time_s
           ? "COAST"
@@ -315,7 +318,7 @@ function plot() {
 }
 function resetParams() {
   Object.assign(params, {
-    diameter: 152.4,
+    diameter: SCENARIO.geometry.diameter_mm,
     stand: 8,
     height: 150,
     exposure: 0.5,
@@ -355,7 +358,12 @@ async function loadVideo(t, resume = false) {
   }
   loading = true;
   offset = manifest.start_s ?? 0;
-  const paths = [manifest.cameras.a.mp4, manifest.cameras.b.mp4].map(p => new URL(p, MEDIA_ROOT).href);
+  const revision = manifest.fingerprint.scene_sha256.slice(0, 12) + "-" + manifest.fingerprint.config_sha256.slice(0, 12);
+  const paths = [manifest.cameras.a.mp4, manifest.cameras.b.mp4].map(p => {
+    const url = new URL(p, MEDIA_ROOT);
+    url.searchParams.set("v", revision);
+    return url.href;
+  });
   const key = paths.join("|");
   if (currentClip !== key) {
     currentClip = key;
@@ -434,8 +442,8 @@ async function loadFlight(file) {
   $("phases").replaceChildren();
   for (const [name, t] of [
     ["Pad", 0],
-    ["Ignition", 3],
-    ["Burnout", 9],
+    ["Ignition", flight.summary.ignition_time_s ?? 3],
+    ["Burnout", flight.summary.burnout_time_s ?? 9],
     ["Airbrakes", 12],
     ["Apogee", flight.summary.apogee_time_s],
     ["Separation", flight.summary.deployment_time_s],
@@ -443,6 +451,7 @@ async function loadFlight(file) {
     const b = document.createElement("button");
     b.textContent = name;
     b.title = `T + ${t.toFixed(1)} s`;
+    b.dataset.time = t;
     b.onclick = () => seek(t).catch(error);
     $("phases").append(b);
   }
@@ -508,7 +517,7 @@ function look(name) {
     horizon: [0, 0, true],
     airbrakes: [0, -72, false],
     nadir: [0, -89.9, false],
-    canopy: [0, 85, false],
+    canopy: [0, 85, true],
     seam: [90, -65, false],
   };
   [yaw, pitch, earth] = views[name];
@@ -705,7 +714,16 @@ function bind() {
   ).observe(document.querySelector(".pipeline"));
   videos.forEach((v,i) => v.requestVideoFrameCallback?.((n,m) => decoded(i,n,m)));
 }
+function drawRocketKey() {
+  const scale = 130 / (STATIONS.tip - STATIONS.tail);
+  const point = (r,z) => `${(44+r*scale).toFixed(3)} ${(7+(STATIONS.tip-z)*scale).toFixed(3)}`;
+  const profile = nominalProfile();
+  const body = [...profile.map(([z,r])=>point(r,z)), ...profile.toReversed().map(([z,r])=>point(-r,z))];
+  $("rocket-profile").setAttribute("d", "M"+body.join(" L")+" Z");
+  $("rocket-fins").setAttribute("d", finAngles().map(a=>"M"+finOutline(ORK.radius).map(([r,z])=>point(r*Math.cos(a),z)).join(" L")+" Z").join(" "));
+}
 try {
+  drawRocketKey();
   renderer = new CameraRenderer($("screen"));
   work = new CameraRenderer($("work-canvas"));
   rig = new RigView($("rig"));

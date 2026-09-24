@@ -26,8 +26,8 @@ const fileHash = (name) => sha256(fs.readFileSync(path.join(site, name)));
 const sourceFiles = [
   "scenario.js",
   "scene.js",
-  "engine.js", "terrain.js",
-  "assets/launch.json",
+  "engine.js", "terrain.js", "rocket.js",
+  "assets/launch.json", "assets/rocket.json",
   "assets/airbrakes.json",
 ];
 const stableJSON = (value) => JSON.stringify(value, function (_key, v) {

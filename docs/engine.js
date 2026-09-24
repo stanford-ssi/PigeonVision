@@ -1,6 +1,7 @@
 import { TERRAIN, terrainMaps, TERRAIN_GLSL } from "./terrain.js";
 import { SCENARIO } from "./scenario.js";
-import { AIRFRAME, finFaces, cameraBoxes, recoveryPose } from "./scene.js";
+import { STATIONS, ORK, RAIL_BUTTONS, PROFILE_POINTS } from "./rocket.js";
+import { finFaces, cameraBoxes, recoveryPose, airframeProfile, bodyRadius, LAUNCHER } from "./scene.js";
 // The renderer owns pixels only. Flight state and the interface live in app.js.
 export const PRESETS = {
   900: {
@@ -37,89 +38,357 @@ export const PRESETS = {
     name: "IMX676 · L185A",
   },
 };
+const f1 = (v) => v.toFixed(5);
+const PROFILE_MAX = PROFILE_POINTS;
 const VERTEX = `#version 300 es
 in vec2 position;out vec2 uv;void main(){uv=position*.5+.5;gl_Position=vec4(position,0.,1.);}`;
 const COMMON = `#version 300 es
 precision highp float;
+precision highp int;
+precision highp sampler2D;
 in vec2 uv;out vec4 frag;
 uniform vec2 screen,sensor;
-uniform float circlePx,halfField,roll,tilt,bodyR,stand,height,leafR,deploy,altitude,speed,readout,skew,exposure;
-uniform int meshReady;
+uniform float circlePx,halfField,roll,tilt,heading,bodyR,stand,height,leafR,deploy,altitude,speed,readout,skew,exposure;
+uniform int meshReady,samples;
+uniform vec2 worldXY;
 uniform vec2 leafOutline[24];
-uniform float flightTime,noseOffset,chuteOpen;
-uniform float pixelPitch,lensF,lensB;
-uniform vec3 finVertices[24],housingCenter[2],housingHalf[2];
-uniform vec3 noseBase,noseAxis,canopyCenter,recoveryLines[30];
+uniform float flightTime,pixelPitch,lensF,lensB,pixelAngle;
+uniform vec3 profile[${PROFILE_MAX}];
+uniform int profileCount;
+uniform float profileMaxR;
+uniform vec3 finVertices[12],housingCenter[2],housingHalf[2];
+uniform int separated;
+uniform vec3 boosterTop,boosterX,boosterY,boosterZ;
+uniform vec3 canopyCenter,canopyAxis,canopyEx,canopyEy,recoveryLines[20];
 uniform float canopyRadius,canopyDepth;
 uniform int recoveryLineCount;
 const float PI=3.14159265359;
+const float Z_TIP=${f1(STATIONS.tip)},Z_NOSE=${f1(STATIONS.noseBase)},Z_SWTOP=${f1(STATIONS.switchTop)},Z_JOINT=${f1(STATIONS.switchBottom)},Z_MAIN=${f1(STATIONS.mainBottom)},Z_TAIL=${f1(STATIONS.tail)};
 vec3 rz(vec3 v,float a){float c=cos(a),s=sin(a);return vec3(c*v.x-s*v.y,s*v.x+c*v.y,v.z);}
 vec3 ry(vec3 v,float a){float c=cos(a),s=sin(a);return vec3(c*v.x+s*v.z,v.y,-s*v.x+c*v.z);}
-vec3 toWorld(vec3 d,float tm){return ry(rz(d,roll+tm*speed*2.*PI),tilt);}
-vec3 toBody(vec3 d){return rz(ry(d,-tilt),-roll);}
+vec3 toWorld(vec3 d,float tm){return rz(ry(rz(d,roll+tm*speed*2.*PI),tilt),heading);}
 ${TERRAIN_GLSL}
-// Intersect an opaque finite cylinder; both roots matter for back-facing rays.
-void cylinder(vec3 o,vec3 d,inout float best,inout vec3 col){
- float a=dot(d.xy,d.xy),b=dot(o.xy,d.xy),c=dot(o.xy,o.xy)-bodyR*bodyR;
- float disc=b*b-a*c;if(a<1e-8||disc<0.)return;
- for(int i=0;i<2;i++){float t=(-b+(i==0?-1.:1.)*sqrt(disc))/a;float z=o.z+t*d.z;
- if(t>.0001&&t<best&&z>${AIRFRAME.bottom.toFixed(1)}&&z<${AIRFRAME.shoulder.toFixed(1)}){best=t;vec3 p=o+t*d;float az=atan(p.y,p.x);float avBand=step(-.12,z)*step(z,.24);col=mix(vec3(.88,.86,.79),vec3(.18,.29,.26),avBand);col*=.68+.32*max(0.,dot(normalize(p.xy),normalize(vec2(-.55,-.35))));float joint=1.-smoothstep(.002,.004,min(abs(z+.2),abs(z-.28)));col=mix(col,vec3(.29,.31,.28),joint);}}
+// ------------------------------------------------------------ atmosphere
+// Single scattering in an exponential Rayleigh + desert-aerosol atmosphere.
+const vec3 BR=vec3(5.8e-6,13.5e-6,33.1e-6);
+const float BM=1.6e-5,HR=8000.,HM=1300.,G=.76;
+vec2 densityPath(float z0,float dz,float t){
+ vec2 e0=exp(-vec2(z0/HR,z0/HM));
+ if(abs(dz)<1e-4)return e0*t;
+ vec2 e1=exp(-vec2((z0+dz*t)/HR,(z0+dz*t)/HM));
+ return vec2(HR,HM)*(e0-e1)/dz;
 }
-void triangleHit(vec3 o,vec3 d,vec3 a,vec3 b,vec3 c,inout float best,inout vec3 col){
- vec3 e=b-a,f=c-a,h=cross(d,f);float det=dot(e,h);if(abs(det)<1e-8)return;
- vec3 q=o-a;float u=dot(q,h)/det;vec3 v=cross(q,e);float w=dot(d,v)/det,t=dot(f,v)/det;
- if(u>=0.&&w>=0.&&u+w<=1.&&t>.0001&&t<best){best=t;col=vec3(.20,.29,.27)*(.65+.35*abs(dot(normalize(cross(e,f)),normalize(vec3(1.,.5,1.)))));}
+vec2 densitySky(float z0,float dz){
+ vec2 e0=exp(-vec2(z0/HR,z0/HM)),c=vec2(.026,.011);
+ float up=max(dz,0.);
+ return vec2(HR,HM)*e0/sqrt(up*up+c*c);
 }
-void boxHit(vec3 o,vec3 d,vec3 center,vec3 halfSize,inout float best,inout vec3 col){
- vec3 safe=vec3(d.x<0.?-1.:1.,d.y<0.?-1.:1.,d.z<0.?-1.:1.)*max(abs(d),vec3(1e-8));
- vec3 a=(center-halfSize-o)/safe,b=(center+halfSize-o)/safe,lo=min(a,b),hi=max(a,b);
- float nearT=max(max(lo.x,lo.y),lo.z),farT=min(min(hi.x,hi.y),hi.z),t=nearT>.0001?nearT:farT;
- if(nearT<=farT&&t>.0001&&t<best){best=t;col=vec3(.16,.20,.21);}
+vec3 sunLight(float z){
+ vec2 m=densitySky(z,SUN.z);return exp(-(BR*m.x+BM*m.y))*vec3(1.,.985,.96);
 }
-void tetherHit(vec3 o,vec3 d,vec3 a,vec3 b,float radius,inout float best,inout vec3 col){
+// Returns in-scattered light; transmittance through 'trans'.
+vec3 scatter(vec3 d,vec2 path,float z,out vec3 trans){
+ vec3 ext=BR*path.x+BM*path.y;trans=exp(-ext);
+ float mu=dot(d,SUN);
+ float pr=3./(16.*PI)*(1.+mu*mu);
+ float pm=(1.-G*G)/(4.*PI*pow(1.+G*G-2.*G*mu,1.5));
+ vec3 single=(BR*path.x*pr+BM*path.y*pm)/max(ext,vec3(1e-7));
+ // Crude multiple scattering: an isotropic share of the sky.
+ vec3 multi=(BR*path.x*.085+BM*path.y*.05)/max(ext,vec3(1e-7));
+ return (single*sunLight(z+1500.)+multi*vec3(.8,.9,1.))*(1.-trans)*1.9;
+}
+vec3 skyRadiance(vec3 d,float z){
+ vec3 tr;vec3 c=scatter(d,densitySky(z,d.z),z,tr);
+ float mu=dot(d,SUN);
+ c+=sunLight(z)*tr*smoothstep(.99998,.999995,mu)*60.;
+ return c;
+}
+const vec3 SKY_E=vec3(.36,.47,.66); // sky irradiance relative to the sun
+vec3 tonemap(vec3 x){
+ x*=2.6;
+ x=clamp((x*(2.51*x+.03))/(x*(2.43*x+.59)+.14),0.,1.);
+ return pow(x,vec3(1./2.2));
+}
+// ------------------------------------------------------------ geometry
+struct Hit{float t;vec3 n;vec3 albedo;float gloss;int kind;};
+// Stack of cone frustums from the OpenRocket profile (z, r, dr/dz).
+float bodyZ;
+void revolved(vec3 o,vec3 d,float zLo,float zHi,inout Hit h){
+ float a=dot(d.xy,d.xy),b=dot(o.xy,d.xy),oo=dot(o.xy,o.xy);
+ if(a>1e-12){if(b*b-a*(oo-profileMaxR*profileMaxR)<0.)return;}else if(oo>profileMaxR*profileMaxR)return;
+ for(int i=0;i<${PROFILE_MAX - 1};i++){
+  if(i>=profileCount-1)break;
+  vec3 p0=profile[i],p1=profile[i+1];
+  if(p1.x>=zHi||p0.x<=zLo)continue;
+  float zt=min(p0.x,zHi),zb=max(p1.x,zLo);
+  float k=(p1.y-p0.y)/(p1.x-p0.x),r0=p0.y+k*(o.z-p0.x);
+  float A=a-k*k*d.z*d.z,B=b-k*d.z*r0,C=oo-r0*r0;
+  if(abs(A)<1e-12)continue;
+  float disc=B*B-A*C;if(disc<0.)continue;
+  float sq=sqrt(disc);
+  for(int s=0;s<2;s++){
+   float t=(-B+(s==0?-sq:sq))/A;
+   if(t<=1e-4||t>=h.t)continue;
+   float z=o.z+t*d.z;
+   if(z>zt||z<zb||r0+k*t*d.z<0.)continue;
+   vec3 p=o+t*d;float slope=mix(p0.z,p1.z,(z-p0.x)/(p1.x-p0.x));
+   h.t=t;h.n=normalize(vec3(normalize(p.xy),-slope));h.kind=1;bodyZ=z;
+  }
+ }
+}
+void disc(vec3 o,vec3 d,float z,float r,vec3 albedo,inout Hit h){
+ if(abs(d.z)<1e-9)return;float t=(z-o.z)/d.z;
+ if(t>1e-4&&t<h.t&&length((o+t*d).xy)<r){h.t=t;h.n=vec3(0,0,-sign(d.z));h.albedo=albedo;h.gloss=.1;h.kind=3;}
+}
+bool triangle(vec3 o,vec3 d,vec3 a,vec3 b,vec3 c,inout Hit h){
+ vec3 e=b-a,f=c-a,p=cross(d,f);float det=dot(e,p);if(abs(det)<1e-10)return false;
+ vec3 q=o-a;float u=dot(q,p)/det;vec3 v=cross(q,e);float w=dot(d,v)/det,t=dot(f,v)/det;
+ if(u<0.||w<0.||u+w>1.||t<=1e-4||t>=h.t)return false;
+ vec3 n=normalize(cross(e,f));h.t=t;h.n=dot(n,d)>0.?-n:n;h.kind=3;return true;
+}
+void fins(vec3 o,vec3 d,inout Hit h){
+ for(int i=0;i<3;i++){
+  vec3 q[4];for(int j=0;j<4;j++)q[j]=finVertices[i*4+j];
+  vec3 n=normalize(cross(q[1]-q[0],q[3]-q[0]))*${(ORK.fins.thickness/2).toFixed(8)};
+  float before=h.t;
+  for(int side=0;side<2;side++){
+   vec3 off=side==0?n:-n;
+   triangle(o,d,q[0]+off,q[1]+off,q[2]+off,h);
+   triangle(o,d,q[0]+off,q[2]+off,q[3]+off,h);
+  }
+  for(int j=0;j<4;j++){
+   vec3 a=q[j],b=q[(j+1)%4];
+   triangle(o,d,a+n,b+n,b-n,h);triangle(o,d,a+n,b-n,a-n,h);
+  }
+  if(h.t<before){h.albedo=vec3(.62,.62,.6);h.gloss=.35;}
+ }
+}
+void box(vec3 o,vec3 d,vec3 center,vec3 halfSize,vec3 albedo,inout Hit h){
+ vec3 sd=vec3(d.x<0.?-1.:1.,d.y<0.?-1.:1.,d.z<0.?-1.:1.)*max(abs(d),vec3(1e-9));
+ vec3 a=(center-halfSize-o)/sd,b=(center+halfSize-o)/sd,lo=min(a,b),hi=max(a,b);
+ float n0=max(max(lo.x,lo.y),lo.z),f0=min(min(hi.x,hi.y),hi.z),t=n0>1e-4?n0:f0;
+ if(n0<=f0&&t>1e-4&&t<h.t){vec3 q=(o+t*d-center)/halfSize,m=abs(q);
+  h.t=t;h.n=m.x>m.y&&m.x>m.z?vec3(sign(q.x),0,0):m.y>m.z?vec3(0,sign(q.y),0):vec3(0,0,sign(q.z));h.albedo=albedo;h.gloss=.25;h.kind=3;}
+}
+void tube(vec3 o,vec3 d,vec3 a,vec3 b,float radius,vec3 albedo,inout Hit h){
  vec3 ba=b-a,oa=o-a;float baba=dot(ba,ba),bard=dot(ba,d),baoa=dot(ba,oa),rdoa=dot(d,oa),oaoa=dot(oa,oa);
- float aa=baba-bard*bard,bb=baba*rdoa-baoa*bard,cc=baba*oaoa-baoa*baoa-radius*radius*baba,h=bb*bb-aa*cc;
- if(h>=0.&&abs(aa)>1e-9){float t=(-bb-sqrt(h))/aa,y=baoa+t*bard;if(y>0.&&y<baba&&t>.0001&&t<best){best=t;col=vec3(.88,.81,.62);}}
+ float aa=baba-bard*bard,bb=baba*rdoa-baoa*bard,cc=baba*oaoa-baoa*baoa-radius*radius*baba,disc=bb*bb-aa*cc;
+ if(disc<0.||abs(aa)<1e-12)return;
+ float t=(-bb-sqrt(disc))/aa,y=baoa+t*bard;
+ if(y>0.&&y<baba&&t>1e-4&&t<h.t){vec3 p=o+t*d,c=a+ba*(y/baba);h.t=t;h.n=normalize(p-c);h.albedo=albedo;h.gloss=.05;h.kind=3;}
 }
-void noseHit(vec3 o,vec3 d,inout float best,inout vec3 col){
- vec3 q=o-noseBase;float z=dot(q,noseAxis),dz=dot(d,noseAxis);vec3 xy=q-z*noseAxis,dx=d-dz*noseAxis;
- float k=bodyR/${AIRFRAME.noseLength.toFixed(1)};float a=dot(dx,dx)-k*k*dz*dz,b=dot(xy,dx)+k*k*(${AIRFRAME.noseLength.toFixed(1)}-z)*dz,c=dot(xy,xy)-k*k*(${AIRFRAME.noseLength.toFixed(1)}-z)*(${AIRFRAME.noseLength.toFixed(1)}-z),disc=b*b-a*c;
- if(abs(a)>1e-8&&disc>=0.)for(int i=0;i<2;i++){float t=(-b+(i==0?-1.:1.)*sqrt(disc))/a,h=z+t*dz;if(t>.0001&&t<best&&h>=0.&&h<=${AIRFRAME.noseLength.toFixed(1)}){best=t;col=vec3(.73,.78,.76);}}
- // The separated nose's base is opaque too.
- if(abs(dz)>1e-8){float t=-z/dz;if(t>.0001&&t<best&&length(xy+t*dx)<bodyR){best=t;col=vec3(.27,.31,.30);}}
+// Illustrative livery: white paint forward and aft, a dark switchband
+// (avionics bay and camera ring) and a green vinyl main airframe.
+vec3 livery(float z,out float gloss){
+ gloss=.45;
+ vec3 c=vec3(.68,.68,.65);
+ if(z<Z_SWTOP&&z>Z_JOINT){c=vec3(.028,.03,.03);gloss=.3;}
+ else if(z<=Z_JOINT&&z>Z_MAIN){c=vec3(.035,.075,.055);gloss=.55;}
+ float seam=min(min(abs(z-Z_NOSE),abs(z-Z_SWTOP)),min(abs(z-Z_JOINT),abs(z-Z_MAIN)));
+ return c*mix(.25,1.,smoothstep(.0008,.002,seam));
+}
+void railButtons(vec3 o,vec3 d,inout Hit h){
+ const float angle=${LAUNCHER.railAzimuth.toFixed(10)};
+ vec3 radial=vec3(cos(angle),sin(angle),0.);
+ for(int j=0;j<2;j++){
+  float z=j==0?${RAIL_BUTTONS.z[0].toFixed(8)}:${RAIL_BUTTONS.z[1].toFixed(8)};
+  vec3 a=vec3(0,0,z)+radial*bodyR;
+  tube(o,d,a,a+radial*.002,.00485,vec3(.03),h);
+  tube(o,d,a+radial*.002,a+radial*.0077,.004,vec3(.03),h);
+  tube(o,d,a+radial*.0077,a+radial*.0097,.00485,vec3(.03),h);
+ }
+}
+void airframe(vec3 o,vec3 d,bool lower,bool upper,inout Hit h){
+ float lo=lower?Z_TAIL:Z_JOINT,hi=upper?Z_TIP:Z_JOINT;
+ float before=h.t;revolved(o,d,lo,hi,h);
+ if(h.t<before&&h.kind==1){h.albedo=livery(bodyZ,h.gloss);}
+ if(lower){disc(o,d,Z_TAIL,.058,vec3(.03),h);if(lower&&!upper){disc(o,d,Z_JOINT+.002,bodyR*.985,vec3(.012),h);}}
+ if(upper&&!lower)disc(o,d,Z_JOINT,bodyR,vec3(.09,.09,.085),h);
+ if(lower){fins(o,d,h);railButtons(o,d,h);}
+}
+void airbrakes(vec3 o,vec3 d,inout Hit h){
+ if(abs(d.z)<1e-6)return;
+ float t=(-height-o.z)/d.z;if(t<=1e-4||t>=h.t)return;
+ vec2 hit=(o+t*d).xy;
+ if(meshReady==1){
+  if(length(hit)>.2||length(hit)<bodyR*.9)return;
+  for(int j=0;j<3;j++){
+   vec2 local=rz(vec3(hit,0.),-float(j)*2.*PI/3.).xy-vec2(.0575,0.);
+   local=rz(vec3(local,0.),radians(108.879142)*deploy).xy+vec2(.0575,0.);
+   bool inside=false;vec2 prev=leafOutline[23];
+   for(int k=0;k<24;k++){vec2 cur=leafOutline[k];if((cur.y>local.y)!=(prev.y>local.y))if(local.x<(prev.x-cur.x)*(local.y-cur.y)/(prev.y-cur.y)+cur.x)inside=!inside;prev=cur;}
+   if(inside){h.t=t;h.n=vec3(0,0,-sign(d.z));h.albedo=vec3(.5,.51,.52)*(1.-step(.985,fract(local.x*190.))*.2);h.gloss=.6;h.kind=3;}
+  }
+ } else if(length(hit)>bodyR&&length(hit)<mix(bodyR,leafR,deploy)){h.t=t;h.n=vec3(0,0,-sign(d.z));h.albedo=vec3(.5);h.gloss=.5;h.kind=3;}
+}
+void drogue(vec3 o,vec3 d,inout Hit h){
+ vec3 q=o-canopyCenter;
+ vec3 lo=vec3(dot(q,canopyEx),dot(q,canopyEy),dot(q,canopyAxis)),ld=vec3(dot(d,canopyEx),dot(d,canopyEy),dot(d,canopyAxis));
+ vec3 radii=vec3(canopyRadius,canopyRadius,canopyDepth),oc=lo/radii,rd=ld/radii;
+ float a=dot(rd,rd),b=dot(oc,rd),disc=b*b-a*(dot(oc,oc)-1.);if(disc<0.)return;
+ for(int s=0;s<2;s++){
+  float t=(-b+(s==0?-1.:1.)*sqrt(disc))/a;vec3 p=lo+t*ld;
+  if(t<=1e-4||t>=h.t||p.z<-.15*canopyDepth)continue;
+  float ang=atan(p.y,p.x),gore=fract(ang/(2.*PI)*6.);
+  // Radial seams and a slight scallop between lines.
+  float seam=smoothstep(.0,.03,min(gore,1.-gore));
+  vec3 c=mod(floor(ang/(2.*PI)*6.+6.),2.)<.5?vec3(.52,.13,.035):vec3(.022,.022,.024);
+  vec3 n=normalize(p/(radii*radii));n=n.x*canopyEx+n.y*canopyEy+n.z*canopyAxis;
+  h.t=t;h.n=n;h.albedo=c*mix(.6,1.,seam);h.gloss=.15;h.kind=2;
+ }
+}
+// Pad hardware in pad coordinates: a 1515 rail on a stand, blast plate.
+uniform vec3 railFoot;uniform float railAngle;
+void launcher(vec3 p,vec3 d,inout Hit h){
+ if(altitude>900.)return;
+ vec3 lo=rz(p-railFoot,-railAngle),ld=rz(d,-railAngle);
+ box(lo,ld,vec3(0,0,3.2),vec3(.019,.019,2.75),vec3(.22,.22,.22),h);
+ box(lo,ld,vec3(0,0,.3),vec3(.06,.06,.12),vec3(.05,.05,.05),h);
+ for(int i=0;i<3;i++){float a=float(i)*2.1+.9;tube(lo,ld,vec3(0,0,.55),vec3(1.5*cos(a),1.5*sin(a),0.),.022,vec3(.12,.12,.11),h);}
+ disc(p,d,.02,.42,vec3(.16,.155,.15),h);
+}
+// ------------------------------------------------------------ terrain
+float footprintAt(float t){return pixelAngle*t;}
+float rocketShadow(vec3 p){
+ // Pad coordinates. Rocket as a capsule; only matters near the ground.
+ if(altitude>350.)return 1.;
+ vec3 a=vec3(worldXY,altitude)+toWorld(vec3(0,0,Z_TAIL),0.),b=vec3(worldXY,altitude)+toWorld(vec3(0,0,Z_TIP-.25),0.);
+ vec3 u=b-a,w=p-a;float uu=dot(u,u),us=dot(u,SUN),ws=dot(w,SUN),uw=dot(u,w);
+ float den=uu-us*us,s=clamp((uw-us*ws)/max(den,1e-9),0.,1.),tt=max(0.,dot(a+u*s-p,SUN));
+ float dist=length(p+SUN*tt-(a+u*s));
+ float shade=smoothstep(bodyR*.7,bodyR*1.6,dist);
+ if(altitude<60.){vec3 r0=railFoot+vec3(0,0,.45),r1=railFoot+vec3(0,0,5.95);u=r1-r0;w=p-r0;uu=dot(u,u);us=dot(u,SUN);ws=dot(w,SUN);uw=dot(u,w);
+  s=clamp((uw-us*ws)/max(uu-us*us,1e-9),0.,1.);tt=max(0.,dot(r0+u*s-p,SUN));shade*=smoothstep(.012,.04,length(p+SUN*tt-(r0+u*s)));}
+ return mix(1.,shade,1.-smoothstep(150.,350.,altitude));
+}
+vec3 shadeTerrain(vec3 p,vec3 d,float t,int g){
+ float fp=footprintAt(t);
+ float span=g==0?FINE_SPAN:FAR_SPAN;vec2 uv=p.xy/span+.5;
+ float lod=log2(max(fp/(span/GRID_N),1e-3));
+ vec3 alb=g==0?textureLod(fineColour,uv,max(0.,lod)).rgb:textureLod(farColour,uv,max(0.,lod)).rgb;
+ vec4 pr=g==0?textureLod(fineProps,uv,0.):textureLod(farProps,uv,0.);
+ alb*=alb; // stored as sqrt(linear)
+ float e=max(1.5,fp*1.5);
+ float hx=surfaceH(p.xy+vec2(e,0),g,fp)-surfaceH(p.xy-vec2(e,0),g,fp),hy=surfaceH(p.xy+vec2(0,e),g,fp)-surfaceH(p.xy-vec2(0,e),g,fp);
+ vec3 n=normalize(vec3(-hx,-hy,2.*e));
+ // Surface colour detail below the texel: gravel mottling, varnish, washes, shrubs.
+ vec4 m1=texture(detailNoise,p.xy/1900.),m2=texture(detailNoise,p.xy/310.+.37),m3=texture(detailNoise,p.xy/47.+.71);
+ float rock=pr.b,wash=pr.a;
+ alb*=1.+.22*(m1.r-.5)+.16*(m2.g-.5)*(1.-smoothstep(60.,400.,fp))+.14*(m3.b-.5)*(1.-smoothstep(4.,40.,fp));
+ // Sandy wash beds: sinuous pale ribbons with shrub-lined banks.
+ float bed=smoothstep(.45,.75,wash+.35*(m2.r-.5));
+ alb=mix(alb,vec3(.29,.24,.18),bed*.45*(1.-rock));
+ // Creosote bush speckle; resolved as individual shrubs close to the camera.
+ float shrubField=(1.-rock)*(1.-smoothstep(.7,.95,bed))*smoothstep(.2,.6,m1.g+.25);
+ if(fp<6.){
+  vec2 cell=floor(p.xy/5.5),f=fract(p.xy/5.5);
+  float hsh=fract(sin(dot(cell,vec2(127.1,311.7)))*43758.5453),hsh2=fract(hsh*47.13);
+  vec2 c=vec2(.25+.5*hsh,.25+.5*hsh2);float rad=(.05+.09*fract(hsh*91.7))*step(.3,hsh2*shrubField+.15);
+  // Irregular crown: offset the distance by coarse noise.
+  float lobes=.25*(texture(detailNoise,p.xy/3.1).a-.5);
+  float dist=length(f-c)*(1.+lobes),sh=length(f-c+SUN.xy/max(SUN.z,.2)*.045)*(1.+lobes);
+  float fade=1.-smoothstep(.25,1.5,fp);
+  alb=mix(alb,alb*.62,fade*(1.-smoothstep(rad*.8,rad*1.5,sh))*.7);
+  alb=mix(alb,vec3(.075,.078,.055),fade*.85*(1.-smoothstep(rad*.55,rad*1.05,dist)));
+ }
+ alb=mix(alb,alb*vec3(.72,.74,.68),shrubField*.35*smoothstep(.25,1.5,fp)*(1.-smoothstep(20.,200.,fp)));
+ // Launch site: graded pad, access track, and staging area.
+ if(g==0&&max(abs(p.x),abs(p.y))<3000.){
+  float pad=1.-smoothstep(10.,12.,length(p.xy));
+  alb=mix(alb,vec3(.33,.3,.25)*(1.+.2*(m3.r-.5)),pad*.8);
+  float road=abs(p.y-(.14*p.x+22.*sin(p.x/260.)-24.));
+  float track=(1.-smoothstep(2.4,3.6,road))*step(18.,p.x)*step(p.x,2900.);
+  float ruts=1.-.25*(1.-smoothstep(.3,.6,abs(road-1.))) ;
+  alb=mix(alb,vec3(.36,.31,.24)*ruts,track*.85);
+  vec2 q=p.xy-vec2(210.,26.);float lot=(1.-smoothstep(28.,32.,abs(q.x)))*(1.-smoothstep(16.,20.,abs(q.y)));
+  alb=mix(alb,vec3(.34,.31,.26),lot*.85);
+  vec2 v=abs(mod(q+vec2(26.,14.),vec2(6.5,11.))-vec2(3.25,5.5));
+  float car=(1.-smoothstep(.85,1.,v.x))*(1.-smoothstep(2.1,2.3,v.y))*lot*step(abs(q.y),13.)*step(q.x,20.);
+  vec3 paint=mix(vec3(.55,.55,.53),vec3(.08,.1,.12),step(.5,fract(floor((q.x+26.)/6.5)*.618)));
+  alb=mix(alb,paint,car);
+  float tent=(1.-smoothstep(2.8,3.,max(abs(q.x-25.),abs(q.y-3.))))*lot;
+  alb=mix(alb,vec3(.62,.62,.6),tent);
+ }
+ float sunVis=pr.r*rocketShadow(p);
+ float z=p.z+SITE_ASL;
+ vec3 E=sunLight(z)*max(0.,dot(n,SUN))*sunVis+SKY_E*pr.g*(.6+.4*n.z)+vec3(.06,.05,.04)*(.5-.5*n.z);
+ return alb/PI*E;
+}
+vec3 ground(vec3 wo,vec3 d){
+ vec3 o=wo+vec3(worldXY,altitude);
+ float zAsl=o.z+SITE_ASL;
+ vec3 sky=skyRadiance(d,zAsl);
+ float h2=dot(d.xy,d.xy);
+ if(d.z>0.&&o.z>farTop)return sky;
+ float pixel=pixelAngle;
+ float tHit;int g=-1;
+ // Fine grid first, then the far grid from where the ray leaves the fine box.
+ vec2 inv=1./max(abs(d.xy),vec2(1e-9));
+ vec2 tf=(FINE_SPAN*.5-.5*FINE_SPAN/GRID_N-sign(d.xy)*o.xy)*inv;
+ float tFine=min(tf.x,tf.y);
+ vec2 tg=(FAR_SPAN*.5-FAR_SPAN/GRID_N-sign(d.xy)*o.xy)*inv;
+ float tFar=min(min(tg.x,tg.y),4e5);
+ float tStart=0.;
+ if(d.z<0.&&o.z>fineTop)tStart=(o.z-fineTop)/-d.z;
+ if(tStart<tFine&&traceGrid(0,o,d,tStart,tFine,pixel,tHit))g=0;
+ else {
+  float s2=max(tFine,0.);if(d.z<0.&&o.z>farTop)s2=max(s2,(o.z-farTop)/-d.z);
+  if(s2<tFar&&traceGrid(1,o,d,s2,tFar,pixel,tHit))g=1;
+ }
+ vec3 c;float t;
+ if(g<0){
+  // Beyond the far grid: a hazy plain at the far-edge level, over the horizon.
+  float base=-60.;float a=K_CURVE*h2,b=d.z,cc=o.z-base,disc=b*b-4.*a*cc;
+  if(disc<0.||(b>0.&&cc>0.))return sky;
+  t=(-b-sqrt(disc))/(2.*a);if(t<0.)return sky;
+  vec3 p=o+t*d;
+  c=vec3(.2,.17,.13)/PI*(sunLight(zAsl)*SUN.z*.9+SKY_E);
+ } else {
+  t=tHit;vec3 p=o+t*d;p.z=surfaceH(p.xy,g,pixel*t);
+  c=shadeTerrain(p,d,t,g);
+ }
+ vec3 tr;vec3 ins=scatter(d,densityPath(zAsl,d.z+K_CURVE*h2*t,t),zAsl,tr);
+ return c*tr+ins;
+}
+// ------------------------------------------------------------ shading
+vec3 shadeObject(Hit h,vec3 d,vec3 wp){
+ vec3 n=h.n,sun=sunLight(wp.z+altitude+SITE_ASL);
+ float nl=dot(n,SUN);
+ vec3 E=sun*max(0.,nl)+SKY_E*(.55+.45*n.z)+vec3(.13,.11,.085)*(.55-.45*n.z);
+ vec3 c=h.albedo/PI*E;
+ if(h.kind==2){
+  // Thin ripstop: sunlight transmitted through the canopy seen from inside.
+  float back=max(0.,-nl);c+=h.albedo*vec3(1.,.55,.35)*sun*back*.35/PI+h.albedo*SKY_E*.12;
+ }
+ vec3 hv=normalize(SUN-d);
+ float spec=pow(max(0.,dot(n,hv)),mix(8.,90.,h.gloss))*h.gloss*.06*step(0.,nl);
+ vec3 r=reflect(d,n);
+ c+=sun*spec+skyRadiance(normalize(vec3(r.xy,abs(r.z)+.05)),altitude+SITE_ASL)*mix(.02,.07,h.gloss)*(1.-max(0.,dot(-d,n))*.6);
+ return c;
 }
 vec3 scene(vec3 o,vec3 d,float tm){
- float best=1e20;vec3 col=vec3(0.);cylinder(o,d,best,col);
- for(int i=0;i<8;i++)triangleHit(o,d,finVertices[i*3],finVertices[i*3+1],finVertices[i*3+2],best,col);
- for(int i=0;i<2;i++)boxHit(o,d,housingCenter[i],housingHalf[i],best,col);
- // Actual REV2 leaf silhouette: rotate about hinge, then around rocket axis.
- if(meshReady==1 && abs(d.z)>1e-6){
- float t=(-height-o.z)/d.z;
- if(t>.0001 && t<best){vec2 hit=(o+t*d).xy;
- if(length(hit)<.20 && length(hit)>bodyR*.9){
- for(int j=0;j<3;j++){
- vec2 local=rz(vec3(hit,0.),-float(j)*2.*PI/3.).xy-vec2(.0575,0.);
- local=rz(vec3(local,0.),radians(108.879142)*deploy).xy+vec2(.0575,0.);
- bool inside=false;vec2 prev=leafOutline[23];
- for(int k2=0;k2<24;k2++){vec2 cur=leafOutline[k2];if((cur.y>local.y)!=(prev.y>local.y))if(local.x<(prev.x-cur.x)*(local.y-cur.y)/(prev.y-cur.y)+cur.x)inside=!inside;prev=cur;}
- if(inside){best=t;col=mix(vec3(.70,.73,.75),vec3(.88,.89,.90),float(j)/2.);float marks=step(.985,fract(local.x*190.));col*=1.-marks*.18;}
- }}}
- } else if(meshReady==0 && abs(d.z)>1e-6){
- float t=(-height-o.z)/d.z;vec2 p=(o+t*d).xy;
- if(t>.0001&&t<best&&length(p)>bodyR&&length(p)<mix(bodyR,leafR,deploy)){best=t;col=vec3(.7,.7,.68);}
+ Hit h;h.t=1e20;h.kind=0;h.gloss=0.;h.albedo=vec3(0);h.n=vec3(0,0,1);
+ // Body-frame parts: the airframe (upper section only after separation),
+ // camera housings and the airbrake petals.
+ airframe(o,d,separated==0,true,h);
+ for(int i=0;i<2;i++)box(o,d,housingCenter[i],housingHalf[i],vec3(.03,.032,.035),h);
+ if(separated==0)airbrakes(o,d,h);
+ vec3 wo=toWorld(o,tm),wd=toWorld(d,tm);
+ if(h.kind>0)h.n=toWorld(h.n,tm);
+ if(separated==1){
+  // Separated booster on its own cord, in booster coordinates.
+  vec3 q=wo-boosterTop;
+  vec3 lo=vec3(dot(q,boosterX),dot(q,boosterY),dot(q,boosterZ)+Z_JOINT),ld=vec3(dot(wd,boosterX),dot(wd,boosterY),dot(wd,boosterZ));
+  Hit b=h;b.kind=0;
+  airframe(lo,ld,true,false,b);
+  airbrakes(lo,ld,b);
+  if(b.kind>0&&b.t<h.t){h=b;h.n=b.n.x*boosterX+b.n.y*boosterY+b.n.z*boosterZ;}
+  drogue(wo,wd,h);
+  for(int i=0;i<10;i++){if(i>=recoveryLineCount)break;tube(wo,wd,recoveryLines[2*i],recoveryLines[2*i+1],i<4?.0065:.0022,i<4?vec3(.3,.24,.13):vec3(.5,.48,.44),h);}
  }
- // Recovery geometry is world-oriented, independent of airframe roll.
- vec3 worldO=toWorld(o,tm),worldD=toWorld(d,tm);
- noseHit(worldO,worldD,best,col);
- if(chuteOpen>.01){
- vec3 radii=vec3(canopyRadius,canopyRadius,canopyDepth),oc=(worldO-canopyCenter)/radii,rd=worldD/radii;
- float a=dot(rd,rd),b=dot(oc,rd),disc=b*b-a*(dot(oc,oc)-1.);
- if(disc>=0.)for(int side=0;side<2;side++){float t=(-b+(side==0?-1.:1.)*sqrt(disc))/a;vec3 q=worldO+t*worldD-canopyCenter;
- if(t>.0001&&t<best&&q.z>-.18*canopyDepth){best=t;float sector=step(.5,fract((atan(q.y,q.x)+PI)/(2.*PI)*12.));col=mix(vec3(.84,.26,.17),vec3(.94,.91,.82),sector);col*=.8+.2*abs(normalize(q/radii).z);}}
- }
- for(int i=0;i<15;i++){if(i>=recoveryLineCount)break;tetherHit(worldO,worldD,recoveryLines[2*i],recoveryLines[2*i+1],.004,best,col);}
- if(best<1e19)return col;
- return ground(toWorld(o,tm),toWorld(d,tm));
+ launcher(wo+vec3(worldXY,altitude),wd,h);
+ if(h.kind>0)return shadeObject(h,wd,wo+h.t*wd);
+ return ground(wo,wd);
 }
 `;
 const CAPTURE =
@@ -135,15 +404,17 @@ void main(){
  vec3 origin=vec3(eye*(bodyR+stand),0.,0.);
  float tm=(q.y/sensor.y)*readout+(eye<0.?skew:0.);
  vec3 c=scene(origin,ray,tm);
- if(exposure>0.)c=(scene(origin,ray,tm-exposure*.5)+c+scene(origin,ray,tm+exposure*.5))/3.;
- frag=vec4(c,1.);
+ if(samples>1)c=(scene(origin,ray,tm-exposure*.5)+c+scene(origin,ray,tm+exposure*.5))/3.;
+ // Mild lens relative illumination toward the edge of the field.
+ c*=1.-.16*pow(theta/halfField,2.);
+ frag=vec4(tonemap(c),1.);
 }`;
 const VIEW = `#version 300 es
 precision highp float;
 in vec2 uv;out vec4 frag;
 uniform sampler2D camA,camB,received;
 uniform vec2 sensor,screen;
-uniform float circlePx,halfField,yaw,pitch,fov,roll,tilt,pixelPitch,lensF,lensB;
+uniform float circlePx,halfField,yaw,pitch,fov,roll,tilt,heading,pixelPitch,lensF,lensB;
 uniform int mode,policy,earth,feed;
 const float PI=3.14159265359;
 vec3 rz(vec3 v,float a){float c=cos(a),s=sin(a);return vec3(c*v.x-s*v.y,s*v.x+c*v.y,v.z);}
@@ -162,7 +433,7 @@ void main(){
  vec3 d;vec2 p=uv*2.-1.;
  if(mode==1||mode==7){float lon=p.x*PI,lat=p.y*PI*.5;d=vec3(cos(lat)*cos(lon),cos(lat)*sin(lon),sin(lat));}
  else {vec3 f=vec3(cos(pitch)*cos(yaw),cos(pitch)*sin(yaw),sin(pitch));vec3 r=vec3(-sin(yaw),cos(yaw),0.);vec3 u=cross(f,r);d=normalize(f+r*p.x*tan(fov*.5)+u*p.y*tan(fov*.5)*screen.y/screen.x);}
- if(earth==1)d=rz(ry(d,-tilt),-roll);
+ if(earth==1)d=rz(ry(rz(d,-heading),-tilt),-roll);
  if(feed==1){vec2 q=vec2((atan(d.y,d.x)+PI)/(2.*PI),asin(clamp(d.z,-1.,1.))/PI+.5);frag=vec4(texture(received,q).rgb,1.);return;}
  vec4 a=eye(d,1.),b=eye(d,-1.);if(mode==4)b=vec4(0.);if(mode==5)a=vec4(0.);
  if(a.a+b.a<.00001){frag=vec4(hatch(),1.);return;}
@@ -190,18 +461,7 @@ export class CameraRenderer {
       view: this.program(VIEW),
     };
     this.cache = new Map();
-    const maps = terrainMaps();
-    this.terrainHeight = g.createTexture();
-    g.bindTexture(g.TEXTURE_2D, this.terrainHeight);
-    // R32F filtering is not guaranteed without OES_texture_float_linear.
-    const linear = g.getExtension("OES_texture_float_linear") ? g.LINEAR : g.NEAREST;
-    g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MIN_FILTER,linear);
-    g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MAG_FILTER,linear);
-    g.texParameteri(g.TEXTURE_2D,g.TEXTURE_WRAP_S,g.CLAMP_TO_EDGE);
-    g.texParameteri(g.TEXTURE_2D,g.TEXTURE_WRAP_T,g.CLAMP_TO_EDGE);
-    g.texImage2D(g.TEXTURE_2D,0,g.R32F,TERRAIN.size,TERRAIN.size,0,g.RED,g.FLOAT,maps.heights);
-    this.terrainColour = this.texture(TERRAIN.size,TERRAIN.size);
-    g.texImage2D(g.TEXTURE_2D,0,g.RGBA,TERRAIN.size,TERRAIN.size,0,g.RGBA,g.UNSIGNED_BYTE,maps.colours);
+    this.uploadTerrain(terrainMaps());
     this.buffer = g.createBuffer();
     g.bindBuffer(g.ARRAY_BUFFER, this.buffer);
     g.bufferData(
@@ -221,7 +481,57 @@ export class CameraRenderer {
     this.videoSize = [1, 1];
     this.lastUpload = null;
     this.captured = null;
-    this.metrics = { uploadMs: 0, drawMs: 0 };
+    this.metrics = { uploadMs: 0, drawMs: 0, captureMs: 0, terrainSeconds: terrainMaps().seconds };
+  }
+  uploadTerrain(maps) {
+    const g = this.gl;
+    // R32F filtering is optional in WebGL2; without it heights fall back to nearest.
+    const linear = g.getExtension("OES_texture_float_linear") ? g.LINEAR : g.NEAREST;
+    const make = (unit, setup) => {
+      const t = g.createTexture();
+      g.activeTexture(g.TEXTURE0 + unit);
+      g.bindTexture(g.TEXTURE_2D, t);
+      g.pixelStorei(g.UNPACK_ALIGNMENT, 1);
+      setup(t);
+      return { unit, t };
+    };
+    const params = (min, mag, wrap = g.CLAMP_TO_EDGE) => {
+      g.texParameteri(g.TEXTURE_2D, g.TEXTURE_MIN_FILTER, min);
+      g.texParameteri(g.TEXTURE_2D, g.TEXTURE_MAG_FILTER, mag);
+      g.texParameteri(g.TEXTURE_2D, g.TEXTURE_WRAP_S, wrap);
+      g.texParameteri(g.TEXTURE_2D, g.TEXTURE_WRAP_T, wrap);
+    };
+    this.terrain = {};
+    let unit = 3;
+    for (const kind of ["fine", "far"]) {
+      const m = maps[kind], n = TERRAIN[kind].size;
+      this.terrain[kind + "Height"] = make(unit++, () => {
+        params(linear, linear);
+        g.texImage2D(g.TEXTURE_2D, 0, g.R32F, n, n, 0, g.RED, g.FLOAT, m.heights);
+      });
+      this.terrain[kind + "Max"] = make(unit++, () => {
+        params(g.NEAREST_MIPMAP_NEAREST, g.NEAREST);
+        m.levels.forEach((level, i) => g.texImage2D(g.TEXTURE_2D, i, g.R32F, n >> i, n >> i, 0, g.RED, g.FLOAT, level));
+        g.texParameteri(g.TEXTURE_2D, g.TEXTURE_MAX_LEVEL, m.levels.length - 1);
+      });
+      this.terrain[kind + "Colour"] = make(unit++, () => {
+        params(g.LINEAR_MIPMAP_LINEAR, g.LINEAR);
+        g.texImage2D(g.TEXTURE_2D, 0, g.RGBA, n, n, 0, g.RGBA, g.UNSIGNED_BYTE, m.colours);
+        g.generateMipmap(g.TEXTURE_2D);
+      });
+      this.terrain[kind + "Props"] = make(unit++, () => {
+        params(g.LINEAR, g.LINEAR);
+        g.texImage2D(g.TEXTURE_2D, 0, g.RGBA, n, n, 0, g.RGBA, g.UNSIGNED_BYTE, m.props);
+      });
+    }
+    this.terrain.detailNoise = make(unit++, () => {
+      params(g.LINEAR_MIPMAP_LINEAR, g.LINEAR, g.REPEAT);
+      const n = TERRAIN.noiseSize;
+      g.texImage2D(g.TEXTURE_2D, 0, g.RGBA, n, n, 0, g.RGBA, g.UNSIGNED_BYTE, maps.noise);
+      g.generateMipmap(g.TEXTURE_2D);
+    });
+    this.terrainTop = { fine: maps.fine.levels.at(-1)[0], far: maps.far.levels.at(-1)[0] };
+    g.activeTexture(g.TEXTURE0);
   }
   program(fragment) {
     const g = this.gl,
@@ -316,6 +626,13 @@ export class CameraRenderer {
     else if (int) g.uniform1i(loc, v);
     else g.uniform1f(loc, v);
   }
+  vec3(name, points) {
+    const g = this.gl;
+    let map = this.cache.get(this.current);
+    if (!map) this.cache.set(this.current, (map = new Map()));
+    if (!map.has(name)) map.set(name, g.getUniformLocation(this.current, name));
+    g.uniform3fv(map.get(name), new Float32Array(points.flat()));
+  }
   common(s) {
     const p = PRESETS[s.preset];
     this.uniform("sensor", [p.w, p.h]);
@@ -326,24 +643,33 @@ export class CameraRenderer {
     this.uniform("halfField", (p.field * Math.PI) / 360);
     this.uniform("roll", (s.roll * Math.PI) / 180);
     this.uniform("tilt", (s.tilt * Math.PI) / 180);
+    this.uniform("heading", ((s.heading || 0) * Math.PI) / 180);
   }
   capture(s, { native = false } = {}) {
-    const g = this.gl,
+    const started = performance.now(),
+      g = this.gl,
       p = PRESETS[s.preset],
       scale = native ? 1 : Math.min(1, 1024 / p.w),
       w = Math.round(p.w * scale),
       h = Math.round(p.h * scale);
     this.use(this.programs.capture);
-    g.activeTexture(g.TEXTURE3);
-    g.bindTexture(g.TEXTURE_2D,this.terrainHeight);
-    this.uniform("terrainHeight",3,true);
-    g.activeTexture(g.TEXTURE4);
-    g.bindTexture(g.TEXTURE_2D,this.terrainColour);
-    this.uniform("terrainColour",4,true);
+    for (const [name, { unit, t }] of Object.entries(this.terrain)) {
+      g.activeTexture(g.TEXTURE0 + unit);
+      g.bindTexture(g.TEXTURE_2D, t);
+      this.uniform(name, unit, true);
+    }
     g.activeTexture(g.TEXTURE0);
+    this.uniform("fineTop", this.terrainTop.fine);
+    this.uniform("farTop", this.terrainTop.far);
     this.common(s);
+    this.uniform("worldXY", [s.east || 0, s.north || 0]);
+    const R = bodyRadius(s);
+    // Angular size of one pixel near the image centre; sets terrain detail.
+    const pixelAngle = (p.efl ? p.pitch / p.efl : (p.field * Math.PI / 180) / (p.circle / p.pitch)) / scale;
+    // Temporal exposure samples only when roll smear exceeds ~0.2 px.
+    const smearPx = Math.abs(s.speed) * 2 * Math.PI * (s.exposure / 1000) / pixelAngle;
     for (const [k, v] of Object.entries({
-      bodyR: s.diameter / 2000,
+      bodyR: R,
       stand: s.stand / 1000,
       height: s.height / 1000,
       leafR: 0.18,
@@ -354,22 +680,46 @@ export class CameraRenderer {
       skew: s.skew / 1000,
       exposure: s.exposure / 1000,
       flightTime: s.time,
-      noseOffset: s.noseOffset,
-      chuteOpen: s.chuteOpen,
+      pixelAngle,
     }))
       this.uniform(k, v);
-    const pose = recoveryPose(s), boxes = cameraBoxes(s);
-    const triples = (name, points) => g.uniform3fv(g.getUniformLocation(this.current, name), new Float32Array(points.flat()));
-    triples("finVertices[0]", finFaces(s.diameter / 2000).flatMap(f => [f[0], f[1], f[2], f[0], f[2], f[3]]));
-    triples("housingCenter[0]", boxes.map(b => b.center));
-    triples("housingHalf[0]", boxes.map(b => b.half));
-    triples("noseBase", [pose.noseBase]);
-    triples("noseAxis", [pose.noseAxis]);
-    triples("canopyCenter", [pose.canopy]);
-    if (pose.lines.length) triples("recoveryLines[0]", pose.lines.flat());
-    this.uniform("canopyRadius", Math.max(.001, pose.radius));
-    this.uniform("canopyDepth", pose.depth);
+    this.uniform("samples", s.exposure > 0 && smearPx > 0.2 ? 3 : 1, true);
+    // Airframe profile with per-vertex slope for smooth shading.
+    const prof = airframeProfile(s), slopes = prof.map((_, i) => {
+      const a = prof[Math.max(0, i - 1)], b = prof[Math.min(prof.length - 1, i + 1)];
+      const seg = (u, v) => (v[1] - u[1]) / (v[0] - u[0] || -1e-9);
+      if (i === 0) return seg(prof[0], prof[1]);
+      if (i === prof.length - 1) return seg(prof[i - 1], prof[i]);
+      // Keep shading breaks at real shape changes (cylinder ends).
+      const s0 = seg(a, prof[i]), s1 = seg(prof[i], b);
+      return Math.abs(s0 - s1) > 0.35 ? (Math.abs(s0) < Math.abs(s1) ? s0 : s1) : (s0 + s1) / 2;
+    });
+    this.vec3("profile[0]", prof.map(([z, r], i) => [z, r, slopes[i]]));
+    this.uniform("profileCount", prof.length, true);
+    this.uniform("profileMaxR", Math.max(...prof.map(([, r]) => r)) + 0.3);
+    const boxes = cameraBoxes(s), pose = recoveryPose(s);
+    this.vec3("finVertices[0]", finFaces(R).flat());
+    this.vec3("housingCenter[0]", boxes.map((b) => b.center));
+    this.vec3("housingHalf[0]", boxes.map((b) => b.half));
+    this.uniform("separated", pose.separated ? 1 : 0, true);
+    if (pose.separated) {
+      this.vec3("boosterTop", [pose.booster.top]);
+      this.vec3("boosterX", [pose.booster.x]);
+      this.vec3("boosterY", [pose.booster.y]);
+      this.vec3("boosterZ", [pose.booster.z]);
+      this.vec3("canopyCenter", [pose.canopy]);
+      this.vec3("canopyAxis", [pose.axis]);
+      this.vec3("canopyEx", [pose.ex]);
+      this.vec3("canopyEy", [pose.ey]);
+      this.uniform("canopyRadius", Math.max(0.001, pose.radius));
+      this.uniform("canopyDepth", Math.max(0.001, pose.depth));
+      this.vec3("recoveryLines[0]", pose.lines.flat());
+    }
     this.uniform("recoveryLineCount", pose.lines.length, true);
+    // Rail on the rail-button side of the airframe, fixed to the ground.
+    const railAz = LAUNCHER.railAzimuth, railR = R + 0.0097 + 0.019;
+    this.vec3("railFoot", [[railR * Math.cos(railAz), railR * Math.sin(railAz), 0]]);
+    this.uniform("railAngle", railAz);
     this.uniform("meshReady", s.mesh ? 1 : 0, true);
     if (s.mesh) this.uniform("leafOutline[0]", s.mesh);
     for (const [t, eye] of [
@@ -384,6 +734,7 @@ export class CameraRenderer {
     }
     g.bindFramebuffer(g.FRAMEBUFFER, null);
     this.captured = { time: s.time, w, h, native };
+    this.metrics.captureMs = performance.now() - started;
   }
   upload(video, token) {
     if (video.readyState < 2 || this.lastUpload === token) return;

@@ -84,13 +84,24 @@ let stage = "startup";
       manifest: window.pigeon.state.manifest,
     }));
     stage = "selected optics";
-    assert.equal(initial.target, 3048, "Default flight must be 10,000 ft AGL");
+    assert.equal(initial.target, 3048, "Default flight targets the 10,000 ft class");
     assert.equal(initial.scenario.camera.lens, "CIL212");
     assert.equal(initial.scenario.camera.crop_px, 1552);
     assert.equal(initial.scenario.fps, 30);
     assert.equal(initial.scenario.video.per_camera_mbps, 4);
     assert.equal(await page.locator("#preset").inputValue(), "900");
-    report.checks.push("CIL212 / 1552-square / 30 fps / 10,000 ft defaults");
+    report.checks.push("CIL212 / 1552-square / 30 fps / OpenRocket flight");
+
+    stage = "OpenRocket exterior";
+    const exterior = await page.evaluate(async () => {
+      const { AIRFRAME, finFaces } = await import("./scene.js");
+      return { ...AIRFRAME, fins: finFaces(window.renderSequenceMetadata().geometry.diameter_mm / 2000).length };
+    });
+    assert.ok(Math.abs(initial.scenario.geometry.diameter_mm - 156.718) < 1e-6, "OpenRocket outer diameter");
+    assert.ok(Math.abs(exterior.noseLength - .75) < 1e-6, "OpenRocket nose length");
+    assert.ok(Math.abs(exterior.shoulder + exterior.noseLength - exterior.bottom - 2.9532) < 1e-6, "OpenRocket overall length");
+    assert.equal(exterior.fins, 3, "OpenRocket fin count");
+    report.checks.push("OpenRocket exterior: 156.718 mm OD, 2.9532 m length, three fins");
 
     stage = "model camera views";
     await page.evaluate(() => window.pigeon.setSource("model"));

@@ -35,7 +35,7 @@
         <span class="folio">CAMERA SIMULATION</span>
         <h1>Launch view</h1>
         <p class="flight-caption">
-          10,000 ft &nbsp; / &nbsp; Ø 6 in &nbsp; / &nbsp; Two cameras
+          10,000 ft class &nbsp; / &nbsp; 6-inch class &nbsp; / &nbsp; Two cameras
         </p>
       </section>
       <section class="flight-deck" aria-label="Flight camera simulator">
@@ -85,7 +85,7 @@
                 aria-label="Flight time"
                 type="range"
                 min="0"
-                max="36.6"
+                max="33"
                 step="0.0333333333"
                 value="0"
               /><select id="rate" aria-label="Playback speed">
@@ -163,40 +163,44 @@
             <div>
               <h2>On the rocket</h2>
             </div>
-            <span class="badge ghost">Illustration</span>
+            <span class="badge ghost">Geometry</span>
           </div>
           <div class="airframe-key">
             <svg
               viewBox="0 0 250 155"
               role="img"
-              aria-label="Avionics and cameras near the top of a 4.3 metre rocket, with airbrakes just below"
+              aria-label="OpenRocket exterior: 2.953 metres long. Cameras provisionally at the upper switchband, with iris airbrakes below."
             >
               <g stroke="currentColor" stroke-width="1.1" fill="none">
-                <path d="M40 38 L44 7 L48 38 V141 H40 Z" fill="#e5e3d6" />
                 <path
-                  d="M40 116 L27 138 V141 H40 M48 116 L61 138 V141 H48"
+                  id="rocket-profile" d="M40.5 40 Q40.5 20 44 7 Q47.5 20 47.5 40 V119 L46.6 137 H41.4 L40.5 119 Z"
+                  fill="#e5e3d6"
+                />
+                <path
+                  id="rocket-fins" d="M40.5 106 L30 127 V132 L40.5 128 M47.5 106 L58 127 V132 L47.5 128"
                   fill="#527263"
                 />
-                <path d="M40 46 H48 V62 H40 Z" fill="#527263" />
+                <path d="M40.5 44.5 H47.5 V49 H40.5 Z" fill="#527263" />
                 <path
-                  d="M40 65 H32 M48 65 H57 M40 54 H35 M48 54 H53"
-                  stroke-width="2.5"
+                  d="M40 53 H32 M48 53 H57 M40 47 H35 M48 47 H53"
+                  stroke-width="2"
                 />
                 <path
-                  d="M57 54 H89 L103 44 H128 M60 65 H100 L112 83 H128"
+                  d="M57 47 H89 L103 38 H128 M60 53 H100 L112 78 H128"
                   stroke="#899788"
                 />
-                <path d="M17 7 V141 M14 7 H20 M14 141 H20" stroke="#a6ab9a" />
+                <path d="M17 7 V137 M14 7 H20 M14 137 H20" stroke="#a6ab9a" />
               </g>
               <g
                 fill="currentColor"
                 font-family="ui-monospace, monospace"
                 font-size="9"
               >
-                <text x="133" y="41">AV BAY / CAMERAS</text>
-                <text x="133" y="85">IRIS AIRBRAKES</text>
-                <text x="75" y="137" fill="#768276">
-                  4.3 m illustrative body
+                <text x="133" y="35">AV BAY / CAMERAS</text>
+                <text x="133" y="80">IRIS AIRBRAKES</text>
+                <text x="75" y="126" fill="#768276">2.953 m / OpenRocket</text>
+                <text x="75" y="140" fill="#768276">
+                  Camera position assumed
                 </text>
               </g>
             </svg>
@@ -223,7 +227,7 @@
             ><span>Drag to orbit</span>
           </div>
           <p class="small" id="rig-description">
-            152.4 mm body · 8 mm assumed pupil stand-off · 168.4 mm pupil
+            156.718 mm body · 8 mm assumed pupil stand-off · 172.718 mm pupil
             spacing. The shells show viewing angles, not a finite viewing
             distance. This external view is not transmitted.
           </p>
@@ -237,8 +241,8 @@
                   <option value="matched">IMX676 + L185A · 185° (model)</option>
                 </select></label
               ><label
-                >Flight target<select id="scenario">
-                  <option value="launch.json">10,000 ft · 3,048 m</option>
+                >Flight<select id="scenario">
+                  <option value="launch.json">M2400T · 3,191 m</option>
                   <option value="launch-30kft.json">
                     30,000 ft · 9,144 m (model)
                   </option>
@@ -486,19 +490,20 @@
             <article>
               <h3>Flight & geometry</h3>
               <p>
-                10,000 ft = 3,048 m AGL. The trajectory is fitted to the target
-                altitude, not a motor prediction.
+                Saved OpenRocket M2400T flight: 3,191 m apogee. A three-second
+                pad hold precedes ignition.
               </p>
               <p>
-                The 4.3 m rocket, airbrakes and recovery motion are
-                illustrative. The sequence ends during early descent.
+                The exterior uses the supplied OpenRocket dimensions. Camera
+                mounts, iris placement and recovery motion are provisional.
+                The sequence ends under drogue.
               </p>
               <p>
                 The desert terrain is procedural, not a model of the launch
                 site. Encoding is real; optics, flight and radio performance
                 remain estimates.
               </p>
-              <a href="README.md">Source & reproduction ↗</a>
+              <a href="https://github.com/stanford-ssi/PigeonVision/blob/main/docs/README.md">Source & reproduction ↗</a>
             </article>
           </div>
         </details>
