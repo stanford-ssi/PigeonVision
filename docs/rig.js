@@ -136,18 +136,6 @@ export class RigView {
       const g = -s.altitude, rr = R + 0.029, ra = LAUNCHER.railAzimuth, rx = rr * Math.cos(ra) - (s.east || 0), ry = rr * Math.sin(ra) - (s.north || 0);
       line([[rx, ry, g + 0.45], [rx, ry, g + 5.95]], "#6d716e", 2.2);
     }
-    // Station annotations along the full airframe.
-    x.font = "10px ui-monospace,monospace";
-    if (full) {
-      const tag = (z, text, part = B) => {
-        const p = project(part([R * 1.9, 0, z])), q = project(part([R * 1.05, 0, z]));
-        x.strokeStyle = "#9aa39c"; x.lineWidth = 0.7; x.beginPath(); x.moveTo(q[0], q[1]); x.lineTo(p[0], p[1]); x.stroke();
-        x.fillStyle = "#5d6b62"; x.fillText(text, p[0] + 4, p[1] + 3);
-      };
-      tag(0, "CAMERA RING");
-      tag(-s.height / 1000, `AIRBRAKES −${s.height} mm`, pose.separated ? booster : B);
-      if (!pose.separated) tag(STATIONS.mainBottom - 0.2, "FINS");
-    }
     // The sensor crop, not just the circular lens field, limits each meridian.
     const optics = PRESETS[s.preset || "900"],
       halfField = optics.field * Math.PI / 360,

@@ -35,7 +35,8 @@
         <span class="folio">CAMERA SIMULATION</span>
         <h1>Launch view</h1>
         <p class="flight-caption">
-          10,000 ft class &nbsp; / &nbsp; 6-inch class &nbsp; / &nbsp; Two cameras
+          10,000 ft class &nbsp; / &nbsp; 6-inch class &nbsp; / &nbsp; Two
+          cameras
         </p>
       </section>
       <section class="flight-deck" aria-label="Flight camera simulator">
@@ -173,11 +174,13 @@
             >
               <g stroke="currentColor" stroke-width="1.1" fill="none">
                 <path
-                  id="rocket-profile" d="M40.5 40 Q40.5 20 44 7 Q47.5 20 47.5 40 V119 L46.6 137 H41.4 L40.5 119 Z"
+                  id="rocket-profile"
+                  d="M40.5 40 Q40.5 20 44 7 Q47.5 20 47.5 40 V119 L46.6 137 H41.4 L40.5 119 Z"
                   fill="#e5e3d6"
                 />
                 <path
-                  id="rocket-fins" d="M40.5 106 L30 127 V132 L40.5 128 M47.5 106 L58 127 V132 L47.5 128"
+                  id="rocket-fins"
+                  d="M40.5 106 L30 127 V132 L40.5 128 M47.5 106 L58 127 V132 L47.5 128"
                   fill="#527263"
                 />
                 <path d="M40.5 44.5 H47.5 V49 H40.5 Z" fill="#527263" />
@@ -199,9 +202,6 @@
                 <text x="133" y="35">AV BAY / CAMERAS</text>
                 <text x="133" y="80">IRIS AIRBRAKES</text>
                 <text x="75" y="126" fill="#768276">2.953 m / OpenRocket</text>
-                <text x="75" y="140" fill="#768276">
-                  Camera position assumed
-                </text>
               </g>
             </svg>
           </div>
@@ -361,43 +361,40 @@
           <h2>The hardware</h2>
           <span class="mono">IN DESIGN / KICAD</span>
         </div>
-        <div
-          class="signal-path"
-          aria-label="Signal path from two cameras through CM5 carrier, E200 SDR and RF frontend to antenna"
-        >
-          <span class="signal-camera">Two cameras</span><i>→</i>
-          <a
-            href="https://github.com/stanford-ssi/PigeonVision/tree/main/hardware/carrier"
-            >Carrier <small>CM5</small></a
-          ><i>→</i> <span>E200 <small>Ethernet SDR</small></span
-          ><i>→</i>
-          <a
-            href="https://github.com/stanford-ssi/PigeonVision/tree/main/hardware/rf-frontend"
-            >RF frontend <small>PA + filter</small></a
-          ><i>→</i><span>Antenna</span>
-        </div>
-        <p class="ground-path">
-          Ground: antenna → E200 → PC <span>decode / stitch / pan</span>
-        </p>
-        <div class="board-notes">
-          <a
-            href="https://github.com/stanford-ssi/PigeonVision/tree/main/hardware/carrier/PigeonCarrier"
-            ><span class="board-number">01</span>
-            <div>
-              <h3>Carrier board ↗</h3>
-              <p>3S power, camera capture, local recording and telemetry.</p>
-            </div></a
-          >
-          <a
-            href="https://github.com/stanford-ssi/PigeonVision/tree/main/hardware/rf-frontend"
-            ><span class="board-number">02</span>
-            <div>
-              <h3>RF frontend ↗</h3>
-              <p>
-                Attenuation, amplifier and output filter. Separate from the SDR.
-              </p>
-            </div></a
-          >
+        <div class="hardware-lanes">
+          <article>
+            <h3>On the rocket</h3>
+            <ol class="hardware-chain">
+              <li><span>Two cameras</span><small>CSI-2 video</small></li>
+              <li>
+                <a
+                  href="https://github.com/stanford-ssi/PigeonVision/tree/main/hardware/carrier/PigeonCarrier"
+                  >Carrier + CM5 ↗</a
+                ><small>Encode, record, send over Ethernet</small>
+              </li>
+              <li><span>E200 radio</span><small>Convert data to RF</small></li>
+              <li>
+                <a
+                  href="https://github.com/stanford-ssi/PigeonVision/tree/main/hardware/rf-frontend"
+                  >RF board ↗</a
+                ><small>Amplifier + filter</small>
+              </li>
+              <li><span>Transmit antenna</span></li>
+            </ol>
+          </article>
+          <article>
+            <h3>On the ground</h3>
+            <ol class="hardware-chain">
+              <li><span>Receive antenna</span></li>
+              <li>
+                <span>E200 radio</span
+                ><small>Recover the two video streams</small>
+              </li>
+              <li>
+                <span>Computer</span><small>Decode, stitch, look around</small>
+              </li>
+            </ol>
+          </article>
         </div>
       </section>
       <section
@@ -495,15 +492,18 @@
               </p>
               <p>
                 The exterior uses the supplied OpenRocket dimensions. Camera
-                mounts, iris placement and recovery motion are provisional.
-                The sequence ends under drogue.
+                mounts, iris placement and recovery motion are provisional. The
+                sequence ends under drogue.
               </p>
               <p>
                 The desert terrain is procedural, not a model of the launch
                 site. Encoding is real; optics, flight and radio performance
                 remain estimates.
               </p>
-              <a href="https://github.com/stanford-ssi/PigeonVision/blob/main/docs/README.md">Source & reproduction ↗</a>
+              <a
+                href="https://github.com/stanford-ssi/PigeonVision/blob/main/docs/README.md"
+                >Source & reproduction ↗</a
+              >
             </article>
           </div>
         </details>

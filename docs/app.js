@@ -1,7 +1,7 @@
 import { nominalProfile, finOutline, finAngles, ORK, STATIONS } from "./rocket.js";
 import { CameraRenderer, PRESETS } from "./engine.js";
 import { RigView } from "./rig.js";
-import { opticalState } from "./scene.js";
+import { opticalState, recoveryPose, boosterToWorld, worldToBody, bodyRadius } from "./scene.js";
 import { SCENARIO, linkMargin, radialPixels } from "./scenario.js";
 const $ = (id) => document.getElementById(id),
   rad = (x) => (x * Math.PI) / 180,
@@ -31,6 +31,7 @@ let source = "received",
   pitch = -22,
   fov = 90;
 let launchPreview = true;
+let activeLook = null;
 let time = 0,
   playing = false,
   lastTick = 0,
@@ -96,6 +97,7 @@ function stateAt(t) {
 }
 function drawMain() {
   if (!frameState) return;
+  followLook();
   const s = { ...frameState, yaw, pitch, fov, earth, policy };
   const view = mode;
   renderer.draw(s, {
@@ -126,20 +128,7 @@ function bodyDirection() {
   ];
   if (mode === 1 || mode === 7 || mode === 2) d = [1, 0, 0];
   if (mode === 3) d = [-1, 0, 0];
-  if (earth && mode !== 2 && mode !== 3) {
-    const t = rad(frameState.tilt),
-      r = rad(frameState.roll),
-      q = [
-        Math.cos(t) * d[0] - Math.sin(t) * d[2],
-        d[1],
-        Math.sin(t) * d[0] + Math.cos(t) * d[2],
-      ];
-    d = [
-      Math.cos(r) * q[0] + Math.sin(r) * q[1],
-      -Math.sin(r) * q[0] + Math.cos(r) * q[1],
-      q[2],
-    ];
-  }
+  if (earth && mode !== 2 && mode !== 3) d = worldToBody(d, frameState);
   return d;
 }
 function markers() {
@@ -419,6 +408,7 @@ async function setSource(s) {
   syncUi(true);
 }
 async function setMode(value) {
+  activeLook = null;
   pause();
   mode = Number(value);
 
@@ -512,14 +502,28 @@ function tick(now) {
     syncUi();
   }
 }
+function followLook() {
+  if (!frameState || !["airbrakes", "canopy"].includes(activeLook)) return;
+  const pose = recoveryPose(frameState);
+  if (!pose.separated) {
+    [yaw, pitch, earth] = activeLook === "airbrakes" ? [0,-72,false] : [0,85,true];
+    return;
+  }
+  const p = activeLook === "canopy" ? pose.canopy
+    : boosterToWorld([bodyRadius(frameState),0,-frameState.height/1000], pose.booster);
+  yaw = Math.atan2(p[1],p[0])*180/Math.PI;
+  pitch = Math.atan2(p[2],Math.hypot(p[0],p[1]))*180/Math.PI;
+  earth = true;
+}
 function look(name) {
   const views = {
     horizon: [0, 0, true],
     airbrakes: [0, -72, false],
-    nadir: [0, -89.9, false],
+    nadir: [0, -89.9, true],
     canopy: [0, 85, true],
     seam: [90, -65, false],
   };
+  activeLook = name;
   [yaw, pitch, earth] = views[name];
   mode = 0;
   drawMain();
@@ -544,6 +548,7 @@ function bind() {
             : 5,
       ).catch(error);
   $("earth").onchange = () => {
+    activeLook = null;
     earth = $("earth").checked;
     drawMain();
     syncUi(true);
@@ -663,6 +668,7 @@ function bind() {
   };
   $("screen").onpointerdown = (e) => {
     if (![0, 4, 5].includes(mode)) return;
+    activeLook = null;
     drag = [e.clientX, e.clientY, yaw, pitch];
     $("screen").setPointerCapture(e.pointerId);
   };
@@ -698,6 +704,7 @@ function bind() {
     }[e.key];
     if (!d) return;
     e.preventDefault();
+    activeLook = null;
     yaw += d[0];
     pitch = clamp(pitch + d[1], -89.9, 89.9);
     redraw();
@@ -770,6 +777,7 @@ try {
         time,
         mode,
         earth,
+        yaw, pitch, activeLook,
         playing,
         policy,
         params: { ...params },

@@ -139,7 +139,22 @@ let stage = "startup";
     await seek(deployment + 1);
     await page.click('[data-look="canopy"]');
     await ensureClean();
-    report.checks.push("model playback, backward seek, deployment look-up");
+    await page.click('[data-look="nadir"]');
+    assert.deepEqual(await page.evaluate(() => ({earth:window.pigeon.state.earth,pitch:window.pigeon.state.pitch})), {earth:true,pitch:-89.9}, "Ground-down must stay in the Earth frame after separation");
+    await page.click('[data-look="airbrakes"]');
+    await seek(deployment + 3);
+    const alignment = await page.evaluate(async () => {
+      const { recoveryPose, boosterToWorld, bodyRadius } = await import("./scene.js");
+      const s=window.pigeon.state, f=s.frameState, pose=recoveryPose(f);
+      const v=boosterToWorld([bodyRadius(f),0,-f.height/1000],pose.booster);
+      const yaw=s.yaw*Math.PI/180,pitch=s.pitch*Math.PI/180;
+      return (v[0]*Math.cos(pitch)*Math.cos(yaw)+v[1]*Math.cos(pitch)*Math.sin(yaw)+v[2]*Math.sin(pitch))/Math.hypot(...v);
+    });
+    assert.ok(alignment > .999999, "Airbrake view must follow the separated booster");
+    await page.locator("#screen").focus();
+    await page.keyboard.press("ArrowRight");
+    assert.equal(await page.evaluate(() => window.pigeon.state.activeLook), null, "Manual pan releases target tracking");
+    report.checks.push("model playback, backward seek, recovery targets, Earth-down and manual pan");
 
     const encodedButton = page.locator('[data-source="received"]');
     const encodedAvailable = !!initial.manifest && !(await encodedButton.isDisabled());
@@ -255,8 +270,8 @@ let stage = "startup";
     await page.click("#restart");
     await page.waitForFunction(() => window.pigeon.state.time === 0 && !window.pigeon.state.loading);
     assert.equal(await page.evaluate(() => window.pigeon.state.playing), false);
-    assert.equal(await page.locator('#hardware a[href*="hardware/carrier"]').count(), 2);
-    assert.equal(await page.locator('#hardware a[href*="hardware/rf-frontend"]').count(), 2);
+    assert.equal(await page.locator('#hardware a[href*="hardware/carrier"]').count(), 1);
+    assert.equal(await page.locator('#hardware a[href*="hardware/rf-frontend"]').count(), 1);
     report.checks.push("restart returns to pad; carrier and RF links present");
 
     stage = "mobile layout";
