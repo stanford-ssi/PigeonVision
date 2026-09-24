@@ -1,6 +1,6 @@
 // Illustrative geometry only. Airbrake outlines are supplied separately from CAD.
 // Coordinates are metres, with the camera ring at body z=0.
-export const AIRFRAME = { bottom: -2, shoulder: 1.5, noseLength: 0.8, finSpan: 0.27 };
+export const AIRFRAME = { bottom: -3, shoulder: 0.5, noseLength: 0.8, finSpan: 0.27 };
 export const add = (a, b) => a.map((v, i) => v + b[i]);
 export const mul = (a, k) => a.map((v) => v * k);
 export function bodyToWorld(v, s) {
@@ -16,7 +16,7 @@ export function worldToBody(v, s) {
 export function finFaces(radius) {
   return Array.from({length:4}, (_, i) => {
     const a = i*Math.PI/2+Math.PI/4;
-    return [[radius,-1.23],[radius+AIRFRAME.finSpan,-1.82],[radius+AIRFRAME.finSpan,-1.96],[radius,-1.96]]
+    return [[radius,AIRFRAME.bottom+.77],[radius+AIRFRAME.finSpan,AIRFRAME.bottom+.18],[radius+AIRFRAME.finSpan,AIRFRAME.bottom+.04],[radius,AIRFRAME.bottom+.04]]
       .map(([r,z]) => [Math.cos(a)*r, Math.sin(a)*r,z]);
   });
 }

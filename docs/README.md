@@ -6,9 +6,9 @@ Two IMX900 cameras sit on opposite sides of a 152.4 mm body. Each CIL212 lens is
 
 The [CIL212 supplier model](https://commonlands.com/pages/camera-field-of-view-calculator) uses `r = 1.1 sin(0.4 θ) / 0.4` mm, with θ in radians. At 2.25 µm pixel pitch, the square crop retains about 197° across each axis and up to 225.8° diagonally. This is predicted coverage, not installed calibration.
 
-The sequence covers the pad, ascent, apogee, separation and early descent. The 10,000 ft trajectory, 4.3 m rocket and recovery motion are illustrative. Lens blur, sensor noise, vibration, attitude errors and RF packet loss are not calibrated or simulated. Simple scenery compresses more easily than real flight footage. This does not establish CM5 throughput or radio performance.
+The sequence covers the pad, ascent, apogee, separation and early descent. The camera ring is 3 m above the base, in the upper avionics bay; the iris airbrakes sit 150 mm below it. The desert basin is generated terrain, not a survey of the launch site. The 10,000 ft trajectory, 4.3 m rocket and recovery motion are illustrative. Lens blur, sensor noise, vibration, attitude errors and RF packet loss are not calibrated or simulated. Synthetic scenery is not a substitute for testing compression on real footage. This does not establish CM5 throughput or radio performance.
 
-**Controls:** drag to pan, scroll to zoom, or use the direction buttons. With the camera canvas focused, Space toggles playback and comma/period step one frame. Camera crops and the source map show which image supplies each direction. Settings and model notes are below the views.
+**Controls:** the opening frame previews ascent. Launch plays from the pad; ↺ returns to the pad. Drag to pan, scroll to zoom, or use the direction buttons. With the camera canvas focused, Space toggles playback and comma/period step one frame. Camera crops and the source map show which image supplies each direction. Settings and model notes are below the views.
 
 ## Run and check
 

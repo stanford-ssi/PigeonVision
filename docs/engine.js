@@ -1,3 +1,4 @@
+import { TERRAIN, terrainMaps, TERRAIN_GLSL } from "./terrain.js";
 import { SCENARIO } from "./scenario.js";
 import { AIRFRAME, finFaces, cameraBoxes, recoveryPose } from "./scene.js";
 // The renderer owns pixels only. Flight state and the interface live in app.js.
@@ -56,22 +57,13 @@ vec3 rz(vec3 v,float a){float c=cos(a),s=sin(a);return vec3(c*v.x-s*v.y,s*v.x+c*
 vec3 ry(vec3 v,float a){float c=cos(a),s=sin(a);return vec3(c*v.x+s*v.z,v.y,-s*v.x+c*v.z);}
 vec3 toWorld(vec3 d,float tm){return ry(rz(d,roll+tm*speed*2.*PI),tilt);}
 vec3 toBody(vec3 d){return rz(ry(d,-tilt),-roll);}
-vec3 ground(vec3 origin,vec3 d){
- if(d.z>=-.002){float h=clamp(d.z,0.,1.);vec3 sky=mix(vec3(.79,.86,.88),vec3(.17,.43,.68),pow(h,.45));float sun=pow(max(dot(d,normalize(vec3(.4,.3,.6))),0.),400.);return sky+sun*.75;}
- float t=(-altitude-origin.z)/d.z;vec2 p=(origin+t*d).xy;
- vec2 grid=floor(p/65.);float hash=fract(sin(dot(grid,vec2(127.1,311.7)))*43758.54);
- vec3 c=mix(vec3(.29,.38,.20),vec3(.56,.49,.29),hash);
- float river=abs(p.y-190.*sin(p.x/650.)-40.*sin(p.x/110.));c=mix(c,vec3(.13,.32,.42),1.-smoothstep(14.,22.,river));
- vec2 road=abs(mod(p+125.,250.)-125.);float rd=1.-smoothstep(1.5,3.,min(road.x,road.y));c=mix(c,vec3(.62,.59,.49),rd*.7);
- float pad=1.-smoothstep(11.8,12.2,length(p));c=mix(c,vec3(.66,.66,.64),pad);if(length(p)<10.&&(abs(p.x)<.3||abs(p.y)<.3))c=vec3(.93);
- float haze=clamp(t/22000.,0.,.8);return mix(c,vec3(.74,.81,.83),haze);
-}
+${TERRAIN_GLSL}
 // Intersect an opaque finite cylinder; both roots matter for back-facing rays.
 void cylinder(vec3 o,vec3 d,inout float best,inout vec3 col){
  float a=dot(d.xy,d.xy),b=dot(o.xy,d.xy),c=dot(o.xy,o.xy)-bodyR*bodyR;
  float disc=b*b-a*c;if(a<1e-8||disc<0.)return;
  for(int i=0;i<2;i++){float t=(-b+(i==0?-1.:1.)*sqrt(disc))/a;float z=o.z+t*d.z;
- if(t>.0001&&t<best&&z>${AIRFRAME.bottom.toFixed(1)}&&z<${AIRFRAME.shoulder.toFixed(1)}){best=t;vec3 p=o+t*d;float az=atan(p.y,p.x);float stripe=step(.60,fract((az+PI)/(2.*PI)*8.));col=mix(vec3(.77,.81,.83),vec3(.13,.18,.22),stripe);col*=.7+.3*abs(dot(normalize(p.xy),normalize(vec2(1.,.5))));float band=1.-smoothstep(.007,.012,abs(mod(z+.075,.15)-.075));col=mix(col,vec3(.2,.24,.26),band*.4);}}
+ if(t>.0001&&t<best&&z>${AIRFRAME.bottom.toFixed(1)}&&z<${AIRFRAME.shoulder.toFixed(1)}){best=t;vec3 p=o+t*d;float az=atan(p.y,p.x);float avBand=step(-.12,z)*step(z,.24);col=mix(vec3(.88,.86,.79),vec3(.18,.29,.26),avBand);col*=.68+.32*max(0.,dot(normalize(p.xy),normalize(vec2(-.55,-.35))));float joint=1.-smoothstep(.002,.004,min(abs(z+.2),abs(z-.28)));col=mix(col,vec3(.29,.31,.28),joint);}}
 }
 void triangleHit(vec3 o,vec3 d,vec3 a,vec3 b,vec3 c,inout float best,inout vec3 col){
  vec3 e=b-a,f=c-a,h=cross(d,f);float det=dot(e,h);if(abs(det)<1e-8)return;
@@ -198,6 +190,18 @@ export class CameraRenderer {
       view: this.program(VIEW),
     };
     this.cache = new Map();
+    const maps = terrainMaps();
+    this.terrainHeight = g.createTexture();
+    g.bindTexture(g.TEXTURE_2D, this.terrainHeight);
+    // R32F filtering is not guaranteed without OES_texture_float_linear.
+    const linear = g.getExtension("OES_texture_float_linear") ? g.LINEAR : g.NEAREST;
+    g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MIN_FILTER,linear);
+    g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MAG_FILTER,linear);
+    g.texParameteri(g.TEXTURE_2D,g.TEXTURE_WRAP_S,g.CLAMP_TO_EDGE);
+    g.texParameteri(g.TEXTURE_2D,g.TEXTURE_WRAP_T,g.CLAMP_TO_EDGE);
+    g.texImage2D(g.TEXTURE_2D,0,g.R32F,TERRAIN.size,TERRAIN.size,0,g.RED,g.FLOAT,maps.heights);
+    this.terrainColour = this.texture(TERRAIN.size,TERRAIN.size);
+    g.texImage2D(g.TEXTURE_2D,0,g.RGBA,TERRAIN.size,TERRAIN.size,0,g.RGBA,g.UNSIGNED_BYTE,maps.colours);
     this.buffer = g.createBuffer();
     g.bindBuffer(g.ARRAY_BUFFER, this.buffer);
     g.bufferData(
@@ -330,6 +334,13 @@ export class CameraRenderer {
       w = Math.round(p.w * scale),
       h = Math.round(p.h * scale);
     this.use(this.programs.capture);
+    g.activeTexture(g.TEXTURE3);
+    g.bindTexture(g.TEXTURE_2D,this.terrainHeight);
+    this.uniform("terrainHeight",3,true);
+    g.activeTexture(g.TEXTURE4);
+    g.bindTexture(g.TEXTURE_2D,this.terrainColour);
+    this.uniform("terrainColour",4,true);
+    g.activeTexture(g.TEXTURE0);
     this.common(s);
     for (const [k, v] of Object.entries({
       bodyR: s.diameter / 2000,

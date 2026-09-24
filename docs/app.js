@@ -26,9 +26,10 @@ let source = "received",
   mode = 0,
   earth = true,
   policy = 0,
-  yaw = 0,
-  pitch = 0,
+  yaw = 25,
+  pitch = -22,
   fov = 90;
+let launchPreview = true;
 let time = 0,
   playing = false,
   lastTick = 0,
@@ -206,13 +207,13 @@ function syncUi(force = false) {
     (r.slant_range_m / 1000).toFixed(2) + " <small>km</small>";
   $("flight-margin").innerHTML =
     linkMargin(r.slant_range_m).toFixed(1) + " <small>dB</small>";
-  $("play").textContent = playing ? "Ⅱ" : "▶";
+  $("play").textContent = playing ? "Ⅱ Pause" : launchPreview ? "▶ Launch" : "▶ Play";
   $("play").setAttribute(
     "aria-label",
     playing ? "Pause launch" : "Play launch",
   );
   const names = {
-    0: "Panoramic viewport",
+    0: "Ground view",
     1: "Full direction map",
     2: "Camera A · fisheye",
     3: "Camera B · fisheye",
@@ -220,7 +221,7 @@ function syncUi(force = false) {
     5: "Camera B · perspective",
     7: "Source coverage map",
   };
-  $("view-title").textContent = source === "received" && mode === 0 ? "Ground panorama" : names[mode];
+  $("view-title").textContent = source === "received" && mode === 0 ? "Ground view" : names[mode];
   $("source-badge").textContent = source === "received" ? "Encoded simulation" : "Ideal model";
   $("stage-label").textContent = source === "received" ? "2 × 1552² / 30 fps / 4 Mb/s each" : "Synthetic scene / no codec";
   $("view-reference").textContent = mode === 2 || mode === 3 ? "CAMERA CROP" : earth ? "EARTH FIXED" : "BODY FIXED";
@@ -235,8 +236,8 @@ function syncUi(force = false) {
   $("earth").checked = earth;
   $("view-mode").value = String(mode);
   for (const b of document.querySelectorAll("[data-look]")) b.disabled = false;
-  $("inspection-status").textContent = playing && !$("live-inspection").checked ? `Held at T+${inspectionTime.toFixed(2)} s` : source === "received" ? "Both decoded cameras at the same capture time." : "Synthetic camera crops before encoding.";
-  $("rig-description").textContent = `${params.diameter} mm body · ${params.stand} mm assumed pupil offset · external geometry view`;
+  $("inspection-status").textContent = playing && !$("live-inspection").checked ? `Held at T+${inspectionTime.toFixed(2)} s` : source === "received" ? "Same instant, opposite sides." : "Camera crops before encoding.";
+  $("rig-description").textContent = `Ø ${params.diameter} mm · lens pupils ${params.stand} mm outside the skin`;
   $("seam-description").textContent = ["Selects each camera's outward half.", "Blends the overlap. Nearby surfaces can ghost.", "Uses A wherever it has coverage.", "Uses B wherever it has coverage."][policy];
   const detail = Math.round(2 * radialPixels(Math.PI / 4, p));
   $("detail-head").textContent = `${detail} samples across a centred 90° view`;
@@ -388,6 +389,7 @@ async function loadVideo(t, resume = false) {
   }
 }
 async function seek(t) {
+  launchPreview = false;
   pause();
   t = clamp(t, 0, flight.summary.duration_s);
   if (source === "received") await loadVideo(t);
@@ -396,6 +398,7 @@ async function seek(t) {
   syncUi(true);
 }
 async function setSource(s) {
+  launchPreview = false;
   pause();
   source = s;
   mode = 0;
@@ -438,7 +441,8 @@ async function loadFlight(file) {
     ["Separation", flight.summary.deployment_time_s],
   ]) {
     const b = document.createElement("button");
-    b.textContent = name + " · " + t.toFixed(1) + "s";
+    b.textContent = name;
+    b.title = `T + ${t.toFixed(1)} s`;
     b.onclick = () => seek(t).catch(error);
     $("phases").append(b);
   }
@@ -513,6 +517,7 @@ function look(name) {
   syncUi(true);
 }
 function bind() {
+  $("restart").onclick = () => seek(0).catch(error);
   for (const b of document.querySelectorAll("[data-source]"))
     b.onclick = () => setSource(b.dataset.source).catch(error);
   for (const b of document.querySelectorAll("[data-look]"))
@@ -542,6 +547,7 @@ function bind() {
         if (source === "model") sourceFrame(time);
         inspect();
       } else {
+        if (launchPreview) await seek(0);
         const clipEnded = source === "received" && (videos.some(v => v.ended) || time >= offset + (manifest.frames - 1) / SCENARIO.fps - 1e-6);
         if (clipEnded || time >= flight.summary.duration_s - 0.05) await seek(source === "received" ? offset : 0);
         playing = true;
@@ -770,8 +776,8 @@ try {
     source = "model";
     sourceFrame(0);
   } else {
-    if (source === "received") await loadVideo(0);
-    else sourceFrame(0);
+    if (source === "received") await loadVideo(15);
+    else sourceFrame(15);
     inspect();
     syncUi(true);
     requestAnimationFrame(tick);

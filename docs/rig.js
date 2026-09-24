@@ -41,9 +41,9 @@ export class RigView {
     const pose = recoveryPose(s),
       recoveryPoints = pose.lines.flat().map(p => worldToBody(p,s)),
       canopyBody = worldToBody(pose.canopy,s),
-      recoveryTop = pose.open > .01 ? canopyBody[2] + pose.radius : 2.3 + pose.sep,
+      recoveryTop = pose.open > .01 ? canopyBody[2] + pose.radius : AIRFRAME.shoulder + AIRFRAME.noseLength + pose.sep,
       lowest = Math.min(AIRFRAME.bottom, ...recoveryPoints.map(p=>p[2])),
-      highest = Math.max(2.3 + pose.sep, recoveryTop, ...recoveryPoints.map(p=>p[2])),
+      highest = Math.max(AIRFRAME.shoulder + AIRFRAME.noseLength + pose.sep, recoveryTop, ...recoveryPoints.map(p=>p[2])),
       center = this.full ? (highest + lowest)/2 : -0.04,
       scale = this.full ? Math.min(h / ((highest-lowest)*1.3),w / (pose.open>.01?6:1.5)) : Math.min(w, h) / 1.05,
       ca = Math.cos(this.az),
@@ -76,7 +76,7 @@ export class RigView {
           [i * 0.1, -0.5, -0.15],
           [i * 0.1, 0.5, -0.15],
         ],
-        "#e8ece8",
+        "#deded0",
         0.7,
       );
       line(
@@ -84,7 +84,7 @@ export class RigView {
           [-0.5, i * 0.1, -0.15],
           [0.5, i * 0.1, -0.15],
         ],
-        "#e8ece8",
+        "#deded0",
         0.7,
       );
     }
@@ -99,7 +99,7 @@ export class RigView {
         depth: pts.map(project).reduce((a, p) => a + p[2], 0) / pts.length,
       });
     const bottom = this.full ? AIRFRAME.bottom : -0.56,
-      top = this.full ? AIRFRAME.shoulder : 0.56,
+      top = AIRFRAME.shoulder,
       N = 48;
     for (let i = 0; i < N; i++) {
       const a = (i / N) * Math.PI * 2,
@@ -241,9 +241,9 @@ export class RigView {
     x.fillStyle = "#68736b";
     x.font = "11px ui-monospace,monospace";
     if (!this.full && this.bubbles)
-      x.fillText("SENSOR-CROPPED COVERAGE", 18, h - 36);
+      x.fillText("CROPPED LENS FIELDS", 18, h - 36);
     x.fillText(
-      this.full ? "ILLUSTRATIVE AIRFRAME + RECOVERY" : `CAMERA RING · ${s.diameter.toFixed(1)} mm Ø`,
+      this.full ? "AIRFRAME / RECOVERY" : `CAMERA RING · ${s.diameter.toFixed(1)} mm Ø`,
       18,
       h - 20,
     );

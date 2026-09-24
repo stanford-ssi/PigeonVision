@@ -59,7 +59,12 @@ let stage = "startup";
     }
     return { hash: hash >>> 0, colors: colors.size, width: canvas.width, height: canvas.height };
   });
-  const choose = (selector, value) => page.selectOption(selector, String(value));
+  const choose = async (selector, value) => {
+    await page.locator(selector).evaluate((el) => {
+      for(let p=el.parentElement;p;p=p.parentElement)if(p.tagName === "DETAILS")p.open=true;
+    });
+    return page.selectOption(selector, String(value));
+  };
   const seek = async (time) => {
     await page.evaluate((t) => window.pigeon.seek(t), time);
     await page.waitForFunction(() => !window.pigeon.state.loading && !window.pigeon.state.playing);
@@ -233,6 +238,15 @@ let stage = "startup";
     await choose("#scenario", "launch.json");
     await page.waitForFunction(() => window.flightData.inputs.target_apogee_m === 3048);
     report.checks.push("geometry control and alternate flight force model mode");
+
+    stage = "restart and hardware links";
+    await seek(15);
+    await page.click("#restart");
+    await page.waitForFunction(() => window.pigeon.state.time === 0 && !window.pigeon.state.loading);
+    assert.equal(await page.evaluate(() => window.pigeon.state.playing), false);
+    assert.equal(await page.locator('#hardware a[href*="hardware/carrier"]').count(), 2);
+    assert.equal(await page.locator('#hardware a[href*="hardware/rf-frontend"]').count(), 2);
+    report.checks.push("restart returns to pad; carrier and RF links present");
 
     stage = "mobile layout";
     await page.setViewportSize({ width: 390, height: 844 });
