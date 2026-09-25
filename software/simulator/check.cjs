@@ -103,6 +103,9 @@ let stage = "startup";
     assert.equal(exterior.fins, 3, "OpenRocket fin count");
     report.checks.push("OpenRocket exterior: 156.718 mm OD, 2.9532 m length, three fins");
 
+    assert.ok(await page.locator("#view-mode").isVisible(), "projection selector is always visible");
+    assert.ok(await page.locator("#source-tabs").isVisible(), "source controls are always visible");
+    assert.equal(await page.locator("details.view-options").count(), 0);
     stage = "model camera views";
     await page.evaluate(() => window.pigeon.setSource("model"));
     await seek(15);

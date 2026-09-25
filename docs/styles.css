@@ -412,19 +412,6 @@ nav a:last-child {
   width: 100%;
   border: 0;
 }
-.view-options summary {
-  display: inline-block;
-  cursor: pointer;
-  color: var(--muted);
-  padding: 4px 0;
-}
-.view-options summary:after {
-  content: " +";
-  font-family: var(--mono);
-}
-.view-options[open] summary:after {
-  content: " −";
-}
 .view-controls {
   display: flex;
   align-items: center;
