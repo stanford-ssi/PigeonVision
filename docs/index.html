@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#f3f0e7" />
     <title>PigeonVision · Flight simulator</title>
     <link rel="icon" href="assets/pigeon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css?v=4" />
+    <link rel="stylesheet" href="styles.css?v=5" />
   </head>
   <body>
     <main>
@@ -20,8 +20,8 @@
             height="48"
             style="max-width: 48px; max-height: 48px"
           />
-          <span>Pigeon<span class="brand-light">Vision</span></span>
-          <small>STANFORD SSI / IREC</small>
+          <h1>Pigeon<span class="brand-light">Vision</span></h1>
+          <small>Stanford SSI<br>IREC video downlink</small>
         </a>
         <nav aria-label="Page sections">
           <a href="#imaging">Camera views</a>
@@ -31,22 +31,34 @@
           >
         </nav>
       </header>
-      <section class="intro">
-        <span class="folio">CAMERA SIMULATION</span>
-        <h1>Launch view</h1>
-        <p class="flight-caption">
-          10,000 ft class &nbsp; / &nbsp; 6-inch class &nbsp; / &nbsp; Two
-          cameras
-        </p>
-      </section>
       <section class="flight-deck" aria-label="Flight camera simulator">
         <div class="view-column">
-          <div class="panel-heading">
-            <div>
-              <h2 id="view-title">Received panorama</h2>
+          <div class="view-options" role="group" aria-label="View options">
+            <div class="view-controls">
+              <div class="segmented" id="source-tabs">
+                <button data-source="received" class="active">
+                  Encoded simulation</button
+                ><button data-source="model">Ideal model</button>
+              </div>
+              <select id="view-mode" aria-label="Projection">
+                <option value="0">Look around</option>
+                <option value="1">Full panorama</option>
+                <option value="4">Camera A perspective</option>
+                <option value="5">Camera B perspective</option>
+                <option value="2">Camera A fisheye</option>
+                <option value="3">Camera B fisheye</option>
+                <option value="7">Source coverage map</option></select
+              ><button
+                id="snapshot"
+                class="icon-button"
+                title="Save current view"
+              >
+                Save frame ↗
+              </button>
             </div>
-            <span class="badge" id="source-badge">Loading</span>
           </div>
+          <h2 id="view-title" class="sr-only">Camera view</h2>
+          <span id="source-badge" class="sr-only">Loading</span>
           <div class="viewport">
             <canvas
               id="screen"
@@ -128,42 +140,17 @@
               ><input id="earth" type="checkbox" checked /> Earth fixed</label
             >
           </div>
-          <div class="view-options" role="group" aria-label="View options">
-            <div class="view-controls">
-              <div class="segmented" id="source-tabs">
-                <button data-source="received" class="active">
-                  Encoded video</button
-                ><button data-source="model">Ideal model</button>
-              </div>
-              <select id="view-mode" aria-label="Projection">
-                <option value="0">Look around</option>
-                <option value="1">Full panorama</option>
-                <option value="4">Camera A perspective</option>
-                <option value="5">Camera B perspective</option>
-                <option value="2">Camera A fisheye</option>
-                <option value="3">Camera B fisheye</option>
-                <option value="7">Source coverage map</option></select
-              ><button
-                id="snapshot"
-                class="icon-button"
-                title="Save current view"
-              >
-                Save frame ↗
-              </button>
-            </div>
-          </div>
           <p class="view-note" id="view-note">
-            Turn your view, not your position. This is a panoramic image, not
-            reconstructed 3D.
+            Drag to look around. Scroll to zoom.
           </p>
           <div id="error" role="alert" hidden></div>
         </div>
         <aside class="rig-column">
           <div class="panel-heading">
             <div>
-              <h2>On the rocket</h2>
+              <h2>Camera placement</h2>
             </div>
-            <span class="badge ghost">Geometry</span>
+
           </div>
           <div class="airframe-key">
             <svg
@@ -257,7 +244,7 @@
       <section id="imaging" class="imaging">
         <div class="section-intro">
           <div>
-            <h2>Camera views</h2>
+            <h2>Camera feeds</h2>
           </div>
           <p id="inspection-status">
             Pause to inspect the individual source images at the same instant.
@@ -318,7 +305,7 @@
           </article>
           <article class="panorama-card">
             <div class="card-top">
-              <span>Stitched on the ground</span
+              <span>Ground stitch</span
               ><button id="toggle-mask" class="text-button">
                 Show source map
               </button>
@@ -357,8 +344,8 @@
       </section>
       <section id="hardware" class="hardware">
         <div class="section-intro">
-          <h2>The hardware</h2>
-          <span class="mono">IN DESIGN / KICAD</span>
+          <h2>Flight to ground</h2>
+          <span class="hardware-status">Hardware in development · KiCad</span>
         </div>
         <div class="hardware-lanes">
           <article>
@@ -516,7 +503,7 @@
       </footer>
       <video id="received" muted playsinline preload="auto" hidden></video
       ><canvas id="work-canvas" hidden></canvas>
-      <script type="module" src="app.js?v=4"></script>
+      <script type="module" src="app.js?v=5"></script>
     </main>
   </body>
 </html>

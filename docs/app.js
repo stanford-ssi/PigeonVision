@@ -218,7 +218,7 @@ function syncUi(force = false) {
   $("stage-label").textContent = source === "received" ? "2 × 1552² / 30 fps / 4 Mb/s each" : "Synthetic scene / no codec";
   $("view-reference").textContent = mode === 2 || mode === 3 ? "CAMERA CROP" : earth ? "EARTH FIXED" : "BODY FIXED";
   $("view-angle").textContent = mode === 2 || mode === 3 ? (preset === "900" ? "197° MIN. MODELED FOV" : p.field + "° FISHEYE") : mode === 1 || mode === 7 ? "360° × 180°" : Math.round(fov) + "° VIEW";
-  $("view-note").textContent = source === "received" ? "Two decoded camera streams, stitched here. Drag to look around." : sourceNotice || "Synthetic optics and geometry. Pause for full crop resolution.";
+  $("view-note").textContent = source === "received" ? "Drag to look around · Scroll to zoom" : sourceNotice || "Synthetic optics and geometry. Pause for full crop resolution.";
   for (const b of document.querySelectorAll("[data-source]")) {
     b.classList.toggle("active", b.dataset.source === source);
     b.disabled = b.dataset.source === "received" && (!manifest || $("scenario").value !== "launch.json" || preset !== "900");
@@ -228,7 +228,7 @@ function syncUi(force = false) {
   $("earth").checked = earth;
   $("view-mode").value = String(mode);
   for (const b of document.querySelectorAll("[data-look]")) b.disabled = false;
-  $("inspection-status").textContent = playing && !$("live-inspection").checked ? `Held at T+${inspectionTime.toFixed(2)} s` : source === "received" ? "Same instant, opposite sides." : "Camera crops before encoding.";
+  $("inspection-status").textContent = playing && !$("live-inspection").checked ? `Held at T+${inspectionTime.toFixed(2)} s` : source === "received" ? "Synchronized camera frames" : "Camera crops before encoding.";
   $("rig-description").textContent = `Ø ${params.diameter} mm · lens pupils ${params.stand} mm outside the skin`;
   $("seam-description").textContent = ["Selects each camera's outward half.", "Blends the overlap. Nearby surfaces can ghost.", "Uses A wherever it has coverage.", "Uses B wherever it has coverage."][policy];
   const detail = Math.round(2 * radialPixels(Math.PI / 4, p));
