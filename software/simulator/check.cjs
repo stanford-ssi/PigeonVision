@@ -268,6 +268,27 @@ let stage = "startup";
     await page.waitForFunction(() => window.flightData.inputs.target_apogee_m === 3048);
     report.checks.push("geometry control and alternate flight force model mode");
 
+    if (encodedAvailable) {
+      stage = "source comparison controls";
+      await seek(15);
+      for (const projection of [0, 1, 2, 3, 4, 5, 7]) {
+        await choose("#view-mode", projection);
+        await choose("#seam-policy", 1);
+        const view = await page.evaluate(() => {
+          const s = window.pigeon.state;
+          return {mode:s.mode, policy:s.policy, yaw:s.yaw, pitch:s.pitch, earth:s.earth, time:s.time};
+        });
+        for (const source of ["model", "received"]) {
+          await page.evaluate(s => window.pigeon.setSource(s), source);
+          assert.deepEqual(await page.evaluate(() => {
+            const s = window.pigeon.state;
+            return {mode:s.mode, policy:s.policy, yaw:s.yaw, pitch:s.pitch, earth:s.earth, time:s.time};
+          }), view, `${source}: switching source preserves comparison view`);
+        }
+      }
+      report.checks.push("source switching preserves projection, seam, direction, stabilization and time");
+    }
+
     stage = "restart and hardware links";
     for (const source of encodedAvailable ? ["model", "received"] : ["model"]) {
       await page.evaluate(s => window.pigeon.setSource(s), source);

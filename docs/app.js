@@ -398,10 +398,8 @@ async function setSource(s) {
   launchPreview = false;
   pause();
   source = s;
-  mode = 0;
   if (s === "received") {
     resetParams();
-    policy = 0;
     await loadVideo(time);
   } else sourceFrame(time);
   inspect();
