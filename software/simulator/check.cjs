@@ -286,6 +286,13 @@ let stage = "startup";
         return {playing:s.playing,mode:s.mode,yaw:s.yaw,pitch:s.pitch,earth:s.earth,activeLook:s.activeLook,deployed:s.frameState.tau>0};
       }), {playing:false,mode:0,yaw:25,pitch:-8,earth:true,activeLook:null,deployed:false});
     }
+    for (const selected of [1, 2, 3, 4, 5]) {
+      await page.selectOption("#view-mode", String(selected));
+      await page.click("#restart");
+      await page.waitForFunction(() => window.pigeon.state.time === 0 && !window.pigeon.state.loading);
+      assert.equal(await page.evaluate(() => window.pigeon.state.mode), selected, "restart preserves selected projection");
+      assert.equal(await page.locator("#view-mode").inputValue(), String(selected));
+    }
     await page.click("#ring-view");
     assert.equal(await page.locator('#hardware a[href*="hardware/carrier"]').count(), 1);
     assert.equal(await page.locator('#hardware a[href*="hardware/rf-frontend"]').count(), 1);

@@ -239,6 +239,8 @@ nav a:last-child {
   width: 100%;
   aspect-ratio: 16/9;
   touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
   cursor: grab;
 }
 .viewport canvas:active {
@@ -476,6 +478,8 @@ nav a:last-child {
   width: 100%;
   height: 290px;
   touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
   cursor: grab;
 }
 .rig-toolbar {

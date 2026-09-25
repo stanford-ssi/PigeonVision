@@ -532,7 +532,6 @@ function look(name) {
 function bind() {
   $("restart").onclick = async () => {
     activeLook = null;
-    mode = 0;
     yaw = 25;
     pitch = -8;
     fov = 90;
@@ -678,6 +677,8 @@ function bind() {
   };
   $("screen").onpointerdown = (e) => {
     if (![0, 4, 5].includes(mode)) return;
+    e.preventDefault();
+    $("screen").focus({ preventScroll: true });
     activeLook = null;
     drag = [e.clientX, e.clientY, yaw, pitch];
     $("screen").setPointerCapture(e.pointerId);
