@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#f3f0e7" />
     <title>PigeonVision · Flight simulator</title>
     <link rel="icon" href="assets/pigeon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css?v=5" />
+    <link rel="stylesheet" href="styles.css?v=6" />
   </head>
   <body>
     <main>
@@ -79,7 +79,8 @@
           <section class="flight-strip" aria-label="Launch playback">
             <div class="transport">
               <button id="play" class="play-button" aria-label="Play launch">
-                ▶
+                <span class="play-icon" aria-hidden="true"></span>
+                <span id="play-label">Launch</span>
               </button>
               <button
                 id="restart"
@@ -365,13 +366,13 @@
                   >RF board ↗</a
                 ><small>Amplifier + filter</small>
               </li>
-              <li><span>Transmit antenna</span></li>
+              <li class="antenna-node transmit"><svg class="antenna-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 27V13M5 6l7 7 7-7M8 27h8M22 10a7 7 0 0 1 0 10M26 6a13 13 0 0 1 0 18"/></svg><span>Transmit antenna</span></li>
             </ol>
           </article>
           <article>
             <h3>On the ground</h3>
             <ol class="hardware-chain">
-              <li><span>Receive antenna</span></li>
+              <li class="antenna-node receive"><svg class="antenna-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 27V13M5 6l7 7 7-7M8 27h8M22 10a7 7 0 0 1 0 10M26 6a13 13 0 0 1 0 18"/></svg><span>Receive antenna</span></li>
               <li>
                 <span>E200 radio</span
                 ><small>Recover the two video streams</small>
@@ -445,7 +446,7 @@
         <details class="model-notes">
           <summary>
             Model & link assumptions
-            <span>¹ Link margin includes a 10 dB reserve</span>
+            <span>¹ Margin shown after a 10 dB assumed reserve</span>
           </summary>
           <div class="notes-grid">
             <article>
@@ -469,6 +470,7 @@
                 Playback diagnostics appear while playing.
               </div>
               <p>30 captured frames per second. No simulated RF packet loss.</p>
+              <p>The 10 dB reserve is a design allowance for fading and unmeasured losses, not a measured requirement. Fixed losses are counted separately.</p>
             </article>
             <article>
               <h3>Flight & geometry</h3>
@@ -503,7 +505,7 @@
       </footer>
       <video id="received" muted playsinline preload="auto" hidden></video
       ><canvas id="work-canvas" hidden></canvas>
-      <script type="module" src="app.js?v=5"></script>
+      <script type="module" src="app.js?v=6"></script>
     </main>
   </body>
 </html>

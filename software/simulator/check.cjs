@@ -83,6 +83,10 @@ let stage = "startup";
       target: window.flightData.inputs.target_apogee_m,
       manifest: window.pigeon.state.manifest,
     }));
+    assert.equal(await page.evaluate(() => window.pigeon.state.time), 0, "startup is on the pad");
+    assert.equal(await page.evaluate(() => window.pigeon.state.playing), false);
+    assert.equal(await page.locator("#play-label").textContent(), "Launch");
+    assert.equal(await page.locator(".antenna-icon").count(), 2);
     stage = "selected optics";
     assert.equal(initial.target, 3048, "Default flight targets the 10,000 ft class");
     assert.equal(initial.scenario.camera.lens, "CIL212");
@@ -267,6 +271,27 @@ let stage = "startup";
     await choose("#scenario", "launch.json");
     await page.waitForFunction(() => window.flightData.inputs.target_apogee_m === 3048);
     report.checks.push("geometry control and alternate flight force model mode");
+
+    if (encodedAvailable) {
+      stage = "source comparison controls";
+      await seek(15);
+      for (const projection of [0, 1, 2, 3, 4, 5, 7]) {
+        await choose("#view-mode", projection);
+        await choose("#seam-policy", 1);
+        const view = await page.evaluate(() => {
+          const s = window.pigeon.state;
+          return {mode:s.mode, policy:s.policy, yaw:s.yaw, pitch:s.pitch, earth:s.earth, time:s.time};
+        });
+        for (const source of ["model", "received"]) {
+          await page.evaluate(s => window.pigeon.setSource(s), source);
+          assert.deepEqual(await page.evaluate(() => {
+            const s = window.pigeon.state;
+            return {mode:s.mode, policy:s.policy, yaw:s.yaw, pitch:s.pitch, earth:s.earth, time:s.time};
+          }), view, `${source}: switching source preserves comparison view`);
+        }
+      }
+      report.checks.push("source switching preserves projection, seam, direction, stabilization and time");
+    }
 
     stage = "restart and hardware links";
     for (const source of encodedAvailable ? ["model", "received"] : ["model"]) {
