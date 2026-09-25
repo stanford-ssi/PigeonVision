@@ -530,7 +530,17 @@ function look(name) {
   syncUi(true);
 }
 function bind() {
-  $("restart").onclick = () => seek(0).catch(error);
+  $("restart").onclick = async () => {
+    activeLook = null;
+    mode = 0;
+    yaw = 25;
+    pitch = -8;
+    fov = 90;
+    earth = true;
+    modelClock = 0;
+    lastSourceFrame = -1;
+    try { await seek(0); } catch (e) { error(e); }
+  };
   for (const b of document.querySelectorAll("[data-source]"))
     b.onclick = () => setSource(b.dataset.source).catch(error);
   for (const b of document.querySelectorAll("[data-look]"))
@@ -710,7 +720,7 @@ function bind() {
     redraw();
   };
   videos.forEach(v => v.onended = () => {
-    if (source === "received" && manifest && !loading)
+    if (source === "received" && manifest && !loading && playing && v.ended)
       seek(offset + (manifest.frames - 1) / SCENARIO.fps).catch(error);
   });
   new IntersectionObserver(

@@ -10,7 +10,7 @@ The sequence covers the pad, ascent, apogee, separation and early descent. The c
 
 The boattail uses the clipped ellipse from OpenRocket. Fin outlines, 7.5 mm thickness and rail-button stations follow the file. Fin edge rounding, fillets, surface finish and camera housings are simplified. Shock-cord lengths and the separation joint need confirmation.
 
-**Controls:** the opening frame previews ascent. Launch plays from the pad; ↺ returns to the pad. Drag to pan, scroll to zoom, or use the direction buttons. With the camera canvas focused, Space toggles playback and comma/period step one frame. Camera crops and the source map show which image supplies each direction. Settings and model notes are below the views.
+**Controls:** the opening frame previews ascent. Launch plays from the pad; ↺ restores the pad and starting viewing direction. Drag to pan, scroll to zoom, or use the direction buttons. With the camera canvas focused, Space toggles playback and comma/period step one frame. Camera crops and the source map show which image supplies each direction. Settings and model notes are below the views.
 
 ## Run and check
 
