@@ -10,7 +10,7 @@ The sequence covers the pad, ascent, apogee, separation and early descent. The c
 
 The boattail uses the clipped ellipse from OpenRocket. Fin outlines, 7.5 mm thickness and rail-button stations follow the file. Fin edge rounding, fillets, surface finish and camera housings are simplified. Shock-cord lengths and the separation joint need confirmation.
 
-**Controls:** the opening frame previews ascent. Launch plays from the pad; ↺ restores the pad and starting viewing direction. Drag to pan, scroll to zoom, or use the direction buttons. With the camera canvas focused, Space toggles playback and comma/period step one frame. Camera crops and the source map show which image supplies each direction. Settings and model notes are below the views.
+**Controls:** the opening frame previews ascent. Launch plays from the pad; ↺ returns to the pad while keeping the selected projection. Drag to pan, scroll to zoom, or use the direction buttons. With the camera canvas focused, Space toggles playback and comma/period step one frame. Camera crops and the source map show which image supplies each direction. Settings and model notes are below the views.
 
 ## Run and check
 
@@ -23,7 +23,8 @@ python3 software/simulator/serve.py
 Open `http://127.0.0.1:8767/docs/`. Browser checks require Node, Playwright and Chrome:
 
 ```sh
-node software/simulator/check.cjs
+node software/simulator/check_geometry.mjs
+SIM_REQUIRE_ENCODED=1 node software/simulator/check.cjs
 ```
 
 To regenerate the clips, also install FFmpeg with libx264:
@@ -32,6 +33,6 @@ To regenerate the clips, also install FFmpeg with libx264:
 FFMPEG=/path/to/ffmpeg node software/simulator/render_sequence.cjs
 ```
 
-Outputs go to `build/simulator/`. Copy `manifest-v3.json` and both `cil212-camera-*.mp4` files into `docs/assets/video/`. Keep transport streams and logs out of the site. The manifest records settings, source hashes, frame counts and transport timing; mismatched clips fall back to the ideal model.
+Outputs go to `build/simulator/`. Copy both `cil212-camera-*.mp4` files into `docs/assets/video/`, then copy `manifest-v3.json` last. Keep transport streams and logs out of the site. The manifest records settings, source hashes, frame counts and transport timing; mismatched clips fall back to the ideal model.
 
 For Pages, publish the repository's `/docs` directory after merging. All site assets use relative paths; no build service or external CDN is required.

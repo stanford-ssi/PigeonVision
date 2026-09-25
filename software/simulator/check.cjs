@@ -286,7 +286,7 @@ let stage = "startup";
         return {playing:s.playing,mode:s.mode,yaw:s.yaw,pitch:s.pitch,earth:s.earth,activeLook:s.activeLook,deployed:s.frameState.tau>0};
       }), {playing:false,mode:0,yaw:25,pitch:-8,earth:true,activeLook:null,deployed:false});
     }
-    for (const selected of [1, 2, 3, 4, 5]) {
+    for (const selected of [0, 1, 2, 3, 4, 5, 7]) {
       await page.selectOption("#view-mode", String(selected));
       await page.click("#restart");
       await page.waitForFunction(() => window.pigeon.state.time === 0 && !window.pigeon.state.loading);
@@ -296,7 +296,7 @@ let stage = "startup";
     await page.click("#ring-view");
     assert.equal(await page.locator('#hardware a[href*="hardware/carrier"]').count(), 1);
     assert.equal(await page.locator('#hardware a[href*="hardware/rf-frontend"]').count(), 1);
-    report.checks.push("restart restores camera pixels, assembled rocket and pad view; hardware links present");
+    report.checks.push("restart restores pad and rocket, preserves all projections; hardware links present");
 
     stage = "mobile layout";
     await page.setViewportSize({ width: 390, height: 844 });
