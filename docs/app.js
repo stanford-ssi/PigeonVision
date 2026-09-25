@@ -28,9 +28,8 @@ let source = "received",
   earth = true,
   policy = 0,
   yaw = 25,
-  pitch = -22,
+  pitch = -8,
   fov = 90;
-let launchPreview = true;
 let activeLook = null;
 let time = 0,
   playing = false,
@@ -199,7 +198,8 @@ function syncUi(force = false) {
     (r.slant_range_m / 1000).toFixed(2) + " <small>km</small>";
   $("flight-margin").innerHTML =
     linkMargin(r.slant_range_m).toFixed(1) + " <small>dB</small>";
-  $("play").textContent = playing ? "Ⅱ Pause" : launchPreview ? "▶ Launch" : "▶ Play";
+  $("play-label").textContent = playing ? "Pause" : time < 1 / SCENARIO.fps ? "Launch" : "Play";
+  $("play").classList.toggle("is-playing", playing);
   $("play").setAttribute(
     "aria-label",
     playing ? "Pause launch" : "Play launch",
@@ -240,7 +240,9 @@ function syncUi(force = false) {
     ["Camera crops", "2 × 1552 × 1552"], ["Capture / video", "30 fps / 4 Mb/s each"],
     ["Transport target", "9.00 Mb/s"], ["RF allowance", `${allowance.toFixed(2)} Mb/s`],
     ["PA average / frequency", "0.5 W / 1.28 GHz"], ["Antenna gain TX / RX", "0 / 15 dBi assumed"],
-    ["Loss / NF / reserve", "7 / 3 / 10 dB assumed"], ["Receiver C/N threshold", "8 dB assumed"],
+    ["Fixed losses / noise figure", "7 / 3 dB assumed"],
+    ["Design reserve", `${rconf.reserve_db} dB assumed`],
+    ["Receiver C/N threshold", "8 dB assumed"],
   ].map(([a,b]) => `<div><dt>${a}</dt><dd>${b}</dd></div>`).join("");
   $("codec-status").textContent = manifest ? `${manifest.frames} frames per camera · ${manifest.transport.measured_ts_mbps.toFixed(3)} Mb/s measured transport. ${manifest.transport.mux_delay_s.toFixed(2)} s mux buffer. RF packet loss is not simulated.` : "No matching encoded clip. Showing the ideal model.";
   const qa = video.getVideoPlaybackQuality?.(), qb = videoB.getVideoPlaybackQuality?.();
@@ -386,7 +388,6 @@ async function loadVideo(t, resume = false) {
   }
 }
 async function seek(t) {
-  launchPreview = false;
   pause();
   t = clamp(t, 0, flight.summary.duration_s);
   if (source === "received") await loadVideo(t);
@@ -395,7 +396,6 @@ async function seek(t) {
   syncUi(true);
 }
 async function setSource(s) {
-  launchPreview = false;
   pause();
   source = s;
   if (s === "received") {
@@ -568,7 +568,6 @@ function bind() {
         if (source === "model") sourceFrame(time);
         inspect();
       } else {
-        if (launchPreview) await seek(0);
         const clipEnded = source === "received" && (videos.some(v => v.ended) || time >= offset + (manifest.frames - 1) / SCENARIO.fps - 1e-6);
         if (clipEnded || time >= flight.summary.duration_s - 0.05) await seek(source === "received" ? offset : 0);
         playing = true;
@@ -811,8 +810,8 @@ try {
     source = "model";
     sourceFrame(0);
   } else {
-    if (source === "received") await loadVideo(15);
-    else sourceFrame(15);
+    if (source === "received") await loadVideo(0);
+    else sourceFrame(0);
     inspect();
     syncUi(true);
     requestAnimationFrame(tick);

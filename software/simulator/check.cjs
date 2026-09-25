@@ -83,6 +83,10 @@ let stage = "startup";
       target: window.flightData.inputs.target_apogee_m,
       manifest: window.pigeon.state.manifest,
     }));
+    assert.equal(await page.evaluate(() => window.pigeon.state.time), 0, "startup is on the pad");
+    assert.equal(await page.evaluate(() => window.pigeon.state.playing), false);
+    assert.equal(await page.locator("#play-label").textContent(), "Launch");
+    assert.equal(await page.locator(".antenna-icon").count(), 2);
     stage = "selected optics";
     assert.equal(initial.target, 3048, "Default flight targets the 10,000 ft class");
     assert.equal(initial.scenario.camera.lens, "CIL212");
