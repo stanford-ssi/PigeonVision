@@ -94,8 +94,8 @@ vec3 scatter(vec3 d,vec2 path,float z,out vec3 trans){
  float pm=(1.-G*G)/(4.*PI*pow(1.+G*G-2.*G*mu,1.5));
  vec3 single=(BR*path.x*pr+BM*path.y*pm)/max(ext,vec3(1e-7));
  // Crude multiple scattering: an isotropic share of the sky.
- vec3 multi=(BR*path.x*.085+BM*path.y*.05)/max(ext,vec3(1e-7));
- return (single*sunLight(z+1500.)+multi*vec3(.8,.9,1.))*(1.-trans)*1.9;
+ vec3 multi=(BR*path.x*.045+BM*path.y*.028)/max(ext,vec3(1e-7));
+ return (single*sunLight(z+1500.)+multi*vec3(.8,.9,1.))*(1.-trans)*1.45;
 }
 vec3 skyRadiance(vec3 d,float z){
  vec3 tr;vec3 c=scatter(d,densitySky(z,d.z),z,tr);
@@ -105,7 +105,7 @@ vec3 skyRadiance(vec3 d,float z){
 }
 const vec3 SKY_E=vec3(.36,.47,.66); // sky irradiance relative to the sun
 vec3 tonemap(vec3 x){
- x*=2.6;
+ x*=2.7;
  x=clamp((x*(2.51*x+.03))/(x*(2.43*x+.59)+.14),0.,1.);
  return pow(x,vec3(1./2.2));
 }
@@ -221,6 +221,7 @@ void airbrakes(vec3 o,vec3 d,inout Hit h){
   }
  } else if(length(hit)>bodyR&&length(hit)<mix(bodyR,leafR,deploy)){h.t=t;h.n=vec3(0,0,-sign(d.z));h.albedo=vec3(.5);h.gloss=.5;h.kind=3;}
 }
+float fabricT; // fabric transmittance of the last canopy hit
 void drogue(vec3 o,vec3 d,inout Hit h){
  vec3 q=o-canopyCenter;
  vec3 lo=vec3(dot(q,canopyEx),dot(q,canopyEy),dot(q,canopyAxis)),ld=vec3(dot(d,canopyEx),dot(d,canopyEy),dot(d,canopyAxis));
@@ -228,13 +229,26 @@ void drogue(vec3 o,vec3 d,inout Hit h){
  float a=dot(rd,rd),b=dot(oc,rd),disc=b*b-a*(dot(oc,oc)-1.);if(disc<0.)return;
  for(int s=0;s<2;s++){
   float t=(-b+(s==0?-1.:1.)*sqrt(disc))/a;vec3 p=lo+t*ld;
-  if(t<=1e-4||t>=h.t||p.z<-.15*canopyDepth)continue;
-  float ang=atan(p.y,p.x),gore=fract(ang/(2.*PI)*6.);
-  // Radial seams and a slight scallop between lines.
-  float seam=smoothstep(.0,.03,min(gore,1.-gore));
-  vec3 c=mod(floor(ang/(2.*PI)*6.+6.),2.)<.5?vec3(.52,.13,.035):vec3(.022,.022,.024);
-  vec3 n=normalize(p/(radii*radii));n=n.x*canopyEx+n.y*canopyEy+n.z*canopyAxis;
-  h.t=t;h.n=n;h.albedo=c*mix(.6,1.,seam);h.gloss=.15;h.kind=2;
+  if(t<=1e-4||t>=h.t)continue;
+  float ang=atan(p.y,p.x),gf=ang/(2.*PI)*6.+6.,gore=fract(gf),edge=min(gore,1.-gore);
+  float hem=-.15*canopyDepth;
+  if(p.z<hem)continue;
+  float rn=length(p.xy)/canopyRadius;
+  vec3 n=normalize(p/(radii*radii));
+  // Each gore billows between its radial seams; tilt the normal across it.
+  vec3 tang=normalize(vec3(-p.y,p.x,0.)+vec3(1e-6,0,0));
+  n=normalize(n+tang*(gore-.5)*1.6*smoothstep(.12,.35,rn));
+  // Soft radial wrinkles near the loaded hem.
+  n=normalize(n+tang*.06*sin(ang*54.+rn*9.)*smoothstep(.75,1.,rn));
+  bool orange=mod(floor(gf),2.)<.5;
+  vec3 c=orange?vec3(.5,.12,.03):vec3(.02,.02,.022);
+  float tape=smoothstep(.012,.028,edge);
+  float hemBand=smoothstep(hem+.02*canopyDepth,hem+.035*canopyDepth,p.z);
+  float reinforce=min(tape,hemBand);
+  c=mix(vec3(.035,.035,.034),c,reinforce);
+  h.t=t;h.n=n.x*canopyEx+n.y*canopyEy+n.z*canopyAxis;h.albedo=c;h.gloss=.12;h.kind=2;
+  // Ripstop transmits in proportion to dye; tapes and black gores barely.
+  fabricT=(orange?.45:.05)*mix(.25,1.,reinforce);
  }
 }
 // Pad hardware in pad coordinates: a 1515 rail on a stand, blast plate.
@@ -261,6 +275,34 @@ float rocketShadow(vec3 p){
   s=clamp((uw-us*ws)/max(uu-us*us,1e-9),0.,1.);tt=max(0.,dot(r0+u*s-p,SUN));shade*=smoothstep(.012,.04,length(p+SUN*tt-(r0+u*s)));}
  return mix(1.,shade,1.-smoothstep(150.,350.,altitude));
 }
+// Pattern of wavelength lambda fades to its mean once a pixel covers it.
+float resolved(float fp,float lambda){return 1.-smoothstep(.2*lambda,.7*lambda,fp);}
+float nz(vec2 q,int c){return textureLod(detailNoise,q/32.,0.)[c];} // unit-period noise
+// Smooth fall-line direction from the undetailed height field.
+vec2 fallLine(vec2 p,int g,out float slope){
+ float span=g==0?FINE_SPAN:FAR_SPAN,e=g==0?48.:320.;
+ vec2 u=p/span+.5,k=vec2(e/span,0.);
+ vec2 gr=g==0?vec2(textureLod(fineHeight,u+k,0.).r-textureLod(fineHeight,u-k,0.).r,textureLod(fineHeight,u+k.yx,0.).r-textureLod(fineHeight,u-k.yx,0.).r)
+            :vec2(textureLod(farHeight,u+k,0.).r-textureLod(farHeight,u-k,0.).r,textureLod(farHeight,u+k.yx,0.).r-textureLod(farHeight,u-k.yx,0.).r);
+ gr/=2.*e;slope=length(gr);return slope>1e-5?-gr/slope:vec2(0,1);
+}
+// Noise stretched along the fall line without coordinate swirl: four fixed
+// orientations blended by alignment with the local downslope direction.
+// mode 0: value; 1: thin threads where the noise crosses its mean.
+float flowNoise(vec2 p,vec2 down,float aniso,vec2 scale,int c,int mode){
+ float sum=0.,wsum=0.;
+ for(int i=0;i<4;i++){
+  float a=float(i)*PI*.25;vec2 dir=vec2(cos(a),sin(a));
+  // Where the fall line is ill-defined (flats, knobs) all orientations blend.
+  float al=dot(dir,down),w=max(0.,2.*al*al-1.);w=mix(1.,w*w,aniso);
+  if(w<1e-3)continue;
+  vec2 q=vec2(dot(p,vec2(-dir.y,dir.x))/scale.x,dot(p,dir)/scale.y)+float(i)*vec2(.37,.61);
+  float n=nz(q,c);
+  if(mode==1)n=pow(1.-abs(2.*n-1.),5.)+.5*pow(1.-abs(2.*nz(q*vec2(2.3,1.7)+.41,(c+2)&3)-1.),8.);
+  sum+=w*n;wsum+=w;
+ }
+ return sum/max(wsum,1e-4);
+}
 vec3 shadeTerrain(vec3 p,vec3 d,float t,int g){
  float fp=footprintAt(t);
  float span=g==0?FINE_SPAN:FAR_SPAN;vec2 uv=p.xy/span+.5;
@@ -275,9 +317,38 @@ vec3 shadeTerrain(vec3 p,vec3 d,float t,int g){
  vec4 m1=texture(detailNoise,p.xy/1900.),m2=texture(detailNoise,p.xy/310.+.37),m3=texture(detailNoise,p.xy/47.+.71);
  float rock=pr.b,wash=pr.a;
  alb*=1.+.22*(m1.r-.5)+.16*(m2.g-.5)*(1.-smoothstep(60.,400.,fp))+.14*(m3.b-.5)*(1.-smoothstep(4.,40.,fp));
- // Sandy wash beds: sinuous pale ribbons with shrub-lined banks.
+ float sc=g==0?1.:5.;
+ float slope;vec2 down=fallLine(p.xy,g,slope),across=vec2(-down.y,down.x);
+ float aniso=smoothstep(.004,.02,slope);
+ float fan=(1.-rock)*smoothstep(.003,.012,slope)*(1.-smoothstep(.16,.3,slope));
+ // Alluvial surfaces of different ages: older bars carry dark reddish desert
+ // varnish on packed pavement; younger surfaces are grey, loose and paler.
+ // Surfaces are lobes elongated down-fan, cut by the younger channels.
+ vec2 pw=p.xy+70.*sc*(vec2(nz(p.xy/(520.*sc),3),nz(p.xy/(520.*sc)+.5,0))-.5);
+ float age=smoothstep(.46,.6,flowNoise(pw+180.*sc*(vec2(nz(p.xy/(2100.*sc),2),nz(p.xy/(2100.*sc)+.5,1))-.5),down,aniso,vec2(700.,2400.)*sc,1,0)+.2*(m2.b-.5)+.1*(nz(p.xy/(170.*sc),2)-.5)*resolved(fp,170.*sc));
+ age*=1.-smoothstep(.2,.5,wash);
+ alb*=mix(vec3(1.03,1.02,1.01),vec3(.87,.81,.75),age*(1.-rock));
+ // Braided distributary threads running down the fans (pale sand in the
+ // channels, darker bars between), aligned with the local fall line.
+ float thread=flowNoise(pw,down,aniso,vec2(46.,380.)*sc,0,1);
+ float braid=fan*(.35+.65*smoothstep(.15,.6,wash))*(1.-.6*age)*resolved(fp,46.*sc);
+ alb=mix(alb*mix(1.,.93,braid),vec3(.46,.42,.35),clamp(thread,0.,1.)*braid*.55);
+ // Main wash beds: sinuous pale ribbons with shrub-lined banks.
  float bed=smoothstep(.45,.75,wash+.35*(m2.r-.5));
- alb=mix(alb,vec3(.29,.24,.18),bed*.45*(1.-rock));
+ alb=mix(alb,vec3(.31,.26,.195),bed*.5*(1.-rock));
+ alb*=1.-.18*smoothstep(.3,.45,wash)*(1.-bed)*(1.-rock);
+ // Bedrock: gently dipping sedimentary beds of alternating resistance,
+ // dark varnish streaks down steep faces, and pale talus in hollows.
+ if(rock>.02){
+  float layer=(p.z+dot(p.xy,vec2(.07,-.05)))/(19.*sc)+.9*(m1.b-.5);
+  float beds=.5+.5*sin(6.2832*layer)*.65+.35*sin(6.2832*layer*2.63+1.7);
+  float bedFade=resolved(fp,19.*sc);
+  alb*=mix(1.,mix(.78,1.16,beds),bedFade*rock*smoothstep(.25,.6,slope));
+   float streak=smoothstep(.55,.85,flowNoise(p.xy,down,aniso,vec2(9.,70.)*sc,1,0))*resolved(fp,9.*sc);
+  alb*=1.-.3*streak*rock*smoothstep(.45,.8,slope);
+  float scree=rock*smoothstep(.35,.55,slope)*(1.-smoothstep(.7,.95,slope))*smoothstep(.45,.65,m2.a);
+  alb=mix(alb,alb*vec3(1.14,1.11,1.07),scree*.6);
+ }
  // Creosote bush speckle; resolved as individual shrubs close to the camera.
  float shrubField=(1.-rock)*(1.-smoothstep(.7,.95,bed))*smoothstep(.2,.6,m1.g+.25);
  if(fp<6.){
@@ -308,6 +379,15 @@ vec3 shadeTerrain(vec3 p,vec3 d,float t,int g){
   alb=mix(alb,paint,car);
   float tent=(1.-smoothstep(2.8,3.,max(abs(q.x-25.),abs(q.y-3.))))*lot;
   alb=mix(alb,vec3(.62,.62,.6),tent);
+ }
+ // Near field: desert pavement and pad gravel, clasts to cobbles. Each scale
+ // fades out before it drops below a pixel, so it never aliases.
+ if(fp<6.){
+  float r0=resolved(fp,.07),r1=resolved(fp,.25),r3=resolved(fp,4.);
+  float c0=nz(p.xy/.07,3),c1=nz(p.xy/.25+.3,0),c3=nz(p.xy/4.,2);
+  float pebbles=(smoothstep(.6,.7,c0)-.8*smoothstep(.62,.7,1.-c0))*r0;
+  float cobbles=(smoothstep(.64,.72,c1)-.6*smoothstep(.64,.72,1.-c1))*r1;
+  alb*=1.+(.13*pebbles+.08*cobbles)*(1.-rock*.5)+.07*(c3-.5)*r3;
  }
  float sunVis=pr.r*rocketShadow(p);
  float z=p.z+SITE_ASL;
@@ -357,8 +437,20 @@ vec3 shadeObject(Hit h,vec3 d,vec3 wp){
  vec3 E=sun*max(0.,nl)+SKY_E*(.55+.45*n.z)+vec3(.13,.11,.085)*(.55-.45*n.z);
  vec3 c=h.albedo/PI*E;
  if(h.kind==2){
-  // Thin ripstop: sunlight transmitted through the canopy seen from inside.
-  float back=max(0.,-nl);c+=h.albedo*vec3(1.,.55,.35)*sun*back*.35/PI+h.albedo*SKY_E*.12;
+  // Thin ripstop, lit from both faces. Reflection uses the face toward the
+  // viewer; light arriving on the far face is transmitted, tinted by the dye.
+  vec3 nv=dot(n,d)<0.?n:-n;
+  float lit=dot(nv,SUN);
+  vec3 front=sun*max(0.,lit)+SKY_E*(.5+.5*nv.z)+vec3(.12,.1,.08)*(.5-.5*nv.z);
+  vec3 back=sun*max(0.,-lit)+SKY_E*(.5-.5*nv.z)+vec3(.12,.1,.08)*(.5+.5*nv.z);
+  vec3 tint=normalize(h.albedo+1e-4)*1.7;
+  // Grazing views through the sheet lose more to reflection at the fibres.
+  float view=sqrt(max(0.,-dot(d,nv)));
+  c=h.albedo/PI*front*(1.-fabricT)+tint*fabricT/PI*back*.55*mix(.45,1.,view);
+  // Nylon sheen at grazing view.
+  float f=pow(1.-max(0.,dot(-d,nv)),4.);
+  c+=skyRadiance(normalize(reflect(d,nv)+vec3(0,0,.05)),altitude+SITE_ASL)*f*.08;
+  return c;
  }
  vec3 hv=normalize(SUN-d);
  float spec=pow(max(0.,dot(n,hv)),mix(8.,90.,h.gloss))*h.gloss*.06*step(0.,nl);

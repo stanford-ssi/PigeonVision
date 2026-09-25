@@ -454,9 +454,14 @@ export function terrainMaps() {
       r -= 0.09 * varnish; gg -= 0.075 * varnish; b -= 0.055 * varnish;
       const shrubs = clamp(0.35 + 0.5 * n2 + 0.35 * wash[id], 0, 1) * (1 - rock) * (1 - pl[id]);
       r = mix(r, 0.12, 0.28 * shrubs); gg = mix(gg, 0.115, 0.28 * shrubs); b = mix(b, 0.075, 0.28 * shrubs);
-      const rr = mix(0.25, 0.155, west), rg = mix(0.225, 0.115, west), rb = mix(0.19, 0.09, west);
+      // Weathered, varnished rock is darker and warmer than fresh stone.
+      // Colluvium on range slopes: varnished stony soil with scrub, darker
+      // and browner than basin alluvium. Basin slopes (< 5 %) are unaffected.
+      const colluvium = smooth(0.07, 0.28, slope) * (1 - rock);
+      r = mix(r, 0.2, 0.65 * colluvium); gg = mix(gg, 0.163, 0.65 * colluvium); b = mix(b, 0.122, 0.65 * colluvium);
+      const rr = mix(0.2, 0.135, west), rg = mix(0.168, 0.098, west), rb = mix(0.133, 0.074, west);
       const strata = 0.5 + 0.5 * Math.sin(z / (kind === "fine" ? 23 : 70) + 3 * n1);
-      const rockTone = 0.82 + 0.3 * strata * (1 - west) + 0.15 * n3;
+      const rockTone = 0.86 + 0.2 * strata * (1 - west) + 0.12 * n3;
       r = mix(r, rr * rockTone, rock); gg = mix(gg, rg * rockTone, rock); b = mix(b, rb * rockTone, rock);
       // Loose talus and colluvium in hollows are paler than the ribs.
       const talus = smooth(0, 0.6, cavity) * (1 - rock * 0.5) * smooth(80, 400, z - 0) * 0.4;

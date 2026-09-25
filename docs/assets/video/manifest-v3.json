@@ -1,7 +1,7 @@
 {
   "pipeline_version": 3,
   "camera_scope": "two-fisheyes-ground-stitch",
-  "generated_at": "2026-09-24T04:48:48.709Z",
+  "generated_at": "2026-09-25T01:23:32.035Z",
   "smoke": false,
   "preset": "900",
   "sensor": "IMX900",
@@ -78,14 +78,14 @@
   },
   "fingerprint": {
     "algorithm": "sha256",
-    "scene_sha256": "4ba9374483ee2af54c78182a19afaf090222d4bc445ba36b86b726622dcd5814",
+    "scene_sha256": "4b23134ff9d115b3d6a275c206e616d83c185f4fe7c666dfcbb48c400a0b2949",
     "flight_sha256": "cd6b0db4adbd32fe13ca087c6b7c79d642737241fda068b8bce99830c4b47563",
     "config_sha256": "cb07e9aa463c3772c05a1a39d6ad2ea9f71a409944da25657522ea5d38fcf721",
     "inputs": {
       "scenario.js": "ae2ff57c4704da7d2b97ea9ac68f168838b3c72fc2296827d4a5ef7c60979495",
       "scene.js": "a9faecfb12ac695a868b6260786a04960daad14ceb4574fde4bb1218964f80cf",
-      "engine.js": "d93427ff2e3be4818f6d96ee57f1a97ef6b8f3275165906f5abdca7f0b829b55",
-      "terrain.js": "711092a66eff13c49d337fdb3e45df357897bff93e8ab3102e43a7d98dc06677",
+      "engine.js": "41ee8cec51caaee6230f1627215b39f90604f84e302c677256363cd599c65e5f",
+      "terrain.js": "6c380326487b71d434caee2248b52ef95a701a7708656e5fd201598808e987af",
       "rocket.js": "1833c1535df762b8d5326816d7981efc29185abce4e497c11080f15c58a4798f",
       "assets/launch.json": "cd6b0db4adbd32fe13ca087c6b7c79d642737241fda068b8bce99830c4b47563",
       "assets/rocket.json": "8a30d95d67eeef1c82410fbc7419fd1dddde5a371a82c72fd400d5f650dc3316",
@@ -132,7 +132,7 @@
     "ts": "cil212-dual.ts",
     "video_streams": 2,
     "mux_target_mbps": 9,
-    "measured_ts_mbps": 8.998842181818182,
+    "measured_ts_mbps": 8.998933333333333,
     "mux_delay_s": 0.5,
     "pcr_period_ms": 20,
     "pat_period_s": 0.1,
@@ -143,18 +143,18 @@
         "256": {
           "first_dts_s": 1,
           "first_decode_lead_ms": 499.4888888888889,
-          "min_packet_slack_ms": 158.82844444444368,
+          "min_packet_slack_ms": 191.58222222222145,
           "pes_count": 990
         },
         "257": {
           "first_dts_s": 1,
           "first_decode_lead_ms": 499.4888888888889,
-          "min_packet_slack_ms": 141.2817777777775,
+          "min_packet_slack_ms": 173.78933333333356,
           "pes_count": 990
         }
       }
     },
-    "measured_bytes": 37120224,
+    "measured_bytes": 37120600,
     "measurement": "Whole TS file bytes × 8 / decoded frame duration"
   },
   "encoder_arguments": {
