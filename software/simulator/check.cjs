@@ -59,7 +59,12 @@ let stage = "startup";
     }
     return { hash: hash >>> 0, colors: colors.size, width: canvas.width, height: canvas.height };
   });
-  const choose = (selector, value) => page.selectOption(selector, String(value));
+  const choose = async (selector, value) => {
+    await page.locator(selector).evaluate((el) => {
+      for(let p=el.parentElement;p;p=p.parentElement)if(p.tagName === "DETAILS")p.open=true;
+    });
+    return page.selectOption(selector, String(value));
+  };
   const seek = async (time) => {
     await page.evaluate((t) => window.pigeon.seek(t), time);
     await page.waitForFunction(() => !window.pigeon.state.loading && !window.pigeon.state.playing);
@@ -79,14 +84,28 @@ let stage = "startup";
       manifest: window.pigeon.state.manifest,
     }));
     stage = "selected optics";
-    assert.equal(initial.target, 3048, "Default flight must be 10,000 ft AGL");
+    assert.equal(initial.target, 3048, "Default flight targets the 10,000 ft class");
     assert.equal(initial.scenario.camera.lens, "CIL212");
     assert.equal(initial.scenario.camera.crop_px, 1552);
     assert.equal(initial.scenario.fps, 30);
     assert.equal(initial.scenario.video.per_camera_mbps, 4);
     assert.equal(await page.locator("#preset").inputValue(), "900");
-    report.checks.push("CIL212 / 1552-square / 30 fps / 10,000 ft defaults");
+    report.checks.push("CIL212 / 1552-square / 30 fps / OpenRocket flight");
 
+    stage = "OpenRocket exterior";
+    const exterior = await page.evaluate(async () => {
+      const { AIRFRAME, finFaces } = await import("./scene.js");
+      return { ...AIRFRAME, fins: finFaces(window.renderSequenceMetadata().geometry.diameter_mm / 2000).length };
+    });
+    assert.ok(Math.abs(initial.scenario.geometry.diameter_mm - 156.718) < 1e-6, "OpenRocket outer diameter");
+    assert.ok(Math.abs(exterior.noseLength - .75) < 1e-6, "OpenRocket nose length");
+    assert.ok(Math.abs(exterior.shoulder + exterior.noseLength - exterior.bottom - 2.9532) < 1e-6, "OpenRocket overall length");
+    assert.equal(exterior.fins, 3, "OpenRocket fin count");
+    report.checks.push("OpenRocket exterior: 156.718 mm OD, 2.9532 m length, three fins");
+
+    assert.ok(await page.locator("#view-mode").isVisible(), "projection selector is always visible");
+    assert.ok(await page.locator("#source-tabs").isVisible(), "source controls are always visible");
+    assert.equal(await page.locator("details.view-options").count(), 0);
     stage = "model camera views";
     await page.evaluate(() => window.pigeon.setSource("model"));
     await seek(15);
@@ -123,7 +142,22 @@ let stage = "startup";
     await seek(deployment + 1);
     await page.click('[data-look="canopy"]');
     await ensureClean();
-    report.checks.push("model playback, backward seek, deployment look-up");
+    await page.click('[data-look="nadir"]');
+    assert.deepEqual(await page.evaluate(() => ({earth:window.pigeon.state.earth,pitch:window.pigeon.state.pitch})), {earth:true,pitch:-89.9}, "Ground-down must stay in the Earth frame after separation");
+    await page.click('[data-look="airbrakes"]');
+    await seek(deployment + 3);
+    const alignment = await page.evaluate(async () => {
+      const { recoveryPose, boosterToWorld, bodyRadius } = await import("./scene.js");
+      const s=window.pigeon.state, f=s.frameState, pose=recoveryPose(f);
+      const v=boosterToWorld([bodyRadius(f),0,-f.height/1000],pose.booster);
+      const yaw=s.yaw*Math.PI/180,pitch=s.pitch*Math.PI/180;
+      return (v[0]*Math.cos(pitch)*Math.cos(yaw)+v[1]*Math.cos(pitch)*Math.sin(yaw)+v[2]*Math.sin(pitch))/Math.hypot(...v);
+    });
+    assert.ok(alignment > .999999, "Airbrake view must follow the separated booster");
+    await page.locator("#screen").focus();
+    await page.keyboard.press("ArrowRight");
+    assert.equal(await page.evaluate(() => window.pigeon.state.activeLook), null, "Manual pan releases target tracking");
+    report.checks.push("model playback, backward seek, recovery targets, Earth-down and manual pan");
 
     const encodedButton = page.locator('[data-source="received"]');
     const encodedAvailable = !!initial.manifest && !(await encodedButton.isDisabled());
@@ -233,6 +267,39 @@ let stage = "startup";
     await choose("#scenario", "launch.json");
     await page.waitForFunction(() => window.flightData.inputs.target_apogee_m === 3048);
     report.checks.push("geometry control and alternate flight force model mode");
+
+    stage = "restart and hardware links";
+    for (const source of encodedAvailable ? ["model", "received"] : ["model"]) {
+      await page.evaluate(s => window.pigeon.setSource(s), source);
+      await page.click("#restart");
+      await page.waitForFunction(() => window.pigeon.state.time === 0 && !window.pigeon.state.loading);
+      await page.evaluate(() => window.pigeon.inspect());
+      const pad = await digest("#raw-a");
+      await page.click("#full-rig");
+      const padRig = await digest("#rig");
+      await seek(deployment + 4);
+      await page.click('[data-look="canopy"]');
+      await page.click("#restart");
+      await page.waitForFunction(() => window.pigeon.state.time === 0 && !window.pigeon.state.loading);
+      await page.evaluate(() => window.pigeon.inspect());
+      assert.equal((await digest("#raw-a")).hash, pad.hash, `${source}: restart must restore the actual pad image`);
+      assert.equal((await digest("#rig")).hash, padRig.hash, `${source}: restart must restore the assembled rocket diagram`);
+      assert.deepEqual(await page.evaluate(() => {
+        const s=window.pigeon.state;
+        return {playing:s.playing,mode:s.mode,yaw:s.yaw,pitch:s.pitch,earth:s.earth,activeLook:s.activeLook,deployed:s.frameState.tau>0};
+      }), {playing:false,mode:0,yaw:25,pitch:-8,earth:true,activeLook:null,deployed:false});
+    }
+    for (const selected of [0, 1, 2, 3, 4, 5, 7]) {
+      await page.selectOption("#view-mode", String(selected));
+      await page.click("#restart");
+      await page.waitForFunction(() => window.pigeon.state.time === 0 && !window.pigeon.state.loading);
+      assert.equal(await page.evaluate(() => window.pigeon.state.mode), selected, "restart preserves selected projection");
+      assert.equal(await page.locator("#view-mode").inputValue(), String(selected));
+    }
+    await page.click("#ring-view");
+    assert.equal(await page.locator('#hardware a[href*="hardware/carrier"]').count(), 1);
+    assert.equal(await page.locator('#hardware a[href*="hardware/rf-frontend"]').count(), 1);
+    report.checks.push("restart restores pad and rocket, preserves all projections; hardware links present");
 
     stage = "mobile layout";
     await page.setViewportSize({ width: 390, height: 844 });
