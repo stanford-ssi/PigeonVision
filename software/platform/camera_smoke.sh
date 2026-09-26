@@ -12,14 +12,14 @@ uname -a > "$session_dir/kernel.txt"
 vcgencmd get_throttled > "$session_dir/throttled.txt"
 for camera in 0 1; do
     /usr/local/bin/rpicam-still --camera "$camera" --nopreview --vflip --timeout 3000 \
-        --mode 2064:1552:10 --width 2064 --height 1552 \
+        --mode 2064:1552:10 --viewfinder-mode 2064:1552:10 --width 2064 --height 1552 \
         --metadata "$session_dir/camera-$camera.json" --metadata-format json \
         --output "$session_dir/camera-$camera.jpg" 2> "$session_dir/camera-$camera.log"
 done
 pids=()
 for camera in 0 1; do
     /usr/local/bin/rpicam-still --camera "$camera" --nopreview --vflip --timeout 3000 \
-        --mode 2064:1552:10 --width 2064 --height 1552 \
+        --mode 2064:1552:10 --viewfinder-mode 2064:1552:10 --width 2064 --height 1552 \
         --metadata "$session_dir/dual-$camera.json" --metadata-format json \
         --output "$session_dir/dual-$camera.jpg" 2> "$session_dir/dual-$camera.log" &
     pids+=("$!")
