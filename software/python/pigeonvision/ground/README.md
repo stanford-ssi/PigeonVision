@@ -29,6 +29,15 @@ The tap persists across demux reconnects and records each received datagram once
 
 Saved transports begin paused with one pair loaded. Play, Pause, Step pair and Restart share one server playback timeline across connected browser tabs; connecting another replay viewer restarts that shared timeline. Raw A/B views work without calibration. The panoramic, perspective, and coverage views require a Mei bundle; they never substitute simulator imagery for missing camera data.
 
+For lens inspection, select A or B and use the 1–8× slider or mouse wheel to
+magnify; drag to pan within the image. At 1× the entire transmitted rectangle
+fits the viewport. `Reset view` restores that camera's zoom and centre. Each
+camera also has an independent `Rotate 180°` display toggle, which reset does
+not change. These controls affect the raw viewer only, not recorded pixels,
+timestamps, or calibrated geometry. Settings are currently kept for the life of
+the page; a page reload resets them. Display zoom cannot restore pixels removed
+by the capture crop or rays outside the physical sensor.
+
 The crop uses full-sensor pixel centres: `(u - crop_x + 0.5) * scale - 0.5`, followed by output flips. Per-camera rotations use +Z forward through A, +X right and +Y down for the rig. The Mei `xi > 1` second projection branch is rejected. Optional `max_theta_deg` bounds measured coverage; absent angular limits remain explicitly unvalidated.
 
 Session camera descriptions and per-frame canonical `sensor_crop` are checked against the bundle. Device, negotiated flips, sensor mode, output dimensions or crop mismatches disable panoramic views. Missing evidence is explicitly unverified. A raw `scaler_crop` is not treated as full-sensor coordinates without the native capture service's origin/scale conversion. Imported calibration is not a statement that hardware synchronization, edge quality, lens retention, or rig alignment has passed physical testing.
@@ -48,3 +57,10 @@ WebSocket `/ws` carries the shared Annex-B access-unit envelope and typed status
 `test_ground_recording.py` checks exact received bytes, recorded metadata/timestamp replay, exclusive paths, partial writes, queue overflow, disk/finalization errors and live-read isolation.
 
 The optional Playwright checks require a running local viewer and desktop Chrome. `test_ground_browser.cjs` verifies dual decode, paused stepping and playback. `test_ground_shader.cjs` compares GPU texture coordinates against Python reference vectors and checks geometry mismatch handling. All these checks use explicitly generated or pre-existing synthetic media. No real camera calibration or hardware qualification is implied.
+
+`test_ground_focus.cjs` and `test_ground_errors.cjs` are offline Node checks.
+`test_ground_focus_browser.cjs` verifies focus/rotation controls and GPU sampling
+with routed local assets and a fake WebSocket; it never connects to the live
+receiver. `test_ground_layout_browser.cjs` checks the layout with injected body
+elements resembling browser extensions. These isolated browser checks use an
+installed Chrome and Playwright.
