@@ -1,0 +1,429 @@
+import { Renderer } from "./projection.js";
+import { checkGeometry } from "./geometry.js";
+
+const $ = (id) => document.getElementById(id);
+const state = {
+  connected: false,
+  replay: false,
+  playing: false,
+  status: null,
+  calibration: null,
+  pair: null,
+  pairs: 0,
+  resetCount: 0,
+  metadata: {},
+  descriptions: {},
+  frames: {},
+  geometry: { errors: [], unverified: [] },
+  error: null,
+};
+const camera = () => ({
+  decoder: null,
+  codec: null,
+  waiting: true,
+  epoch: 0,
+  pending: [],
+  decoded: 0,
+  unmatched: 0,
+  resets: 0,
+  lastArrival: 0,
+  lastTimestamp: null,
+  size: null,
+});
+const cameras = { A: camera(), B: camera() };
+let renderer,
+  socket,
+  connectionEpoch = 0;
+function fail(message) {
+  state.error = String(message);
+  $("error").textContent = state.error;
+  $("error").hidden = false;
+}
+function clearError() {
+  state.error = null;
+  $("error").hidden = true;
+}
+function resetCamera(name) {
+  const c = cameras[name];
+  c.epoch++;
+  if (c.decoder?.state !== "closed") c.decoder?.close();
+  c.decoder = null;
+  c.codec = null;
+  c.waiting = true;
+  for (const f of c.pending) f.close();
+  c.pending = [];
+  c.resets++;
+  c.lastArrival = 0;
+  c.lastTimestamp = null;
+  c.size = null;
+}
+function reset() {
+  for (const n of ["A", "B"]) resetCamera(n);
+  state.pair = null;
+  state.frames = {};
+  state.descriptions = {};
+  state.resetCount++;
+  validateGeometry();
+}
+function configureCalibration(bundle) {
+  state.calibration = bundle;
+  renderer.calibration = bundle;
+  for (const o of $("view").options)
+    if (!["a", "b"].includes(o.value)) o.disabled = !bundle;
+  if (!bundle) {
+    $("calibration").textContent =
+      "Uncalibrated: raw cameras are available. A measured calibration bundle is required for the panorama.";
+    $("view").value = "a";
+    renderer.mode = "a";
+  } else {
+    const bounded = Object.values(bundle.cameras).every(
+      (c) => c.max_theta_deg != null,
+    );
+    const alignment = bundle.rig_alignment_status || "unverified";
+    $("calibration").textContent =
+      `Mei calibration loaded. Rig alignment: ${alignment}. ${bounded ? "Angular coverage limits supplied." : "Edge angular coverage is unvalidated."} Validate fit and mounted seam alignment with held-out real images.`;
+  }
+  validateGeometry();
+  renderer.draw();
+}
+
+function validateGeometry() {
+  if (!state.calibration) return;
+  state.geometry = checkGeometry(
+    state.calibration,
+    state.descriptions,
+    state.frames,
+    { A: cameras.A.size, B: cameras.B.size },
+  );
+  const blocked = state.geometry.errors.length > 0;
+  renderer.calibration = blocked ? null : state.calibration;
+  for (const option of $("view").options)
+    if (!["a", "b"].includes(option.value)) option.disabled = blocked;
+  if (blocked) {
+    renderer.mode = "a";
+    $("view").value = "a";
+  }
+  const bundle = state.calibration;
+  const bounded = Object.values(bundle.cameras).every(
+    (c) => c.max_theta_deg != null,
+  );
+  $("calibration").textContent =
+    `Mei calibration loaded. Rig alignment: ${bundle.rig_alignment_status || "unverified"}. ${bounded ? "Angular coverage limits supplied." : "Edge angular coverage is unvalidated."} ` +
+    (blocked
+      ? `PANORAMA DISABLED: ${state.geometry.errors.join("; ")}.`
+      : state.geometry.unverified.length
+        ? `Runtime geometry unverified: ${state.geometry.unverified.join("; ")}.`
+        : "Capture crop, orientation, dimensions and camera identity match calibration.");
+}
+
+function pairFrames() {
+  const a = cameras.A.pending,
+    b = cameras.B.pending;
+  const maxSkew = Number($("max-skew").value) * 1000;
+  while (a.length && b.length) {
+    const delta = a[0].timestamp - b[0].timestamp;
+    // Timestamp order is retained. Never manufacture a frame or rebase a camera.
+    if (Math.abs(delta) <= maxSkew) {
+      const fa = a.shift(),
+        fb = b.shift();
+      renderer.upload("A", fa, true);
+      renderer.upload("B", fb, true);
+      state.pair = {
+        a: fa.timestamp,
+        b: fb.timestamp,
+        skew: delta,
+        at: performance.now(),
+      };
+      state.pairs++;
+      fa.close();
+      fb.close();
+      renderer.draw();
+    } else {
+      const name = delta < 0 ? "A" : "B";
+      cameras[name].pending.shift().close();
+      cameras[name].unmatched++;
+    }
+  }
+  for (const name of ["A", "B"])
+    while (cameras[name].pending.length > 6) {
+      cameras[name].pending.shift().close();
+      cameras[name].unmatched++;
+    }
+}
+
+function decoded(name, frame, epoch) {
+  const c = cameras[name];
+  if (epoch !== c.epoch) {
+    frame.close();
+    return;
+  }
+  c.decoded++;
+  c.lastArrival = performance.now();
+  c.lastTimestamp = frame.timestamp;
+  c.size = [frame.displayWidth, frame.displayHeight];
+  validateGeometry();
+  renderer.upload(name, frame);
+  c.pending.push(frame);
+  c.pending.sort((x, y) => x.timestamp - y.timestamp);
+  pairFrames();
+  renderer.draw();
+}
+
+async function accessUnit(buffer, epoch) {
+  if (epoch !== connectionEpoch) return;
+  const bytes = new Uint8Array(buffer);
+  if (bytes.length < 4) throw Error("Truncated frame message");
+  const length = new DataView(buffer).getUint32(0);
+  if (length > 16384 || length + 4 >= bytes.length)
+    throw Error("Invalid frame header");
+  const header = JSON.parse(
+    new TextDecoder().decode(bytes.subarray(4, 4 + length)),
+  );
+  const name = header.camera_id,
+    c = cameras[name];
+  if (
+    !c ||
+    header.type !== "frame" ||
+    !Number.isSafeInteger(header.timestamp_us)
+  )
+    throw Error("Invalid camera frame header");
+  if (c.decoder?.decodeQueueSize > 8) {
+    resetCamera(name);
+    state.pair = null;
+  }
+  if (!c.decoder || c.codec !== header.codec) {
+    if (!header.keyframe) return;
+    resetCamera(name);
+    const current = c.epoch;
+    const config = { codec: header.codec, optimizeForLatency: true };
+    const support = await VideoDecoder.isConfigSupported(config);
+    if (epoch !== connectionEpoch || current !== c.epoch) return;
+    if (!support.supported)
+      throw Error(
+        `Browser cannot decode ${header.codec}. Use a desktop Chrome build with H.264 support.`,
+      );
+    c.decoder = new VideoDecoder({
+      output: (f) => decoded(name, f, current),
+      error: (e) => {
+        fail(`Camera ${name} decoder: ${e.message}`);
+        resetCamera(name);
+        state.pair = null;
+      },
+    });
+    c.decoder.configure(config);
+    c.codec = header.codec;
+    c.waiting = true;
+  }
+  if (c.waiting && !header.keyframe) return;
+  c.waiting = false;
+  c.decoder.decode(
+    new EncodedVideoChunk({
+      type: header.keyframe ? "key" : "delta",
+      timestamp: header.timestamp_us,
+      data: bytes.subarray(4 + length),
+    }),
+  );
+}
+
+function message(value) {
+  if (value.type === "status") {
+    state.status = value;
+    state.replay = value.replay;
+    state.playing = value.playing;
+    $("playback").hidden = !value.replay;
+    $("source-type").textContent = value.replay
+      ? `Recorded · ${value.source.split("/").pop()}`
+      : "Live camera transport";
+    $("receiver").textContent = JSON.stringify(value, null, 2);
+    if (value.reset) reset();
+    if (value.reset_camera) resetCamera(value.reset_camera);
+  } else if (value.type === "calibration")
+    configureCalibration(value.calibration);
+  else if (value.type === "error") fail(value.message);
+  else if (value.type === "metadata") {
+    const record = value.record;
+    state.metadata[record.camera_id || record.type || "latest"] = record;
+    if (record.type === "session") {
+      state.descriptions = {};
+      for (const camera of record.cameras || record.hardware?.cameras || [])
+        state.descriptions[camera.id] = camera;
+    }
+    if (
+      record.camera_id &&
+      ("sensor_crop" in record || "scaler_crop" in record)
+    )
+      state.frames[record.camera_id] = record;
+    validateGeometry();
+    $("metadata").textContent = JSON.stringify(state.metadata, null, 2);
+  }
+}
+
+function connect() {
+  const epoch = ++connectionEpoch;
+  let chain = Promise.resolve(),
+    pending = 0,
+    accepting = true;
+  socket = new WebSocket(
+    `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/ws`,
+  );
+  socket.binaryType = "arraybuffer";
+  socket.onopen = () => {
+    state.connected = true;
+    clearError();
+  };
+  socket.onmessage = (e) => {
+    if (!accepting) return;
+    if (++pending > 48) {
+      accepting = false;
+      fail("Browser receive queue full; reconnecting for fresh keyframes.");
+      socket.close();
+      return;
+    }
+    chain = chain
+      .then(async () => {
+        if (!accepting || epoch !== connectionEpoch) return;
+        if (typeof e.data === "string") message(JSON.parse(e.data));
+        else await accessUnit(e.data, epoch);
+      })
+      .catch((e) => fail(e.message))
+      .finally(() => pending--);
+  };
+  socket.onclose = () => {
+    if (epoch !== connectionEpoch) return;
+    accepting = false;
+    state.connected = false;
+    reset();
+    setTimeout(connect, 1500);
+  };
+  socket.onerror = () => fail("Ground connection failed; reconnecting.");
+}
+
+function diagnostics() {
+  const now = performance.now();
+  $("connection").textContent = state.connected
+    ? `${state.status?.state || "Connected"}${state.replay ? (state.playing ? " · playing" : " · paused") : ""}`
+    : "Disconnected";
+  const missing = [];
+  for (const name of ["A", "B"]) {
+    const c = cameras[name],
+      stale = !state.replay && now - c.lastArrival > 1000;
+    const status = c.lastArrival
+      ? stale
+        ? "Stale"
+        : "Receiving"
+      : "Waiting for keyframe";
+    if (!c.lastArrival || stale)
+      missing.push(`${name}: ${status.toLowerCase()}`);
+    $("camera-" + name.toLowerCase()).textContent =
+      `${status}${c.size ? " · " + c.size.join(" × ") : ""}\nPTS: ${c.lastTimestamp ?? "—"} µs\nDecoded: ${c.decoded} · unmatched: ${c.unmatched}\nDecode queue: ${c.decoder?.decodeQueueSize ?? 0} · waiting pairs: ${c.pending.length}`;
+  }
+  $("pair").textContent = state.pair
+    ? `Presented pairs: ${state.pairs}\nA−B timestamp gap: ${(state.pair.skew / 1000).toFixed(3)} ms\nExposure sync: unverified\nDecoder resets A/B: ${cameras.A.resets}/${cameras.B.resets}`
+    : "No matched frame pair\nExposure sync: unverified";
+  $("position").textContent = state.pair
+    ? `A ${(state.pair.a / 1e6).toFixed(6)} s · B ${(state.pair.b / 1e6).toFixed(6)} s`
+    : "No pair yet";
+  const panorama = !["a", "b"].includes(renderer.mode);
+  let overlay = "";
+  if (!state.connected) overlay = "Disconnected — image held";
+  else if (missing.length) overlay = missing.join(" · ");
+  else if (panorama && !state.pair)
+    overlay = "Waiting for a matched frame pair";
+  else if (panorama && !state.replay && now - state.pair.at > 1000)
+    overlay = "Paired view is stale — image held";
+  else if (state.status?.state === "ended") overlay = "End of recording";
+  $("overlay").textContent = overlay;
+  $("overlay").hidden = !overlay;
+  $("view-caption").textContent = panorama
+    ? `Infinity projection · ${Math.round((renderer.fov * 180) / Math.PI)}° view · shutter sync unverified`
+    : `Camera ${renderer.mode.toUpperCase()} · original fisheye · ${state.calibration ? "calibration loaded" : "uncalibrated"}`;
+}
+
+try {
+  if (!("VideoDecoder" in window))
+    throw Error(
+      "WebCodecs VideoDecoder is unavailable. Open this localhost viewer in a supported desktop Chrome browser.",
+    );
+  renderer = new Renderer($("image"));
+  $("view").onchange = () => {
+    renderer.mode = $("view").value;
+    renderer.draw();
+  };
+  $("seam").onchange = () => {
+    renderer.seam = Number($("seam").value);
+    renderer.draw();
+  };
+  $("home").onclick = () => {
+    renderer.yaw = renderer.pitch = 0;
+    renderer.fov = Math.PI / 2;
+    renderer.draw();
+  };
+  for (const button of document.querySelectorAll("[data-action]"))
+    button.onclick = () => {
+      if (socket.readyState === WebSocket.OPEN)
+        socket.send(
+          JSON.stringify({ type: "control", action: button.dataset.action }),
+        );
+    };
+  let drag = null;
+  const canvas = $("image");
+  canvas.onpointerdown = (e) => {
+    drag = [e.clientX, e.clientY, renderer.yaw, renderer.pitch];
+    canvas.setPointerCapture(e.pointerId);
+  };
+  canvas.onpointermove = (e) => {
+    if (!drag || renderer.mode !== "perspective") return;
+    renderer.yaw = drag[2] - (e.clientX - drag[0]) * 0.004;
+    renderer.pitch = Math.max(
+      -1.56,
+      Math.min(1.56, drag[3] + (e.clientY - drag[1]) * 0.004),
+    );
+    renderer.draw();
+  };
+  canvas.onpointerup = () => (drag = null);
+  canvas.onpointercancel = () => (drag = null);
+  canvas.addEventListener(
+    "wheel",
+    (e) => {
+      e.preventDefault();
+      renderer.fov = Math.max(
+        0.25,
+        Math.min(2.6, renderer.fov * Math.exp(e.deltaY * 0.001)),
+      );
+      renderer.draw();
+    },
+    { passive: false },
+  );
+  canvas.onkeydown = (e) => {
+    if (e.code === "Space" && state.replay) {
+      e.preventDefault();
+      socket.send(
+        JSON.stringify({
+          type: "control",
+          action: state.playing ? "pause" : "play",
+        }),
+      );
+    }
+    if (e.code === "Period" && state.replay)
+      socket.send(JSON.stringify({ type: "control", action: "step" }));
+  };
+  new ResizeObserver(() => renderer.draw()).observe(canvas);
+  setInterval(diagnostics, 200);
+  connect();
+  // Read-only, compact diagnostics for browser acceptance tests.
+  window.pigeonGround = {
+    snapshot: () => ({
+      connected: state.connected,
+      pairs: state.pairs,
+      pair: state.pair,
+      calibrated: !!renderer.calibration,
+      geometry: state.geometry,
+      errors: state.error,
+      decoded: { A: cameras.A.decoded, B: cameras.B.decoded },
+      pending: { A: cameras.A.pending.length, B: cameras.B.pending.length },
+    }),
+  };
+} catch (error) {
+  fail(error.message);
+  $("overlay").textContent = "Viewer unavailable";
+}

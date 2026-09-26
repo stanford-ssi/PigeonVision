@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pigeonvision"
+version = "0.1.0"
+description = "PigeonVision dual-camera bench tools and ground receiver"
+requires-python = ">=3.11"
+dependencies = [
+  "av>=14,<17",
+  "aiohttp>=3.11,<4",
+  "numpy>=2,<3",
+  "opencv-contrib-python-headless>=4.11,<5",
+  "scipy>=1.15,<2",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8,<10"]
+
+[project.scripts]
+pv = "pigeonvision.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["python"]
+
+[tool.setuptools.package-data]
+"pigeonvision.ground" = ["static/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
