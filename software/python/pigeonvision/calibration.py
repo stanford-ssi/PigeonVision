@@ -152,8 +152,8 @@ def validate_rig(camera: dict[str, Any]) -> None:
         raise ValueError("Crop must lie within the measured full-sensor image.")
 
 
-def _held_out(cv2, obj, image, K, D, xi):
-    """Fit only board pose for held-out views; keep all lens parameters fixed."""
+def _fit_board_pose(cv2, obj, image, K, D, xi):
+    """Return rvec, tvec, pixel errors and ray angles with lens parameters fixed."""
     from scipy.optimize import least_squares
     obj = np.ascontiguousarray(obj, dtype=np.float64).reshape(-1, 1, 3)
     image = np.asarray(image, dtype=float).reshape(-1, 2)
@@ -217,7 +217,13 @@ def _held_out(cv2, obj, image, K, D, xi):
         raise ValueError("Held-out board pose optimization failed or left the Mei projection domain.")
     _, result, unit = min(candidates, key=lambda value: value[0])
     theta = np.rad2deg(np.arccos(np.clip(unit[:, 2], -1, 1)))
-    return np.linalg.norm(result.fun.reshape(-1, 2), axis=1), theta
+    return result.x[:3].copy(), result.x[3:].copy(), np.linalg.norm(result.fun.reshape(-1, 2), axis=1), theta
+
+
+def _held_out(cv2, obj, image, K, D, xi):
+    """Fit only board pose for held-out views; keep all lens parameters fixed."""
+    _, _, errors, theta = _fit_board_pose(cv2, obj, image, K, D, xi)
+    return errors, theta
 
 
 def _intrinsics_camera(dataset: dict[str, Any], camera_id: str) -> dict[str, Any]:
