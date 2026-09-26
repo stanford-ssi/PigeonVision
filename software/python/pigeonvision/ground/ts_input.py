@@ -70,9 +70,10 @@ class ContinuityAudit:
 
 
 class TsInput(io.RawIOBase):
-    def __init__(self, source: str, stop_event):
+    def __init__(self, source: str, stop_event, recorder=None):
         self.audit = ContinuityAudit()
         self.stop_event = stop_event
+        self.recorder = recorder
         self.file = None
         self.socket = None
         parsed = urlparse(source)
@@ -98,14 +99,17 @@ class TsInput(io.RawIOBase):
         return True
 
     def read(self, size=-1):
-        if self.stop_event.is_set():
+        if size == 0 or self.stop_event.is_set():
             return b""
         if self.file:
             data = self.file.read(size)
         elif self.socket:
             if not self.buffer:
                 try:
-                    self.buffer.extend(self.socket.recv(65535))
+                    datagram = self.socket.recv(65535)
+                    if self.recorder is not None:
+                        self.recorder.submit(datagram)
+                    self.buffer.extend(datagram)
                 except TimeoutError as exc:
                     raise TimeoutError("No UDP transport received for two seconds") from exc
             count = len(self.buffer) if size < 0 else min(size, len(self.buffer))

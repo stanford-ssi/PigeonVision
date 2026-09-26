@@ -81,7 +81,7 @@ def summarize(session: Path) -> dict[str, Any]:
         "no_log_records_lost": _assessment(max(log_losses) if log_losses else None, lambda x: x == 0, "records"),
         "dual_1552_record_and_stream_configuration": _assessment(
             ({c["id"] for c in config.get("cameras", [])} == {"A", "B"} and config.get("width") == 1552 and config.get("height") == 1552 and config.get("fps") == 30 and config.get("encode", True) and config.get("record") is True and bool(config.get("udp_destination"))) if config else None, bool),
-        "one_hour_camera_timestamps": _assessment(minimum_span, lambda x: x >= 3600, "seconds"),
+        "one_hour_camera_timestamps": _assessment(minimum_span, lambda x: x + 1 / target_fps >= 3600 - 1e-6, "seconds between first/last frame; one frame period included in assessment"),
         "no_reported_frame_drops": _assessment(sum(v["dropped_records"] for v in camera_reports.values()) if frames else None, lambda x: x == 0, "frames"),
         "one_hour_duration": _assessment(duration, lambda x: x >= 3600, "seconds"),
         "mean_cpu_below_80_percent": _assessment(statistics.mean(cpus) if cpus else None, lambda x: x < 80, "percent"),

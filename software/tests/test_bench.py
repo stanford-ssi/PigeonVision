@@ -151,3 +151,19 @@ def test_ssh_preserves_relative_path_for_remote_execution(tmp_path, monkeypatch)
     assert main(["capture", "--config", str(path), "--ssh", "pi@pigeonvision.local"]) == 0
     assert calls[0][0][:3] == ["ssh", "--", "pi@pigeonvision.local"]
     assert json.loads(calls[0][1]["input"])["session_dir"] == "output/remote-session"
+
+
+def test_exact_hour_includes_final_frame_period(tmp_path):
+    cfg = validate_config(config(tmp_path))
+    (tmp_path / "capture-config.json").write_text(json.dumps(cfg))
+    rows = [{"camera_id": camera, "sequence": seq, "sensor_timestamp_ns": int(seq * 1_000_000_000 / 30), "drop_reason": None}
+            for camera in "AB" for seq in (0, 107999)]
+    (tmp_path / "frames.jsonl").write_text("".join(json.dumps(row) + "\n" for row in rows))
+    (tmp_path / "host-health.jsonl").write_text(json.dumps({"type": "capture_exit", "returncode": 0, "duration_seconds": 3600}) + "\n")
+    report = summarize(tmp_path)
+    assert report["checks"]["one_hour_camera_timestamps"]["status"] == "met"
+    assert report["checks"]["one_hour_duration"]["status"] == "met"
+    assert not report["qualified"]  # Sparse fixture is not continuous hardware evidence.
+    rows[-1]["sensor_timestamp_ns"] -= 33_333_333
+    (tmp_path / "frames.jsonl").write_text("".join(json.dumps(row) + "\n" for row in rows))
+    assert summarize(tmp_path)["checks"]["one_hour_camera_timestamps"]["status"] == "not_met"

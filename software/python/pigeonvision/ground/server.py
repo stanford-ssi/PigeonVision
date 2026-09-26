@@ -15,6 +15,7 @@ from aiohttp import web, WSMsgType
 from .projection import validate_calibration
 from .transport import H264Normalizer, METADATA_PID, VIDEO_PIDS, pts_microseconds, read_metadata
 from .ts_input import TsInput
+from .recording import TransportRecorder
 
 LOG = logging.getLogger(__name__)
 STATIC = Path(__file__).parent / "static"
@@ -23,7 +24,8 @@ STATIC = Path(__file__).parent / "static"
 class Receiver:
     """A single demux thread. Queue limits also apply when a browser is slow."""
 
-    def __init__(self, source: str, replay: bool | None = None, queue_size: int = 48):
+    def __init__(self, source: str, replay: bool | None = None, queue_size: int = 48,
+                 record_transport: str | None = None):
         self.source = source
         self.replay = urlparse(source).scheme not in {"udp", "tcp", "srt"} if replay is None else replay
         if self.replay and not Path(source).is_file():
@@ -46,12 +48,22 @@ class Receiver:
                         "timestamp_discontinuities": 0,
                         "transport_discontinuities": {"A": 0, "B": 0, "metadata": 0, "other": 0}}
         self.state = "waiting"
+        if record_transport is not None and (self.replay or urlparse(source).scheme != "udp"):
+            raise ValueError("--record-transport requires a live UDP source")
+        self.recorder = TransportRecorder(record_transport, on_error=self._recording_error) if record_transport is not None else None
+
+    def _recording_error(self, message):
+        self._put({"type": "error", "component": "transport_recording",
+                   "message": f"Transport recording disabled: {message}. Live reception continues.",
+                   "recoverable": False})
+        self._put(self.status())
 
     def status(self, **extra) -> dict:
         return {"type": "status", "state": self.state, "source": self.source,
                 "replay": self.replay, "playing": self.playing,
                 "generation": self.generation, "queue_depth": self.messages.qsize(),
                 "transport_pts_offset_us": self.transport_pts_offset_us,
+                "transport_recording": self.recorder.status() if self.recorder else None,
                 "first_unit_delay_s": None if self.first_unit_at is None else self.first_unit_at - self.source_opened_at,
                 "metrics": self.metrics, "synchronization": "Exposure synchronization is unverified",
                 **extra}
@@ -67,6 +79,8 @@ class Receiver:
             self.condition.notify_all()
         if self.thread:
             self.thread.join(timeout=4)
+        if self.recorder:
+            self.recorder.close()
 
     def control(self, action: str) -> None:
         if not self.replay:
@@ -157,7 +171,7 @@ class Receiver:
         self.source_opened_at = time.monotonic()
         self.first_unit_at = None
         self.transport_pts_offset_us = 0
-        with TsInput(self.source, self.stop_event) as transport, av.open(
+        with TsInput(self.source, self.stop_event, self.recorder) as transport, av.open(
                 transport, mode="r", format="mpegts", options={"probesize": "262144", "analyzeduration": "1000000"}) as container:
             streams = {stream.index: VIDEO_PIDS[stream.id] for stream in container.streams
                        if stream.id in VIDEO_PIDS and stream.type == "video"}
@@ -172,6 +186,17 @@ class Receiver:
             self._put(self.status(cameras=sorted(streams.values()),
                                   missing_cameras=sorted(set(VIDEO_PIDS.values()) - set(streams.values()))))
             last_pts, step_seen = {}, set()
+
+            def finish_step():
+                if not step_seen:
+                    return
+                with self.condition:
+                    self.steps = max(0, self.steps - 1)
+                self._put(self.status(step_complete=True,
+                                      step_cameras=sorted(step_seen),
+                                      step_missing_cameras=sorted(set(streams.values()) - step_seen)))
+                step_seen.clear()
+
             anchor_pts = anchor_wall = None
             previous_playing = False
             pacing_epoch = self.pacing_epoch
@@ -238,6 +263,14 @@ class Receiver:
                 unit = normalizers[index].normalize(bytes(packet), name, timestamp, corrupt=corrupt)
                 if unit is None:
                     continue
+                if self.replay and not self.playing and name in step_seen:
+                    # A camera can disappear while its stream remains in the
+                    # PMT. Do not drain the surviving camera in search of its
+                    # partner. Keep this AU for the next step so no compressed
+                    # reference frame is discarded.
+                    finish_step()
+                    if not self._gate():
+                        return
                 if self.replay and self.playing:
                     if anchor_pts is None or not previous_playing or pacing_epoch != self.pacing_epoch:
                         anchor_pts, anchor_wall = timestamp, time.monotonic()
@@ -269,15 +302,14 @@ class Receiver:
                 if self.replay and not self.playing:
                     step_seen.add(name)
                     if step_seen >= set(streams.values()):
-                        with self.condition:
-                            self.steps = max(0, self.steps - 1)
-                        step_seen.clear()
-                        self._put(self.status())
+                        finish_step()
                 else:
                     step_seen.clear()
                 if time.monotonic() - last_status > 1:
                     self._put(self.status())
                     last_status = time.monotonic()
+            if self.replay and not self.playing:
+                finish_step()
 
 
 RECEIVER = web.AppKey("receiver", Receiver)
@@ -286,13 +318,13 @@ CALIBRATION = web.AppKey("calibration", dict)
 
 
 def create_app(source: str, *, calibration: str | None = None,
-               replay: bool | None = None) -> web.Application:
+               replay: bool | None = None, record_transport: str | None = None) -> web.Application:
     app = web.Application(client_max_size=16384)
-    app[RECEIVER] = Receiver(source, replay)
-    app[CLIENTS] = set()
     if calibration is not None:
         with open(calibration, encoding="utf-8") as handle:
             app[CALIBRATION] = validate_calibration(json.load(handle))
+    app[RECEIVER] = Receiver(source, replay, record_transport=record_transport)
+    app[CLIENTS] = set()
 
     async def index(request):
         return web.FileResponse(STATIC / "index.html", headers={"Cache-Control": "no-store"})
@@ -367,8 +399,8 @@ def create_app(source: str, *, calibration: str | None = None,
 
 def run(source: str, *, host: str = "127.0.0.1", port: int = 8768,
         calibration: str | None = None, open_browser: bool = True,
-        replay: bool | None = None) -> None:
-    app = create_app(source, calibration=calibration, replay=replay)
+        replay: bool | None = None, record_transport: str | None = None) -> None:
+    app = create_app(source, calibration=calibration, replay=replay, record_transport=record_transport)
     if open_browser:
         async def launch(application):
             asyncio.get_running_loop().call_later(.5, webbrowser.open, f"http://{host}:{port}/")

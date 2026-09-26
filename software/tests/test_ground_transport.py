@@ -143,6 +143,68 @@ def test_replay_step_and_missing_camera_are_explicit(transport):
         receiver.stop()
 
 
+def test_replay_steps_remain_bounded_when_one_camera_stops(transport, tmp_path):
+    path = tmp_path / "camera-a-stops.ts"
+    with av.open(str(transport)) as source, av.open(str(path), "w", format="mpegts",
+            options={"mpegts_start_pid": "256", "mpegts_copyts": "1"}) as output:
+        streams = {stream.index: output.add_stream_from_template(stream)
+                   for stream in source.streams.video}
+        a_packets = 0
+        for packet in source.demux():
+            if not packet.size or packet.stream.index not in streams:
+                continue
+            if packet.stream.id == 256:
+                a_packets += 1
+                if a_packets > 5:
+                    continue
+            packet.stream = streams[packet.stream.index]
+            output.mux(packet)
+
+    receiver = Receiver(str(path))
+    receiver.start()
+    units = {"A": [], "B": []}
+    partial_steps = []
+    try:
+        for _ in range(17):
+            receiver.control("step")
+            seen = []
+            while True:
+                message = receiver.messages.get(timeout=3)
+                if isinstance(message, bytes):
+                    header, payload = unpack_message(message)
+                    seen.append(header["camera_id"])
+                    units[header["camera_id"]].append((header, payload))
+                elif message.get("type") == "error":
+                    pytest.fail(message["message"])
+                elif message.get("step_complete"):
+                    assert message["step_cameras"] == sorted(seen)
+                    assert message["step_missing_cameras"] == sorted({"A", "B"} - set(seen))
+                    if message["step_missing_cameras"]:
+                        partial_steps.append(message["step_missing_cameras"])
+                    break
+            assert 1 <= len(seen) <= 2
+            assert len(seen) == len(set(seen)), "A step must not drain an unpaired camera"
+            assert receiver.steps == 0
+            if [len(units[name]) for name in ("A", "B")] == [5, 12]:
+                break
+        assert [len(units[name]) for name in ("A", "B")] == [5, 12]
+        assert ["A"] in partial_steps
+        # Holding the next AU at the step boundary must retain all compressed
+        # references, including deltas between the surviving camera's IDRs.
+        for name, count in (("A", 5), ("B", 12)):
+            decoder = av.CodecContext.create("h264", "r")
+            decoded = []
+            for header, payload in units[name]:
+                packet = av.Packet(payload)
+                packet.pts = header["timestamp_us"]
+                packet.time_base = Fraction(1, 1_000_000)
+                decoded.extend(decoder.decode(packet))
+            decoded.extend(decoder.decode(None))
+            assert len(decoded) == count
+    finally:
+        receiver.stop()
+
+
 def test_http_websocket_replay(transport):
     async def scenario():
         app = create_app(str(transport))
