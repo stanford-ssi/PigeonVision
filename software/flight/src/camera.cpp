@@ -1,5 +1,6 @@
 #include "pv/camera.hpp"
 #include "pv/core.hpp"
+#include "pv/framos.hpp"
 #include <libcamera/camera.h>
 #include <libcamera/control_ids.h>
 #include <libcamera/formats.h>
@@ -7,13 +8,19 @@
 #include <libcamera/framebuffer_allocator.h>
 #include <libcamera/property_ids.h>
 #include <linux/dma-buf.h>
+#include <linux/videodev2.h>
+#include <fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <unistd.h>
+#include <algorithm>
 #include <array>
 #include <cerrno>
+#include <cstdlib>
 #include <cstring>
 #include <functional>
+#include <fstream>
+#include <iterator>
 #include <map>
 #include <mutex>
 #include <set>
@@ -28,6 +35,73 @@ constexpr AVRational us_timebase{1, 1000000};
 Json rectangle(const libcamera::Rectangle &r) { return Json::array({r.x, r.y, r.width, r.height}); }
 void camera_check(int status, const char *what) {
   if (status < 0) throw std::runtime_error(std::string(what) + ": " + std::strerror(-status));
+}
+struct ControlDevice {
+  int fd;
+  explicit ControlDevice(const std::filesystem::path &path) : fd(open(path.c_str(), O_RDWR | O_CLOEXEC)) {
+    if (fd < 0) throw std::runtime_error("open sensor control " + path.string() + ": " + std::strerror(errno));
+  }
+  ~ControlDevice() { close(fd); }
+  void call(unsigned long request, void *value, const char *operation) const {
+    int status;
+    do { status = ioctl(fd, request, value); } while (status < 0 && errno == EINTR);
+    if (status < 0) throw std::runtime_error(std::string(operation) + ": " + std::strerror(errno));
+  }
+};
+Json configure_framos_rate(libcamera::Camera &camera, libcamera::CameraConfiguration &configuration, unsigned fps) {
+  const auto sensor = resolve_sensor_node(camera.id());
+  std::ifstream compatible(sensor.of_node / "compatible", std::ios::binary);
+  const std::string properties{std::istreambuf_iterator<char>(compatible), std::istreambuf_iterator<char>()};
+  bool framos = false;
+  for (std::size_t begin = 0; begin < properties.size();) {
+    const auto end = properties.find('\0', begin);
+    if (properties.substr(begin, end - begin) == "framos,fr_imx900") framos = true;
+    if (end == std::string::npos) break;
+    begin = end + 1;
+  }
+  if (!framos) throw std::runtime_error("camera device-tree compatible is not framos,fr_imx900");
+  ControlDevice device(sensor.device);
+  v4l2_queryctrl query{}; query.id = framos_frame_rate_id;
+  device.call(VIDIOC_QUERYCTRL, &query, "query FRAMOS Frame rate control");
+  const std::string name(reinterpret_cast<const char *>(query.name), strnlen(reinterpret_cast<const char *>(query.name), sizeof(query.name)));
+  const auto requested = validate_framos_rate(fps, query.id, name, query.minimum, query.maximum, query.step,
+      query.type == V4L2_CTRL_TYPE_INTEGER && !(query.flags & (V4L2_CTRL_FLAG_DISABLED | V4L2_CTRL_FLAG_READ_ONLY |
+                                                            V4L2_CTRL_FLAG_INACTIVE | V4L2_CTRL_FLAG_GRABBED)));
+  v4l2_control rate{}; rate.id = framos_frame_rate_id; rate.value = requested;
+  device.call(VIDIOC_S_CTRL, &rate, "set FRAMOS Frame rate control");
+  device.call(VIDIOC_G_CTRL, &rate, "read FRAMOS Frame rate control");
+  if (rate.value != requested) throw std::runtime_error("FRAMOS Frame rate readback differs from requested micro-fps");
+
+  // The vendor driver exposes VBLANK as a fixed range derived from its private
+  // rate. Reconfigure the IDENTICAL mode to refresh libcamera/IPA's cached
+  // VBLANK and exposure limits. fr_imx900_set_pad_format preserves the private
+  // rate when the mode pointer is unchanged; assert that behavior below.
+  camera_check(camera.configure(&configuration), "refresh libcamera timing after FRAMOS frame rate");
+  device.call(VIDIOC_G_CTRL, &rate, "verify FRAMOS rate after identical-mode configure");
+  if (rate.value != requested) throw std::runtime_error("identical-mode configure reset FRAMOS Frame rate; refusing stale IPA timing");
+  const auto limits = camera.controls().find(&libcamera::controls::FrameDurationLimits);
+  if (limits == camera.controls().end()) throw std::runtime_error("refreshed FrameDurationLimits unavailable");
+  const auto minimum_us = limits->second.min().get<std::int64_t>();
+  const auto maximum_us = limits->second.max().get<std::int64_t>();
+  const auto requested_us = std::int64_t(1'000'000 / fps);
+  // Sensor line quantization and integer nanosecond line-time calculations
+  // can put the fixed advertised duration just below the integer request.
+  const auto tolerance_us = std::max<std::int64_t>(100, requested_us / 1000);
+  if (std::abs(minimum_us - requested_us) > tolerance_us || std::abs(maximum_us - requested_us) > tolerance_us)
+    throw std::runtime_error("libcamera retained stale frame-duration limits after FRAMOS control refresh: " +
+                             std::to_string(minimum_us) + ".." + std::to_string(maximum_us) + " us");
+  v4l2_control vblank{}; vblank.id = V4L2_CID_VBLANK;
+  device.call(VIDIOC_G_CTRL, &vblank, "read refreshed sensor VBLANK");
+  const auto exposure = camera.controls().find(&libcamera::controls::ExposureTime);
+  if (exposure == camera.controls().end()) throw std::runtime_error("refreshed exposure control unavailable");
+  return {{"method", "framos_private_rate_then_identical_mode_ipa_refresh"},
+          {"control_node", sensor.device.string()}, {"of_node", sensor.of_node.string()},
+          {"control_id", query.id}, {"control_name", name}, {"control_units", "micro_fps"},
+          {"control_range", {query.minimum, query.maximum, query.step}},
+          {"requested_fps", fps}, {"requested_micro_fps", requested}, {"readback_micro_fps", rate.value},
+          {"vblank_lines", vblank.value}, {"libcamera_frame_duration_limits_us", {minimum_us, maximum_us}},
+          {"libcamera_exposure_max_us", exposure->second.max().get<std::int32_t>()},
+          {"measured_cadence_verified", false}};
 }
 struct Mapping {
   struct Region { void *address; std::size_t length; };
@@ -111,6 +185,7 @@ struct CameraSession::Impl {
   libcamera::Stream *stream = nullptr;
   libcamera::Rectangle crop;
   libcamera::Rectangle full_sensor_crop;
+  Json frame_rate_control;
   AVCodecContext *encoder = nullptr;
   Outputs *outputs = nullptr;
   struct Capture { libcamera::Request *request; libcamera::FrameBuffer *buffer; Json metadata; };
@@ -160,6 +235,7 @@ struct CameraSession::Impl {
     if (!output.colorSpace || output.colorSpace != libcamera::ColorSpace::Rec709)
       throw std::runtime_error("camera cannot provide requested Rec709 colour space");
     camera_check(camera->configure(camera_config.get()), "configure camera");
+    frame_rate_control = configure_framos_rate(*camera, *camera_config, config.fps);
     auto maximum = camera->properties().get(libcamera::properties::ScalerCropMaximum);
     auto array = camera->properties().get(libcamera::properties::PixelArraySize);
     if (!maximum || !array || maximum->width < 2064 || maximum->height < 1552)
@@ -336,6 +412,7 @@ struct CameraSession::Impl {
                 {"sensor_bit_depth", 10}, {"orientation", int(camera_config->orientation)},
                 {"flip_x", settings.flip_x}, {"flip_y", settings.flip_y}, {"requested_scaler_crop", rectangle(crop)},
                 {"requested_sensor_crop", sensor_crop(crop)},
+                {"frame_rate_control", frame_rate_control},
                 {"sensor_coordinate_transform", {{"source", "configured full-mode ScalerCropMaximum"},
                   {"pixel_array_origin", {full_sensor_crop.x, full_sensor_crop.y}},
                   {"sensor_pixels_per_array_pixel", {2064.0/full_sensor_crop.width, 1552.0/full_sensor_crop.height}},

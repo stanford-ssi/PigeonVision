@@ -38,6 +38,25 @@ requested output size. Both requested and actual per-frame crops are recorded.
 coordinates using the selected mode's ScalerCropMaximum origin and scale. The
 manifest records that transform, active areas, physical IDs and orientation.
 
+The pinned FRAMOS IMX900 driver controls cadence through its private `Frame rate`
+control (`0x009819b1`, micro-fps), and exposes VBLANK as a fixed range. Ordinary
+libcamera `FrameDurationLimits` alone therefore leaves the sensor at its maximum
+rate. Capture resolves the sensor subdevice by exact equality between the camera
+ID's device-tree node and `/sys/class/video4linux/v4l-subdev*/device/of_node`.
+It verifies the FRAMOS compatible, control ID/name/type/range, writes the requested
+rate after mode selection, and reads it back. It then configures the **same mode
+again** to refresh libcamera/IPA's cached VBLANK, exposure and frame-duration
+limits. The pinned driver's `imx900_set_pad_format` preserves the private rate
+when the mode is unchanged. A changed readback or stale frame-duration range
+fails configuration; capture must not continue with stale AE timing limits.
+The manifest's `frame_rate_control` records the node, requested/readback values,
+refreshed duration limits and exposure ceiling. Readback does not prove actual
+cadence: check SensorTimestamp deltas and AE behavior on each installed version.
+Source provenance: FRAMOS `framos-rpi-drivers/drivers/fr_imx900.c`, functions
+`imx900_update_frame_rate`, `imx900_set_ctrl`, `imx900_set_pad_format`; FRAMOS
+libcamera `CameraSensorLegacy::setFormat` refreshes control info, followed by
+`CameraData::configureIPA`. Versions remain pinned in the platform manifest.
+
 Each camera has eight requested libcamera buffers and a three-frame queue.
 Mapped DMA buffers are held by reference-counted AVFrames until x264 releases
 them; the completion callback does no encoding or disk/network IO. Each encoder
