@@ -12,7 +12,7 @@ from aiohttp import ClientSession, WSMsgType, web
 import numpy as np
 import pytest
 
-from pigeonvision.ground.server import Receiver, create_app
+from pigeonvision.ground.server import CLIENTS, RECEIVER, Receiver, create_app
 from pigeonvision.ground.transport import (
     H264Normalizer, START_CODE, annexb_nals, pts_microseconds, unpack_message,
 )
@@ -235,6 +235,52 @@ def test_http_websocket_replay(transport):
                     await ws.send_json({"type": "control", "action": "pause"})
         finally:
             await runner.cleanup()
+    asyncio.run(scenario())
+
+
+def test_shutdown_closes_connected_websocket_before_waiting_for_handlers(transport, monkeypatch):
+    async def scenario():
+        app = create_app(str(transport))
+        receiver = app[RECEIVER]
+        original_stop = receiver.stop
+        stopped = []
+
+        def stop():
+            stopped.append(not app[CLIENTS])
+            original_stop()
+
+        monkeypatch.setattr(receiver, "stop", stop)
+        # Keep aiohttp's ordinary shutdown timeout: shortening it would hide
+        # the regression where cleanup_ctx closes sockets only after that wait.
+        runner = web.AppRunner(app)
+        await runner.setup()
+        site = web.TCPSite(runner, "127.0.0.1", 0)
+        try:
+            await site.start()
+            port = site._server.sockets[0].getsockname()[1]
+            async with ClientSession() as client:
+                async with client.ws_connect(f"http://127.0.0.1:{port}/ws") as ws:
+                    assert (await ws.receive_json(timeout=2))["type"] == "status"
+                    assert not ws.closed and len(app[CLIENTS]) == 1
+
+                    async def receive_close():
+                        while True:
+                            message = await ws.receive(timeout=2)
+                            if message.type in (WSMsgType.CLOSE, WSMsgType.CLOSED, WSMsgType.ERROR):
+                                return message
+
+                    _, closed = await asyncio.wait_for(
+                        asyncio.gather(runner.cleanup(), receive_close()), timeout=2)
+                    assert closed.type == WSMsgType.CLOSE
+                    assert closed.data == 1001
+                    assert stopped == [True], "Receiver cleanup must run after the client handler exits"
+                    assert receiver.stop_event.is_set()
+                    assert not receiver.thread.is_alive()
+        finally:
+            # Also release fixture resources if the bounded regression fails.
+            await runner.cleanup()
+            if not stopped:
+                original_stop()
     asyncio.run(scenario())
 
 

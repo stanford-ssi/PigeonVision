@@ -376,12 +376,16 @@ def create_app(source: str, *, calibration: str | None = None,
                 continue
             await asyncio.gather(*(send(ws, message) for ws in tuple(app[CLIENTS])))
 
+    async def close_clients(application):
+        # Shutdown precedes aiohttp's wait for active request handlers. Closing
+        # here releases each WebSocket handler before that wait begins.
+        await asyncio.gather(*(ws.close(code=1001, message=b"Ground server stopped")
+                               for ws in tuple(application[CLIENTS])))
+
     async def lifecycle(application):
         application[RECEIVER].start()
         task = asyncio.create_task(pump())
         yield
-        await asyncio.gather(*(ws.close(code=1001, message=b"Ground server stopped")
-                               for ws in tuple(application[CLIENTS])))
         await asyncio.to_thread(application[RECEIVER].stop)
         task.cancel()
         try:
@@ -389,6 +393,7 @@ def create_app(source: str, *, calibration: str | None = None,
         except asyncio.CancelledError:
             pass
 
+    app.on_shutdown.append(close_clients)
     app.cleanup_ctx.append(lifecycle)
     app.router.add_get("/", index)
     app.router.add_get("/health", health)
