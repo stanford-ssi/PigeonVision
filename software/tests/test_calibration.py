@@ -74,3 +74,23 @@ def test_xi_above_one_rejects_noninjective_back_branch():
     rays = np.c_[np.sin(theta), np.zeros(2), np.cos(theta)]
     _, valid = project_mei(rays, c)
     assert valid.tolist() == [True, False]
+
+
+@pytest.mark.parametrize("theta_deg", [70, 100])
+def test_held_out_pose_initializes_off_axis_mei_bearings(theta_deg):
+    """A complete board may sit beyond the pinhole forward hemisphere."""
+    import cv2
+    c = camera()
+    c["D"] = [-.05, .008, .0005, -.0002]
+    theta = math.radians(theta_deg)
+    rotation = np.array([[math.cos(theta), 0, math.sin(theta)],
+                         [0, 1, 0], [-math.sin(theta), 0, math.cos(theta)]])
+    points = np.array([[(x - 3) * .02, (y - 3) * .02, 0] for y in range(7) for x in range(7)],
+                      dtype=np.float64).reshape(-1, 1, 3)
+    translation = np.array([math.sin(theta), 0, math.cos(theta)]) * .6
+    rvec = cv2.Rodrigues(rotation)[0]
+    K, D = np.array(c["K"]), np.array(c["D"])
+    image, _ = cv2.omnidir.projectPoints(points, rvec, translation, K, c["xi"], D)
+    errors, recovered_theta = _held_out(cv2, points, image, K, D, c["xi"])
+    assert errors.max() < 1e-5
+    assert abs(np.median(recovered_theta) - theta_deg) < .5

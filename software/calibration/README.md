@@ -74,6 +74,9 @@ metadata and unknown/cropped geometry are rejected. Missing indexed segments,
 unfinalized segments, and unindexed MKVs are reported explicitly, so a partial
 copy is not described as a complete archive. Existing output directories are
 never overwritten. This command does not access the Pi or generate a rig or fit.
+Add `--camera B` to inspect a B-first collection promptly, or `--camera A` for an
+A-only pass. Without that option both cameras are processed. Selecting the camera
+that actually sees the board avoids spending time searching the opposite view.
 
 Each camera needs a list of real image paths relative to the dataset JSON, an
 explicit `fit` or `validation` split, and a useful region label. Labels beginning
@@ -101,22 +104,55 @@ sensor crop and physical device IDs alongside extracted frames.
 
 ## Fit and inspect evidence
 
-The current fitter requires an explicit rig JSON with each camera's full-sensor
-size, stream crop/output size/flips and `R_camera_from_rig`. Unrelated board poses
-can determine independent lens intrinsics but cannot measure relative camera
-alignment. Do not invent a measured rotation or set `rig_alignment_status` to a
-verified value merely to enable the panorama.
+Fit either lens independently before measuring rig alignment. The collector's
+dataset already records `physical_cameras`, capture flips, actual per-frame crop
+and device identity. Curate distinct poses and keep an independent held-out
+collection. From the repository root:
 
-From the repository root, once the real dataset and rig description exist:
+```sh
+software/.venv/bin/pv calibrate --intrinsics-only --camera B \
+  --dataset output/calibration/dataset.json --output output/calibration/B-fit-01
+```
+
+This writes `intrinsics.json` with `scope: "intrinsics_only"` and
+`rig_alignment_status: "unmeasured"`. It contains no invented camera-to-rig
+rotation and cannot enable the panorama. Omit `--camera` to fit every nonempty
+camera collection. Each camera normally needs at least eight accepted fit views
+and three evaluated held-out views.
+
+For a first training-only diagnostic while collecting, explicitly add
+`--allow-unvalidated`. The eight-fit-view minimum still applies. Missing or
+insufficient held-out evidence produces `validation.status: "unvalidated_intrinsics"`,
+null validation threshold results and no measured angular limit. A low training
+RMS is not a validation result. Testing an earlier frozen model on a new session
+is useful; once those images are included in a refit, that test no longer
+validates the newer model.
+
+The fitter checks physical and logical camera IDs, full-sensor dimensions,
+per-image sensor crop, capture orientation and any supplied image hash before
+fitting. When merging collections, preserve these fields and use paths that
+still resolve to the original images. A cropped image padded back to full size
+is not a valid full-sensor observation. For manually acquired originals, each
+record must instead have explicit `source_provenance` with
+`kind: "manual_full_sensor"`, `camera_id`, `device_id`, `sensor_crop`, `flip_x`,
+`flip_y`, and a nonempty `note` identifying how the original was acquired.
+This declaration must match the dataset's physical camera description; it
+cannot override contradictory extractor metadata.
+
+Later, a separately measured rig JSON can supply each camera's full-sensor size,
+stream crop/output size/flips and `R_camera_from_rig`. Unrelated board poses do
+not determine this alignment. Do not invent a measured rotation or mark alignment
+verified merely to enable the panorama. With an actual rig description:
 
 ```sh
 software/.venv/bin/pv calibrate --dataset output/calibration/dataset.json \
   --rig output/calibration/rig.json --output output/calibration/fit-01
 ```
 
-Read `observations.json` for rejected detections and retained views. Inspect
-held-out RMS/p95 errors, per-region/seam errors and angular coverage in
-`calibration.json`. Current error targets are ≤1 px RMS and ≤2 px p95; satisfying
+Read `observations.json` for rejected detections, retained views and per-view
+training/held-out residuals. Inspect held-out RMS/p95 errors, per-region/seam
+errors and angular coverage in `intrinsics.json` or `calibration.json`. Current
+error targets are ≤1 px RMS and ≤2 px p95; satisfying
 them on central poses does not qualify a seam. `max_theta_deg` is only the largest
 observed held-out ray, not evidence that every ray inside that angle was tested.
 

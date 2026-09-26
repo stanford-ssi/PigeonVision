@@ -38,7 +38,11 @@ def parser() -> argparse.ArgumentParser:
     bench.add_argument("--dry-run", action="store_true")
     calibration = commands.add_parser("calibrate", help="Fit checkerboard or ChArUco Mei intrinsics and evaluate held-out observations")
     calibration.add_argument("--dataset", required=True, type=Path)
-    calibration.add_argument("--rig", required=True, type=Path)
+    calibration_mode = calibration.add_mutually_exclusive_group(required=True)
+    calibration_mode.add_argument("--rig", type=Path, help="Supplied rig geometry for the existing calibration bundle")
+    calibration_mode.add_argument("--intrinsics-only", action="store_true", help="Per-lens diagnostics without rig alignment; absent held-out evidence remains unvalidated")
+    calibration.add_argument("--camera", choices=("A", "B"), help="Select one camera for --intrinsics-only; default uses nonempty camera datasets")
+    calibration.add_argument("--allow-unvalidated", action="store_true", help="Allow --intrinsics-only diagnostics without sufficient held-out views; output stays unvalidated")
     calibration.add_argument("--output", required=True, type=Path)
     for name in ("view", "replay"):
         viewer = commands.add_parser(name, help="View live UDP or replay a saved MPEG-TS in the browser")
@@ -104,10 +108,20 @@ def main(argv: list[str] | None = None) -> int:
             else:
                 return run_matrix(config, args.output, args.duration, args.udp, args.binary, args.preset)
         elif args.command == "calibrate":
-            from .calibration import calibrate
-            result = calibrate(args.dataset, args.rig, args.output)
+            if (args.camera or args.allow_unvalidated) and not args.intrinsics_only:
+                raise ValueError("--camera and --allow-unvalidated are only supported with --intrinsics-only.")
+            if args.intrinsics_only:
+                from .calibration import calibrate_intrinsics
+                result = calibrate_intrinsics(args.dataset, args.output,
+                                              camera_ids=(args.camera,) if args.camera else None,
+                                              allow_unvalidated=args.allow_unvalidated)
+                filename = "intrinsics.json"
+            else:
+                from .calibration import calibrate
+                result = calibrate(args.dataset, args.rig, args.output)
+                filename = "calibration.json"
             print(json.dumps(result["validation"], indent=2))
-            print(f"Saved {args.output / 'calibration.json'}")
+            print(f"Saved {args.output / filename}")
         elif args.command in ("view", "replay"):
             from .ground import run
             run(args.source, host=args.host, port=args.port, calibration=args.calibration,
