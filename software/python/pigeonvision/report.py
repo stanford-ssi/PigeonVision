@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import statistics
+from collections import Counter
 from pathlib import Path
 from typing import Any
 
@@ -60,13 +61,19 @@ def summarize(session: Path) -> dict[str, Any]:
         sequences = sorted({f["sequence"] for f in rows if isinstance(f.get("sequence"), int)})
         missing = sequences[-1] - sequences[0] + 1 - len(sequences) if sequences else None
         dropped = [f for f in rows if f.get("drop_reason") is not None]
-        encoded = [f for f in rows if f.get("drop_reason") is None and f.get("status") != "captured"]
+        encoded = [f for f in rows if f.get("status") == "encoded" and f.get("drop_reason") is None]
         reported_times = sorted(f["sensor_timestamp_ns"] for f in rows if isinstance(f.get("sensor_timestamp_ns"), int))
         interval = (reported_times[-1] - reported_times[0]) / 1e9 if len(reported_times) > 1 else None
         fps = (len(reported_times) - 1) / interval if interval and interval > 0 else None
+        encoded_times = sorted(f["sensor_timestamp_ns"] for f in encoded if type(f.get("sensor_timestamp_ns")) is int)
+        encoded_interval = (encoded_times[-1] - encoded_times[0]) / 1e9 if len(encoded_times) > 1 else None
+        encoded_fps = (len(encoded_times) - 1) / encoded_interval if encoded_interval and encoded_interval > 0 else None
         camera_reports[camera_id] = {"records": len(rows), "encoded_records": len(encoded), "dropped_records": len(dropped),
                 "unexplained_sequence_gaps": missing, "observed_capture_fps": fps,
+                "observed_encoded_fps": encoded_fps, "encoded_timestamp_span_seconds": encoded_interval,
+                "encoded_timestamped_records": len(encoded_times),
                 "timestamp_span_seconds": interval, "drop_reasons": sorted({str(f["drop_reason"]) for f in dropped}),
+                "drop_reason_counts": dict(sorted(Counter(str(f["drop_reason"]) for f in dropped).items())),
                 "queue_high_water": max((c.get("queue_high_water", 0) for sample in native_samples for c in sample.get("cameras", []) if c.get("camera_id") == camera_id), default=None)}
     measurements = {}
     path = session / "measurements.json"
@@ -75,6 +82,10 @@ def summarize(session: Path) -> dict[str, Any]:
     gaps = sum(v["unexplained_sequence_gaps"] for v in camera_reports.values()) if all(v["unexplained_sequence_gaps"] is not None for v in camera_reports.values()) else None
     target_fps = config.get("fps", 30)
     fps_met = all(v["observed_capture_fps"] is not None and abs(v["observed_capture_fps"] - target_fps) <= target_fps * .01 for v in camera_reports.values()) if frames else None
+    encoded_fps_met = None
+    if config.get("encode", True) and all(v["observed_encoded_fps"] is not None and
+            v["encoded_timestamped_records"] == v["encoded_records"] for v in camera_reports.values()):
+        encoded_fps_met = all(abs(v["observed_encoded_fps"] - target_fps) <= target_fps * .01 for v in camera_reports.values())
     minimum_span = min((v["timestamp_span_seconds"] for v in camera_reports.values()), default=None) if all(v["timestamp_span_seconds"] is not None for v in camera_reports.values()) else None
     log_losses = [r["log_records_lost"] for r in native_samples if r.get("log_records_lost") is not None]
     checks = {
@@ -88,6 +99,7 @@ def summarize(session: Path) -> dict[str, Any]:
         "no_current_throttle_or_undervoltage": _assessment(any(x & 0xf for x in throttle) if throttle else None, lambda x: not x),
         "no_unexplained_sequence_gaps": _assessment(gaps, lambda x: x == 0, "frames"),
         "nominal_capture_rate": _assessment(fps_met, bool),
+        "nominal_encode_rate": _assessment(encoded_fps_met, bool),
         "glass_to_glass_latency": _assessment(measurements.get("glass_to_glass_latency_p95_ms"), lambda x: x <= 1000, "milliseconds"),
         "exposure_skew": _assessment(measurements.get("exposure_skew_max_us"), lambda x: x <= 100, "microseconds"),
         "network_failure_preserves_recording": _assessment(measurements.get("network_failure_preserves_recording"), lambda x: x is True),
@@ -114,6 +126,7 @@ def summarize(session: Path) -> dict[str, Any]:
             "checks": checks, "qualified": not problems and all(c["status"] == "met" for c in checks.values()),
             "problems": problems,
             "limitations": ["Capture timestamps are not independently measured exposure synchronization.",
+                            "Encoding rate uses sensor timestamps of explicitly encoded frames; it does not measure delivery or decoding.",
                             "Board temperature and CPU samples describe only this run.",
                             "Calibration and browser interaction require their own measured evidence."]}
 
@@ -127,6 +140,13 @@ def markdown(report: dict[str, Any]) -> str:
         if check["unit"]:
             value += " " + check["unit"]
         lines.append(f"| {name.replace('_', ' ')} | {value} | {check['status']} |")
+    lines.extend(["", "| Camera | Capture fps | Encoded fps | Encoded frames | Drops by reason |",
+                  "|---|---|---|---|---|"])
+    for camera_id, camera in report["cameras"].items():
+        capture = "unknown" if camera["observed_capture_fps"] is None else f"{camera['observed_capture_fps']:.3f}"
+        encoded = "unknown" if camera["observed_encoded_fps"] is None else f"{camera['observed_encoded_fps']:.3f}"
+        reasons = ", ".join(f"{reason}: {count}" for reason, count in camera["drop_reason_counts"].items()) or "none reported"
+        lines.append(f"| {camera_id} | {capture} | {encoded} | {camera['encoded_records']} | {reasons} |")
     if report["problems"]:
         lines.extend(["", "Data issues:", ""] + [f"- {p}" for p in report["problems"]])
     lines.extend(["", *report["limitations"], ""])
