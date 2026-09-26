@@ -42,6 +42,38 @@ The crop uses full-sensor pixel centres: `(u - crop_x + 0.5) * scale - 0.5`, fol
 
 Session camera descriptions and per-frame canonical `sensor_crop` are checked against the bundle. Device, negotiated flips, sensor mode, output dimensions or crop mismatches disable panoramic views. Missing evidence is explicitly unverified. A raw `scaler_crop` is not treated as full-sensor coordinates without the native capture service's origin/scale conversion. Imported calibration is not a statement that hardware synchronization, edge quality, lens retention, or rig alignment has passed physical testing.
 
+## Preview colour balance
+
+A calibration bundle may include `display_colour` with `schema_version: 1`,
+`method: "display_rgb_gain"`, three RGB `gains` for each of A/B, and `devices`
+matching the lens models' physical camera IDs. Every gain must be finite and
+between 0.5 and 2. A `reference_camera` of A or B keeps that camera's gains at
+identity. Alternatively, `reference_camera: null` with
+`reference_target: "colorchecker_neutrals"` allows both cameras to be balanced
+against the measured neutral patches. The profile should retain its source
+frames, lighting conditions, fit/check results and limitations.
+
+The viewer applies these gains to browser-decoded RGB before seam blending.
+This is a display correction, not a calibrated linear-light colour transform:
+[WebCodecs rendering can convert colour space](https://www.w3.org/TR/webcodecs/#video-frame-rendering).
+The on-screen toggle compares original and corrected colour, retaining the
+choice through WebSocket reconnects. Missing or mismatched camera identity,
+orientation or crop disables correction until the geometry is verified.
+Profiles affect both direct views and the panorama; camera controls, recorded
+pixels, timestamps and source-coverage masks are unchanged.
+
+Use unclipped neutral patches under the intended illumination, check other
+frames, and remeasure when illumination or ISP processing changes. Neutral
+balance alone does not establish colour accuracy, exposure matching, or a
+complete camera profile. The official
+[ColorChecker guidance](https://calibrite.com/us/product/colorchecker-classic/?noredirect=en-US)
+describes the target's neutral and camera-matching roles.
+
+`test_ground_colour_browser.cjs` exercises the GPU correction and identity,
+clipping, blend-weight and mask behavior. `test_ground_colour_app.cjs` checks
+runtime identity gating, before/after controls and reconnect preferences.
+Both are isolated browser tests with synthetic fixtures.
+
 ## Timing and failure behavior
 
 MPEG-TS PIDs 256/257 identify A/B and 258 carries JSON metadata. Independent camera offsets are preserved. The native mux's declared `transport_pts_offset_us` is removed once from both video timelines; an external transport with no declaration uses zero. An offset declaration arriving late resets both decoders before subsequent keyframes. The native sender must repeat session metadata for late joins.

@@ -18,6 +18,7 @@ const state = {
   frames: {},
   geometry: { errors: [], unverified: [] },
   error: null,
+  colourRequested: false,
 };
 const camera = () => ({
   decoder: null,
@@ -97,8 +98,14 @@ function calibrationDescription(bundle) {
 }
 function configureCalibration(bundle) {
   const firstCalibration = !state.calibration;
+  const hadColour = !!state.calibration?.display_colour;
   state.calibration = bundle;
   renderer.calibration = bundle;
+  const colour = bundle?.display_colour;
+  if (!colour || !hadColour) state.colourRequested = !!colour;
+  for (const name of ["A", "B"])
+    renderer.setColourCorrection(name, colour?.gains[name] || [1, 1, 1]);
+  updateColourControls();
   for (const o of $("view").options)
     if (!["a", "b"].includes(o.value)) o.disabled = !bundle;
   if (!bundle) {
@@ -127,6 +134,7 @@ function validateGeometry() {
     { A: cameras.A.size, B: cameras.B.size },
   );
   const blocked = state.geometry.errors.length > 0;
+  updateColourControls();
   renderer.calibration = blocked ? null : state.calibration;
   for (const option of $("view").options)
     if (!["a", "b"].includes(option.value)) option.disabled = blocked;
@@ -143,6 +151,23 @@ function validateGeometry() {
       : state.geometry.unverified.length
         ? `Runtime geometry unverified: ${state.geometry.unverified.join("; ")}.`
         : "Capture crop, orientation, dimensions and camera identity match calibration.");
+}
+
+function updateColourControls() {
+  const profile = state.calibration?.display_colour;
+  const verified = !state.geometry.errors.length && !state.geometry.unverified.length;
+  $("colour-controls").hidden = !profile;
+  renderer.colourEnabled = !!profile && state.colourRequested && verified;
+  $("colour-toggle").disabled = !verified;
+  $("colour-toggle").setAttribute("aria-pressed", String(renderer.colourEnabled));
+  $("colour-toggle").textContent = renderer.colourEnabled ? "Show original colours" : "Match camera colours";
+  $("colour-status").textContent = !verified
+    ? "Waiting for camera identity and geometry."
+    : renderer.colourEnabled
+      ? profile.reference_target === "colorchecker_neutrals"
+        ? "Neutral chart balance · preview"
+        : `Matched to camera ${profile.reference_camera} · preview`
+      : "Original camera colours";
 }
 
 function pairFrames() {
@@ -401,6 +426,11 @@ try {
       "WebCodecs VideoDecoder is unavailable. Open this localhost viewer in a supported desktop Chrome browser.",
     );
   renderer = new Renderer($("image"));
+  $("colour-toggle").onclick = () => {
+    state.colourRequested = !state.colourRequested;
+    updateColourControls();
+    renderer.draw();
+  };
   $("view").onchange = () => {
     renderer.mode = $("view").value;
     drag = null;
@@ -502,6 +532,7 @@ try {
       errors: state.error,
       focus: renderer.focus,
       viewerRotation: renderer.viewerRotation,
+      colourEnabled: renderer.colourEnabled,
       decoded: { A: cameras.A.decoded, B: cameras.B.decoded },
       pending: { A: cameras.A.pending.length, B: cameras.B.pending.length },
     }),

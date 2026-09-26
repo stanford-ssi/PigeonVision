@@ -46,6 +46,31 @@ def validate_calibration(bundle: dict) -> dict:
         limit = camera.get("max_theta_deg")
         if limit is not None and not 0 < limit < 180:
             raise ValueError(f"{name} max_theta_deg must lie between 0 and 180")
+    colour = bundle.get("display_colour")
+    if colour is not None:
+        if (not isinstance(colour, dict) or colour.get("schema_version") != 1
+                or colour.get("method") != "display_rgb_gain"):
+            raise ValueError("Expected a version 1 display RGB colour match")
+        reference = colour.get("reference_camera")
+        neutral_target = reference is None and colour.get("reference_target") == "colorchecker_neutrals"
+        if reference not in ("A", "B") and not neutral_target:
+            raise ValueError("Colour match needs a camera or ColorChecker neutral reference")
+        if reference in ("A", "B") and colour.get("reference_target") is not None:
+            raise ValueError("Declare one colour reference, not both camera and target")
+        if not isinstance(colour.get("gains"), dict) or set(colour["gains"]) != {"A", "B"}:
+            raise ValueError("Colour match needs gains for A and B")
+        if not isinstance(colour.get("devices"), dict):
+            raise ValueError("Colour match must identify both physical cameras")
+        for name in ("A", "B"):
+            gains = colour["gains"][name]
+            if (not isinstance(gains, list) or len(gains) != 3
+                    or not all(type(v) in (int, float) and math.isfinite(v) and .5 <= v <= 2 for v in gains)):
+                raise ValueError("Colour gains must be three finite values between 0.5 and 2")
+            device = bundle["cameras"][name].get("provenance", {}).get("device_id")
+            if not device or colour.get("devices", {}).get(name) != device:
+                raise ValueError("Colour match must identify the same physical cameras as the lens models")
+        if not neutral_target and any(abs(v - 1) > 1e-9 for v in colour["gains"][reference]):
+            raise ValueError("The colour reference camera must retain identity gains")
     return bundle
 
 

@@ -64,3 +64,56 @@ def test_mei_second_branch_is_rejected():
     c["max_theta_deg"] = 170
     assert project_ray(c, (1, 0, -.5)) is not None
     assert project_ray(c, (.2, 0, -1)) is None
+
+
+def colour_bundle():
+    return {"schema_version": 1, "model": "mei", "cameras": {
+        name: {**camera(), "provenance": {"device_id": f"device-{name}"}} for name in ("A", "B")},
+        "display_colour": {"schema_version": 1, "method": "display_rgb_gain", "reference_camera": "A",
+                           "gains": {"A": [1, 1, 1], "B": [1.05, .98, 1.08]},
+                           "devices": {"A": "device-A", "B": "device-B"}}}
+
+
+def test_display_colour_is_bound_to_physical_cameras():
+    bundle = colour_bundle()
+    assert validate_calibration(bundle) is bundle
+    bundle["display_colour"]["devices"]["B"] = "device-A"
+    with pytest.raises(ValueError, match="physical cameras"):
+        validate_calibration(bundle)
+
+
+@pytest.mark.parametrize("gains", [[float("nan"), 1, 1], [True, 1, 1], [.49, 1, 1], [1, 2.01, 1], [1, 1], None])
+def test_display_colour_rejects_invalid_gains(gains):
+    bundle = colour_bundle()
+    bundle["display_colour"]["gains"]["B"] = gains
+    with pytest.raises(ValueError, match="gains"):
+        validate_calibration(bundle)
+
+
+def test_display_colour_preserves_reference_camera():
+    bundle = colour_bundle()
+    bundle["display_colour"]["gains"]["A"] = [.9, 1, 1]
+    with pytest.raises(ValueError, match="reference camera"):
+        validate_calibration(bundle)
+
+
+def test_neutral_target_can_balance_both_cameras():
+    bundle = colour_bundle()
+    colour = bundle["display_colour"]
+    colour.update(reference_camera=None, reference_target="colorchecker_neutrals")
+    colour["gains"]["A"] = [1.1, 1, .99]
+    assert validate_calibration(bundle) is bundle
+    colour["reference_target"] = "unidentified_surface"
+    with pytest.raises(ValueError, match="reference"):
+        validate_calibration(bundle)
+    colour.update(reference_camera="A", reference_target="colorchecker_neutrals")
+    with pytest.raises(ValueError, match="one colour reference"):
+        validate_calibration(bundle)
+
+
+@pytest.mark.parametrize("field,value", [("method", "unknown"), ("reference_camera", "C"), ("gains", None), ("devices", None)])
+def test_display_colour_rejects_invalid_profile(field, value):
+    bundle = colour_bundle()
+    bundle["display_colour"][field] = value
+    with pytest.raises(ValueError):
+        validate_calibration(bundle)

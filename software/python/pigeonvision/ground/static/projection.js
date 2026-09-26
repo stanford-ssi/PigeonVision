@@ -25,14 +25,19 @@ const fragment = `#version 300 es
 precision highp float;
 in vec2 uv;out vec4 color;
 uniform sampler2D imageA,imageB;
+uniform vec3 colourGainA,colourGainB;
 uniform vec2 viewport,rawSpan,rawCenter;
 uniform int mode,seam;
 uniform float yaw,pitch,fov,rawDirection;
 struct Camera{mat3 rotation;vec4 k;float skew;vec4 distortion;float xi;vec4 crop;vec2 outputSize;vec2 flips;float radius;float maxTheta;};
 uniform Camera cameraA,cameraB;
 const float PI=3.141592653589793;
+// Viewer-only gain in browser-decoded display RGB. Source Rec709 metadata
+// does not establish the transfer function after the browser's texture upload.
+// This is a relative visual correction, not physical linear-light calibration.
+vec3 correctColour(vec3 rgb,vec3 gain){return clamp(rgb*gain,0.,1.);}
 vec3 missing(){float stripe=step(.5,fract((gl_FragCoord.x+gl_FragCoord.y)/20.));return mix(vec3(.12,.15,.16),vec3(.19,.21,.22),stripe);}
-vec4 project(Camera c,sampler2D image,vec3 rig){
+vec4 project(Camera c,sampler2D image,vec3 gain,vec3 rig){
  vec3 d=normalize(c.rotation*rig);float theta=acos(clamp(d.z,-1.,1.));
  if(c.maxTheta>0.&&theta>c.maxTheta||d.z+c.xi<=1e-8||c.xi>1.&&d.z<=-1./c.xi)return vec4(0.);
  vec2 p=d.xy/(d.z+c.xi);float r2=dot(p,p);vec4 D=c.distortion;
@@ -42,17 +47,17 @@ vec4 project(Camera c,sampler2D image,vec3 rig){
  if(any(lessThan(pixel,c.crop.xy))||any(greaterThanEqual(pixel,c.crop.xy+c.crop.zw)))return vec4(0.);
  vec2 mapped=(pixel-c.crop.xy+.5)/c.crop.zw;
  mapped=mix(mapped,1.-mapped,c.flips);
- return vec4(texture(image,mapped).rgb,2.+d.z);
+ return vec4(correctColour(texture(image,mapped).rgb,gain),2.+d.z);
 }
 void main(){
  if(mode<2){vec2 p=(vec2(uv.x,1.-uv.y)-.5)*rawSpan*rawDirection+rawCenter;
   if(any(lessThan(p,vec2(0.)))||any(greaterThan(p,vec2(1.)))){color=vec4(.035,.065,.072,1.);return;}
-  color=vec4(mode==0?texture(imageA,p).rgb:texture(imageB,p).rgb,1.);return;
+  color=vec4(mode==0?correctColour(texture(imageA,p).rgb,colourGainA):correctColour(texture(imageB,p).rgb,colourGainB),1.);return;
  }
  vec3 d;
  if(mode==3||mode==4){float lon=(uv.x*2.-1.)*PI,lat=(uv.y-.5)*PI;d=vec3(sin(lon)*cos(lat),-sin(lat),cos(lon)*cos(lat));}
  else{vec3 forward=vec3(sin(yaw)*cos(pitch),-sin(pitch),cos(yaw)*cos(pitch));vec3 right=vec3(cos(yaw),0.,-sin(yaw));vec3 up=cross(right,forward);vec2 p=uv*2.-1.;d=normalize(forward+right*p.x*tan(fov*.5)+up*p.y*tan(fov*.5)*viewport.y/viewport.x);}
- vec4 a=project(cameraA,imageA,d),b=project(cameraB,imageB,d);
+ vec4 a=project(cameraA,imageA,colourGainA,d),b=project(cameraB,imageB,colourGainB,d);
  if(a.a==0.&&b.a==0.){color=vec4(missing(),1.);return;}
  float w=a.a>0.?1.:0.;
  if(a.a>0.&&b.a>0.){w=smoothstep(-.0872,.0872,a.a-b.a);if(seam==1)w=step(b.a,a.a);if(seam==2)w=1.;if(seam==3)w=0.;}
@@ -104,7 +109,18 @@ export class Renderer {
     this.calibration = null;
     this.focus = { A: { zoom: 1, center: [0.5, 0.5] }, B: { zoom: 1, center: [0.5, 0.5] } };
     this.viewerRotation = { A: 0, B: 0 };
+    this.colourEnabled = false;
+    this.colourMethod = "display_rgb_gain";
+    this.colour = { A: { enabled: false, gain: [1, 1, 1] }, B: { enabled: false, gain: [1, 1, 1] } };
     this.draw();
+  }
+  setColourCorrection(name, gains) {
+    if (name !== "A" && name !== "B") throw new TypeError("Colour correction needs camera A or B.");
+    if (!Array.isArray(gains) || gains.length !== 3 || !Array.from(gains).every(Number.isFinite))
+      throw new TypeError("Colour gains must contain three finite numbers.");
+    const gain = gains.map((value) => Math.max(0.5, Math.min(2, value)));
+    this.colour[name] = { enabled: true, gain };
+    return [...gain];
   }
   rawLayout(name = this.mode === "b" ? "B" : "A") {
     const image = this.raw[name], focus = this.focus[name];
@@ -220,6 +236,8 @@ export class Renderer {
       g.activeTexture(g.TEXTURE0 + index);
       g.bindTexture(g.TEXTURE_2D, sources[name].texture);
       this.uniform("image" + name, index, true);
+      this.uniform("colourGain" + name,
+        this.colourEnabled && this.colour[name].enabled ? this.colour[name].gain : [1, 1, 1]);
       if (this.calibration)
         this.setCamera(name, this.calibration.cameras[name]);
     }

@@ -864,3 +864,5 @@ input[type="number"] {
 #orientation-value { font-variant-numeric: tabular-nums; }
 #rotate-view { width: 100%; }
 #rotate-view[aria-pressed="true"] { border-color: currentColor; box-shadow: inset 3px 0 currentColor; }
+#colour-toggle { width: 100%; }
+#colour-toggle[aria-pressed="true"] { border-color: currentColor; box-shadow: inset 3px 0 currentColor; }
