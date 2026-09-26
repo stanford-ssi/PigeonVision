@@ -1,5 +1,6 @@
 #include "pv/encoder_input.hpp"
 #include <cassert>
+#include <cstdint>
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
