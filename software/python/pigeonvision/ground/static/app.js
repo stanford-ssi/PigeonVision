@@ -1,4 +1,4 @@
-import { Renderer, rawDragCenter } from "./projection.js";
+import { Renderer, rawDragCenter, DEFAULT_PERSPECTIVE_FOV } from "./projection.js";
 import { checkGeometry } from "./geometry.js";
 import { ErrorState } from "./errors.js";
 
@@ -484,7 +484,7 @@ try {
   };
   $("home").onclick = () => {
     renderer.yaw = renderer.pitch = 0;
-    renderer.fov = Math.PI / 2;
+    renderer.fov = DEFAULT_PERSPECTIVE_FOV;
     renderer.resetRawView();
     updateFocusControls();
     renderer.draw();

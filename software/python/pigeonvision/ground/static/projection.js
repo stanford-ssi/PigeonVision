@@ -1,5 +1,6 @@
 // Measured Mei projection. +Z through camera A, +X right, +Y down in the rig.
 // Texture coordinates retain source top-left orientation; no synthetic source.
+export const DEFAULT_PERSPECTIVE_FOV = 110 * Math.PI / 180;
 
 // At 1x the complete image fits. Zoom reduces the visible source span, and each
 // centre coordinate is bounded so panning cannot reveal extra space at an edge.
@@ -105,7 +106,7 @@ export class Renderer {
     this.seam = 0;
     this.yaw = 0;
     this.pitch = 0;
-    this.fov = Math.PI / 2;
+    this.fov = DEFAULT_PERSPECTIVE_FOV;
     this.calibration = null;
     this.focus = { A: { zoom: 1, center: [0.5, 0.5] }, B: { zoom: 1, center: [0.5, 0.5] } };
     this.viewerRotation = { A: 0, B: 0 };
