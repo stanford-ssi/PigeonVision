@@ -26,6 +26,11 @@ Existing datasets without `board.type` continue to mean ChArUco.
    Vary their relative distances, tilts and positions across each camera's image: centre, top, bottom,
    left, right and the two seam directions. Avoid reflections and motion blur.
    Change pose rather than collecting adjacent frames of the same stationary board.
+   Keeping the board stationary and moving the entire rocket rig is equally
+   valid: translate and rotate the mounted assembly without adjusting either lens
+   or camera mount. Hold each new pose for 2–3 seconds when sampling once per
+   second; the collector tests one frame in each interval, which can otherwise
+   land during motion.
 4. Aim for **20–30 distinct fit poses and 6–10 separate held-out poses per camera**.
    The fitter refuses fewer than **eight accepted fit views and three accepted
    held-out views** per camera. These counts alone do not establish angular coverage.
@@ -42,6 +47,33 @@ it does not attach persistent physical identities to checkerboard corners.
 [OpenCV detector documentation](https://docs.opencv.org/4.x/d9/d0c/group__calib3d.html).
 
 ## Dataset and orientation
+
+Extract candidates offline from a copy of a native session containing `session.json`,
+`frames.jsonl`, `segments.jsonl`, and finalized per-camera MKV files:
+
+```sh
+software/.venv/bin/python software/tools/calibration_frames.py \
+  --session output/sessions/calibration-fit-001 \
+  --board software/calibration/boards/dfvision-q18-400-20.json \
+  --output output/calibration/fit-candidates-001 \
+  --interval-seconds 1 --split fit --require-board
+```
+
+Use a separate recording, output directory, and explicit `--split validation`
+for held-out poses. The collector samples at most one frame per camera in each
+interval on the original common timeline. `--require-board` retains only a
+complete 289-corner detection; omitting it saves unchecked candidates for manual
+inspection. Optional `--region` labels the collected poses; its default is
+`unlabelled`. Inspect diversity and correct region labels before fitting.
+
+The output contains original-orientation PNGs, `dataset.json`, and
+`collection-report.json`. Each image retains the source segment/hash, container
+PTS/timebase, original capture metadata/common PTS, device ID and PNG hash.
+Timestamp matching allows only the MKV timebase's rounding uncertainty; ambiguous
+metadata and unknown/cropped geometry are rejected. Missing indexed segments,
+unfinalized segments, and unindexed MKVs are reported explicitly, so a partial
+copy is not described as a complete archive. Existing output directories are
+never overwritten. This command does not access the Pi or generate a rig or fit.
 
 Each camera needs a list of real image paths relative to the dataset JSON, an
 explicit `fit` or `validation` split, and a useful region label. Labels beginning

@@ -36,7 +36,7 @@ def parser() -> argparse.ArgumentParser:
     bench.add_argument("--preset", choices=["ultrafast", "superfast", "veryfast"], action="append")
     bench.add_argument("--binary", default="pv-capture")
     bench.add_argument("--dry-run", action="store_true")
-    calibration = commands.add_parser("calibrate", help="Fit ChArUco/Mei intrinsics and evaluate held-out observations")
+    calibration = commands.add_parser("calibrate", help="Fit checkerboard or ChArUco Mei intrinsics and evaluate held-out observations")
     calibration.add_argument("--dataset", required=True, type=Path)
     calibration.add_argument("--rig", required=True, type=Path)
     calibration.add_argument("--output", required=True, type=Path)
