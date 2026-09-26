@@ -1,4 +1,5 @@
 #include "pv/core.hpp"
+#include "pv/timing.hpp"
 #include <cassert>
 #include <future>
 #include <memory>
@@ -46,4 +47,23 @@ int main() {
   threaded.close(); consumer.join();
   assert(received.size() == 10000 && threaded.high_water() <= 8);
   for (int i = 0; i < 10000; ++i) assert(received[i] == i);
+  pv::TimingCounter timing;
+  assert(timing.snapshot().samples == 0);
+  timing.observe(std::chrono::nanoseconds(1500));
+  timing.observe(std::chrono::nanoseconds(4500));
+  auto measured = timing.snapshot();
+  assert(measured.samples == 2 && measured.total_ns == 6000 && measured.minimum_ns == 1500 && measured.maximum_ns == 4500);
+  rejected = false;
+  try { timing.observe(std::chrono::nanoseconds(-1)); } catch (const std::invalid_argument &) { rejected = true; }
+  assert(rejected && timing.snapshot().samples == 2);
+  assert(pv::timed_codec_call(timing, [] { return -11; }) == -11);  // Error/EAGAIN results are preserved and timed.
+  assert(timing.snapshot().samples == 3);
+  pv::TimingCounter concurrent;
+  std::vector<std::thread> producers;
+  for (int i = 0; i < 4; ++i) producers.emplace_back([&] {
+    for (int j = 0; j < 1000; ++j) concurrent.observe(std::chrono::nanoseconds(2500));
+  });
+  for (auto &producer : producers) producer.join();
+  measured = concurrent.snapshot();
+  assert(measured.samples == 4000 && measured.total_ns == 10'000'000 && measured.minimum_ns == 2500 && measured.maximum_ns == 2500);
 }

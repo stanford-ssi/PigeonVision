@@ -106,6 +106,8 @@ def test_report_reads_native_health_without_wrapper(tmp_path):
     ("bitrate", 9999), ("bitrate", 100000001), ("vbv_bits", 100000001),
     ("min_free_bytes", -1), ("min_free_bytes", True), ("min_free_bytes", 2**64),
     ("duration_seconds", None), ("duration_seconds", True), ("duration_seconds", float("inf")),
+    ("encoder_threads", 0), ("encoder_threads", 9), ("encoder_threads", -1),
+    ("encoder_threads", 2.0), ("encoder_threads", True), ("encoder_threads", None), ("encoder_threads", "3"),
 ])
 def test_capture_config_matches_native_scalar_limits(tmp_path, name, value):
     with pytest.raises(ValueError):
@@ -118,6 +120,20 @@ def test_native_duration_zero_and_transport_headroom(tmp_path):
     with pytest.raises(ValueError, match="headroom"):
         validate_config(config(tmp_path) | {"udp_destination": "192.0.2.1:1234", "mux_bitrate": 8_499_999})
     assert validate_config(config(tmp_path) | {"udp_destination": "192.0.2.1:1234", "mux_bitrate": 8_500_000})
+
+
+def test_encoder_threads_default_and_explicit_values_survive_config_and_matrix(tmp_path):
+    assert validate_config(config(tmp_path))["encoder_threads"] == 2
+    for threads in (1, 3, 4, 8):
+        base = config(tmp_path) | {"encoder_threads": threads}
+        assert validate_config(base)["encoder_threads"] == threads
+        configs = matrix(base, tmp_path, 1, None, ["ultrafast"])
+        assert all(cfg["encoder_threads"] == threads for cfg in configs)
+    output = tmp_path / "threads.json"
+    source = tmp_path / "input.json"
+    source.write_text(json.dumps(config(tmp_path) | {"encoder_threads": 4}))
+    assert main(["capture", "--config", str(source), "--write-config", str(output)]) == 0
+    assert json.loads(output.read_text())["encoder_threads"] == 4
 
 
 def test_capture_session_path_uses_execution_cwd_not_config_parent(tmp_path, monkeypatch):

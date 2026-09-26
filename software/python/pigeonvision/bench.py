@@ -17,7 +17,7 @@ from typing import Any
 from .doctor import command, read_text
 
 DEFAULTS = {"schema_version": 1, "width": 1552, "height": 1552, "fps": 30,
-            "bitrate": 4_000_000, "vbv_bits": 2_000_000, "preset": "ultrafast",
+            "bitrate": 4_000_000, "vbv_bits": 2_000_000, "preset": "ultrafast", "encoder_threads": 2,
             "segment_seconds": 60, "min_free_bytes": 2_147_483_648,
             "encode": True, "record": True, "udp_destination": None, "mux_bitrate": 9_000_000}
 
@@ -52,7 +52,7 @@ def validate_config(config: dict[str, Any]) -> dict[str, Any]:
         raise ValueError("session_dir must name a new session directory.")
     ranges = {"width": (16, 2064), "height": (16, 1552), "fps": (1, 120),
               "bitrate": (10_000, 100_000_000), "vbv_bits": (10_000, 100_000_000),
-              "segment_seconds": (1, 86400), "mux_bitrate": (1, 100_000_000),
+              "segment_seconds": (1, 86400), "encoder_threads": (1, 8), "mux_bitrate": (1, 100_000_000),
               "min_free_bytes": (0, 2**64 - 1)}
     for name, (minimum, maximum) in ranges.items():
         if type(out[name]) is not int:

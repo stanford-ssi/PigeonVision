@@ -2,6 +2,7 @@
 #include "pv/colour.hpp"
 #include "pv/core.hpp"
 #include "pv/framos.hpp"
+#include "pv/timing.hpp"
 #include <libcamera/camera.h>
 #include <libcamera/control_ids.h>
 #include <libcamera/formats.h>
@@ -34,6 +35,13 @@ namespace pv {
 namespace {
 constexpr AVRational us_timebase{1, 1000000};
 Json rectangle(const libcamera::Rectangle &r) { return Json::array({r.x, r.y, r.width, r.height}); }
+Json timing_json(const TimingCounter &counter) {
+  const auto value = counter.snapshot();
+  return {{"samples", value.samples}, {"total_us", value.total_ns / 1000.0},
+          {"mean_us", value.samples ? Json(double(value.total_ns) / value.samples / 1000.0) : Json(nullptr)},
+          {"min_us", value.samples ? Json(value.minimum_ns / 1000.0) : Json(nullptr)},
+          {"max_us", value.samples ? Json(value.maximum_ns / 1000.0) : Json(nullptr)}};
+}
 void camera_check(int status, const char *what) {
   if (status < 0) throw std::runtime_error(std::string(what) + ": " + std::strerror(-status));
 }
@@ -189,7 +197,12 @@ struct CameraSession::Impl {
   Json frame_rate_control;
   AVCodecContext *encoder = nullptr;
   Outputs *outputs = nullptr;
-  struct Capture { libcamera::Request *request; libcamera::FrameBuffer *buffer; Json metadata; };
+  struct Capture {
+    libcamera::Request *request;
+    libcamera::FrameBuffer *buffer;
+    Json metadata;
+    std::chrono::steady_clock::time_point enqueued_at;
+  };
   BoundedQueue<Capture> queue{3};
   std::thread worker;
   std::mutex state_mutex;
@@ -200,6 +213,7 @@ struct CameraSession::Impl {
   std::int64_t last_pts = -1;
   std::optional<std::uint32_t> last_sequence;
   std::map<std::int64_t, Json> pending_metadata;
+  TimingCounter queue_dwell, encoder_send, encoder_receive;
 
   Impl(libcamera::CameraManager &manager, const Config &c, const CameraConfig &s, Logs &l, std::int64_t epoch)
       : config(c), settings(s), logs(l), origin(epoch) {
@@ -267,7 +281,7 @@ struct CameraSession::Impl {
     encoder->time_base = us_timebase; encoder->framerate = {int(config.fps), 1};
     encoder->bit_rate = config.bitrate; encoder->rc_max_rate = config.bitrate; encoder->rc_min_rate = config.bitrate;
     encoder->rc_buffer_size = config.vbv_bits; encoder->gop_size = config.fps; encoder->max_b_frames = 0;
-    encoder->thread_count = 2; encoder->thread_type = FF_THREAD_SLICE;
+    encoder->thread_count = config.encoder_threads; encoder->thread_type = FF_THREAD_SLICE;
     encoder->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
     encoder->color_range = AVCOL_RANGE_MPEG; encoder->colorspace = AVCOL_SPC_BT709;
     encoder->color_primaries = AVCOL_PRI_BT709; encoder->color_trc = AVCOL_TRC_BT709;
@@ -353,14 +367,14 @@ struct CameraSession::Impl {
       metadata["pts_us"] = relative_pts_us(*timestamp, origin);
       if (buffer->metadata().status != libcamera::FrameMetadata::FrameSuccess) { drop(std::move(metadata), "camera_frame_error"); recycle(request); return; }
       if (failure) { drop(std::move(metadata), "camera_or_encoder_unavailable"); recycle(request); return; }
-      Capture item{request, buffer, std::move(metadata)};
+      Capture item{request, buffer, std::move(metadata), std::chrono::steady_clock::now()};
       if (!queue.try_push(std::move(item))) { drop(std::move(item.metadata), "capture_queue_full"); recycle(request); }
     } catch (const std::exception &e) { failure = true; logs.event("camera", "callback_failed", settings.id, e.what()); recycle(request); }
   }
   void receive_packets() {
     Packet packet(av_packet_alloc()); if (!packet) throw std::bad_alloc();
     while (true) {
-      int result = avcodec_receive_packet(encoder, packet.get());
+      int result = timed_codec_call(encoder_receive, [&] { return avcodec_receive_packet(encoder, packet.get()); });
       if (result == AVERROR(EAGAIN) || result == AVERROR_EOF) break;
       av_check(result, "receive encoded packet");
       auto it = pending_metadata.find(packet->pts);
@@ -377,6 +391,7 @@ struct CameraSession::Impl {
     Json in_flight_metadata;
     try {
       while (auto item = queue.pop()) {
+        queue_dwell.observe(std::chrono::steady_clock::now() - item->enqueued_at);
         in_flight_metadata = item->metadata;
         auto &mapping = *mappings.at(item->buffer);
         try { mapping.begin(); }
@@ -391,11 +406,17 @@ struct CameraSession::Impl {
         auto frame = av_frame(mapping, config.width, config.height, camera_config->at(0).stride, lease, pts);
         pending_metadata.emplace(pts, std::move(item->metadata));
         in_flight_metadata = nullptr;
-        int result = avcodec_send_frame(encoder, frame.get());
-        if (result == AVERROR(EAGAIN)) { receive_packets(); result = avcodec_send_frame(encoder, frame.get()); }
+        int result = timed_codec_call(encoder_send, [&] { return avcodec_send_frame(encoder, frame.get()); });
+        if (result == AVERROR(EAGAIN)) {
+          receive_packets();
+          result = timed_codec_call(encoder_send, [&] { return avcodec_send_frame(encoder, frame.get()); });
+        }
         av_check(result, "send frame to encoder"); receive_packets();
       }
-      if (encoder) { av_check(avcodec_send_frame(encoder, nullptr), "flush encoder"); receive_packets(); }
+      if (encoder) {
+        av_check(timed_codec_call(encoder_send, [&] { return avcodec_send_frame(encoder, nullptr); }), "flush encoder");
+        receive_packets();
+      }
     } catch (const std::exception &e) {
       failure = true; logs.event("encoder", "failed", settings.id, e.what()); queue.close();
       if (!in_flight_metadata.is_null()) drop(std::move(in_flight_metadata), "frame_processing_failed");
@@ -456,7 +477,10 @@ bool CameraSession::failed() const { return impl_->failure; }
 Json CameraSession::stats() const {
   return {{"camera_id", impl_->settings.id}, {"active", impl_->active.load()}, {"failed", impl_->failure.load()},
           {"captured_frames", impl_->captured.load()}, {"encoded_frames", impl_->encoded.load()}, {"dropped_frames", impl_->dropped.load()},
-          {"queue", impl_->queue.size()}, {"queue_high_water", impl_->queue.high_water()}, {"last_frame_ns", impl_->last_frame_ns.load()}};
+          {"queue", impl_->queue.size()}, {"queue_high_water", impl_->queue.high_water()}, {"last_frame_ns", impl_->last_frame_ns.load()},
+          {"timing_us", {{"capture_queue_dwell", timing_json(impl_->queue_dwell)},
+                         {"encoder_send_call", timing_json(impl_->encoder_send)},
+                         {"encoder_receive_call", timing_json(impl_->encoder_receive)}}}};
 }
 Json enumerate_cameras(libcamera::CameraManager &manager) {
   Json cameras = Json::array();

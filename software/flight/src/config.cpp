@@ -34,6 +34,7 @@ Config Config::read(const std::filesystem::path &path) {
   };
   integer("schema_version", 1, 1); integer("width",16,2064); integer("height",16,1552);
   integer("fps",1,120); integer("bitrate",10000,100000000); integer("vbv_bits",10000,100000000);
+  integer("encoder_threads",1,8);
   integer("segment_seconds",1,86400); integer("mux_bitrate",1,100000000);
   integer("min_free_bytes",0,std::numeric_limits<std::uint64_t>::max());
   if (j.contains("duration_seconds") && !j["duration_seconds"].is_number()) throw std::runtime_error("duration_seconds must be numeric");
@@ -54,6 +55,7 @@ Config Config::read(const std::filesystem::path &path) {
   c.width = j.value("width", c.width); c.height = j.value("height", c.height); c.fps = j.value("fps", c.fps);
   c.bitrate = j.value("bitrate", c.bitrate); c.vbv_bits = j.value("vbv_bits", c.vbv_bits);
   c.preset = j.value("preset", c.preset); c.segment_seconds = j.value("segment_seconds", c.segment_seconds);
+  c.encoder_threads = j.value("encoder_threads", c.encoder_threads);
   c.min_free_bytes = j.value("min_free_bytes", c.min_free_bytes);
   c.encode = j.value("encode", c.encode); c.record = j.value("record", c.record);
   if (j.contains("udp_destination") && !j["udp_destination"].is_null()) c.udp_destination = j["udp_destination"].get<std::string>();
@@ -76,7 +78,7 @@ Json Config::effective() const {
   for (const auto &c : cameras) cams.push_back({{"id", c.id}, {"device", c.device}, {"flip_x", c.flip_x}, {"flip_y", c.flip_y}});
   return {{"schema_version", 1}, {"session_dir", session_dir.string()}, {"cameras", cams},
           {"width", width}, {"height", height}, {"fps", fps}, {"bitrate", bitrate}, {"vbv_bits", vbv_bits},
-          {"preset", preset}, {"segment_seconds", segment_seconds}, {"min_free_bytes", min_free_bytes},
+          {"preset", preset}, {"encoder_threads", encoder_threads}, {"segment_seconds", segment_seconds}, {"min_free_bytes", min_free_bytes},
           {"encode", encode}, {"record", record}, {"udp_destination", udp_destination.empty() ? Json(nullptr) : Json(udp_destination)},
           {"mux_bitrate", mux_bitrate}, {"duration_seconds", duration_seconds},
           {"sensor_mode", {{"width", 2064}, {"height", 1552}, {"bit_depth", 10}}}};
