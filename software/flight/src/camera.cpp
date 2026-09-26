@@ -1,4 +1,5 @@
 #include "pv/camera.hpp"
+#include "pv/colour.hpp"
 #include "pv/core.hpp"
 #include "pv/framos.hpp"
 #include <libcamera/camera.h>
@@ -314,6 +315,16 @@ struct CameraSession::Impl {
                     {"exposure_us", nullptr}, {"analogue_gain", nullptr}, {"scaler_crop", nullptr}, {"drop_reason", nullptr}};
       if (auto exposure = m.get(libcamera::controls::ExposureTime)) metadata["exposure_us"] = *exposure;
       if (auto gain = m.get(libcamera::controls::AnalogueGain)) metadata["analogue_gain"] = *gain;
+      ColourMetadata colour;
+      if (auto gains = m.get(libcamera::controls::ColourGains)) colour.gains = {{(*gains)[0], (*gains)[1]}};
+      if (auto temperature = m.get(libcamera::controls::ColourTemperature)) colour.temperature_k = *temperature;
+      if (auto matrix = m.get(libcamera::controls::ColourCorrectionMatrix)) {
+        std::array<float, 9> values;
+        std::copy(matrix->begin(), matrix->end(), values.begin());
+        colour.correction_matrix = values;
+      }
+      if (auto enabled = m.get(libcamera::controls::AwbEnable)) colour.awb_enabled = *enabled;
+      metadata.update(colour_metadata(colour));
       metadata["sensor_crop"] = nullptr;
       if (auto actual = m.get(libcamera::controls::ScalerCrop)) {
         metadata["scaler_crop"] = rectangle(*actual);
@@ -327,6 +338,7 @@ struct CameraSession::Impl {
             Json missing{{"schema_version", 1}, {"type", "frame"}, {"camera_id", settings.id},
                          {"sequence", std::uint32_t(*last_sequence+i)}, {"sensor_timestamp_ns", nullptr},
                          {"pts_us", nullptr}, {"exposure_us", nullptr}, {"analogue_gain", nullptr}};
+            missing.update(colour_metadata());
             drop(std::move(missing), "camera_sequence_gap");
           }
         } else if (gap >= 10000) logs.event("camera", "sequence_reset_or_large_gap", settings.id, std::to_string(gap));
@@ -413,6 +425,7 @@ struct CameraSession::Impl {
                 {"flip_x", settings.flip_x}, {"flip_y", settings.flip_y}, {"requested_scaler_crop", rectangle(crop)},
                 {"requested_sensor_crop", sensor_crop(crop)},
                 {"frame_rate_control", frame_rate_control},
+                {"colour_control_provenance", colour_control_provenance()},
                 {"sensor_coordinate_transform", {{"source", "configured full-mode ScalerCropMaximum"},
                   {"pixel_array_origin", {full_sensor_crop.x, full_sensor_crop.y}},
                   {"sensor_pixels_per_array_pixel", {2064.0/full_sensor_crop.width, 1552.0/full_sensor_crop.height}},
