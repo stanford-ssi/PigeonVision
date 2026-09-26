@@ -19,6 +19,7 @@ import av
 import cv2
 
 from pigeonvision.calibration import BoardDetector
+from pigeonvision.video_colour import native_frame_to_pixels
 
 
 SIZE = [2064, 1552]
@@ -220,7 +221,7 @@ def collect(session: Path, board_path: Path, output: Path, *, interval_seconds: 
                             if identity in seen:
                                 raise ValueError("duplicate_source_frame")
                             seen.add(identity)
-                            pixels = frame.to_ndarray(format="bgr24")
+                            pixels, conversion = native_frame_to_pixels(frame, stream.codec_context, format="bgr24")
                             detection = None
                             if require_board:
                                 gray = cv2.cvtColor(pixels, cv2.COLOR_BGR2GRAY)
@@ -245,6 +246,7 @@ def collect(session: Path, board_path: Path, output: Path, *, interval_seconds: 
                                       "source_time_base": [frame.time_base.numerator, frame.time_base.denominator],
                                       "decoded_pts_us": float(pts), "pts_us": row["pts_us"],
                                       "timestamp_quantization_error_us": float(pts - row["pts_us"]),
+                                      "colour_conversion": conversion,
                                       "capture_metadata": row, "board_corner_count": len(detection[2]) if detection is not None else None}
                             dataset["cameras"][camera_id].append(record)
                             report["accepted"][camera_id] += 1

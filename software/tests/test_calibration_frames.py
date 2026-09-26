@@ -26,7 +26,7 @@ def write_rows(path, rows):
     path.write_text("".join(json.dumps(row) + "\n" for row in rows))
 
 
-def make_session(tmp_path):
+def make_session(tmp_path, *, matrix=1):
     session = tmp_path / "synthetic-session"
     session.mkdir()
     board = tmp_path / "board.json"
@@ -37,20 +37,36 @@ def make_session(tmp_path):
                 "hardware": {"cameras": [c | {"width": 2064, "height": 1552, "sensor_size": [2064, 1552],
                                              "requested_sensor_crop": [0, 0, 2064, 1552]} for c in cameras]}}
     rows, segments = [], []
-    # Colour bars are deliberately not a calibration target. Lossless FFV1 is
-    # only the fixture codec; production native files contain H.264.
-    pixels = np.full((1552, 2064, 3), [40, 90, 140], dtype=np.uint8)
-    pixels[:200] = [200, 10, 50]
+    # Planar Y'CbCr bars are deliberately not a calibration target. Lossless
+    # FFV1 preserves their code values; native production files contain H.264.
+    codes = [(100, 140, 160), (180, 90, 150)]
+    def expected_bgr(y, cb, cr):
+        luma, blue, red = (y - 16) / 219, (cb - 128) / 224, (cr - 128) / 224
+        return np.rint(np.clip(255 * np.array([
+            luma + 1.8556 * blue,
+            luma - .1873242729306488 * blue - .4681242729306488 * red,
+            luma + 1.5748 * red]), 0, 255)).astype(np.uint8)
+    pixels = np.tile(expected_bgr(*codes[0]), (1552, 2064, 1))
+    pixels[:200] = expected_bgr(*codes[1])
     for camera, phase in (("A", 0), ("B", 10_000)):
         pts_values = [1_234_567 + phase, 1_267_900 + phase, 2_234_567 + phase]
         name = f"{camera}-000001.mkv"
         with av.open(str(session / name), "w", format="matroska") as container:
             stream = container.add_stream("ffv1", rate=30)
-            stream.width, stream.height, stream.pix_fmt = 2064, 1552, "bgr0"
+            stream.width, stream.height, stream.pix_fmt = 2064, 1552, "yuv420p"
+            stream.codec_context.colorspace = matrix
+            stream.codec_context.color_range = 1
+            stream.codec_context.color_primaries = stream.codec_context.color_trc = 1
             stream.time_base = stream.codec_context.time_base = Fraction(1, 1_000_000)
             stream.metadata["title"] = camera
             for sequence, pts in enumerate(pts_values):
-                frame = av.VideoFrame.from_ndarray(pixels, format="bgr24")
+                frame = av.VideoFrame(2064, 1552, "yuv420p")
+                frame.colorspace = matrix
+                frame.color_range = 1
+                for index, plane in enumerate(frame.planes):
+                    data = np.full((plane.height, plane.line_size), codes[0][index], np.uint8)
+                    data[:200 if index == 0 else 100] = codes[1][index]
+                    plane.update(data.tobytes())
                 frame.pts, frame.time_base = pts, Fraction(1, 1_000_000)
                 for packet in stream.encode(frame):
                     container.mux(packet)
@@ -83,7 +99,14 @@ def test_real_mkv_decode_retains_common_phase_metadata_orientation_and_pixels(tm
     assert a["capture_metadata"] == rows[0]
     assert abs(a["timestamp_quantization_error_us"]) <= 501
     assert a["split"] == "validation" and a["source_time_base"] == [1, 1000]
-    assert np.array_equal(cv2.imread(str(output / a["path"])), pixels)
+    actual = cv2.imread(str(output / a["path"]))
+    # Chroma interpolation blends the two rows next to the colour-bar edge;
+    # interiors retain the independently calculated colour and orientation.
+    assert np.max(np.abs(actual[:198].astype(int) - pixels[:198])) <= 2
+    assert np.max(np.abs(actual[202:].astype(int) - pixels[202:])) <= 2
+    assert a["colour_conversion"]["source_matrix"] == "bt709"
+    assert a["colour_conversion"]["source_range"] == "limited"
+    assert a["colour_conversion"]["output_pixel_format"] == "bgr24"
     assert not (output / "calibration.json").exists()
     with pytest.raises(FileExistsError):
         collector.collect(source, board, output, interval_seconds=1, split="fit")
@@ -135,6 +158,15 @@ def test_unknown_frame_crop_and_ambiguous_metadata_are_rejected(tmp_path):
     assert report["rejection_counts"] == {"metadata_crop_unknown_or_mismatched": 1, "metadata_ambiguous": 1}
 
 
+def test_non_native_colour_matrix_is_reported_and_no_png_is_saved(tmp_path):
+    source, board, _, _, _, _ = make_session(tmp_path, matrix=5)
+    output = tmp_path / "candidates"
+    report = collector.collect(source, board, output, interval_seconds=1, split="fit")
+    assert report["accepted"] == {"A": 0, "B": 0}
+    assert report["rejection_counts"] == {"native_colour_metadata_frame_colorspace_expected_1_got_5": 4}
+    assert not list(output.rglob("*.png"))
+
+
 @pytest.mark.parametrize("change", ["dimensions", "flip", "device", "crop"])
 def test_unknown_or_mismatched_manifest_geometry_excludes_camera(tmp_path, change):
     source, board, manifest, _, _, _ = make_session(tmp_path)
@@ -167,7 +199,8 @@ def test_real_detector_rejects_negative_board_without_saving_false_candidates(tm
     assert report["rejection_counts"] == {"complete_board_not_detected": 4}
     assert not list(output.rglob("*.png"))
     assert len(observed) == 4
-    assert np.array_equal(observed[0], cv2.flip(cv2.cvtColor(pixels, cv2.COLOR_BGR2GRAY), 0))
+    expected = cv2.flip(cv2.cvtColor(pixels, cv2.COLOR_BGR2GRAY), 0)
+    assert np.max(np.abs(observed[0].astype(int) - expected)) <= 2
 
 
 def test_timestamp_match_is_quantization_limited_and_clock_checked():

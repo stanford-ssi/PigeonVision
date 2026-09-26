@@ -61,6 +61,10 @@ are rejected. Missing indexed, unfinalized and unindexed segments are reported,
 so a partial copy is not called complete. Existing outputs are refused. The
 collector neither accesses the Pi nor fits lenses/alignment.
 
+Native PNG extraction requires limited-range BT.709 YUV420 tags and records the
+explicit matrix/range conversion. These pixels retain the BT.709 transfer curve;
+they are not linear-light or colour-managed sRGB measurements.
+
 Each camera's image list needs paths relative to its dataset, explicit
 `fit`/`validation` splits and region labels. Preserve `physical_cameras`,
 `image_orientation`, per-image `device_id` and `capture_metadata` when merging
