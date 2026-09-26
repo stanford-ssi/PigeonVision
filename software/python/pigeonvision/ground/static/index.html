@@ -104,6 +104,20 @@
           <div class="section-heading"><h2>Colour match</h2></div>
           <button id="colour-toggle" type="button" aria-pressed="false">Match camera colours</button>
           <p id="colour-status" role="status" class="control-hint"></p>
+          <fieldset class="colour-strength-controls">
+            <legend class="field-label">Balance strength</legend>
+            <label class="colour-strength" for="colour-strength-a">
+              <span>A</span>
+              <input id="colour-strength-a" type="range" min="0" max="100" step="1" value="100" disabled aria-label="Camera A balance strength" />
+              <output id="colour-strength-value-a" for="colour-strength-a">100%</output>
+            </label>
+            <label class="colour-strength" for="colour-strength-b">
+              <span>B</span>
+              <input id="colour-strength-b" type="range" min="0" max="100" step="1" value="100" disabled aria-label="Camera B balance strength" />
+              <output id="colour-strength-value-b" for="colour-strength-b">100%</output>
+            </label>
+          </fieldset>
+          <p id="colour-strength-hint" class="control-hint">0% removes the balance. Toggle shows originals.</p>
           <p class="control-hint">Preview only; recordings keep their original colour. Recheck after lighting changes.</p>
         </section>
         <section class="control-section inspection-controls">

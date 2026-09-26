@@ -117,3 +117,28 @@ def test_display_colour_rejects_invalid_profile(field, value):
     bundle["display_colour"][field] = value
     with pytest.raises(ValueError):
         validate_calibration(bundle)
+
+
+def test_neutral_preview_accepts_headroom_and_independent_strengths():
+    bundle = colour_bundle()
+    bundle["display_colour"].update(reference_camera=None, reference_target="colorchecker_neutrals",
+                                    common_headroom_scale=.88, camera_strengths={"A": 1, "B": .5})
+    assert validate_calibration(bundle) is bundle
+    bundle["display_colour"].update(reference_camera="A", reference_target=None)
+    with pytest.raises(ValueError, match="identity headroom"):
+        validate_calibration(bundle)
+
+
+@pytest.mark.parametrize("field,value", [
+    ("common_headroom_scale", True), ("common_headroom_scale", None),
+    ("common_headroom_scale", float("nan")), ("common_headroom_scale", .49),
+    ("common_headroom_scale", 1.01), ("camera_strengths", None),
+    ("camera_strengths", {"A": .5}), ("camera_strengths", {"A": 0, "B": True}),
+    ("camera_strengths", {"A": -1, "B": 0}), ("camera_strengths", {"A": 0, "B": 1.01}),
+    ("camera_strengths", {"A": float("inf"), "B": 1}),
+])
+def test_colour_strength_controls_reject_invalid_values(field, value):
+    bundle = colour_bundle()
+    bundle["display_colour"][field] = value
+    with pytest.raises(ValueError):
+        validate_calibration(bundle)

@@ -62,6 +62,16 @@ orientation or crop disables correction until the geometry is verified.
 Profiles affect both direct views and the panorama; camera controls, recorded
 pixels, timestamps and source-coverage masks are unchanged.
 
+Independent A/B balance-strength sliders reduce each correction from 100% to
+0% without restarting the feed. Their settings survive WebSocket reconnects
+for the current page. Optional `camera_strengths: {"A": 1, "B": 0.5}` supplies
+initial defaults. For a neutral-target profile, `common_headroom_scale` may be
+between 0.5 and 1; otherwise it is 1. Each effective channel multiplier is
+`scale + strength * (gain - scale)`. Thus 0% removes the colour balance while
+retaining the same common dimming; the original-colour toggle bypasses both.
+This prevents a strength adjustment from silently removing reserved highlight
+headroom. A camera-reference profile requires scale 1 to preserve its reference.
+
 Use unclipped neutral patches under the intended illumination, check other
 frames, and remeasure when illumination or ISP processing changes. Neutral
 balance alone does not establish colour accuracy, exposure matching, or a

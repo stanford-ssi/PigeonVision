@@ -866,3 +866,8 @@ input[type="number"] {
 #rotate-view[aria-pressed="true"] { border-color: currentColor; box-shadow: inset 3px 0 currentColor; }
 #colour-toggle { width: 100%; }
 #colour-toggle[aria-pressed="true"] { border-color: currentColor; box-shadow: inset 3px 0 currentColor; }
+.colour-strength-controls { min-width: 0; margin: 12px 0 0; padding: 0; border: 0; }
+.colour-strength { display: grid; grid-template-columns: 16px minmax(0, 1fr) 36px; gap: 8px; align-items: center; margin-top: 8px; font: 11px/1.5 var(--mono); }
+.colour-strength input { width: 100%; margin: 0; accent-color: var(--accent); cursor: ew-resize; }
+.colour-strength input:disabled { opacity: 0.5; cursor: not-allowed; }
+.colour-strength output { text-align: right; font-variant-numeric: tabular-nums; }

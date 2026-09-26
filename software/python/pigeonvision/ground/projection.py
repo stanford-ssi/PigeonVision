@@ -57,6 +57,17 @@ def validate_calibration(bundle: dict) -> dict:
             raise ValueError("Colour match needs a camera or ColorChecker neutral reference")
         if reference in ("A", "B") and colour.get("reference_target") is not None:
             raise ValueError("Declare one colour reference, not both camera and target")
+        scale = colour.get("common_headroom_scale", 1)
+        if type(scale) not in (int, float) or not math.isfinite(scale) or not .5 <= scale <= 1:
+            raise ValueError("Colour headroom scale must be finite and between 0.5 and 1")
+        if not neutral_target and scale != 1:
+            raise ValueError("A colour reference camera requires identity headroom scale")
+        if "camera_strengths" in colour:
+            strengths = colour["camera_strengths"]
+            if (not isinstance(strengths, dict) or set(strengths) != {"A", "B"}
+                    or not all(type(v) in (int, float) and math.isfinite(v) and 0 <= v <= 1
+                               for v in strengths.values())):
+                raise ValueError("Colour strengths must contain finite A and B values between 0 and 1")
         if not isinstance(colour.get("gains"), dict) or set(colour["gains"]) != {"A", "B"}:
             raise ValueError("Colour match needs gains for A and B")
         if not isinstance(colour.get("devices"), dict):

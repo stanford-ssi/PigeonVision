@@ -19,6 +19,7 @@ const state = {
   geometry: { errors: [], unverified: [] },
   error: null,
   colourRequested: false,
+  colourStrength: { A: 1, B: 1 },
 };
 const camera = () => ({
   decoder: null,
@@ -103,8 +104,12 @@ function configureCalibration(bundle) {
   renderer.calibration = bundle;
   const colour = bundle?.display_colour;
   if (!colour || !hadColour) state.colourRequested = !!colour;
-  for (const name of ["A", "B"])
-    renderer.setColourCorrection(name, colour?.gains[name] || [1, 1, 1]);
+  if (colour && !hadColour)
+    for (const name of ["A", "B"]) {
+      const strength = colour.camera_strengths?.[name];
+      state.colourStrength[name] = Number.isFinite(strength) && strength >= 0 && strength <= 1 ? strength : 1;
+    }
+  applyColourStrengths();
   updateColourControls();
   for (const o of $("view").options)
     if (!["a", "b"].includes(o.value)) o.disabled = !bundle;
@@ -153,6 +158,20 @@ function validateGeometry() {
         : "Capture crop, orientation, dimensions and camera identity match calibration.");
 }
 
+function colourBaseline(profile) {
+  const scale = profile?.common_headroom_scale;
+  return Number.isFinite(scale) && scale >= 0.5 && scale <= 1 ? scale : 1;
+}
+
+function applyColourStrengths() {
+  const profile = state.calibration?.display_colour;
+  const base = colourBaseline(profile);
+  for (const name of ["A", "B"])
+    renderer.setColourCorrection(name, profile
+      ? profile.gains[name].map((gain) => base + state.colourStrength[name] * (gain - base))
+      : [1, 1, 1]);
+}
+
 function updateColourControls() {
   const profile = state.calibration?.display_colour;
   const verified = !state.geometry.errors.length && !state.geometry.unverified.length;
@@ -161,6 +180,16 @@ function updateColourControls() {
   $("colour-toggle").disabled = !verified;
   $("colour-toggle").setAttribute("aria-pressed", String(renderer.colourEnabled));
   $("colour-toggle").textContent = renderer.colourEnabled ? "Show original colours" : "Match camera colours";
+  for (const name of ["A", "B"]) {
+    const input = $("colour-strength-" + name.toLowerCase());
+    const percent = state.colourStrength[name] * 100;
+    input.disabled = !profile || !verified;
+    input.value = String(percent);
+    $("colour-strength-value-" + name.toLowerCase()).textContent = `${Math.round(percent)}%`;
+  }
+  $("colour-strength-hint").textContent = colourBaseline(profile) < 1
+    ? "0% removes the balance but keeps the preview dimming. Toggle shows originals."
+    : "0% removes the balance. Toggle shows originals.";
   $("colour-status").textContent = !verified
     ? "Waiting for camera identity and geometry."
     : renderer.colourEnabled
@@ -431,6 +460,18 @@ try {
     updateColourControls();
     renderer.draw();
   };
+  for (const name of ["A", "B"]) {
+    const input = $("colour-strength-" + name.toLowerCase());
+    input.oninput = () => {
+      const percent = input.valueAsNumber;
+      if (!input.disabled && Number.isFinite(percent)) {
+        state.colourStrength[name] = Math.max(0, Math.min(1, percent / 100));
+        applyColourStrengths();
+        renderer.draw();
+      }
+      updateColourControls();
+    };
+  }
   $("view").onchange = () => {
     renderer.mode = $("view").value;
     drag = null;
@@ -533,6 +574,8 @@ try {
       focus: renderer.focus,
       viewerRotation: renderer.viewerRotation,
       colourEnabled: renderer.colourEnabled,
+      colourStrength: { ...state.colourStrength },
+      colourGains: { A: [...renderer.colour.A.gain], B: [...renderer.colour.B.gain] },
       decoded: { A: cameras.A.decoded, B: cameras.B.decoded },
       pending: { A: cameras.A.pending.length, B: cameras.B.pending.length },
     }),
