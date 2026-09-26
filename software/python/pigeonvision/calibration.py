@@ -1,7 +1,9 @@
-"""Measured full-sensor ChArUco/Mei calibration with explicit held-out evidence.
+"""Measured full-sensor board/Mei calibration with explicit held-out evidence.
 
-Input dataset JSON: board {squares_x,squares_y,square_length_m,marker_length_m,
-dictionary}, cameras {A: [{path,split:'fit'|'validation',region}], B: [...]}. Paths
+Input dataset JSON: board {type:'charuco'|'checkerboard',squares_x,squares_y,
+square_length_m}; ChArUco additionally needs marker_length_m and dictionary and
+is the default when type is omitted. cameras {A: [{path,split:'fit'|'validation',
+region}], B: [...]}. Paths
 are relative to the dataset file. Rig JSON provides cameras A/B with image_size,
 R_camera_from_rig, crop, output_size, flip_x, flip_y and optional valid_radius_px.
 Rig axes are +Z forward through A, +X right, +Y down. Camera axes use +Z optical,
@@ -17,6 +19,78 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
+
+
+class BoardDetector:
+    """Detect measured planar targets in an already canonical, unflipped image.
+
+    Checkerboard IDs describe detector-local row/column order. They do not
+    identify the same physical corner across images of a symmetric board.
+    """
+
+    def __init__(self, board_info: dict[str, Any]):
+        import cv2
+
+        self.type = board_info.get("type", "charuco")
+        if self.type not in ("charuco", "checkerboard"):
+            raise ValueError("board.type must be charuco or checkerboard.")
+        dimensions = [board_info.get(key) for key in ("squares_x", "squares_y")]
+        if any(isinstance(value, bool) or not isinstance(value, int) or value < 3 for value in dimensions):
+            raise ValueError("Board squares_x/squares_y must be integers of at least three; count squares, not inner corners.")
+        square = board_info.get("square_length_m")
+        if isinstance(square, bool) or not isinstance(square, (int, float)) or not math.isfinite(square) or square <= 0:
+            raise ValueError("Use a positive, finite measured square_length_m in metres.")
+        self.pattern_size = (dimensions[0] - 1, dimensions[1] - 1)
+        self.warnings = []
+        if self.type == "checkerboard":
+            columns, rows = self.pattern_size
+            self.object_points = np.asarray(
+                [[x * square, y * square, 0.] for y in range(rows) for x in range(columns)],
+                dtype=np.float64).reshape(-1, 1, 3)
+            self.rejection_reason = f"complete {columns}x{rows} checkerboard inner-corner grid was not detected"
+            self.corner_id_scope = "detector_local_per_view"
+            ambiguity = "90/180/270-degree" if columns == rows else "180-degree"
+            self.warnings.append(
+                f"Checkerboard {ambiguity} corner-order ambiguity is unresolved. Local corner IDs are suitable for independent intrinsics; "
+                "paired extrinsic estimation requires a verified common physical origin and axis direction in both images.")
+        else:
+            if not hasattr(cv2, "aruco"):
+                raise RuntimeError("Install opencv-contrib-python-headless for ChArUco detection.")
+            dictionary_name = board_info.get("dictionary", "DICT_4X4_100")
+            if not isinstance(dictionary_name, str) or not dictionary_name.startswith("DICT_") or not hasattr(cv2.aruco, dictionary_name):
+                raise ValueError(f"Unknown ChArUco dictionary {dictionary_name}")
+            marker = board_info.get("marker_length_m")
+            if isinstance(marker, bool) or not isinstance(marker, (int, float)) or not math.isfinite(marker) or not 0 < marker < square:
+                raise ValueError("Use measured board dimensions in metres with 0 < marker < square.")
+            dictionary = cv2.aruco.getPredefinedDictionary(getattr(cv2.aruco, dictionary_name))
+            self.board = cv2.aruco.CharucoBoard(tuple(dimensions), square, marker, dictionary)
+            self.detector = cv2.aruco.CharucoDetector(self.board)
+            self.rejection_reason = "fewer than eight detected ChArUco corners"
+            self.corner_id_scope = "board_corner_id"
+
+    def detect(self, gray: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray] | None:
+        """Return object points, image points and IDs, or None for a rejected view."""
+        import cv2
+
+        if self.type == "checkerboard":
+            # SB refines to subpixel coordinates internally. No LARGER flag:
+            # only a complete grid with the requested size is accepted.
+            flags = cv2.CALIB_CB_NORMALIZE_IMAGE | cv2.CALIB_CB_EXHAUSTIVE | cv2.CALIB_CB_ACCURACY
+            found, corners = cv2.findChessboardCornersSB(gray, self.pattern_size, flags=flags)
+            if not found or corners is None or len(corners) != len(self.object_points):
+                return None
+            ids = np.arange(len(self.object_points), dtype=np.int32)
+            obj = self.object_points.copy()
+        else:
+            corners, ids, _, _ = self.detector.detectBoard(gray)
+            if ids is None or len(ids) < 8:
+                return None
+            ids = ids.ravel()
+            obj = self.board.getChessboardCorners()[ids].reshape(-1, 1, 3)
+        image = np.ascontiguousarray(corners, dtype=np.float64).reshape(-1, 1, 2)
+        if not np.isfinite(image).all():
+            return None
+        return np.ascontiguousarray(obj, dtype=np.float64), image, ids
 
 
 def project_mei(rays: np.ndarray, camera: dict[str, Any], *, output: bool = True) -> tuple[np.ndarray, np.ndarray]:
@@ -106,28 +180,21 @@ def _held_out(cv2, obj, image, K, D, xi):
 
 def calibrate(dataset_path: Path, rig_path: Path, output: Path) -> dict[str, Any]:
     import cv2
-    if not hasattr(cv2, "omnidir") or not hasattr(cv2, "aruco"):
-        raise RuntimeError("Install the locked opencv-contrib-python-headless package; omnidir and aruco are required.")
+    if not hasattr(cv2, "omnidir"):
+        raise RuntimeError("Install the locked opencv-contrib-python-headless package; omnidir is required.")
     dataset = json.loads(dataset_path.read_text())
     rig = json.loads(rig_path.read_text())
     board_info = dataset["board"]
-    dictionary_name = board_info.get("dictionary", "DICT_4X4_100")
-    if not hasattr(cv2.aruco, dictionary_name) or not dictionary_name.startswith("DICT_"):
-        raise ValueError(f"Unknown ChArUco dictionary {dictionary_name}")
-    square, marker = board_info["square_length_m"], board_info["marker_length_m"]
-    if not 0 < marker < square:
-        raise ValueError("Use measured board dimensions in metres with 0 < marker < square.")
-    dictionary = cv2.aruco.getPredefinedDictionary(getattr(cv2.aruco, dictionary_name))
-    board = cv2.aruco.CharucoBoard((board_info["squares_x"], board_info["squares_y"]), square, marker, dictionary)
-    detector = cv2.aruco.CharucoDetector(board)
+    detector = BoardDetector(board_info)
     bundle = {"schema_version": 1, "model": "mei", "rig_axes": "+Z forward through A, +X right, +Y down",
               "rig_alignment_status": rig.get("rig_alignment_status", "unverified"), "cameras": {},
               "validation": {"status": "measured_intrinsics_only", "targets": {"rms_px": 1, "p95_px": 2}, "cameras": {}},
               "source_dataset": str(dataset_path.resolve()), "board": board_info,
+              "board_detection": {"type": detector.type, "corner_id_scope": detector.corner_id_scope, "warnings": detector.warnings},
               "intrinsic_coordinate_convention": "unflipped_full_sensor_pixel_centres",
               "provenance": {"dataset_sha256": hashlib.sha256(dataset_path.read_bytes()).hexdigest(),
                              "rig_sha256": hashlib.sha256(rig_path.read_bytes()).hexdigest()}}
-    evidence = {"schema_version": 1, "observations": []}
+    evidence = {"schema_version": 1, "board_detection": bundle["board_detection"], "observations": []}
     if output.exists() and any(output.iterdir()):
         raise ValueError("Calibration output is not empty; choose a new output directory to preserve earlier evidence.")
     output.mkdir(parents=True, exist_ok=True)
@@ -163,12 +230,12 @@ def calibrate(dataset_path: Path, rig_path: Path, output: Path) -> dict[str, Any
                     gray = cv2.flip(gray, 1)
                 if orientation["flip_y"]:
                     gray = cv2.flip(gray, 0)
-                corners, ids, _, _ = detector.detectBoard(gray)
-                if ids is None or len(ids) < 8:
-                    observation["rejected"] = "fewer than eight detected ChArUco corners"
+                detected = detector.detect(gray)
+                observation.update(board_type=detector.type, corner_id_scope=detector.corner_id_scope)
+                if detected is None:
+                    observation["rejected"] = detector.rejection_reason
                     continue
-                obj = np.ascontiguousarray(board.getChessboardCorners()[ids.ravel()].reshape(-1, 1, 3), dtype=np.float64)
-                img = np.ascontiguousarray(corners, dtype=np.float64)
+                obj, img, ids = detected
                 observation.update(corner_count=len(ids), corner_ids=ids.ravel().tolist(), canonical_image_points=img.reshape(-1, 2).tolist())
                 (fit if record["split"] == "fit" else validation).append((obj, img, observation))
             if len(fit) < 8 or len(validation) < 3:

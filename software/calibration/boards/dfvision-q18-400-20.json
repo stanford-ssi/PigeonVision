@@ -1,0 +1,14 @@
+{
+  "type": "checkerboard",
+  "squares_x": 18,
+  "squares_y": 18,
+  "square_length_m": 0.02,
+  "manufacturer_model": "DFVision Q18-400-20",
+  "overall_size_m": [0.4, 0.4],
+  "pattern_size_m": [0.36, 0.36],
+  "inner_corners": [17, 17],
+  "specification_source": "https://www.dfoptic.com/in-stock-standards-product/152.html",
+  "specification_checked": "2026-09-25",
+  "measurement_status": "manufacturer_nominal_dimensions; confirm physical board label and square pitch",
+  "corner_orientation": "unresolved_square_pattern_symmetry"
+}
