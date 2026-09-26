@@ -56,6 +56,9 @@ Config Config::read(const std::filesystem::path &path) {
   c.bitrate = j.value("bitrate", c.bitrate); c.vbv_bits = j.value("vbv_bits", c.vbv_bits);
   c.preset = j.value("preset", c.preset); c.segment_seconds = j.value("segment_seconds", c.segment_seconds);
   c.encoder_threads = j.value("encoder_threads", c.encoder_threads);
+  c.encoder_input = j.value("encoder_input", c.encoder_input);
+  if (c.encoder_input != "dmabuf" && c.encoder_input != "copy")
+    throw std::runtime_error("encoder_input must be dmabuf or copy");
   c.min_free_bytes = j.value("min_free_bytes", c.min_free_bytes);
   c.encode = j.value("encode", c.encode); c.record = j.value("record", c.record);
   if (j.contains("udp_destination") && !j["udp_destination"].is_null()) c.udp_destination = j["udp_destination"].get<std::string>();
@@ -78,7 +81,8 @@ Json Config::effective() const {
   for (const auto &c : cameras) cams.push_back({{"id", c.id}, {"device", c.device}, {"flip_x", c.flip_x}, {"flip_y", c.flip_y}});
   return {{"schema_version", 1}, {"session_dir", session_dir.string()}, {"cameras", cams},
           {"width", width}, {"height", height}, {"fps", fps}, {"bitrate", bitrate}, {"vbv_bits", vbv_bits},
-          {"preset", preset}, {"encoder_threads", encoder_threads}, {"segment_seconds", segment_seconds}, {"min_free_bytes", min_free_bytes},
+          {"preset", preset}, {"encoder_threads", encoder_threads}, {"encoder_input", encoder_input},
+          {"segment_seconds", segment_seconds}, {"min_free_bytes", min_free_bytes},
           {"encode", encode}, {"record", record}, {"udp_destination", udp_destination.empty() ? Json(nullptr) : Json(udp_destination)},
           {"mux_bitrate", mux_bitrate}, {"duration_seconds", duration_seconds},
           {"sensor_mode", {{"width", 2064}, {"height", 1552}, {"bit_depth", 10}}}};

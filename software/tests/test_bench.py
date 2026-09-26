@@ -154,6 +154,25 @@ def test_capture_session_path_uses_execution_cwd_not_config_parent(tmp_path, mon
     assert not (source / "relative-session").exists()
 
 
+@pytest.mark.parametrize("value", [None, True, 1, 2.0, "", "cached", "COPY", [], {}])
+def test_encoder_input_rejects_unknown_or_nonstring_modes(tmp_path, value):
+    with pytest.raises(ValueError, match="encoder_input"):
+        validate_config(config(tmp_path) | {"encoder_input": value})
+
+
+def test_encoder_input_default_and_copy_survive_config_and_matrix(tmp_path):
+    assert validate_config(config(tmp_path))["encoder_input"] == "dmabuf"
+    for mode in ("dmabuf", "copy"):
+        base = config(tmp_path) | {"encoder_input": mode}
+        assert validate_config(base)["encoder_input"] == mode
+        assert all(cfg["encoder_input"] == mode for cfg in matrix(base, tmp_path, 1, None, ["ultrafast"]))
+    source = tmp_path / "input.json"
+    destination = tmp_path / "copy.json"
+    source.write_text(json.dumps(config(tmp_path) | {"encoder_input": "copy"}))
+    assert main(["capture", "--config", str(source), "--write-config", str(destination)]) == 0
+    assert json.loads(destination.read_text())["encoder_input"] == "copy"
+
+
 def test_ssh_preserves_relative_path_for_remote_execution(tmp_path, monkeypatch):
     from types import SimpleNamespace
     import pigeonvision.cli

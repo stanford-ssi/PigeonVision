@@ -1,6 +1,7 @@
 #include "pv/camera.hpp"
 #include "pv/colour.hpp"
 #include "pv/core.hpp"
+#include "pv/encoder_input.hpp"
 #include "pv/framos.hpp"
 #include "pv/timing.hpp"
 #include <libcamera/camera.h>
@@ -213,7 +214,7 @@ struct CameraSession::Impl {
   std::int64_t last_pts = -1;
   std::optional<std::uint32_t> last_sequence;
   std::map<std::int64_t, Json> pending_metadata;
-  TimingCounter queue_dwell, encoder_send, encoder_receive;
+  TimingCounter queue_dwell, encoder_send, encoder_receive, input_copy, input_and_send;
 
   Impl(libcamera::CameraManager &manager, const Config &c, const CameraConfig &s, Logs &l, std::int64_t epoch)
       : config(c), settings(s), logs(l), origin(epoch) {
@@ -390,6 +391,9 @@ struct CameraSession::Impl {
   void work() {
     Json in_flight_metadata;
     try {
+      std::unique_ptr<CachedEncoderInput> cached_input;
+      if (config.encode && config.encoder_input == "copy")
+        cached_input = std::make_unique<CachedEncoderInput>(config.width, config.height);
       while (auto item = queue.pop()) {
         queue_dwell.observe(std::chrono::steady_clock::now() - item->enqueued_at);
         in_flight_metadata = item->metadata;
@@ -404,13 +408,26 @@ struct CameraSession::Impl {
           item->metadata["status"] = "captured"; logs.frame(std::move(item->metadata)); in_flight_metadata = nullptr; continue;
         }
         auto frame = av_frame(mapping, config.width, config.height, camera_config->at(0).stride, lease, pts);
+        AVFrame *encoder_frame = frame.get();
+        std::chrono::nanoseconds input_send_elapsed{};
+        if (cached_input) {
+          timed_codec_call(input_copy, [&] {
+            encoder_frame = cached_input->copy_from(*frame);
+            return 0;
+          }, &input_send_elapsed);
+          // The cached AVFrame owns independent pixels. Drop every DMA lease
+          // reference now, ending CPU access and recycling the camera request
+          // before encoding; FFmpeg can retain only the cached frame's buffers.
+          frame.reset(); lease.reset();
+        }
         pending_metadata.emplace(pts, std::move(item->metadata));
         in_flight_metadata = nullptr;
-        int result = timed_codec_call(encoder_send, [&] { return avcodec_send_frame(encoder, frame.get()); });
+        int result = timed_codec_call(encoder_send, [&] { return avcodec_send_frame(encoder, encoder_frame); }, &input_send_elapsed);
         if (result == AVERROR(EAGAIN)) {
           receive_packets();
-          result = timed_codec_call(encoder_send, [&] { return avcodec_send_frame(encoder, frame.get()); });
+          result = timed_codec_call(encoder_send, [&] { return avcodec_send_frame(encoder, encoder_frame); }, &input_send_elapsed);
         }
+        input_and_send.observe(input_send_elapsed);
         av_check(result, "send frame to encoder"); receive_packets();
       }
       if (encoder) {
@@ -442,6 +459,7 @@ struct CameraSession::Impl {
     Json result{{"id", settings.id}, {"device", settings.device}, {"width", s.size.width}, {"height", s.size.height},
                 {"stride", s.stride}, {"frame_size", s.frameSize}, {"buffer_count", allocator->buffers(stream).size()},
                 {"pixel_format", s.pixelFormat.toString()}, {"colour_space", "Rec709"}, {"sensor_size", {2064,1552}},
+                {"encoder_input", config.encoder_input},
                 {"sensor_bit_depth", 10}, {"orientation", int(camera_config->orientation)},
                 {"flip_x", settings.flip_x}, {"flip_y", settings.flip_y}, {"requested_scaler_crop", rectangle(crop)},
                 {"requested_sensor_crop", sensor_crop(crop)},
@@ -480,6 +498,8 @@ Json CameraSession::stats() const {
           {"queue", impl_->queue.size()}, {"queue_high_water", impl_->queue.high_water()}, {"last_frame_ns", impl_->last_frame_ns.load()},
           {"timing_us", {{"capture_queue_dwell", timing_json(impl_->queue_dwell)},
                          {"encoder_send_call", timing_json(impl_->encoder_send)},
+                         {"encoder_input_copy", timing_json(impl_->input_copy)},
+                         {"encoder_input_and_send", timing_json(impl_->input_and_send)},
                          {"encoder_receive_call", timing_json(impl_->encoder_receive)}}}};
 }
 Json enumerate_cameras(libcamera::CameraManager &manager) {

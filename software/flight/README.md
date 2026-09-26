@@ -60,8 +60,31 @@ libcamera `CameraSensorLegacy::setFormat` refreshes control info, followed by
 Each camera has eight requested libcamera buffers and a three-frame queue.
 Mapped DMA buffers are held by reference-counted AVFrames until x264 releases
 them; the completion callback does no encoding or disk/network IO. Each encoder
-uses two slice threads, no B frames, a one-second GOP, repeated SPS/PPS, configured
+uses `encoder_threads` slice threads (default two), no B frames, a one-second GOP, repeated SPS/PPS, configured
 bitrate/VBV and the selected preset. Dropped frames keep real timestamp gaps.
+
+`encoder_input:"copy"` enables a controlled cached-input experiment. It copies
+active YUV pixels into a reusable CPU-allocated AVFrame with padded strides and preserves capture
+PTS and colour properties. DMA CPU access ends and the camera request is recycled
+after the copy, before encoding. `av_frame_make_writable` prevents overwriting
+pixels still referenced by FFmpeg. The default `"dmabuf"` path remains unchanged.
+Health includes `encoder_input_copy` and `encoder_input_and_send`; the latter sums
+copy preparation and direct send-call durations per frame, so moving time out of
+the encoder call cannot be mistaken for a throughput improvement. Check actual
+encoded cadence, capture loss and queue dwell as well. Keep full sensor mode,
+output size, frame rate, thread count, bitrate/VBV and scene fixed between runs;
+alternate the modes after warm-up and compare repeated, compiler-free intervals.
+
+Source review motivates this comparison but does not prove a cache bottleneck:
+the pinned [x264 input path](https://code.videolan.org/videolan/x264/-/blob/31e19f9/common/frame.c)
+copies/interleaves incoming pixels into internal frames before motion analysis.
+Our libcamera FrameBufferAllocator exports PiSP V4L2 MMAP buffers, whereas
+[rpicam-apps at the installed commit](https://github.com/raspberrypi/rpicam-apps/blob/24906da670e9/core/dma_heaps.cpp)
+uses imported cached DMA-heap buffers. The
+[pinned PiSP driver](https://github.com/raspberrypi/linux/blob/stable_20250916/drivers/media/platform/raspberrypi/pisp_be/pisp_be.c)
+uses `vb2_dma_contig`; mapping cache attributes depend on the DMA/device path.
+Runtime page attributes have not been measured. Copy mode adds another full
+image transfer and may be slower; it must earn adoption through hardware results.
 
 Encoded packet references fan out to independent 120-packet recording queues
 and a 240-item transport queue. Recorders rotate on IDRs after the configured

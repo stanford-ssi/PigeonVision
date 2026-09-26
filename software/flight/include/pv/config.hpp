@@ -18,6 +18,7 @@ struct Config {
   std::int64_t bitrate = 4000000, vbv_bits = 2000000;
   std::string preset = "ultrafast";
   unsigned encoder_threads = 2;
+  std::string encoder_input = "dmabuf";
   unsigned segment_seconds = 60;
   std::uintmax_t min_free_bytes = 2147483648ULL;
   bool encode = true, record = true;

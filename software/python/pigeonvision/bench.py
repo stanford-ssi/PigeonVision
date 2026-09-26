@@ -18,6 +18,7 @@ from .doctor import command, read_text
 
 DEFAULTS = {"schema_version": 1, "width": 1552, "height": 1552, "fps": 30,
             "bitrate": 4_000_000, "vbv_bits": 2_000_000, "preset": "ultrafast", "encoder_threads": 2,
+            "encoder_input": "dmabuf",
             "segment_seconds": 60, "min_free_bytes": 2_147_483_648,
             "encode": True, "record": True, "udp_destination": None, "mux_bitrate": 9_000_000}
 
@@ -76,6 +77,8 @@ def validate_config(config: dict[str, Any]) -> dict[str, Any]:
         raise ValueError("Capture-only mode requires record=false and no UDP destination.")
     if out["preset"] not in {"ultrafast", "superfast", "veryfast", "faster", "fast", "medium", "slow", "slower", "veryslow"}:
         raise ValueError("Unsupported x264 preset.")
+    if not isinstance(out["encoder_input"], str) or out["encoder_input"] not in ("dmabuf", "copy"):
+        raise ValueError("encoder_input must be dmabuf or copy.")
     if out["udp_destination"] and out["mux_bitrate"] < out["bitrate"] * len(cameras) + 500_000:
         raise ValueError("Transport needs at least 500 kbit/s headroom above combined video bitrate.")
     out["cameras"] = [{"flip_x": False, "flip_y": True} | c for c in cameras]

@@ -58,6 +58,13 @@ int main() {
   assert(rejected && timing.snapshot().samples == 2);
   assert(pv::timed_codec_call(timing, [] { return -11; }) == -11);  // Error/EAGAIN results are preserved and timed.
   assert(timing.snapshot().samples == 3);
+  pv::TimingCounter copy_timing, send_timing;
+  std::chrono::nanoseconds combined{};
+  assert(pv::timed_codec_call(copy_timing, [] { return 0; }, &combined) == 0);
+  assert(pv::timed_codec_call(send_timing, [] { return -11; }, &combined) == -11);
+  assert(pv::timed_codec_call(send_timing, [] { return 0; }, &combined) == 0);
+  assert(combined.count() == static_cast<std::int64_t>(copy_timing.snapshot().total_ns + send_timing.snapshot().total_ns));
+  assert(copy_timing.snapshot().samples == 1 && send_timing.snapshot().samples == 2);
   pv::TimingCounter concurrent;
   std::vector<std::thread> producers;
   for (int i = 0; i < 4; ++i) producers.emplace_back([&] {

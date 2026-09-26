@@ -30,10 +30,13 @@ class TimingCounter {
   TimingSnapshot value_;
 };
 
-template<class F> int timed_codec_call(TimingCounter &counter, F &&operation) {
+template<class F> int timed_codec_call(TimingCounter &counter, F &&operation,
+                                     std::chrono::nanoseconds *accumulated = nullptr) {
   const auto start = std::chrono::steady_clock::now();
   const int result = operation();
-  counter.observe(std::chrono::steady_clock::now() - start);
+  const auto elapsed = std::chrono::steady_clock::now() - start;
+  if (accumulated) *accumulated += elapsed;
+  counter.observe(elapsed);
   return result;
 }
 }  // namespace pv

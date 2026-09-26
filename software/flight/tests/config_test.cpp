@@ -13,6 +13,12 @@ int main() {
   assert(config.session_dir == std::filesystem::current_path()/"output/config-test");
   assert(!config.encode && config.cameras[0].flip_y && !config.cameras[0].flip_x);
   assert(config.encoder_threads == 2 && config.effective().at("encoder_threads") == 2);
+  assert(config.encoder_input == "dmabuf" && config.effective().at("encoder_input") == "dmabuf");
+  for (const auto *mode : {"dmabuf", "copy"}) {
+    auto j = valid; j["encoder_input"] = mode; write(j);
+    const auto configured = pv::Config::read(file);
+    assert(configured.encoder_input == mode && configured.effective().at("encoder_input") == mode);
+  }
   for (unsigned threads : {1u, 3u, 4u, 8u}) {
     auto j = valid; j["encoder_threads"] = threads; write(j);
     const auto configured = pv::Config::read(file);
@@ -31,6 +37,8 @@ int main() {
   rejects("encoder_threads",0); rejects("encoder_threads",9); rejects("encoder_threads",-1);
   rejects("encoder_threads",2.0); rejects("encoder_threads",true);
   rejects("encoder_threads",nullptr); rejects("encoder_threads","3");
+  for (const auto &bad : pv::Json::array({nullptr, true, 1, 2.0, "", "cached", "COPY", pv::Json::array(), pv::Json::object()}))
+    rejects("encoder_input", bad);
   rejects("cameras",{{{"id","A"},{"device","same"}},{{"id","B"},{"device","same"}}});
   std::filesystem::remove(file);
   std::cout << "PASS: strict config types, bounds, unique device identities, capture-only and CWD paths\n";
