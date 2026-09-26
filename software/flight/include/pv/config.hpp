@@ -19,6 +19,7 @@ struct Config {
   std::string preset = "ultrafast";
   unsigned encoder_threads = 2;
   std::string encoder_input = "dmabuf";
+  std::string capture_allocator = "libcamera";
   unsigned segment_seconds = 60;
   std::uintmax_t min_free_bytes = 2147483648ULL;
   bool encode = true, record = true;

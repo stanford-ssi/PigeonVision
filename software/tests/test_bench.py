@@ -173,6 +173,25 @@ def test_encoder_input_default_and_copy_survive_config_and_matrix(tmp_path):
     assert json.loads(destination.read_text())["encoder_input"] == "copy"
 
 
+@pytest.mark.parametrize("value", [None, True, 1, 2.0, "", "cached", "system", "LIBCAMERA", [], {}])
+def test_capture_allocator_rejects_unknown_or_nonstring_modes(tmp_path, value):
+    with pytest.raises(ValueError, match="capture_allocator"):
+        validate_config(config(tmp_path) | {"capture_allocator": value})
+
+
+def test_capture_allocator_default_and_cached_survive_config_and_matrix(tmp_path):
+    assert validate_config(config(tmp_path))["capture_allocator"] == "libcamera"
+    for mode in ("libcamera", "dma_heap_cached"):
+        base = config(tmp_path) | {"capture_allocator": mode}
+        assert validate_config(base)["capture_allocator"] == mode
+        assert all(cfg["capture_allocator"] == mode for cfg in matrix(base, tmp_path, 1, None, ["ultrafast"]))
+    source = tmp_path / "input.json"
+    destination = tmp_path / "cached.json"
+    source.write_text(json.dumps(config(tmp_path) | {"capture_allocator": "dma_heap_cached"}))
+    assert main(["capture", "--config", str(source), "--write-config", str(destination)]) == 0
+    assert json.loads(destination.read_text())["capture_allocator"] == "dma_heap_cached"
+
+
 def test_ssh_preserves_relative_path_for_remote_execution(tmp_path, monkeypatch):
     from types import SimpleNamespace
     import pigeonvision.cli

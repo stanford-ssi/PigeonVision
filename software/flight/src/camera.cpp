@@ -1,10 +1,13 @@
 #include "pv/camera.hpp"
 #include "pv/colour.hpp"
 #include "pv/core.hpp"
+#include "pv/dma_heap.hpp"
 #include "pv/encoder_input.hpp"
 #include "pv/framos.hpp"
 #include "pv/timing.hpp"
 #include <libcamera/camera.h>
+#include <libcamera/base/shared_fd.h>
+#include <libcamera/base/unique_fd.h>
 #include <libcamera/control_ids.h>
 #include <libcamera/formats.h>
 #include <libcamera/framebuffer.h>
@@ -117,6 +120,7 @@ struct Mapping {
   struct Region { void *address; std::size_t length; };
   std::map<int, Region> regions;
   std::vector<std::pair<std::uint8_t *, std::size_t>> planes;
+  std::optional<DmaReadSync> read_sync;
   explicit Mapping(const libcamera::FrameBuffer &buffer) {
     std::map<int, std::size_t> lengths;
     for (const auto &plane : buffer.planes()) {
@@ -131,30 +135,38 @@ struct Mapping {
       }
       for (const auto &plane : buffer.planes())
         planes.emplace_back(static_cast<std::uint8_t *>(regions.at(plane.fd.get()).address) + plane.offset, plane.length);
+      std::vector<int> descriptors;
+      for (auto [fd, _] : regions) descriptors.push_back(fd);
+      read_sync.emplace(std::move(descriptors), [](int fd, bool start) {
+        dma_buf_sync sync{};
+        sync.flags = (start ? DMA_BUF_SYNC_START : DMA_BUF_SYNC_END) | DMA_BUF_SYNC_READ;
+        return ioctl(fd, DMA_BUF_IOCTL_SYNC, &sync);
+      });
     } catch (...) { for (auto [_, r] : regions) munmap(r.address, r.length); throw; }
   }
   ~Mapping() { for (auto [_, r] : regions) munmap(r.address, r.length); }
   void begin() {
-    std::vector<int> started;
-    for (auto [fd, _] : regions) {
-      dma_buf_sync sync{DMA_BUF_SYNC_START | DMA_BUF_SYNC_READ};
-      if (ioctl(fd, DMA_BUF_IOCTL_SYNC, &sync) < 0) {
-        for (int previous : started) { dma_buf_sync end{DMA_BUF_SYNC_END | DMA_BUF_SYNC_READ}; ioctl(previous, DMA_BUF_IOCTL_SYNC, &end); }
-        throw std::runtime_error(std::string("DMA_BUF_SYNC_START: ") + std::strerror(errno));
-      }
-      started.push_back(fd);
-    }
+    if (int error = read_sync->begin())
+      throw std::system_error(error, std::generic_category(), "DMA_BUF_SYNC_START");
   }
-  void end() noexcept {
-    for (auto [fd, _] : regions) { dma_buf_sync sync{DMA_BUF_SYNC_END | DMA_BUF_SYNC_READ}; ioctl(fd, DMA_BUF_IOCTL_SYNC, &sync); }
+  int end() noexcept {
+    const int error = read_sync->end();
+    return error ? error : (read_sync->failed() ? EIO : 0);
   }
 };
 struct FrameDelete { void operator()(AVFrame *p) const { av_frame_free(&p); } };
 using Frame = std::unique_ptr<AVFrame, FrameDelete>;
 struct Lease {
   Mapping &mapping;
-  std::function<void()> release;
-  ~Lease() { mapping.end(); release(); }
+  TimingCounter &end_timing;
+  std::function<void(int)> release;
+  ~Lease() noexcept {
+    const auto start = std::chrono::steady_clock::now();
+    const int error = mapping.end();
+    try { end_timing.observe(std::chrono::steady_clock::now() - start); } catch (...) {}
+    // This can run through FFmpeg's C free callback. No exception may escape.
+    try { release(error); } catch (...) {}
+  }
 };
 void release_buffer(void *opaque, std::uint8_t *) { delete static_cast<std::shared_ptr<Lease> *>(opaque); }
 Frame av_frame(Mapping &mapping, unsigned width, unsigned height, unsigned stride,
@@ -190,6 +202,8 @@ struct CameraSession::Impl {
   std::shared_ptr<libcamera::Camera> camera;
   std::unique_ptr<libcamera::CameraConfiguration> camera_config;
   std::unique_ptr<libcamera::FrameBufferAllocator> allocator;
+  std::vector<std::unique_ptr<libcamera::FrameBuffer>> imported_buffers;
+  std::string heap_target;
   std::vector<std::unique_ptr<libcamera::Request>> requests;
   std::map<libcamera::FrameBuffer *, std::unique_ptr<Mapping>> mappings;
   libcamera::Stream *stream = nullptr;
@@ -208,13 +222,14 @@ struct CameraSession::Impl {
   std::thread worker;
   std::mutex state_mutex;
   std::atomic<bool> active{false}, failure{false};
+  std::atomic<bool> dma_quarantined{false};
   bool acquired = false;
   std::atomic<std::uint64_t> captured{0}, encoded{0}, dropped{0};
   std::atomic<std::int64_t> last_frame_ns{0};
   std::int64_t last_pts = -1;
   std::optional<std::uint32_t> last_sequence;
   std::map<std::int64_t, Json> pending_metadata;
-  TimingCounter queue_dwell, encoder_send, encoder_receive, input_copy, input_and_send;
+  TimingCounter queue_dwell, encoder_send, encoder_receive, input_copy, input_and_send, dma_start, dma_end;
 
   Impl(libcamera::CameraManager &manager, const Config &c, const CameraConfig &s, Logs &l, std::int64_t epoch)
       : config(c), settings(s), logs(l), origin(epoch) {
@@ -227,8 +242,11 @@ struct CameraSession::Impl {
   ~Impl() { stop(); cleanup(); }
   void cleanup() {
     if (camera) camera->requestCompleted.disconnect(this);
-    avcodec_free_context(&encoder); requests.clear(); mappings.clear(); allocator.reset();
+    avcodec_free_context(&encoder); requests.clear(); mappings.clear(); imported_buffers.clear(); allocator.reset();
     if (acquired) { camera->release(); acquired = false; }
+  }
+  const std::vector<std::unique_ptr<libcamera::FrameBuffer>> &buffers() const {
+    return allocator ? allocator->buffers(stream) : imported_buffers;
   }
   void configure() {
     camera_config = camera->generateConfiguration({libcamera::StreamRole::VideoRecording});
@@ -262,10 +280,26 @@ struct CameraSession::Impl {
     if (!camera->controls().count(&libcamera::controls::ScalerCrop) || !camera->controls().count(&libcamera::controls::FrameDurationLimits))
       throw std::runtime_error("camera does not expose crop and fixed frame-duration controls");
     stream = output.stream();
-    allocator = std::make_unique<libcamera::FrameBufferAllocator>(camera);
-    camera_check(allocator->allocate(stream), "allocate camera buffers");
-    if (allocator->buffers(stream).size() < 6) throw std::runtime_error("insufficient capture buffers");
-    for (const auto &buffer : allocator->buffers(stream)) {
+    (void)checked_yuv420_layout(output.size.width, output.size.height, output.stride, output.frameSize);
+    if (config.capture_allocator == "dma_heap_cached") {
+      DmaHeap heap;
+      heap_target = std::filesystem::canonical(cached_video_heap).string();
+      imported_buffers.reserve(output.bufferCount);
+      for (unsigned i = 0; i < output.bufferCount; ++i) {
+        auto owned_fd = heap.allocate(output.frameSize);
+        libcamera::UniqueFD fd(owned_fd.release());
+        std::vector<libcamera::FrameBuffer::Plane> planes(1);
+        planes[0].fd = libcamera::SharedFD(std::move(fd));
+        planes[0].offset = 0;
+        planes[0].length = output.frameSize;
+        imported_buffers.push_back(std::make_unique<libcamera::FrameBuffer>(planes));
+      }
+    } else {
+      allocator = std::make_unique<libcamera::FrameBufferAllocator>(camera);
+      camera_check(allocator->allocate(stream), "allocate camera buffers");
+    }
+    if (buffers().size() < 6) throw std::runtime_error("insufficient capture buffers");
+    for (const auto &buffer : buffers()) {
       mappings[buffer.get()] = std::make_unique<Mapping>(*buffer);
       auto request = camera->createRequest();
       if (!request) throw std::runtime_error("cannot allocate request");
@@ -305,11 +339,13 @@ struct CameraSession::Impl {
     logs.event("camera", "started", settings.id, settings.device);
   }
   void recycle(libcamera::Request *request) noexcept {
-    std::lock_guard lock(state_mutex);
-    if (!active) return;
-    request->reuse(libcamera::Request::ReuseBuffers);
-    int result = camera->queueRequest(request);
-    if (result < 0) { failure = true; logs.event("camera", "requeue_failed", settings.id, std::to_string(result)); }
+    try {
+      std::lock_guard lock(state_mutex);
+      if (!active || dma_quarantined) return;
+      request->reuse(libcamera::Request::ReuseBuffers);
+      int result = camera->queueRequest(request);
+      if (result < 0) { failure = true; logs.event("camera", "requeue_failed", settings.id, std::to_string(result)); }
+    } catch (...) { failure = true; }
   }
   void drop(Json metadata, const char *reason) {
     ++dropped; metadata["status"] = "dropped"; metadata["drop_reason"] = reason;
@@ -398,9 +434,18 @@ struct CameraSession::Impl {
         queue_dwell.observe(std::chrono::steady_clock::now() - item->enqueued_at);
         in_flight_metadata = item->metadata;
         auto &mapping = *mappings.at(item->buffer);
-        try { mapping.begin(); }
-        catch (...) { recycle(item->request); throw; }
-        auto lease = std::shared_ptr<Lease>(new Lease{mapping, [this, request = item->request] { recycle(request); }});
+        // Construct the guard before START so allocation/exception paths cannot
+        // leave CPU access open. END failures quarantine the camera without
+        // changing active: the main loop must still call camera->stop().
+        auto lease = std::make_shared<Lease>(mapping, dma_end, [this, request = item->request](int error) noexcept {
+          if (error) {
+            dma_quarantined = true; failure = true;
+            try { logs.event("camera", "dma_sync_failed", settings.id, std::strerror(error)); } catch (...) {}
+            return;
+          }
+          recycle(request);
+        });
+        timed_codec_call(dma_start, [&] { mapping.begin(); return 0; });
         const auto pts = item->metadata.at("pts_us").get<std::int64_t>();
         if (pts <= last_pts) { drop(std::move(item->metadata), "nonmonotonic_sensor_timestamp"); in_flight_metadata = nullptr; continue; }
         last_pts = pts;
@@ -457,9 +502,12 @@ struct CameraSession::Impl {
   Json description() const {
     const auto &s = camera_config->at(0);
     Json result{{"id", settings.id}, {"device", settings.device}, {"width", s.size.width}, {"height", s.size.height},
-                {"stride", s.stride}, {"frame_size", s.frameSize}, {"buffer_count", allocator->buffers(stream).size()},
+                {"stride", s.stride}, {"frame_size", s.frameSize}, {"buffer_count", buffers().size()},
                 {"pixel_format", s.pixelFormat.toString()}, {"colour_space", "Rec709"}, {"sensor_size", {2064,1552}},
                 {"encoder_input", config.encoder_input},
+                {"capture_allocator", config.capture_allocator},
+                {"dma_heap_path", heap_target.empty() ? Json(nullptr) : Json(cached_video_heap)},
+                {"dma_heap_target", heap_target.empty() ? Json(nullptr) : Json(heap_target)},
                 {"sensor_bit_depth", 10}, {"orientation", int(camera_config->orientation)},
                 {"flip_x", settings.flip_x}, {"flip_y", settings.flip_y}, {"requested_scaler_crop", rectangle(crop)},
                 {"requested_sensor_crop", sensor_crop(crop)},
@@ -471,6 +519,13 @@ struct CameraSession::Impl {
                   {"canonical_size", {2064,1552}}}},
                 {"timestamp_source", "libcamera SensorTimestamp; PiSP forwards CFE buffer timestamp"},
                 {"exposure_alignment_verified", false}, {"synchronization", "free_running"}};
+    result["buffer_planes"] = Json::array();
+    for (const auto &buffer : buffers()) {
+      Json planes = Json::array();
+      for (const auto &plane : buffer->planes())
+        planes.push_back({{"offset", plane.offset}, {"length", plane.length}});
+      result["buffer_planes"].push_back(std::move(planes));
+    }
     if (auto p = camera->properties().get(libcamera::properties::PixelArraySize)) result["pixel_array_size"] = {p->width,p->height};
     if (auto p = camera->properties().get(libcamera::properties::ScalerCropMaximum)) result["scaler_crop_maximum"] = rectangle(*p);
     if (auto p = camera->properties().get(libcamera::properties::PixelArrayActiveAreas)) {
@@ -494,12 +549,15 @@ Json CameraSession::description() const { return impl_->description(); }
 bool CameraSession::failed() const { return impl_->failure; }
 Json CameraSession::stats() const {
   return {{"camera_id", impl_->settings.id}, {"active", impl_->active.load()}, {"failed", impl_->failure.load()},
+          {"dma_quarantined", impl_->dma_quarantined.load()},
           {"captured_frames", impl_->captured.load()}, {"encoded_frames", impl_->encoded.load()}, {"dropped_frames", impl_->dropped.load()},
           {"queue", impl_->queue.size()}, {"queue_high_water", impl_->queue.high_water()}, {"last_frame_ns", impl_->last_frame_ns.load()},
           {"timing_us", {{"capture_queue_dwell", timing_json(impl_->queue_dwell)},
                          {"encoder_send_call", timing_json(impl_->encoder_send)},
                          {"encoder_input_copy", timing_json(impl_->input_copy)},
                          {"encoder_input_and_send", timing_json(impl_->input_and_send)},
+                         {"dma_sync_start", timing_json(impl_->dma_start)},
+                         {"dma_sync_end", timing_json(impl_->dma_end)},
                          {"encoder_receive_call", timing_json(impl_->encoder_receive)}}}};
 }
 Json enumerate_cameras(libcamera::CameraManager &manager) {

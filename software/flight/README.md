@@ -86,6 +86,44 @@ uses `vb2_dma_contig`; mapping cache attributes depend on the DMA/device path.
 Runtime page attributes have not been measured. Copy mode adds another full
 image transfer and may be slower; it must earn adoption through hardware results.
 
+`capture_allocator:"dma_heap_cached"` is a separate opt-in experiment that
+allocates ISP output directly from `/dev/dma_heap/vidbuf_cached`. The default is
+`"libcamera"`, retaining FrameBufferAllocator. Cached mode opens only that heap;
+missing permissions, allocation or import failures are errors, with no fallback.
+It follows the pinned [rpicam-apps allocation layout](https://github.com/raspberrypi/rpicam-apps/blob/24906da670e9f2468ac18f2885218b2ba3491a20/core/rpicam_app.cpp):
+one buffer of negotiated `frameSize`, one plane at offset zero, for each of the
+same eight requests. Use negotiated stride and frame size, including padding;
+the observed full-sensor layout is stride 2176 and 5065728 bytes, not width ×
+height × 1.5. The manifest records the allocator, heap path and resolved target,
+plus each buffer's plane offsets and lengths. The configured sensor, ISP crop,
+timestamps, colour and encoder settings are unchanged by allocator selection.
+
+With `encoder_input:"dmabuf"`, the existing AVFrame lease holds the imported
+buffer until all encoder references release, with no extra pixel copy. CPU reads
+remain bracketed by `DMA_BUF_IOCTL_SYNC` START/END READ; EINTR/EAGAIN retry up
+to 16 attempts with 1 ms backoff, and terminal sync failures quarantine the
+camera's requests until shutdown. The retry loop is bounded; individual kernel
+ioctl execution time is not guaranteed by userspace. The
+failure callback cannot throw through FFmpeg. START failure rolls back every
+successful START; END failure suppresses requeue, while retaining active state
+so the main loop still stops the camera. Health reports `dma_quarantined` and
+separate `dma_sync_start` / `dma_sync_end` timing counters. Cache synchronization
+does not establish device completion: request completion and AVFrame ownership
+continue to enforce that ordering.
+
+Compare default versus cached allocation using direct encoder input, equal
+full-sensor settings, a stationary scene, and repeated runs after warm-up. Check
+actual encoded cadence, accounted losses, queue dwell, CPU/temperature and both
+DMA sync and codec time. Decode the completed segments and inspect changing
+images for stale pixels/colour/stride corruption; exercise stop and restart.
+These checks test the hypothesis, not a proven cache bottleneck. Heap backing
+and importer behavior depend on the installed kernel/platform; Pi 5 normally
+resolves `vidbuf_cached` to the system heap, but that must be recorded on target.
+The [pinned FRAMOS pipeline](https://github.com/framosimaging/framos-libcamera/blob/160625a1f0eee5d7522421e0ed52327f35fcbcff/src/libcamera/pipeline/rpi/common/pipeline_base.cpp)
+registers externally supplied request buffers, and the
+[kernel DMA API](https://www.kernel.org/doc/html/latest/driver-api/dma-buf.html#cpu-access-to-dma-buffer-objects)
+requires explicit CPU sync even when a mapping appears coherent.
+
 Encoded packet references fan out to independent 120-packet recording queues
 and a 240-item transport queue. Recorders rotate on IDRs after the configured
 segment duration; recording space/write errors disable that sink while transport

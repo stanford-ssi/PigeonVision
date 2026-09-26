@@ -14,6 +14,12 @@ int main() {
   assert(!config.encode && config.cameras[0].flip_y && !config.cameras[0].flip_x);
   assert(config.encoder_threads == 2 && config.effective().at("encoder_threads") == 2);
   assert(config.encoder_input == "dmabuf" && config.effective().at("encoder_input") == "dmabuf");
+  assert(config.capture_allocator == "libcamera" && config.effective().at("capture_allocator") == "libcamera");
+  for (const auto *mode : {"libcamera", "dma_heap_cached"}) {
+    auto j = valid; j["capture_allocator"] = mode; write(j);
+    const auto configured = pv::Config::read(file);
+    assert(configured.capture_allocator == mode && configured.effective().at("capture_allocator") == mode);
+  }
   for (const auto *mode : {"dmabuf", "copy"}) {
     auto j = valid; j["encoder_input"] = mode; write(j);
     const auto configured = pv::Config::read(file);
@@ -39,6 +45,8 @@ int main() {
   rejects("encoder_threads",nullptr); rejects("encoder_threads","3");
   for (const auto &bad : pv::Json::array({nullptr, true, 1, 2.0, "", "cached", "COPY", pv::Json::array(), pv::Json::object()}))
     rejects("encoder_input", bad);
+  for (const auto &bad : pv::Json::array({nullptr, true, 1, 2.0, "", "cached", "system", "LIBCAMERA", pv::Json::array(), pv::Json::object()}))
+    rejects("capture_allocator", bad);
   rejects("cameras",{{{"id","A"},{"device","same"}},{{"id","B"},{"device","same"}}});
   std::filesystem::remove(file);
   std::cout << "PASS: strict config types, bounds, unique device identities, capture-only and CWD paths\n";

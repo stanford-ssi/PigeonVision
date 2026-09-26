@@ -59,6 +59,9 @@ Config Config::read(const std::filesystem::path &path) {
   c.encoder_input = j.value("encoder_input", c.encoder_input);
   if (c.encoder_input != "dmabuf" && c.encoder_input != "copy")
     throw std::runtime_error("encoder_input must be dmabuf or copy");
+  c.capture_allocator = j.value("capture_allocator", c.capture_allocator);
+  if (c.capture_allocator != "libcamera" && c.capture_allocator != "dma_heap_cached")
+    throw std::runtime_error("capture_allocator must be libcamera or dma_heap_cached");
   c.min_free_bytes = j.value("min_free_bytes", c.min_free_bytes);
   c.encode = j.value("encode", c.encode); c.record = j.value("record", c.record);
   if (j.contains("udp_destination") && !j["udp_destination"].is_null()) c.udp_destination = j["udp_destination"].get<std::string>();
@@ -82,6 +85,7 @@ Json Config::effective() const {
   return {{"schema_version", 1}, {"session_dir", session_dir.string()}, {"cameras", cams},
           {"width", width}, {"height", height}, {"fps", fps}, {"bitrate", bitrate}, {"vbv_bits", vbv_bits},
           {"preset", preset}, {"encoder_threads", encoder_threads}, {"encoder_input", encoder_input},
+          {"capture_allocator", capture_allocator},
           {"segment_seconds", segment_seconds}, {"min_free_bytes", min_free_bytes},
           {"encode", encode}, {"record", record}, {"udp_destination", udp_destination.empty() ? Json(nullptr) : Json(udp_destination)},
           {"mux_bitrate", mux_bitrate}, {"duration_seconds", duration_seconds},
