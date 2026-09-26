@@ -1,7 +1,9 @@
-import { Renderer } from "./projection.js";
+import { Renderer, rawDragCenter } from "./projection.js";
 import { checkGeometry } from "./geometry.js";
+import { ErrorState } from "./errors.js";
 
 const $ = (id) => document.getElementById(id);
+const errors = new ErrorState();
 const state = {
   connected: false,
   replay: false,
@@ -34,14 +36,18 @@ const cameras = { A: camera(), B: camera() };
 let renderer,
   socket,
   connectionEpoch = 0;
-function fail(message) {
-  state.error = String(message);
-  $("error").textContent = state.error;
-  $("error").hidden = false;
+function renderErrors() {
+  state.error = errors.message;
+  $("error").textContent = state.error || "";
+  $("error").hidden = state.error === null;
 }
-function clearError() {
-  state.error = null;
-  $("error").hidden = true;
+function fail(message, component = "viewer", recoverable = false) {
+  errors.set(message, component, recoverable);
+  renderErrors();
+}
+function clearError(component) {
+  errors.ready(component);
+  renderErrors();
 }
 function resetCamera(name) {
   const c = cameras[name];
@@ -84,6 +90,7 @@ function configureCalibration(bundle) {
       `Mei calibration loaded. Rig alignment: ${alignment}. ${bounded ? "Angular coverage limits supplied." : "Edge angular coverage is unvalidated."} Validate fit and mounted seam alignment with held-out real images.`;
   }
   validateGeometry();
+  updateFocusControls();
   renderer.draw();
 }
 
@@ -102,6 +109,7 @@ function validateGeometry() {
   if (blocked) {
     renderer.mode = "a";
     $("view").value = "a";
+    updateFocusControls();
   }
   const bundle = state.calibration;
   const bounded = Object.values(bundle.cameras).every(
@@ -205,7 +213,7 @@ async function accessUnit(buffer, epoch) {
     c.decoder = new VideoDecoder({
       output: (f) => decoded(name, f, current),
       error: (e) => {
-        fail(`Camera ${name} decoder: ${e.message}`);
+        fail(`Camera ${name} decoder: ${e.message}`, `decoder:${name}`);
         resetCamera(name);
         state.pair = null;
       },
@@ -228,6 +236,7 @@ async function accessUnit(buffer, epoch) {
 function message(value) {
   if (value.type === "status") {
     state.status = value;
+    if (value.state === "ready") clearError("source");
     state.replay = value.replay;
     state.playing = value.playing;
     $("playback").hidden = !value.replay;
@@ -239,7 +248,8 @@ function message(value) {
     if (value.reset_camera) resetCamera(value.reset_camera);
   } else if (value.type === "calibration")
     configureCalibration(value.calibration);
-  else if (value.type === "error") fail(value.message);
+  else if (value.type === "error")
+    fail(value.message, value.component || "viewer", value.recoverable === true);
   else if (value.type === "metadata") {
     const record = value.record;
     state.metadata[record.camera_id || record.type || "latest"] = record;
@@ -269,13 +279,13 @@ function connect() {
   socket.binaryType = "arraybuffer";
   socket.onopen = () => {
     state.connected = true;
-    clearError();
+    clearError("connection");
   };
   socket.onmessage = (e) => {
     if (!accepting) return;
     if (++pending > 48) {
       accepting = false;
-      fail("Browser receive queue full; reconnecting for fresh keyframes.");
+      fail("Browser receive queue full; reconnecting for fresh keyframes.", "connection", true);
       socket.close();
       return;
     }
@@ -295,7 +305,18 @@ function connect() {
     reset();
     setTimeout(connect, 1500);
   };
-  socket.onerror = () => fail("Ground connection failed; reconnecting.");
+  socket.onerror = () => fail("Ground connection failed; reconnecting.", "connection", true);
+}
+
+function updateFocusControls() {
+  const raw = ["a", "b"].includes(renderer.mode);
+  $("focus-control").hidden = !raw;
+  if (raw) {
+    const focus = renderer.focus[renderer.mode.toUpperCase()];
+    $("focus-zoom").value = focus.zoom;
+    $("focus-value").textContent = `${focus.zoom.toFixed(1).replace(/\.0$/, "")}×`;
+  }
+  $("image").classList.toggle("can-pan", renderer.mode === "perspective" || raw && renderer.rawLayout().zoom > 1);
 }
 
 function diagnostics() {
@@ -336,7 +357,7 @@ function diagnostics() {
   $("overlay").hidden = !overlay;
   $("view-caption").textContent = panorama
     ? `Infinity projection · ${Math.round((renderer.fov * 180) / Math.PI)}° view · shutter sync unverified`
-    : `Camera ${renderer.mode.toUpperCase()} · original fisheye · ${state.calibration ? "calibration loaded" : "uncalibrated"}`;
+    : `Camera ${renderer.mode.toUpperCase()} · ${renderer.rawLayout().zoom.toFixed(1).replace(/\.0$/, "")}× focus zoom · ${renderer.rawLayout().zoom > 1 ? "Drag to inspect" : "Scroll to zoom"}`;
 }
 
 try {
@@ -347,6 +368,8 @@ try {
   renderer = new Renderer($("image"));
   $("view").onchange = () => {
     renderer.mode = $("view").value;
+    drag = null;
+    updateFocusControls();
     renderer.draw();
   };
   $("seam").onchange = () => {
@@ -356,8 +379,16 @@ try {
   $("home").onclick = () => {
     renderer.yaw = renderer.pitch = 0;
     renderer.fov = Math.PI / 2;
+    renderer.resetRawView();
+    updateFocusControls();
     renderer.draw();
   };
+  $("focus-zoom").oninput = () => {
+    renderer.setRawZoom(Number($("focus-zoom").value));
+    updateFocusControls();
+    renderer.draw();
+  };
+  updateFocusControls();
   for (const button of document.querySelectorAll("[data-action]"))
     button.onclick = () => {
       if (socket.readyState === WebSocket.OPEN)
@@ -368,28 +399,36 @@ try {
   let drag = null;
   const canvas = $("image");
   canvas.onpointerdown = (e) => {
-    drag = [e.clientX, e.clientY, renderer.yaw, renderer.pitch];
+    drag = { x: e.clientX, y: e.clientY, yaw: renderer.yaw, pitch: renderer.pitch, layout: renderer.rawLayout() };
+    canvas.classList.add("dragging");
     canvas.setPointerCapture(e.pointerId);
   };
   canvas.onpointermove = (e) => {
-    if (!drag || renderer.mode !== "perspective") return;
-    renderer.yaw = drag[2] - (e.clientX - drag[0]) * 0.004;
-    renderer.pitch = Math.max(
-      -1.56,
-      Math.min(1.56, drag[3] + (e.clientY - drag[1]) * 0.004),
-    );
+    if (!drag) return;
+    if (["a", "b"].includes(renderer.mode)) {
+      renderer.panRaw(rawDragCenter(drag.layout,
+        [e.clientX - drag.x, e.clientY - drag.y],
+        [canvas.clientWidth, canvas.clientHeight]));
+    } else if (renderer.mode === "perspective") {
+      renderer.yaw = drag.yaw - (e.clientX - drag.x) * 0.004;
+      renderer.pitch = Math.max(-1.56, Math.min(1.56,
+        drag.pitch + (e.clientY - drag.y) * 0.004));
+    } else return;
     renderer.draw();
   };
-  canvas.onpointerup = () => (drag = null);
-  canvas.onpointercancel = () => (drag = null);
+  const endDrag = () => { drag = null; canvas.classList.remove("dragging"); };
+  canvas.onpointerup = endDrag;
+  canvas.onpointercancel = endDrag;
   canvas.addEventListener(
     "wheel",
     (e) => {
       e.preventDefault();
-      renderer.fov = Math.max(
-        0.25,
-        Math.min(2.6, renderer.fov * Math.exp(e.deltaY * 0.001)),
-      );
+      if (["a", "b"].includes(renderer.mode)) {
+        renderer.setRawZoom(renderer.rawLayout().zoom * Math.exp(-e.deltaY * 0.001));
+        updateFocusControls();
+      } else {
+        renderer.fov = Math.max(0.25, Math.min(2.6, renderer.fov * Math.exp(e.deltaY * 0.001)));
+      }
       renderer.draw();
     },
     { passive: false },
@@ -419,6 +458,7 @@ try {
       calibrated: !!renderer.calibration,
       geometry: state.geometry,
       errors: state.error,
+      focus: renderer.focus,
       decoded: { A: cameras.A.decoded, B: cameras.B.decoded },
       pending: { A: cameras.A.pending.length, B: cameras.B.pending.length },
     }),

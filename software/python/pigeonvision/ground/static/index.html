@@ -3,97 +3,229 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>PigeonVision · Ground</title>
+    <meta name="theme-color" content="#e9e5db" />
+    <title>PigeonVision · Optical bench</title>
     <link rel="stylesheet" href="/static/style.css" />
   </head>
   <body>
-    <header>
-      <div><strong>PigeonVision</strong><span>Ground camera bench</span></div>
-      <span id="connection">Connecting…</span>
+    <header class="masthead">
+      <div class="identity">
+        <svg
+          class="brand-mark"
+          viewBox="0 0 40 40"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M3 8V3h5M32 3h5v5M37 32v5h-5M8 37H3v-5"
+            stroke="currentColor"
+            stroke-width="1.5"
+          />
+          <path
+            d="M20 8a12 12 0 0 0 0 24M20 8a12 12 0 0 1 0 24"
+            stroke="currentColor"
+            stroke-width="2"
+          />
+          <path d="M20 8v24M8 20h24" stroke="currentColor" stroke-width="1" />
+          <circle
+            cx="20"
+            cy="20"
+            r="3"
+            fill="currentColor"
+            class="mark-centre"
+          />
+        </svg>
+        <div class="wordmark">
+          <strong>PigeonVision<span class="brand-stop">.</span></strong
+          ><span>GROUND IMAGING SYSTEM</span>
+        </div>
+      </div>
+      <div class="station-label">
+        <span>OPTICAL BENCH</span><span>IMX900 / CM5</span>
+      </div>
+      <div class="connection-status">
+        <span class="status-tick" aria-hidden="true"></span
+        ><span id="connection" role="status">Connecting…</span>
+      </div>
     </header>
-    <main>
-      <div class="toolbar">
-        <label
-          >View
+
+    <main class="workbench">
+      <section class="image-column" aria-label="Camera inspection">
+        <div class="image-heading">
+          <span class="eyebrow">IMAGE PLANE</span><span id="source-type"></span>
+        </div>
+        <div class="viewport">
+          <canvas
+            id="image"
+            tabindex="0"
+            aria-label="Camera image; drag to inspect and scroll to zoom"
+          ></canvas>
+          <div id="overlay">Waiting for camera data</div>
+          <span class="frame-corner top-left" aria-hidden="true"></span
+          ><span class="frame-corner top-right" aria-hidden="true"></span>
+          <span class="frame-corner bottom-left" aria-hidden="true"></span
+          ><span class="frame-corner bottom-right" aria-hidden="true"></span>
+        </div>
+        <div class="image-caption">
+          <span class="caption-marker" aria-hidden="true"></span
+          ><span id="view-caption">Raw view</span
+          ><span class="image-hint">DRAG / SCROLL</span>
+        </div>
+        <div
+          class="playback"
+          id="playback"
+          hidden
+          aria-label="Recording playback"
+        >
+          <div class="playback-buttons">
+            <button data-action="restart">Restart</button
+            ><button data-action="play" class="primary-button">Play</button
+            ><button data-action="pause">Pause</button
+            ><button data-action="step">Step pair</button>
+          </div>
+          <span id="position">No frame yet</span>
+        </div>
+        <div class="camera-readouts">
+          <section aria-labelledby="camera-a-heading">
+            <h2 id="camera-a-heading">
+              <span class="camera-letter">A</span><span>CAMERA A</span>
+            </h2>
+            <pre id="camera-a">Waiting for IDR</pre>
+          </section>
+          <section aria-labelledby="camera-b-heading">
+            <h2 id="camera-b-heading">
+              <span class="camera-letter">B</span><span>CAMERA B</span>
+            </h2>
+            <pre id="camera-b">Waiting for IDR</pre>
+          </section>
+        </div>
+      </section>
+
+      <aside class="control-rail" aria-label="Inspection controls">
+        <div class="rail-heading">
+          <span class="eyebrow">INSPECTION CONTROLS</span>
+          <h1>Lens inspection</h1>
+          <p>Select a camera, then inspect its field.</p>
+        </div>
+        <section class="control-section">
+          <div class="section-heading">
+            <span class="section-number" aria-hidden="true">01</span>
+            <h2>Source</h2>
+          </div>
+          <label class="field-label" for="view">Viewing mode</label>
           <select id="view">
-            <option value="a">Camera A</option>
-            <option value="b">Camera B</option>
+            <option value="a">A / Camera A</option>
+            <option value="b">B / Camera B</option>
             <option value="perspective" disabled>
               Panorama · pan and zoom
             </option>
             <option value="sphere" disabled>Full sphere</option>
             <option value="mask" disabled>Source coverage</option>
-          </select></label
-        >
-        <label
-          >Seam
-          <select id="seam">
-            <option value="0">Narrow feather</option>
-            <option value="1">Hard boundary</option>
-            <option value="2">Prefer A</option>
-            <option value="3">Prefer B</option>
-          </select></label
-        >
-        <button id="home">Reset view</button>
-        <span id="source-type"></span>
-      </div>
-      <section class="viewport">
-        <canvas
-          id="image"
-          tabindex="0"
-          aria-label="Camera image; drag to pan and scroll to zoom"
-        ></canvas>
-        <div id="overlay">Waiting for real camera data</div>
-        <div id="view-caption">Raw view</div>
-      </section>
-      <div class="toolbar playback" id="playback" hidden>
-        <button data-action="restart">Restart</button
-        ><button data-action="play">Play</button
-        ><button data-action="pause">Pause</button
-        ><button data-action="step">Step pair</button
-        ><span id="position">No frame yet</span>
-      </div>
-      <div id="error" role="alert" hidden></div>
-      <div class="cards">
-        <section>
-          <h2>Camera A</h2>
-          <pre id="camera-a">Waiting for IDR</pre>
+          </select>
         </section>
-        <section>
-          <h2>Camera B</h2>
-          <pre id="camera-b">Waiting for IDR</pre>
+        <section class="control-section inspection-controls">
+          <div class="section-heading">
+            <span class="section-number" aria-hidden="true">02</span>
+            <h2>Inspect</h2>
+          </div>
+          <label id="focus-control" class="focus-control"
+            ><span class="field-label">Focus zoom</span
+            ><output id="focus-value" for="focus-zoom">1×</output
+            ><input
+              id="focus-zoom"
+              type="range"
+              min="1"
+              max="8"
+              step="0.1"
+              value="1"
+              aria-label="Focus zoom"
+            /><span class="range-endpoints" aria-hidden="true"
+              ><span>1× / FULL FRAME</span><span>8× / DETAIL</span></span
+            ></label
+          >
+          <button id="home" class="reset-button">
+            <span aria-hidden="true">↶</span> Reset view
+          </button>
+          <p class="control-hint">
+            Scroll to magnify. Drag to inspect the centre and edges while
+            adjusting the lens.
+          </p>
         </section>
-        <section>
-          <h2>Pairing</h2>
-          <pre id="pair">No pair</pre>
-        </section>
-      </div>
-      <section class="notes">
-        <p id="calibration">
-          Uncalibrated: raw cameras are available. A measured calibration bundle
-          is required for the panorama.
-        </p>
-        <p>
-          Projection is at infinity. Nearby objects can disagree across the
-          seam. Timestamp agreement does not verify simultaneous exposures.
-        </p>
-        <label
-          >Maximum pairing gap (ms)
-          <input
-            id="max-skew"
-            type="number"
-            min="0.05"
-            max="100"
-            step="0.1"
-            value="16.7" /></label
-        ><span>Nearest timestamps; unmatched frames are counted.</span>
-      </section>
-      <details>
-        <summary>Receiver and capture metadata</summary>
-        <pre id="receiver"></pre>
-        <pre id="metadata">No transported capture metadata received.</pre>
-      </details>
+
+        <div id="error" role="alert" hidden></div>
+
+        <details class="rail-details">
+          <summary>
+            <span>Projection &amp; pairing</span
+            ><span class="detail-indicator" aria-hidden="true">+</span>
+          </summary>
+          <div class="detail-content">
+            <label class="field-label" for="seam">Overlap seam</label
+            ><select id="seam">
+              <option value="0">Narrow feather</option>
+              <option value="1">Hard boundary</option>
+              <option value="2">Prefer A</option>
+              <option value="3">Prefer B</option>
+            </select>
+            <label class="inline-field" for="max-skew"
+              ><span>Maximum pairing gap</span
+              ><span class="number-unit"
+                ><input
+                  id="max-skew"
+                  type="number"
+                  min="0.05"
+                  max="100"
+                  step="0.1"
+                  value="16.7"
+                /><span>ms</span></span
+              ></label
+            >
+            <pre id="pair">No pair</pre>
+            <p class="detail-note">
+              Projection is at infinity. Nearby objects can disagree across the
+              seam. Timestamp agreement does not verify simultaneous exposures.
+            </p>
+          </div>
+        </details>
+        <details class="rail-details calibration-details">
+          <summary>
+            <span>Calibration</span
+            ><span class="detail-indicator" aria-hidden="true">+</span>
+          </summary>
+          <div class="detail-content">
+            <p id="calibration">
+              Uncalibrated: raw cameras are available. A measured calibration
+              bundle is required for the panorama.
+            </p>
+          </div>
+        </details>
+        <details class="rail-details metadata-details">
+          <summary>
+            <span>Capture metadata</span
+            ><span class="detail-indicator" aria-hidden="true">+</span>
+          </summary>
+          <div class="detail-content">
+            <span class="field-label">Receiver</span>
+            <pre id="receiver"></pre>
+            <span class="field-label metadata-label">Capture</span>
+            <pre id="metadata">No transported capture metadata received.</pre>
+          </div>
+        </details>
+        <div class="rail-footnote">
+          <span class="crosshair" aria-hidden="true">⌖</span
+          ><span
+            >Focus is adjusted on the lens.<br />Zoom changes this view
+            only.</span
+          >
+        </div>
+      </aside>
     </main>
+    <footer class="bench-footer">
+      <span
+        >PIGEON VISION<span class="footer-rule" aria-hidden="true"></span
+        >STANFORD SSI</span
+      ><span>DUAL CAMERA / GROUND VIEW</span>
+    </footer>
     <script type="module" src="/static/app.js"></script>
   </body>
 </html>

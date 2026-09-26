@@ -157,7 +157,7 @@ class Receiver:
                     break
                 self.state = "error"
                 LOG.warning("Ground source: %s", exc)
-                self._put({"type": "error", "message": str(exc), "recoverable": not self.replay})
+                self._put({"type": "error", "component": "source", "message": str(exc), "recoverable": not self.replay})
                 self._put(self.status())
                 self.ended = True
             if self.replay:

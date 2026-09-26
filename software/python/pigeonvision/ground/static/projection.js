@@ -1,12 +1,30 @@
 // Measured Mei projection. +Z through camera A, +X right, +Y down in the rig.
 // Texture coordinates retain source top-left orientation; no synthetic source.
+
+// At 1x the complete image fits. Zoom reduces the visible source span, and each
+// centre coordinate is bounded so panning cannot reveal extra space at an edge.
+export function rawViewTransform(viewport, imageSize, zoom = 1, center = [0.5, 0.5]) {
+  zoom = Math.max(1, Math.min(8, Number.isFinite(zoom) ? zoom : 1));
+  const viewAspect = Math.max(1, viewport[0]) / Math.max(1, viewport[1]);
+  const imageAspect = Math.max(1, imageSize[0]) / Math.max(1, imageSize[1]);
+  const span = [Math.max(1, viewAspect / imageAspect) / zoom,
+                Math.max(1, imageAspect / viewAspect) / zoom];
+  const bounded = span.map((extent, axis) => extent >= 1 ? 0.5 :
+    Math.max(extent / 2, Math.min(1 - extent / 2,
+      Number.isFinite(center[axis]) ? center[axis] : 0.5)));
+  return { zoom, span, center: bounded };
+}
+
+export function rawDragCenter(layout, delta, viewport) {
+  return layout.center.map((value, axis) => value - delta[axis] * layout.span[axis] / Math.max(1, viewport[axis]));
+}
 const vertex = `#version 300 es
 in vec2 position;out vec2 uv;void main(){uv=(position+1.)*.5;gl_Position=vec4(position,0.,1.);}`;
 const fragment = `#version 300 es
 precision highp float;
 in vec2 uv;out vec4 color;
 uniform sampler2D imageA,imageB;
-uniform vec2 viewport;
+uniform vec2 viewport,rawSpan,rawCenter;
 uniform int mode,seam;
 uniform float yaw,pitch,fov;
 struct Camera{mat3 rotation;vec4 k;float skew;vec4 distortion;float xi;vec4 crop;vec2 outputSize;vec2 flips;float radius;float maxTheta;};
@@ -26,9 +44,7 @@ vec4 project(Camera c,sampler2D image,vec3 rig){
  return vec4(texture(image,mapped).rgb,2.+d.z);
 }
 void main(){
- if(mode<2){vec2 p=vec2(uv.x,1.-uv.y);vec2 imageSize=vec2(textureSize(imageA,0));if(mode==1)imageSize=vec2(textureSize(imageB,0));
-  float viewAspect=viewport.x/viewport.y,imageAspect=imageSize.x/imageSize.y;
-  if(viewAspect>imageAspect)p.x=(p.x-.5)*viewAspect/imageAspect+.5;else p.y=(p.y-.5)*imageAspect/viewAspect+.5;
+ if(mode<2){vec2 p=(vec2(uv.x,1.-uv.y)-.5)*rawSpan+rawCenter;
   if(any(lessThan(p,vec2(0.)))||any(greaterThan(p,vec2(1.)))){color=vec4(.035,.065,.072,1.);return;}
   color=vec4(mode==0?texture(imageA,p).rgb:texture(imageB,p).rgb,1.);return;
  }
@@ -85,7 +101,28 @@ export class Renderer {
     this.pitch = 0;
     this.fov = Math.PI / 2;
     this.calibration = null;
+    this.focus = { A: { zoom: 1, center: [0.5, 0.5] }, B: { zoom: 1, center: [0.5, 0.5] } };
     this.draw();
+  }
+  rawLayout(name = this.mode === "b" ? "B" : "A") {
+    const image = this.raw[name], focus = this.focus[name];
+    return rawViewTransform([this.canvas.clientWidth, this.canvas.clientHeight],
+      [image.width, image.height], focus.zoom, focus.center);
+  }
+  setRawZoom(zoom) {
+    const name = this.mode === "b" ? "B" : "A";
+    this.focus[name].zoom = zoom;
+    const layout = this.rawLayout(name);
+    this.focus[name] = { zoom: layout.zoom, center: layout.center };
+  }
+  panRaw(center) {
+    const name = this.mode === "b" ? "B" : "A";
+    this.focus[name].center = center;
+    this.focus[name].center = this.rawLayout(name).center;
+  }
+  resetRawView() {
+    const name = this.mode === "b" ? "B" : "A";
+    this.focus[name] = { zoom: 1, center: [0.5, 0.5] };
   }
   texture() {
     const g = this.gl,
@@ -182,6 +219,12 @@ export class Renderer {
     this.uniform("mode", mode, true);
     this.uniform("seam", this.seam, true);
     this.uniform("viewport", [c.width, c.height]);
+    if (mode < 2) {
+      const name = mode === 1 ? "B" : "A", layout = this.rawLayout(name);
+      this.focus[name] = { zoom: layout.zoom, center: layout.center };
+      this.uniform("rawSpan", layout.span);
+      this.uniform("rawCenter", layout.center);
+    }
     this.uniform("yaw", this.yaw);
     this.uniform("pitch", this.pitch);
     this.uniform("fov", this.fov);
