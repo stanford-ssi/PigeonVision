@@ -15,8 +15,9 @@ export function rawViewTransform(viewport, imageSize, zoom = 1, center = [0.5, 0
   return { zoom, span, center: bounded };
 }
 
-export function rawDragCenter(layout, delta, viewport) {
-  return layout.center.map((value, axis) => value - delta[axis] * layout.span[axis] / Math.max(1, viewport[axis]));
+export function rawDragCenter(layout, delta, viewport, rotation = 0) {
+  const direction = rotation === 180 ? -1 : 1;
+  return layout.center.map((value, axis) => value - direction * delta[axis] * layout.span[axis] / Math.max(1, viewport[axis]));
 }
 const vertex = `#version 300 es
 in vec2 position;out vec2 uv;void main(){uv=(position+1.)*.5;gl_Position=vec4(position,0.,1.);}`;
@@ -26,7 +27,7 @@ in vec2 uv;out vec4 color;
 uniform sampler2D imageA,imageB;
 uniform vec2 viewport,rawSpan,rawCenter;
 uniform int mode,seam;
-uniform float yaw,pitch,fov;
+uniform float yaw,pitch,fov,rawDirection;
 struct Camera{mat3 rotation;vec4 k;float skew;vec4 distortion;float xi;vec4 crop;vec2 outputSize;vec2 flips;float radius;float maxTheta;};
 uniform Camera cameraA,cameraB;
 const float PI=3.141592653589793;
@@ -44,7 +45,7 @@ vec4 project(Camera c,sampler2D image,vec3 rig){
  return vec4(texture(image,mapped).rgb,2.+d.z);
 }
 void main(){
- if(mode<2){vec2 p=(vec2(uv.x,1.-uv.y)-.5)*rawSpan+rawCenter;
+ if(mode<2){vec2 p=(vec2(uv.x,1.-uv.y)-.5)*rawSpan*rawDirection+rawCenter;
   if(any(lessThan(p,vec2(0.)))||any(greaterThan(p,vec2(1.)))){color=vec4(.035,.065,.072,1.);return;}
   color=vec4(mode==0?texture(imageA,p).rgb:texture(imageB,p).rgb,1.);return;
  }
@@ -102,6 +103,7 @@ export class Renderer {
     this.fov = Math.PI / 2;
     this.calibration = null;
     this.focus = { A: { zoom: 1, center: [0.5, 0.5] }, B: { zoom: 1, center: [0.5, 0.5] } };
+    this.viewerRotation = { A: 0, B: 0 };
     this.draw();
   }
   rawLayout(name = this.mode === "b" ? "B" : "A") {
@@ -119,6 +121,11 @@ export class Renderer {
     const name = this.mode === "b" ? "B" : "A";
     this.focus[name].center = center;
     this.focus[name].center = this.rawLayout(name).center;
+  }
+  rotateRawView() {
+    const name = this.mode === "b" ? "B" : "A";
+    this.viewerRotation[name] = this.viewerRotation[name] === 0 ? 180 : 0;
+    // Keep the inspected source point centred; only its display orientation changes.
   }
   resetRawView() {
     const name = this.mode === "b" ? "B" : "A";
@@ -224,6 +231,7 @@ export class Renderer {
       this.focus[name] = { zoom: layout.zoom, center: layout.center };
       this.uniform("rawSpan", layout.span);
       this.uniform("rawCenter", layout.center);
+      this.uniform("rawDirection", this.viewerRotation[name] === 180 ? -1 : 1);
     }
     this.uniform("yaw", this.yaw);
     this.uniform("pitch", this.pitch);

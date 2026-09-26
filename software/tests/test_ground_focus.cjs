@@ -53,3 +53,21 @@ test("focus zoom is bounded from fit to8x and resetting restores full image", as
   const reset = rawViewTransform([100, 100], [100, 100], 1, [.1, .9]);
   assert.deepEqual(reset, { zoom: 1, span: [1, 1], center: [.5, .5] });
 });
+
+
+test("rotated focus panning follows the pointer without changing source crop bounds", async () => {
+  const { rawViewTransform, rawDragCenter } = await modulePromise;
+  const layout = rawViewTransform([800, 600], [1552, 1552], 4, [.3, .7]);
+  for (const rotation of [0, 180]) {
+    const direction = rotation === 180 ? -1 : 1;
+    const moved = rawDragCenter(layout, [80, 60], [800, 600], rotation);
+    const after = rawViewTransform([800, 600], [1552, 1552], 4, moved);
+    for (let axis = 0; axis < 2; axis++) {
+      // The source feature initially at viewport centre follows a 10% screen drag.
+      const featurePosition = .5 + (layout.center[axis] - after.center[axis]) / (layout.span[axis] * direction);
+      near(featurePosition, .6);
+      assert.ok(after.center[axis] - after.span[axis] / 2 >= 0);
+      assert.ok(after.center[axis] + after.span[axis] / 2 <= 1);
+    }
+  }
+});

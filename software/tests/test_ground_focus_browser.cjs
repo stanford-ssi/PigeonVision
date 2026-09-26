@@ -50,7 +50,17 @@ const assets = path.resolve(__dirname, "../python/pigeonvision/ground/static");
     await page.mouse.up();
     const moved = await page.evaluate(() => window.pigeonGround.snapshot().focus.A.center);
     assert.ok(moved[0] < .5 && moved[1] < .5);
+    await page.locator("#rotate-view").click();
+    const rotatedA = await page.evaluate(() => window.pigeonGround.snapshot());
+    assert.equal(rotatedA.viewerRotation.A, 180);
+    assert.equal(rotatedA.viewerRotation.B, 0);
+    assert.deepEqual(rotatedA.focus.A.center, moved);
+    assert.equal(rotatedA.focus.A.zoom, 4);
+    assert.equal(await page.locator("#rotate-view").getAttribute("aria-pressed"), "true");
+    assert.equal(await page.locator("#orientation-value").textContent(), "180°");
     await page.selectOption("#view", "b");
+    assert.equal(await page.locator("#orientation-value").textContent(), "0°");
+    await page.locator("#rotate-view").click();
     assert.equal(await page.locator("#focus-value").textContent(), "1×");
     await page.locator("#image").hover();
     await page.mouse.wheel(0, -800);
@@ -59,6 +69,10 @@ const assets = path.resolve(__dirname, "../python/pigeonvision/ground/static");
     const reset = await page.evaluate(() => window.pigeonGround.snapshot().focus);
     assert.deepEqual(reset.B, { zoom: 1, center: [.5, .5] });
     assert.equal(reset.A.zoom, 4);
+    assert.deepEqual(await page.evaluate(() => window.pigeonGround.snapshot().viewerRotation), { A: 180, B: 180 });
+    await page.selectOption("#view", "a");
+    await page.locator("#rotate-view").click();
+    assert.deepEqual(await page.evaluate(() => window.pigeonGround.snapshot().viewerRotation), { A: 0, B: 180 });
 
     const gpu = await page.evaluate(async () => {
       const { Renderer } = await import("/static/projection.js");
@@ -77,22 +91,43 @@ const assets = path.resolve(__dirname, "../python/pigeonvision/ground/static");
       renderer.upload("A", source);
       renderer.setRawZoom(4);
       renderer.panRaw([-10, 10]);
-      renderer.draw();
       const gl = renderer.gl, samples = [], layout = renderer.rawLayout();
-      for (const [x, y] of [[0, 0], [319, 179], [160, 90]]) {
-        const pixel = new Uint8Array(4);
-        gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
-        const u = ((x + .5) / 320 - .5) * layout.span[0] + layout.center[0];
-        const v = (1 - (y + .5) / 180 - .5) * layout.span[1] + layout.center[1];
-        samples.push({ actual: [...pixel], expected: [Math.max(0, Math.min(255, u * 256 - .5)), Math.max(0, Math.min(255, v * 256 - .5))] });
+      for (const rotation of [0, 180]) {
+        renderer.viewerRotation.A = rotation;
+        renderer.draw();
+        const direction = rotation === 180 ? -1 : 1;
+        for (const [x, y] of [[0, 0], [319, 179], [160, 90]]) {
+          const pixel = new Uint8Array(4);
+          gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+          const u = ((x + .5) / 320 - .5) * layout.span[0] * direction + layout.center[0];
+          const v = (1 - (y + .5) / 180 - .5) * layout.span[1] * direction + layout.center[1];
+          samples.push({ rotation, actual: [...pixel], expected: [Math.max(0, Math.min(255, u * 256 - .5)), Math.max(0, Math.min(255, v * 256 - .5))] });
+        }
       }
+      // This generated calibration exists only inside the test. Raw rotation
+      // must never alter the calibrated renderer's source geometry.
+      const synthetic = { K: [[128,0,127.5],[0,128,127.5],[0,0,1]], D: [0,0,0,0], xi: 1,
+        crop: [0,0,256,256], output_size: [256,256], R_camera_from_rig: [[1,0,0],[0,1,0],[0,0,1]], max_theta_deg: 110 };
+      renderer.calibration = { cameras: { A: synthetic, B: { ...synthetic, R_camera_from_rig: [[-1,0,0],[0,1,0],[0,0,-1]] } } };
+      renderer.upload("A", source, true); renderer.upload("B", source, true);
+      renderer.mode = "perspective";
+      const calibrated = [];
+      for (const rotation of [0, 180]) {
+        renderer.viewerRotation = { A: rotation, B: rotation };
+        renderer.draw();
+        const pixel = new Uint8Array(4);
+        gl.readPixels(100, 60, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+        calibrated.push([...pixel]);
+      }
+      if (JSON.stringify(calibrated[0]) !== JSON.stringify(calibrated[1]))
+        throw new Error("Raw rotation changed calibrated projection");
       canvas.remove();
       return samples;
     });
     for (const sample of gpu) for (let channel = 0; channel < 2; channel++)
       assert.ok(Math.abs(sample.actual[channel] - sample.expected[channel]) <= 2, JSON.stringify(sample));
     assert.deepEqual(failures, []);
-    console.log(JSON.stringify({ passed: true, checked: ["source-error-recovery", "storage-error-retention", "raw-focus-controls", "drag-pan", "per-camera-reset", "GPU-source-crop"] }));
+    console.log(JSON.stringify({ passed: true, checked: ["source-error-recovery", "storage-error-retention", "raw-focus-controls", "drag-pan", "per-camera-reset", "GPU-source-crop", "independent-180-degree-rotation", "calibration-unaffected"] }));
   } finally {
     await browser.close();
   }

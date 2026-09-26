@@ -311,8 +311,14 @@ function connect() {
 function updateFocusControls() {
   const raw = ["a", "b"].includes(renderer.mode);
   $("focus-control").hidden = !raw;
+  $("raw-orientation").hidden = !raw;
   if (raw) {
-    const focus = renderer.focus[renderer.mode.toUpperCase()];
+    const cameraId = renderer.mode.toUpperCase();
+    const focus = renderer.focus[cameraId];
+    const rotation = renderer.viewerRotation[cameraId];
+    $("orientation-value").textContent = `${rotation}°`;
+    $("rotate-view").setAttribute("aria-pressed", String(rotation === 180));
+    $("rotate-view").setAttribute("aria-label", `Rotate camera ${cameraId} display 180 degrees; currently ${rotation} degrees`);
     $("focus-zoom").value = focus.zoom;
     $("focus-value").textContent = `${focus.zoom.toFixed(1).replace(/\.0$/, "")}×`;
   }
@@ -357,7 +363,7 @@ function diagnostics() {
   $("overlay").hidden = !overlay;
   $("view-caption").textContent = panorama
     ? `Infinity projection · ${Math.round((renderer.fov * 180) / Math.PI)}° view · shutter sync unverified`
-    : `Camera ${renderer.mode.toUpperCase()} · ${renderer.rawLayout().zoom.toFixed(1).replace(/\.0$/, "")}× focus zoom · ${renderer.rawLayout().zoom > 1 ? "Drag to inspect" : "Scroll to zoom"}`;
+    : `Camera ${renderer.mode.toUpperCase()} · display ${renderer.viewerRotation[renderer.mode.toUpperCase()]}° · ${renderer.rawLayout().zoom.toFixed(1).replace(/\.0$/, "")}× focus zoom · ${renderer.rawLayout().zoom > 1 ? "Drag to inspect" : "Scroll to zoom"}`;
 }
 
 try {
@@ -383,6 +389,13 @@ try {
     updateFocusControls();
     renderer.draw();
   };
+  $("rotate-view").onclick = () => {
+    drag = null;
+    $("image").classList.remove("dragging");
+    renderer.rotateRawView();
+    updateFocusControls();
+    renderer.draw();
+  };
   $("focus-zoom").oninput = () => {
     renderer.setRawZoom(Number($("focus-zoom").value));
     updateFocusControls();
@@ -399,7 +412,7 @@ try {
   let drag = null;
   const canvas = $("image");
   canvas.onpointerdown = (e) => {
-    drag = { x: e.clientX, y: e.clientY, yaw: renderer.yaw, pitch: renderer.pitch, layout: renderer.rawLayout() };
+    drag = { x: e.clientX, y: e.clientY, yaw: renderer.yaw, pitch: renderer.pitch, layout: renderer.rawLayout(), rotation: renderer.viewerRotation[renderer.mode.toUpperCase()] || 0 };
     canvas.classList.add("dragging");
     canvas.setPointerCapture(e.pointerId);
   };
@@ -408,7 +421,7 @@ try {
     if (["a", "b"].includes(renderer.mode)) {
       renderer.panRaw(rawDragCenter(drag.layout,
         [e.clientX - drag.x, e.clientY - drag.y],
-        [canvas.clientWidth, canvas.clientHeight]));
+        [canvas.clientWidth, canvas.clientHeight], drag.rotation));
     } else if (renderer.mode === "perspective") {
       renderer.yaw = drag.yaw - (e.clientX - drag.x) * 0.004;
       renderer.pitch = Math.max(-1.56, Math.min(1.56,
@@ -459,6 +472,7 @@ try {
       geometry: state.geometry,
       errors: state.error,
       focus: renderer.focus,
+      viewerRotation: renderer.viewerRotation,
       decoded: { A: cameras.A.decoded, B: cameras.B.decoded },
       pending: { A: cameras.A.pending.length, B: cameras.B.pending.length },
     }),

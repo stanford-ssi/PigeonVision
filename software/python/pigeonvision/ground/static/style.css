@@ -19,12 +19,29 @@
 * {
   box-sizing: border-box;
 }
+html {
+  height: 100%;
+  overflow: hidden;
+}
 body {
   margin: 0;
   height: 100dvh;
-  min-height: 580px;
+  overflow: hidden;
+}
+/* Only our shell participates in the page grid. Browser extensions may insert
+   ordinary body children; those must not consume a row or resize the canvas. */
+.bench-app {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100dvh;
+  min-height: 0;
   display: grid;
+  grid-template-areas: "masthead" "workbench" "footer";
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: 78px minmax(0, 1fr) 30px;
+  overflow: hidden;
+  background: var(--paper);
 }
 button,
 input,
@@ -88,6 +105,9 @@ select option {
 }
 
 .masthead {
+  grid-area: masthead;
+  min-width: 0;
+  min-height: 0;
   display: flex;
   align-items: center;
   gap: 30px;
@@ -101,11 +121,10 @@ select option {
 }
 .brand-mark {
   flex: none;
-  width: 39px;
-  height: 39px;
-}
-.mark-centre {
-  color: var(--accent);
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
 }
 .wordmark {
   display: flex;
@@ -156,6 +175,7 @@ select option {
 }
 
 .workbench {
+  grid-area: workbench;
   min-height: 0;
   min-width: 0;
   display: grid;
@@ -587,6 +607,7 @@ input[type="number"] {
 }
 
 .bench-footer {
+  grid-area: footer;
   border-top: 1px solid var(--rule);
   display: flex;
   align-items: center;
@@ -656,7 +677,7 @@ input[type="number"] {
   }
 }
 @media (max-height: 730px) and (min-width: 801px) {
-  body {
+  .bench-app {
     grid-template-rows: 64px minmax(0, 1fr) 25px;
   }
   .masthead {
@@ -693,10 +714,10 @@ input[type="number"] {
   }
 }
 @media (max-width: 800px) {
-  body {
+  .bench-app {
     display: block;
-    height: auto;
-    min-height: 100dvh;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
   .masthead {
     height: 72px;
@@ -837,3 +858,9 @@ input[type="number"] {
     transition: none;
   }
 }
+
+.orientation-control { margin: 14px 0; }
+.orientation-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
+#orientation-value { font-variant-numeric: tabular-nums; }
+#rotate-view { width: 100%; }
+#rotate-view[aria-pressed="true"] { border-color: currentColor; box-shadow: inset 3px 0 currentColor; }
