@@ -1,55 +1,43 @@
-# Real lens calibration with the DFVision board
+# Lens calibration and the initial panorama
 
-The supplied Q18-400-20 is a checkerboard with **18 × 18 squares at 20 mm pitch**,
-a 360 × 360 mm pattern, and 400 × 400 mm overall dimensions. That produces
-**17 × 17 = 289 inner corners**; OpenCV takes inner-corner counts, while our
-dataset takes square counts. These are nominal manufacturer dimensions; confirm
-the model label and physical pitch on the actual board.
-[Manufacturer specification, Q18 row](https://www.dfoptic.com/in-stock-standards-product/152.html).
+The bench has preliminary Mei lens fits and a nominal opposed-camera panorama;
+held-out lens/seam accuracy and measured rig alignment remain incomplete. See the
+[bench evidence](../bench-notes/2026-09-25.md) for results. This guide covers
+collection, independent lens fitting and the initial preview; detailed paired
+alignment is in [rig-alignment.md](rig-alignment.md).
 
-Use [boards/dfvision-q18-400-20.json](boards/dfvision-q18-400-20.json) as the dataset's
-`board` object. No ArUco dictionary or marker dimensions apply to this board.
-Existing datasets without `board.type` continue to mean ChArUco.
+## Board and collection
 
-## Collect original images
+The DFVision **Q18-400-20** has 18×18 squares at nominal 20 mm pitch: a 360 mm
+pattern on a 400 mm board, giving **17×17 = 289 inner corners**. Confirm the label
+and physical pitch. Use [the board preset](boards/dfvision-q18-400-20.json) as the
+dataset's `board` object; it takes square counts, while OpenCV takes inner-corner
+counts. No ArUco dimensions apply. Datasets without `board.type` retain ChArUco
+behavior. [Manufacturer specification](https://www.dfoptic.com/in-stock-standards-product/152.html).
 
-1. Finish focusing both lenses, then keep their focus, aperture, mounting and
-   camera identity fixed. Record the session and lens settings. Changing focus
-   after collection invalidates those intrinsic measurements.
-2. Record the original full-sensor **2064 × 1552** streams. Extract PNG frames from
-   the saved transport or per-camera recording. Do not calibrate from browser
-   screenshots, viewer zoom/rotation, resized images, or a cropped preview. H.264
-   decoded images retain compression artifacts, even when saved as PNG.
-3. Keep the whole checkerboard and its surrounding border visible, sharp and
-   unobstructed. Hold each pose still before choosing a frame. Either move the board
-   or keep the heavy board fixed and move the entire rigid camera/rocket assembly.
-   Vary their relative distances, tilts and positions across each camera's image: centre, top, bottom,
-   left, right and the two seam directions. Avoid reflections and motion blur.
-   Change pose rather than collecting adjacent frames of the same stationary board.
-   Keeping the board stationary and moving the entire rocket rig is equally
-   valid: translate and rotate the mounted assembly without adjusting either lens
-   or camera mount. Hold each new pose for 2–3 seconds when sampling once per
-   second; the collector tests one frame in each interval, which can otherwise
-   land during motion.
-4. Aim for **20–30 distinct fit poses and 6–10 separate held-out poses per camera**.
-   The fitter refuses fewer than **eight accepted fit views and three accepted
-   held-out views** per camera. These counts alone do not establish angular coverage.
-   Keep held-out poses independent; do not put near-identical frames from a static
-   hold in both splits. A/B may require separate board positions for lens fitting.
-5. Include edge/seam poses only while the entire grid remains visible and detected.
-   This checkerboard detector requires all 289 inner corners and does not support
-   partial-board inference. A central-board fit does not validate >90° rays or a
-   360° seam. Preserve missed detections and report the remaining coverage gap.
+1. Finish focus, then preserve focus/aperture, mounts and camera identity. Record
+   settings; changing focus invalidates those intrinsic measurements.
+2. Collect original **2064×1552** images from transport or native recordings,
+   never resized/cropped previews or browser screenshots. Decoded H.264 retains
+   compression artifacts even when saved as PNG.
+3. Show the complete sharp, unobstructed grid and border. Vary distance, tilt and
+   position across centre, edges and both seams; avoid reflections and blur.
+   Move either the board or the entire rigid rocket without adjusting its mounts.
+   Hold each pose 2–3 seconds for one-second sampling; only one frame per interval
+   is tested. Adjacent frames from one hold are not distinct poses.
+4. Aim for 20–30 fit poses and 6–10 independent held-out poses per camera. Normally
+   the fitter requires eight accepted fit views and three held-out views. Do not
+   split near-identical holds across fitting/validation; counts do not prove coverage.
+5. Edge poses must still contain all 289 corners. The SB detector uses exhaustive,
+   subpixel refinement and has no partial-board inference or persistent physical
+   corner IDs. Preserve missed detections and coverage gaps. A central fit does
+   not validate >90° rays or seams.
+   [OpenCV detector documentation](https://docs.opencv.org/4.x/d9/d0c/group__calib3d.html).
 
-The detector uses OpenCV's subpixel `findChessboardCornersSB`, with exhaustive
-search and accuracy refinement. The SB detector needs a complete ordered grid;
-it does not attach persistent physical identities to checkerboard corners.
-[OpenCV detector documentation](https://docs.opencv.org/4.x/d9/d0c/group__calib3d.html).
+## Extract and curate
 
-## Dataset and orientation
-
-Extract candidates offline from a copy of a native session containing `session.json`,
-`frames.jsonl`, `segments.jsonl`, and finalized per-camera MKV files:
+From the repository root, use a local copy of `session.json`, `frames.jsonl`,
+`segments.jsonl` and finalized A/B MKVs:
 
 ```sh
 software/.venv/bin/python software/tools/calibration_frames.py \
@@ -59,133 +47,64 @@ software/.venv/bin/python software/tools/calibration_frames.py \
   --interval-seconds 1 --split fit --require-board
 ```
 
-Use a separate recording, output directory, and explicit `--split validation`
-for held-out poses. The collector samples at most one frame per camera in each
-interval on the original common timeline. `--require-board` retains only a
-complete 289-corner detection; omitting it saves unchecked candidates for manual
-inspection. Optional `--region` labels the collected poses; its default is
-`unlabelled`. Inspect diversity and correct region labels before fitting.
+Use another recording/output with `--split validation` for held-out poses.
+`--camera A` or `--camera B` avoids searching the opposite camera when collecting
+one lens; default is both. `--require-board` keeps complete detections; omit it
+for unchecked candidates. Set useful `--region` labels; default is `unlabelled`,
+and labels beginning `seam` are reported separately. Curate diversity before fitting.
 
-The output contains original-orientation PNGs, `dataset.json`, and
-`collection-report.json`. Each image retains the source segment/hash, container
-PTS/timebase, original capture metadata/common PTS, device ID and PNG hash.
-Timestamp matching allows only the MKV timebase's rounding uncertainty; ambiguous
-metadata and unknown/cropped geometry are rejected. Missing indexed segments,
-unfinalized segments, and unindexed MKVs are reported explicitly, so a partial
-copy is not described as a complete archive. Existing output directories are
-never overwritten. This command does not access the Pi or generate a rig or fit.
-Add `--camera B` to inspect a B-first collection promptly, or `--camera A` for an
-A-only pass. Without that option both cameras are processed. Selecting the camera
-that actually sees the board avoids spending time searching the opposite view.
+Output includes original-orientation PNGs, `dataset.json` and
+`collection-report.json`. Records retain segment/PNG hashes, container PTS/timebase,
+original capture metadata/common PTS, physical IDs and geometry. Matching allows
+only MKV rounding uncertainty; ambiguous metadata and unknown/cropped geometry
+are rejected. Missing indexed, unfinalized and unindexed segments are reported,
+so a partial copy is not called complete. Existing outputs are refused. The
+collector neither accesses the Pi nor fits lenses/alignment.
 
-Each camera needs a list of real image paths relative to the dataset JSON, an
-explicit `fit` or `validation` split, and a useful region label. Labels beginning
-with `seam` are reported separately. For example, after those image files exist:
+Each camera's image list needs paths relative to its dataset, explicit
+`fit`/`validation` splits and region labels. Preserve `physical_cameras`,
+`image_orientation`, per-image `device_id` and `capture_metadata` when merging
+collections. Use actual capture `flip_x`/`flip_y`, not browser rotation; the
+fitter reverses them before detection so intrinsics describe canonical unflipped
+full-sensor pixels. Keep common timestamps/offsets and actual sensor crop.
+Padding a cropped image back to full size is invalid.
 
-```json
-{
-  "board": {"type": "checkerboard", "squares_x": 18, "squares_y": 18, "square_length_m": 0.02},
-  "image_orientation": {
-    "A": {"flip_x": false, "flip_y": true},
-    "B": {"flip_x": false, "flip_y": true}
-  },
-  "cameras": {
-    "A": [{"path": "images/A/fit-001.png", "split": "fit", "region": "centre"}],
-    "B": [{"path": "images/B/validation-001.png", "split": "validation", "region": "seam-left"}]
-  }
-}
-```
+For manual originals, each record instead needs `source_provenance`:
+`kind:"manual_full_sensor"`, `camera_id`, `device_id`, `sensor_crop`, `flip_x`,
+`flip_y` and a nonempty acquisition `note`. It must match the dataset's physical
+camera description and cannot override contradictory extractor metadata.
 
-The example is incomplete and its flip values are illustrative: use the actual
-capture session's booleans, never the browser's independent 180° view setting.
-The fitter reverses capture flips before detection so `K` and `D` describe the
-unflipped full sensor. Keep original PTS, pair offset, capture dimensions, actual
-sensor crop and physical device IDs alongside extracted frames.
+## Fit and check lenses
 
-## Fit and inspect evidence
-
-Fit either lens independently before measuring rig alignment. The collector's
-dataset already records `physical_cameras`, capture flips, actual per-frame crop
-and device identity. Curate distinct poses and keep an independent held-out
-collection. From the repository root:
+Fit a lens independently; omit `--camera` to process every nonempty camera list:
 
 ```sh
 software/.venv/bin/pv calibrate --intrinsics-only --camera B \
   --dataset output/calibration/dataset.json --output output/calibration/B-fit-01
 ```
 
-This writes `intrinsics.json` with `scope: "intrinsics_only"` and
-`rig_alignment_status: "unmeasured"`. It contains no invented camera-to-rig
-rotation and cannot enable the panorama. Omit `--camera` to fit every nonempty
-camera collection. Each camera normally needs at least eight accepted fit views
-and three evaluated held-out views.
+`intrinsics.json` has `scope:"intrinsics_only"`, `rig_alignment_status:"unmeasured"`
+and no camera-to-rig rotation; it cannot enable a panorama. IDs, dimensions,
+crop/orientation and supplied image hashes are checked before fitting.
 
-For a first training-only diagnostic while collecting, explicitly add
-`--allow-unvalidated`. The eight-fit-view minimum still applies. Missing or
-insufficient held-out evidence produces `validation.status: "unvalidated_intrinsics"`,
-null validation threshold results and no measured angular limit. A low training
-RMS is not a validation result. Testing an earlier frozen model on a new session
-is useful; once those images are included in a refit, that test no longer
-validates the newer model.
+For a collecting-stage diagnostic, explicitly add `--allow-unvalidated`.
+Eight accepted fit views are still required. Insufficient held-out evidence gives
+`unvalidated_intrinsics`, null threshold results and no measured angular limit.
+Training RMS is not validation. Once new-session observations enter a refit,
+their earlier test against a frozen model no longer validates the new model.
 
-The fitter checks physical and logical camera IDs, full-sensor dimensions,
-per-image sensor crop, capture orientation and any supplied image hash before
-fitting. When merging collections, preserve these fields and use paths that
-still resolve to the original images. A cropped image padded back to full size
-is not a valid full-sensor observation. For manually acquired originals, each
-record must instead have explicit `source_provenance` with
-`kind: "manual_full_sensor"`, `camera_id`, `device_id`, `sensor_crop`, `flip_x`,
-`flip_y`, and a nonempty `note` identifying how the original was acquired.
-This declaration must match the dataset's physical camera description; it
-cannot override contradictory extractor metadata.
-
-Later, a separately measured rig JSON can supply each camera's full-sensor size,
-stream crop/output size/flips and `R_camera_from_rig`. Unrelated board poses do
-not determine this alignment. Do not invent a measured rotation or mark alignment
-verified merely to enable the panorama. With an actual rig description:
-
-```sh
-software/.venv/bin/pv calibrate --dataset output/calibration/dataset.json \
-  --rig output/calibration/rig.json --output output/calibration/fit-01
-```
-
-Read `observations.json` for rejected detections, retained views and per-view
-training/held-out residuals. Inspect held-out RMS/p95 errors, per-region/seam
-errors and angular coverage in `intrinsics.json` or `calibration.json`. Current
-error targets are ≤1 px RMS and ≤2 px p95; satisfying
-them on central poses does not qualify a seam. `max_theta_deg` is only the largest
-observed held-out ray, not evidence that every ray inside that angle was tested.
-
-## Relative orientation remains a separate measurement
-
-The 18 × 18 square pattern has unresolved 90°/180°/270° corner-order ambiguity.
-The detector's first corner and axes can change between views. Per-view pose
-fitting absorbs this for independent intrinsic calibration. **Do not equate
-the same local corner index in A and B for extrinsic calibration.**
-
-For paired extrinsics, mark a physical board origin and two axis directions on
-the outer margin without covering the pattern, record enough context to identify
-them in both images, and explicitly verify/reorder corner correspondences. The
-current detector does not automatically read those marks. Capture simultaneous
-common-board views in actual overlap where both cameras see the same printed
-face and full grid. Keep the A/B timestamp difference and move slowly or hold the
-board still; nearest timestamps do not prove hardware synchronization.
-
-If the mounted geometry cannot present a complete grid to both cameras, record
-that limitation and use a separately designed alignment measurement. Nominal
-back-to-back rotations are an initial geometric assumption, not a measured stitch.
-Lens intrinsics plus relative rotations support distant-scene alignment; the
-physical separation of the cameras still produces depth-dependent parallax.
+Read `observations.json` for rejected/retained views and residuals; inspect
+held-out RMS/p95, region/seam errors and coverage in the output bundle. Targets
+are ≤1 px RMS and ≤2 px p95. Central accuracy does not qualify seams;
+`max_theta_deg` is the largest observed held-out ray, not proof that all enclosed
+rays were tested.
 
 ## Initial nominal opposed-camera preview
 
-An initial viewer demo can combine real lens fits with operator-supplied approximate
-mounting geometry, before a precision rig solve. `tools/nominal_rig_preview.py`
-requires explicit opposed axes, a common-roll assumption, a nominal separation
-in metres and the source date. It uses A as the rig reference and rotates B 180°
-about rig Y; both canonical camera +Y axes are assumed parallel. The 0.1524 m
-value below records an approximate six-inch separation, which is **not used to
-correct parallax** in the infinity projection.
+An initial demo can combine real lens fits with approximate operator geometry
+before a measured rig solve. A is the reference; B rotates 180° about rig Y,
+assuming parallel canonical +Y axes (zero relative roll). The example records an
+approximate six-inch baseline; infinity projection **does not correct parallax**.
 
 ```sh
 software/.venv/bin/python software/tools/nominal_rig_preview.py \
@@ -195,12 +114,31 @@ software/.venv/bin/python software/tools/nominal_rig_preview.py \
   --opposed --common-roll-assumed
 ```
 
-The normal intrinsics format identifies its source dataset and hash; a flat
-training diagnostic requires explicit source datasets (repeat `--dataset-b`
-for a combined fit). The generator checks physical IDs and full-sensor FlipY
-geometry, writes an exclusively created `calibration.json`, and preserves each
-lens fit's validation state. The bundle is labelled
-`rig_alignment_status: nominal_operator_geometry` and `qualified: false`.
-Missing angular coverage stays null; training observations do not establish
-validated seam coverage. This is a usable preliminary preview, with alignment,
-edge coverage and nearby-object parallax still visible limitations.
+Use the actual source date/separation. Normal intrinsics bind their source dataset
+and hash; flat diagnostics need explicit datasets (repeat `--dataset-b` for
+combined fits). The generator verifies physical IDs and full-sensor FlipY geometry,
+refuses existing output, and writes `calibration.json` with
+`rig_alignment_status:nominal_operator_geometry`, `qualified:false`. Lens validation
+states and missing angular limits remain unchanged; alignment and seam coverage
+are still unmeasured.
+
+## Measured alignment is separate
+
+A symmetric checkerboard's detector-local corner order can rotate between views.
+**Do not equate A/B corner indices.** Paired alignment needs a marked physical
+origin/axes, verified correspondence, the same printed face/full grid in both
+cameras, original timestamps and stationary holds. Nearest timestamps do not
+prove exposure synchronization. Follow the [paired alignment workflow](rig-alignment.md);
+if full-board overlap is unavailable, record that limit and design another
+measurement. Camera separation still causes depth-dependent parallax.
+
+With a separately measured rig JSON specifying sensor size, crop/output/flips
+and `R_camera_from_rig`, fit the combined bundle:
+
+```sh
+software/.venv/bin/pv calibrate --dataset output/calibration/dataset.json \
+  --rig output/calibration/rig.json --output output/calibration/fit-01
+```
+
+Unrelated A/B board poses do not determine rig alignment; never label nominal
+rotations as measured to enable a viewer.
