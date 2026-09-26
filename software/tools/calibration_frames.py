@@ -30,7 +30,7 @@ def digest(path: Path) -> str:
         return hashlib.file_digest(source, "sha256").hexdigest()
 
 
-def read_rows(path: Path, problems: list[str]) -> list[dict]:
+def read_rows(path: Path, problems: list[str], camera: str | None = None) -> list[dict]:
     rows = []
     with path.open() as source:
         for number, line in enumerate(source, 1):
@@ -38,7 +38,8 @@ def read_rows(path: Path, problems: list[str]) -> list[dict]:
                 row = json.loads(line)
                 if not isinstance(row, dict):
                     raise ValueError("expected an object")
-                rows.append(row)
+                if camera is None or row.get("camera_id") == camera:
+                    rows.append(row)
             except ValueError as exc:
                 problems.append(f"{path.name}:{number}: {exc}")
     return rows
@@ -99,11 +100,14 @@ class FrameMetadata:
 
 
 def collect(session: Path, board_path: Path, output: Path, *, interval_seconds: float,
-            split: str, require_board: bool = False, region: str = "unlabelled") -> dict:
+            split: str, require_board: bool = False, region: str = "unlabelled", camera: str | None = None) -> dict:
     if not math.isfinite(interval_seconds) or interval_seconds <= 0:
         raise ValueError("interval_seconds must be positive and finite")
     if split not in ("fit", "validation"):
         raise ValueError("split must explicitly be fit or validation")
+    if camera not in (None, "A", "B"):
+        raise ValueError("camera must be A or B when specified")
+    selected = [camera] if camera else ["A", "B"]
     session, output = session.resolve(), output.resolve()
     manifest = json.loads((session / "session.json").read_text())
     origin = manifest.get("clock_origin_ns")
@@ -115,11 +119,12 @@ def collect(session: Path, board_path: Path, output: Path, *, interval_seconds: 
     if detector.type != "checkerboard" or detector.pattern_size != (17, 17):
         raise ValueError("This collector requires the complete 17x17 inner-corner checkerboard (18x18 squares)")
     problems: list[str] = []
-    rows = read_rows(session / "frames.jsonl", problems)
+    rows = read_rows(session / "frames.jsonl", problems, camera)
     segments = read_rows(session / "segments.jsonl", problems)
     report = {"schema_version": 1, "kind": "calibration_candidates_not_a_fit", "source_session": str(session),
               "source_session_id": manifest.get("session_id"), "clock_domain": manifest["clock_domain"],
               "clock_origin_ns": origin, "interval_seconds": interval_seconds, "split": split,
+              "selected_cameras": selected,
               "board_filter": "complete_17x17" if require_board else "not_requested", "problems": problems,
               "segments": [], "missing_indexed_segments": [], "incomplete_indexed_segments": [],
               "camera_exclusions": {}, "decoded_frames": 0, "interval_skips": 0, "accepted": {"A": 0, "B": 0},
@@ -136,6 +141,10 @@ def collect(session: Path, board_path: Path, output: Path, *, interval_seconds: 
                               "board_json_sha256": digest(board_path), "source_session": str(session)}}
     geometry = {}
     for camera_id in ("A", "B"):
+        if camera_id not in selected:
+            report["camera_exclusions"][camera_id] = "not_selected"
+            dataset["image_orientation"][camera_id] = {"flip_x": None, "flip_y": None}
+            continue
         try:
             geometry[camera_id] = camera_geometry(manifest, camera_id)
             dataset["image_orientation"][camera_id] = {key: geometry[camera_id][key] for key in ("flip_x", "flip_y")}
@@ -170,6 +179,9 @@ def collect(session: Path, board_path: Path, output: Path, *, interval_seconds: 
             if segment.get("complete") is not True:
                 report["incomplete_indexed_segments"].append(name)
                 info["excluded"] = "segment_not_finalized"
+                continue
+            if camera_id not in selected:
+                info["excluded"] = "camera_not_selected"
                 continue
             if name in duplicates or camera_id not in geometry:
                 info["excluded"] = "duplicate_index" if name in duplicates else "camera_geometry_excluded"
@@ -259,15 +271,17 @@ def main(argv=None) -> int:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--interval-seconds", type=float, required=True, help="Sample one candidate per common-timeline interval")
     parser.add_argument("--split", choices=("fit", "validation"), required=True)
+    parser.add_argument("--camera", choices=("A", "B"), help="Process only this camera; default processes both")
     parser.add_argument("--region", default="unlabelled", help="Operator-supplied region; inspect pose diversity afterward")
     parser.add_argument("--require-board", action="store_true", help="Keep only a complete 17x17 inner-corner detection")
     args = parser.parse_args(argv)
     try:
         report = collect(args.session, args.board, args.output, interval_seconds=args.interval_seconds,
-                         split=args.split, require_board=args.require_board, region=args.region)
+                         split=args.split, require_board=args.require_board, region=args.region, camera=args.camera)
     except (OSError, ValueError) as exc:
         parser.exit(2, f"calibration collection: {exc}\n")
     print(json.dumps({"output": str(args.output), "accepted": report["accepted"],
+                      "selected_cameras": report["selected_cameras"],
                       "missing_indexed_segments": report["missing_indexed_segments"],
                       "camera_exclusions": report["camera_exclusions"], "problems": report["problems"]}, indent=2))
     return 0 if sum(report["accepted"].values()) else 2

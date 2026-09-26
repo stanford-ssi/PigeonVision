@@ -103,6 +103,27 @@ def test_partial_archive_reports_missing_incomplete_and_unindexed_segments(tmp_p
     assert report["accepted"] == {"A": 2, "B": 0}
 
 
+def test_camera_selection_never_decodes_unselected_archive(tmp_path, monkeypatch):
+    source, board, _, _, _, _ = make_session(tmp_path)
+    opened = []
+    open_archive = collector.av.open
+    def inspect_open(path, *args, **kwargs):
+        opened.append(Path(path).name)
+        return open_archive(path, *args, **kwargs)
+    monkeypatch.setattr(collector.av, "open", inspect_open)
+    output = tmp_path / "camera-b"
+    report = collector.collect(source, board, output, interval_seconds=1, split="fit", camera="B")
+    assert opened == ["B-000001.mkv"]
+    assert report["selected_cameras"] == ["B"]
+    assert report["accepted"] == {"A": 0, "B": 2}
+    assert report["decoded_frames"] == 3
+    assert report["camera_exclusions"] == {"A": "not_selected"}
+    assert report["segments"][0]["excluded"] == "camera_not_selected"
+    dataset = json.loads((output / "dataset.json").read_text())
+    assert dataset["cameras"]["A"] == []
+    assert dataset["cameras"]["B"][0]["pts_us"] == 1_244_567
+
+
 def test_unknown_frame_crop_and_ambiguous_metadata_are_rejected(tmp_path):
     source, board, _, rows, _, _ = make_session(tmp_path)
     del rows[0]["sensor_crop"]
