@@ -58,7 +58,7 @@ int main(int argc, char **argv) {
       {"hardware", {{"model", device_model()}, {"kernel", system.release}, {"architecture", system.machine}, {"cameras", descriptions}}},
       {"calibration", nullptr}, {"sensor_timestamp_optically_verified", false}};
     manifest["transport"] = {{"pts_offset_us", 1000000}, {"mux_delay_us", 500000},
-      {"metadata_pes_clock", "mux_admission"}, {"video_pids", {{"A",256},{"B",257}}}, {"metadata_pid",258}};
+      {"metadata_pes_clock", "producer_queue_admission"}, {"video_pids", {{"A",256},{"B",257}}}, {"metadata_pid",258}};
     {
       std::ofstream file(config.session_dir / "session.json.tmp");
       file << manifest.dump(2) << '\n'; file.flush();
@@ -74,7 +74,7 @@ int main(int argc, char **argv) {
     std::cout << pv::Json{{"type", "session"}, {"session_dir", config.session_dir.string()}, {"camera_count", cameras.size()}}.dump() << std::endl;
     pv::Json wire_session{{"schema_version", 1}, {"type", "session"}, {"session_id", manifest["session_id"]},
                           {"clock_origin_ns", origin}, {"clock_domain", "CLOCK_BOOTTIME"}, {"cameras", descriptions},
-                          {"transport_pts_offset_us",1000000}, {"metadata_pes_clock","mux_admission"}, {"pts_us", (run_start-origin)/1000}};
+                          {"transport_pts_offset_us",1000000}, {"metadata_pes_clock","producer_queue_admission"}, {"pts_us", (run_start-origin)/1000}};
     outputs->metadata(wire_session);
     auto next_health = run_start;
     bool runtime_failed = false;

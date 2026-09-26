@@ -57,10 +57,10 @@ void check_transport_clock(const std::filesystem::path &path) {
 }
 
 int main(int argc, char **argv) {
-  if (argc < 3 || argc > 4) { std::cerr << "usage: pv-media-test input-h264.mp4 empty-output-directory [storage-floor|transport-failure]\n"; return 2; }
+  if (argc < 3 || argc > 4) { std::cerr << "usage: pv-media-test input-h264.mp4 empty-output-directory [storage-floor|transport-failure|cbr-burst]\n"; return 2; }
   try {
     const std::string scenario = argc == 4 ? argv[3] : "normal";
-    if (scenario != "normal" && scenario != "storage-floor" && scenario != "transport-failure") throw std::runtime_error("unknown test scenario");
+    if (scenario != "normal" && scenario != "storage-floor" && scenario != "transport-failure" && scenario != "cbr-burst") throw std::runtime_error("unknown test scenario");
     pv::Config config; config.session_dir = argv[2]; config.segment_seconds = 1; config.min_free_bytes = 0;
     if (scenario == "storage-floor") config.min_free_bytes = std::numeric_limits<std::uintmax_t>::max();
     if (std::filesystem::exists(config.session_dir)) throw std::runtime_error("test directory must not exist");
@@ -116,10 +116,17 @@ int main(int argc, char **argv) {
     pv::Outputs output(config, logs, {{"A",codec}, {"B",codec}}, origin);
     auto start = std::chrono::steady_clock::now();
     for (int i = 0; i < 120; ++i) {
-      std::this_thread::sleep_until(start + std::chrono::microseconds(i*1000000/30));
+      // Deliver small encoder-like bursts while the actual UDP sink remains
+      // paced. A consumer-clock metadata timestamp would absorb that backlog.
+      const int release_index = scenario == "cbr-burst" ? i/3*3+2 : i;
+      std::this_thread::sleep_until(start + std::chrono::microseconds(release_index*1000000/30));
       for (const auto &id : {"A", "B"}) {
         if (id[0] == 'A' && i >= 60) continue;  // PCR owner stops halfway.
         pv::Json metadata{{"schema_version",1}, {"type","frame"}, {"camera_id",id}, {"sequence",i}, {"pts_us",frames[i]->pts}, {"drop_reason",nullptr}};
+        if (scenario == "cbr-burst") {
+          metadata["test_admission_before_us"] = (pv::boot_ns()-origin)/1000;
+          metadata["test_metadata_padding"] = std::string(250, 'x');
+        }
         output.packet(id, frames[i].get(), metadata);
       }
       if (i % 15 == 0) output.metadata({{"schema_version",1}, {"type","health"}, {"pts_us",(pv::boot_ns()-origin)/1000}});
@@ -142,17 +149,24 @@ int main(int argc, char **argv) {
     AVFormatContext *received = nullptr;
     pv::av_check(avformat_open_input(&received, (config.session_dir/"received.ts").c_str(), nullptr, nullptr), "read transport");
     pv::av_check(avformat_find_stream_info(received, nullptr), "inspect transport");
-    std::map<int,int> counts; int metadata_count = 0;
+    std::map<int,int> counts; int metadata_count = 0; std::int64_t maximum_admission_error_us = 0;
     while (av_read_frame(received, packet.get()) >= 0) {
       auto *stream = received->streams[packet->stream_index];
       ++counts[stream->id];
       if (stream->id == 258) {
         auto record = pv::Json::parse(packet->data, packet->data+packet->size);
         assert(record.contains("type")); ++metadata_count;
+        if (record.contains("test_admission_before_us")) {
+          const auto pes_us = av_rescale_q(packet->pts, stream->time_base, AVRational{1,1000000}) - 1000000;
+          const auto error_us = pes_us - record["test_admission_before_us"].get<std::int64_t>();
+          maximum_admission_error_us = std::max(maximum_admission_error_us, error_us);
+          assert(error_us >= -12 && error_us < 20000);  // 90 kHz timestamp quantization + scheduling tolerance.
+        }
       }
       av_packet_unref(packet.get());
     }
     assert(counts[256] == 60 && counts[257] == 120 && metadata_count >= 180);
+    if (scenario == "cbr-burst") std::cout << "Maximum producer-to-metadata timestamp error: " << maximum_admission_error_us << " us\n";
     avformat_close_input(&received);
     }
     // Finalized one-second segments must all begin at an independently decodable IDR.

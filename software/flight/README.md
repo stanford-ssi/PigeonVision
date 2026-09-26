@@ -78,9 +78,12 @@ owner bounds interleaving and paces byte output; socket errors never block captu
 The standard FFmpeg mux's 500 ms delay adds **one common 1,000,000 µs media PTS
 offset**. Session metadata declares `transport_pts_offset_us`; receivers subtract
 it from both videos. Local MKV and JSONL retain the original shared timeline.
-Metadata PES uses mux-admission time because asynchronous A/B records cannot
+Metadata PES uses producer queue-admission time because asynchronous A/B records cannot
 share monotonically ordered capture DTS on one PID; the JSON contains the exact
-capture `pts_us`. Session/geometry metadata repeats once per second for late joins.
+capture `pts_us`. The timestamp is assigned under the producer-order lock and
+retained through pacing; consumer wall time would feed queue delay back into CBR
+null padding. Health includes transport queue age, wire bytes and last submitted
+video timestamps. Session/geometry metadata repeats once per second for late joins.
 
 The shared origin uses CLOCK_BOOTTIME per libcamera's SensorTimestamp contract,
 with a bracketed CLOCK_MONOTONIC sample recorded too. FRAMOS PiSP forwards the CFE
@@ -99,11 +102,14 @@ ctest --test-dir build/flight-portable --output-on-failure
 ```
 
 With FFmpeg/JSON development packages, `-DPV_BUILD_MEDIA_TESTS=ON` adds
-`pv-media-test input-h264.mp4 new-output-directory [storage-floor|transport-failure]`.
+`pv-media-test input-h264.mp4 new-output-directory [storage-floor|transport-failure|cbr-burst]`.
 Use the existing simulator's `docs/assets/video/cil212-camera-a.mp4` fixture.
 This runs the actual recorder/TS/UDP implementations against prerecorded H264;
 it checks PID/frame counts, private JSON, PCR byte clock, video decode deadlines,
 PCR continuity after A stops, IDR segment boundaries and sink failure isolation.
+The `cbr-burst` case delivers three-frame encoder bursts and checks that metadata
+PES timestamps retain producer admission time while the real UDP consumer paces
+the backlog. Replacing this with consumer wall time makes the regression fail.
 It does not test camera acquisition, x264 throughput, optics or hardware sync.
 
 Remaining target gates: Linux link/build, DMA layout/caches on the CM5, exact

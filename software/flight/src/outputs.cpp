@@ -213,6 +213,8 @@ struct Transport {
   std::thread worker;
   std::atomic<bool> failed{false};
   std::atomic<std::uint64_t> drops{0}, packets{0}, datagram_errors{0};
+  std::atomic<std::int64_t> queue_age_us{0}, max_queue_age_us{0}, last_video_a_us{-1}, last_video_b_us{-1};
+  std::atomic<std::uint64_t> wire_bytes{0};
   std::mutex submit_mutex;
   std::uint64_t generation = 0;
   Transport(const Config &c, Logs &l, const std::vector<StreamInfo> &streams, std::int64_t epoch) : config(c), logs(l), origin(epoch) {
@@ -224,6 +226,10 @@ struct Transport {
   bool submit(Encoded item) {
     std::lock_guard lock(submit_mutex);
     item.generation = generation;
+    // Stamp once in producer order. Sampling the paced consumer's wall clock
+    // feeds queue delay back into the CBR mux: future metadata adds null packets,
+    // which increase pacing delay and push subsequent metadata farther ahead.
+    item.transport_admission_us = (boot_ns() - origin) / 1000;
     if (failed || !queue.try_push(std::move(item))) { ++drops; ++generation; return false; } return true;
   }
   void run() {
@@ -265,6 +271,8 @@ struct Transport {
       for (const auto &[id, _] : parameters) waiting_for_keyframe[id] = true;
       while (auto item = queue.pop()) {
         in_flight = true;
+        queue_age_us = (boot_ns() - origin) / 1000 - item->transport_admission_us;
+        max_queue_age_us = std::max(max_queue_age_us.load(), queue_age_us.load());
         if (item->generation != observed_generation) {
           observed_generation = item->generation;
           for (auto &[_, wait] : waiting_for_keyframe) wait = true;
@@ -275,9 +283,11 @@ struct Transport {
           if (wait && !(item->packet->flags & AV_PKT_FLAG_KEY)) { ++drops; in_flight = false; continue; }
           wait = false;
           auto *stream = streams.at(item->camera);
+          const auto video_pts_us = item->packet->pts;
           av_packet_rescale_ts(item->packet.get(), us_timebase, stream->time_base);
           item->packet->stream_index = stream->index;
           av_check(av_interleaved_write_frame(output.context, item->packet.get()), "mux video");
+          (item->camera == "A" ? last_video_a_us : last_video_b_us) = video_pts_us;
           ++packets;
         }
         const auto payload = item->metadata.dump();
@@ -288,18 +298,20 @@ struct Transport {
         av_check(av_new_packet(metadata.get(), payload.size()), "allocate metadata");
         std::memcpy(metadata->data, payload.data(), payload.size());
         // A and B complete asynchronously. A single data stream therefore uses
-        // mux-admission timestamps; its JSON preserves the exact capture PTS.
+        // producer queue-admission timestamps; JSON preserves exact capture PTS.
         // Video packets keep the sensor-derived PTS without this adjustment.
-        metadata->pts = metadata->dts = (boot_ns() - origin) / 1000;
+        metadata->pts = metadata->dts = item->transport_admission_us;
         metadata->stream_index = data->index;
         av_packet_rescale_ts(metadata.get(), us_timebase, data->time_base);
         av_check(av_interleaved_write_frame(output.context, metadata.get()), "mux metadata");
         avio_flush(output.context->pb);
         datagram_errors = udp.errors;
+        wire_bytes = udp.sent_bytes;
         in_flight = false;
       }
       av_check(av_interleaved_write_frame(output.context, nullptr), "flush transport");
       output.close(true); udp.flush(); datagram_errors = udp.errors;
+      wire_bytes = udp.sent_bytes;
     } catch (const std::exception &e) {
       failed = true; logs.event("transport", "failed", "", e.what());
       if (in_flight) ++drops;
@@ -340,7 +352,9 @@ Json Outputs::stats() const {
   for (const auto &[id, r] : impl_->recorders)
     out["recorders"][id] = {{"failed", r->failed.load()}, {"queue", r->queue.size()}, {"queue_high_water", r->queue.high_water()}, {"dropped_packets", r->drops.load()}, {"written_packets", r->written.load()}};
   if (auto &t = impl_->transport; t)
-    out["transport"] = {{"failed", t->failed.load()}, {"queue", t->queue.size()}, {"queue_high_water", t->queue.high_water()}, {"dropped_packets", t->drops.load()}, {"video_packets", t->packets.load()}, {"datagram_errors", t->datagram_errors.load()}};
+    out["transport"] = {{"failed", t->failed.load()}, {"queue", t->queue.size()}, {"queue_high_water", t->queue.high_water()}, {"dropped_packets", t->drops.load()}, {"video_packets", t->packets.load()}, {"datagram_errors", t->datagram_errors.load()},
+      {"queue_age_us", t->queue_age_us.load()}, {"max_queue_age_us", t->max_queue_age_us.load()},
+      {"wire_bytes", t->wire_bytes.load()}, {"last_video_pts_us", {{"A", t->last_video_a_us.load()}, {"B", t->last_video_b_us.load()}}}};
   return out;
 }
 }  // namespace pv

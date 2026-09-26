@@ -20,6 +20,7 @@ struct Encoded {
   Packet packet;
   Json metadata;
   std::uint64_t generation = 0;
+  std::int64_t transport_admission_us = 0;
 };
 struct StreamInfo {
   std::string camera;
