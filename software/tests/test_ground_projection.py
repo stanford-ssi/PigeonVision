@@ -97,16 +97,17 @@ def test_display_colour_preserves_reference_camera():
         validate_calibration(bundle)
 
 
-def test_neutral_target_can_balance_both_cameras():
+@pytest.mark.parametrize("target", ["colorchecker_neutrals", "measured_neutral_surfaces"])
+def test_neutral_target_can_balance_both_cameras(target):
     bundle = colour_bundle()
     colour = bundle["display_colour"]
-    colour.update(reference_camera=None, reference_target="colorchecker_neutrals")
+    colour.update(reference_camera=None, reference_target=target)
     colour["gains"]["A"] = [1.1, 1, .99]
     assert validate_calibration(bundle) is bundle
     colour["reference_target"] = "unidentified_surface"
     with pytest.raises(ValueError, match="reference"):
         validate_calibration(bundle)
-    colour.update(reference_camera="A", reference_target="colorchecker_neutrals")
+    colour.update(reference_camera="A", reference_target=target)
     with pytest.raises(ValueError, match="one colour reference"):
         validate_calibration(bundle)
 
@@ -119,9 +120,10 @@ def test_display_colour_rejects_invalid_profile(field, value):
         validate_calibration(bundle)
 
 
-def test_neutral_preview_accepts_headroom_and_independent_strengths():
+@pytest.mark.parametrize("target", ["colorchecker_neutrals", "measured_neutral_surfaces"])
+def test_neutral_preview_accepts_headroom_and_independent_strengths(target):
     bundle = colour_bundle()
-    bundle["display_colour"].update(reference_camera=None, reference_target="colorchecker_neutrals",
+    bundle["display_colour"].update(reference_camera=None, reference_target=target,
                                     common_headroom_scale=.88, camera_strengths={"A": 1, "B": .5})
     assert validate_calibration(bundle) is bundle
     bundle["display_colour"].update(reference_camera="A", reference_target=None)

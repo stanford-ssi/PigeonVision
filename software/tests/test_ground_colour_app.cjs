@@ -126,7 +126,11 @@ const assets = path.resolve(__dirname, "../python/pigeonvision/ground/static");
     neutral.display_colour.gains = { A: [1.08,1,.96], B: [1.12,1,1.01] };
     await emit({ type: "calibration", calibration: neutral });
     assert.equal((await snapshot()).colourEnabled, true);
-    assert.match(await page.locator("#colour-status").textContent(), /Neutral chart balance/);
+    assert.match(await page.locator("#colour-status").textContent(), /Neutral balance/);
+    neutral.display_colour.reference_target = "measured_neutral_surfaces";
+    await emit({ type: "calibration", calibration: neutral });
+    assert.equal((await snapshot()).colourEnabled, true);
+    assert.match(await page.locator("#colour-status").textContent(), /Neutral balance/);
 
     await emit({ type: "calibration", calibration: null });
     assert.equal((await snapshot()).colourEnabled, false);

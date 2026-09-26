@@ -52,9 +52,10 @@ def validate_calibration(bundle: dict) -> dict:
                 or colour.get("method") != "display_rgb_gain"):
             raise ValueError("Expected a version 1 display RGB colour match")
         reference = colour.get("reference_camera")
-        neutral_target = reference is None and colour.get("reference_target") == "colorchecker_neutrals"
+        neutral_target = reference is None and colour.get("reference_target") in (
+            "colorchecker_neutrals", "measured_neutral_surfaces")
         if reference not in ("A", "B") and not neutral_target:
-            raise ValueError("Colour match needs a camera or ColorChecker neutral reference")
+            raise ValueError("Colour match needs a camera or measured neutral reference")
         if reference in ("A", "B") and colour.get("reference_target") is not None:
             raise ValueError("Declare one colour reference, not both camera and target")
         scale = colour.get("common_headroom_scale", 1)

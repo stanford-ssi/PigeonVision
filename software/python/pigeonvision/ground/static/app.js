@@ -193,8 +193,8 @@ function updateColourControls() {
   $("colour-status").textContent = !verified
     ? "Waiting for camera identity and geometry."
     : renderer.colourEnabled
-      ? profile.reference_target === "colorchecker_neutrals"
-        ? "Neutral chart balance · preview"
+      ? ["colorchecker_neutrals", "measured_neutral_surfaces"].includes(profile.reference_target)
+        ? "Neutral balance · preview"
         : `Matched to camera ${profile.reference_camera} · preview`
       : "Original camera colours";
 }

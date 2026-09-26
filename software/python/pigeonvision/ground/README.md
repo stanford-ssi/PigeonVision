@@ -64,7 +64,7 @@ Optional `display_colour` uses these fields:
 | --- | --- |
 | `schema_version`, `method` | `1`, `"display_rgb_gain"` |
 | `gains`, `devices` | A/B RGB triples, finite 0.5–2; IDs match lens provenance |
-| `reference_camera` | A or B, retaining identity gains; or `null` with `reference_target: "colorchecker_neutrals"` |
+| `reference_camera` | A or B, retaining identity gains; or `null` with `reference_target: "colorchecker_neutrals"` or `"measured_neutral_surfaces"` |
 | `camera_strengths` | Optional initial A/B strengths, each 0–1 |
 | `common_headroom_scale` | Optional 0.5–1 for a neutral target; camera reference requires 1 |
 
