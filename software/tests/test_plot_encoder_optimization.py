@@ -87,3 +87,28 @@ def test_readme_preserves_live_scene_and_startup_limits(sources):
     assert "not one-hour qualification" in text
     assert "does not imply zero startup drops" in text
     assert "not browser-delivered or displayed fps" in text
+
+
+def test_subsequent_followup_is_separate_and_carries_extended_drops(sources, tmp_path):
+    rows = json.loads((sources / "allocator-comparison.json").read_text())
+    for row, (preset, seconds) in zip(rows, [("superfast",90), ("veryfast",90), ("ultrafast",180)]):
+        row["configuration"].update(preset=preset, duration_seconds=seconds, capture_allocator="dma_heap_cached")
+    rows[2]["measured_seconds"] = 169.4
+    rows[2]["cameras"]["A"]["additional_drops"] = 2
+    rows[2]["cameras"]["B"]["additional_drops"] = 3
+    path = tmp_path / "subsequent.json"
+    path.write_text(json.dumps(rows))
+    summary = plot.load_sources(sources)
+    original_trials = json.dumps(summary["trials"])
+    original_comparison = dict(summary["descriptive_comparison"])
+    summary["subsequent_followup"] = plot.load_followup(path)
+    assert json.dumps(summary["trials"]) == original_trials
+    assert summary["descriptive_comparison"] == original_comparison
+    later = summary["subsequent_followup"]
+    assert later["included_in_figures_or_primary_comparison"] is False
+    assert later["trials"][2]["cameras"]["B"]["added_frame_drops"] == 3
+    assert "must not be read as sustained drop-free operation" in plot.evidence_readme(summary)
+    rows.pop()
+    path.write_text(json.dumps(rows))
+    with pytest.raises(ValueError, match="all three"):
+        plot.load_followup(path)

@@ -121,6 +121,38 @@ def load_sources(source_dir: Path) -> dict:
                 "uncertainty": "Each plotted control is one observed sequential live-scene run, not a replay of identical raw frames. No statistical significance, image-quality comparison, uncertainty estimates, or one-hour qualification are inferred."}}
 
 
+
+def load_followup(path: Path) -> dict:
+    """Keep later preset/extended evidence separate from the six plotted trials."""
+    data = path.read_bytes()
+    rows = json.loads(data)
+    expected = [("superfast", 90), ("veryfast", 90), ("ultrafast", 180)]
+    if not isinstance(rows, list) or len(rows) != len(expected):
+        raise ValueError("Subsequent follow-up must contain all three completed preset/extended trials")
+    trials = []
+    for row, (preset, duration) in zip(rows, expected):
+        config = row["configuration"]
+        wanted = dict(PROFILE, preset=preset, duration_seconds=duration)
+        if any(type(config.get(k)) is not type(v) or config[k] != v for k, v in wanted.items()):
+            raise ValueError("Follow-up profile differs from the documented cached-buffer preset comparison")
+        if (config.get("capture_allocator") != "dma_heap_cached" or config.get("encoder_input") != "dmabuf"
+                or not config.get("udp_destination") or row.get("capture_exit") != 0 or row.get("archive_copy_exit") != 0):
+            raise ValueError("Follow-up requires completed cached-buffer direct-input recording/UDP trials")
+        trials.append({"name": row["name"], "preset": preset, "configured_seconds": duration,
+                       "measured_seconds": finite(row["measured_seconds"], "followup duration", minimum=1),
+                       "cpu_mean_percent": finite(row["cpu_mean_percent"], "followup CPU"),
+                       "cameras": {camera: {
+                           "encoded_fps": finite(row["cameras"][camera]["encoded_frames"], "followup fps"),
+                           "added_frame_drops": counter(row["cameras"][camera]["additional_drops"], "followup drops")}
+                           for camera in "AB"}})
+    return {"included_in_figures_or_primary_comparison": False,
+            "source": {"file": str(path.resolve()), "sha256": hashlib.sha256(data).hexdigest()},
+            "trials": trials,
+            "interpretation": ["The longer ultrafast trial had additional camera drops; the earlier zero-drop window does not establish sustained drop-free operation.",
+                               "Superfast and veryfast missed the nominal 30 fps target in these trials.",
+                               "These remain sequential live-scene bench trials, not one-hour qualification or image-quality comparisons."]}
+
+
 def configure_plotting():
     import matplotlib
     matplotlib.use("Agg")
@@ -278,11 +310,24 @@ def evidence_readme(summary):
               "- Startup camera errors, full-session archive verification, end-to-end network receipt and browser frame delivery are outside these plotted steady-window summaries. Zero added drops does not imply zero startup drops.",
               "- The cached allocator remains an opt-in experiment. These figures do not change software defaults or establish one-hour, synchronization, or flight qualification.", "",
               "## Reproduce", "", "From the repository root with Python 3.11+ and Matplotlib installed (tested: 3.10.8):", "", "```sh", "python software/tools/plot_encoder_optimization.py \\", "  --source-dir output/provisioning \\", "  --output output/portfolio/encoder-optimization-new", "```", "", "Choose a new output directory; existing exports are never overwritten. The tool refuses partial campaigns and mismatched profiles. Input health summaries were produced by `output/provisioning/compare_encoder_inputs.py` and `compare_allocators.py`; rate and timing values are differences of cumulative counters over the selected health window."]
+    followup = summary.get("subsequent_followup")
+    if followup:
+        lines += ["", "## Subsequent follow-up — separate from the figures", "",
+                  "Later cached-buffer trials are recorded here without changing or pooling the six plotted runs. The extended ultrafast trial had additional frame drops: the earlier zero-drop ~80-second window must not be read as sustained drop-free operation.", "",
+                  "| Preset | Configured / measured seconds | Encoded A / B (fps) | CPU (%) | Added drops A / B |",
+                  "| --- | ---: | ---: | ---: | ---: |"]
+        for trial in followup["trials"]:
+            a, b = trial["cameras"]["A"], trial["cameras"]["B"]
+            lines.append(f'| {trial["preset"]} | {trial["configured_seconds"]} / {trial["measured_seconds"]:.3f} | {a["encoded_fps"]:.3f} / {b["encoded_fps"]:.3f} | {trial["cpu_mean_percent"]:.2f} | {a["added_frame_drops"]} / {b["added_frame_drops"]} |')
+        lines += ["", *[f"- {note}" for note in followup["interpretation"]],
+                  "", "Reproduce this separate appendix by adding `--followup output/provisioning/cached-preset-comparison.json` to the command above. Its source hash and exact values are retained under `subsequent_followup` in `source-summary.json`."]
     return "\n".join(lines) + "\n"
 
 
-def export(source_dir: Path, output: Path):
+def export(source_dir: Path, output: Path, followup: Path | None = None):
     summary = load_sources(source_dir)
+    if followup is not None:
+        summary["subsequent_followup"] = load_followup(followup)
     output.mkdir(parents=True, exist_ok=False)
     plt = configure_plotting()
     from matplotlib.backends.backend_pdf import PdfPages
@@ -309,9 +354,10 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source-dir", type=Path, default=ROOT / "output/provisioning")
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--followup", type=Path, help="Separate subsequent preset/extended-trial evidence; does not alter plots")
     args = parser.parse_args(argv)
     try:
-        export(args.source_dir, args.output)
+        export(args.source_dir, args.output, args.followup)
     except (ValueError, KeyError, OSError) as exc:
         parser.exit(2, f"encoder plot: {exc}\n")
     print(args.output.resolve())
