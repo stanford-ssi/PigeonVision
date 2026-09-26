@@ -144,6 +144,15 @@
             <div class="orientation-label"><span class="field-label">Display rotation</span><output id="orientation-value">0°</output></div>
             <button id="rotate-view" type="button" aria-pressed="false">Rotate 180°</button>
           </div>
+          <div id="perspective-controls" class="perspective-control" hidden>
+            <div class="perspective-readout">
+              <span class="field-label">Look-around zoom</span>
+              <output id="perspective-zoom-value">1.00×</output>
+            </div>
+            <output id="perspective-fov-value">110.0° horizontal FOV</output>
+            <button id="perspective-save-default" type="button">Use as default</button>
+            <p id="perspective-default-status" class="control-hint" role="status"></p>
+          </div>
           <button id="home" class="reset-button">
             <span aria-hidden="true">↶</span> Reset view
           </button>

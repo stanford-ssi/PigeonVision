@@ -1,9 +1,20 @@
-import { Renderer, rawDragCenter, DEFAULT_PERSPECTIVE_FOV } from "./projection.js";
+import { Renderer, rawDragCenter, DEFAULT_PERSPECTIVE_FOV, MIN_PERSPECTIVE_FOV,
+  MAX_PERSPECTIVE_FOV, validPerspectiveFov, perspectiveZoom } from "./projection.js";
 import { checkGeometry } from "./geometry.js";
 import { ErrorState } from "./errors.js";
 
 const $ = (id) => document.getElementById(id);
 const errors = new ErrorState();
+const perspectiveDefaultKey = "pigeonvision.perspectiveDefaultFov.v1";
+let perspectiveDefaultFov = DEFAULT_PERSPECTIVE_FOV;
+let perspectiveDefaultStatus = "1× is the 110° factory view. Scroll to choose.";
+try {
+  const saved = JSON.parse(localStorage.getItem(perspectiveDefaultKey));
+  if (validPerspectiveFov(saved)) {
+    perspectiveDefaultFov = saved;
+    perspectiveDefaultStatus = `Browser default: ${(saved * 180 / Math.PI).toFixed(1)}°. 1× remains 110°.`;
+  }
+} catch { /* Unavailable storage or invalid JSON keeps the factory default. */ }
 const state = {
   connected: false,
   replay: false,
@@ -394,6 +405,7 @@ function updateFocusControls() {
   const raw = ["a", "b"].includes(renderer.mode);
   $("focus-control").hidden = !raw;
   $("raw-orientation").hidden = !raw;
+  updatePerspectiveControls();
   if (raw) {
     const cameraId = renderer.mode.toUpperCase();
     const focus = renderer.focus[cameraId];
@@ -405,6 +417,13 @@ function updateFocusControls() {
     $("focus-value").textContent = `${focus.zoom.toFixed(1).replace(/\.0$/, "")}×`;
   }
   $("image").classList.toggle("can-pan", renderer.mode === "perspective" || raw && renderer.rawLayout().zoom > 1);
+}
+
+function updatePerspectiveControls() {
+  $("perspective-controls").hidden = renderer.mode !== "perspective";
+  $("perspective-zoom-value").textContent = `${perspectiveZoom(renderer.fov).toFixed(2)}×`;
+  $("perspective-fov-value").textContent = `${(renderer.fov * 180 / Math.PI).toFixed(1)}° horizontal FOV`;
+  $("perspective-default-status").textContent = perspectiveDefaultStatus;
 }
 
 function diagnostics() {
@@ -445,7 +464,7 @@ function diagnostics() {
   $("overlay").hidden = !overlay;
   const alignment = state.calibration?.rig_alignment_status === "nominal_operator_geometry" ? "Nominal alignment" : "Spherical projection";
   $("view-caption").textContent = panorama
-    ? `${renderer.mode === "sphere" ? "360° panorama" : renderer.mode === "mask" ? "Source coverage" : `${Math.round((renderer.fov * 180) / Math.PI)}° look-around`} · ${alignment} · shutter sync unverified`
+    ? `${renderer.mode === "sphere" ? "360° panorama" : renderer.mode === "mask" ? "Source coverage" : `${perspectiveZoom(renderer.fov).toFixed(2)}× · ${Math.round((renderer.fov * 180) / Math.PI)}° look-around`} · ${alignment} · shutter sync unverified`
     : `Camera ${renderer.mode.toUpperCase()} · display ${renderer.viewerRotation[renderer.mode.toUpperCase()]}° · ${renderer.rawLayout().zoom.toFixed(1).replace(/\.0$/, "")}× focus zoom · ${renderer.rawLayout().zoom > 1 ? "Drag to inspect" : "Scroll to zoom"}`;
 }
 
@@ -455,6 +474,18 @@ try {
       "WebCodecs VideoDecoder is unavailable. Open this localhost viewer in a supported desktop Chrome browser.",
     );
   renderer = new Renderer($("image"));
+  renderer.fov = perspectiveDefaultFov;
+  $("perspective-save-default").onclick = () => {
+    if (renderer.mode !== "perspective" || !validPerspectiveFov(renderer.fov)) return;
+    perspectiveDefaultFov = renderer.fov;
+    try {
+      localStorage.setItem(perspectiveDefaultKey, JSON.stringify(perspectiveDefaultFov));
+      perspectiveDefaultStatus = "Saved for this browser. Reset view uses this zoom.";
+    } catch {
+      perspectiveDefaultStatus = "Default set for this page only; browser storage is unavailable.";
+    }
+    updatePerspectiveControls();
+  };
   $("colour-toggle").onclick = () => {
     state.colourRequested = !state.colourRequested;
     updateColourControls();
@@ -484,7 +515,7 @@ try {
   };
   $("home").onclick = () => {
     renderer.yaw = renderer.pitch = 0;
-    renderer.fov = DEFAULT_PERSPECTIVE_FOV;
+    renderer.fov = perspectiveDefaultFov;
     renderer.resetRawView();
     updateFocusControls();
     renderer.draw();
@@ -540,7 +571,8 @@ try {
         renderer.setRawZoom(renderer.rawLayout().zoom * Math.exp(-e.deltaY * 0.001));
         updateFocusControls();
       } else {
-        renderer.fov = Math.max(0.25, Math.min(2.6, renderer.fov * Math.exp(e.deltaY * 0.001)));
+        renderer.fov = Math.max(MIN_PERSPECTIVE_FOV, Math.min(MAX_PERSPECTIVE_FOV, renderer.fov * Math.exp(e.deltaY * 0.001)));
+        updatePerspectiveControls();
       }
       renderer.draw();
     },
@@ -572,6 +604,7 @@ try {
       geometry: state.geometry,
       errors: state.error,
       focus: renderer.focus,
+      perspective: { fov: renderer.fov, defaultFov: perspectiveDefaultFov, zoom: perspectiveZoom(renderer.fov) },
       viewerRotation: renderer.viewerRotation,
       colourEnabled: renderer.colourEnabled,
       colourStrength: { ...state.colourStrength },

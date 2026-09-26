@@ -1,6 +1,14 @@
 // Measured Mei projection. +Z through camera A, +X right, +Y down in the rig.
 // Texture coordinates retain source top-left orientation; no synthetic source.
 export const DEFAULT_PERSPECTIVE_FOV = 110 * Math.PI / 180;
+export const MIN_PERSPECTIVE_FOV = 0.25, MAX_PERSPECTIVE_FOV = 2.6;
+export function validPerspectiveFov(value) {
+  return typeof value === "number" && Number.isFinite(value) &&
+    value >= MIN_PERSPECTIVE_FOV && value <= MAX_PERSPECTIVE_FOV;
+}
+export function perspectiveZoom(fov) {
+  return Math.tan(DEFAULT_PERSPECTIVE_FOV / 2) / Math.tan(fov / 2);
+}
 
 // At 1x the complete image fits. Zoom reduces the visible source span, and each
 // centre coordinate is bounded so panning cannot reveal extra space at an edge.

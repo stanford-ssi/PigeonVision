@@ -434,6 +434,23 @@ pre {
 .focus-control .field-label {
   margin-bottom: 0;
 }
+.perspective-readout {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+#perspective-zoom-value {
+  font: 24px/1.2 var(--mono);
+  letter-spacing: -0.06em;
+}
+#perspective-fov-value {
+  display: block;
+  margin: 5px 0 12px;
+  color: var(--muted);
+  font: 10px/1.4 var(--mono);
+}
+#perspective-save-default { width: 100%; }
 #focus-value {
   color: var(--ink);
   font: 26px/1 var(--mono);

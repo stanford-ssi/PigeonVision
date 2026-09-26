@@ -28,6 +28,7 @@ const assets = path.resolve(__dirname, "../python/pigeonvision/ground/static");
     });
     await page.goto("http://127.0.0.1:9876/");
     await page.waitForFunction(() => window.pigeonGround?.snapshot().connected);
+    assert.equal(await page.locator("#perspective-controls").isVisible(), false);
     const emit = value => page.evaluate(value => window.testSocket.onmessage({ data: JSON.stringify(value) }), value);
     await emit({ type: "error", component: "source", recoverable: true, message: "No UDP transport received for two seconds" });
     await page.waitForFunction(() => window.pigeonGround.snapshot().errors?.includes("No UDP"));
@@ -126,8 +127,70 @@ const assets = path.resolve(__dirname, "../python/pigeonvision/ground/static");
     });
     for (const sample of gpu) for (let channel = 0; channel < 2; channel++)
       assert.ok(Math.abs(sample.actual[channel] - sample.expected[channel]) <= 2, JSON.stringify(sample));
+
+    // Synthetic calibration only enables the controls; no live frames or server.
+    const lens = name => ({ image_size: [256,256], crop: [0,0,256,256], output_size: [256,256],
+      K: [[128,0,127.5],[0,128,127.5],[0,0,1]], D: [0,0,0,0], xi: 1,
+      flip_x: false, flip_y: false, max_theta_deg: null,
+      R_camera_from_rig: name === "A" ? [[1,0,0],[0,1,0],[0,0,1]] : [[-1,0,0],[0,1,0],[0,0,-1]],
+      provenance: { device_id: `synthetic-${name}` } });
+    const lookAround = async () => {
+      await emit({ type: "calibration", calibration: { schema_version: 1, model: "mei",
+        rig_alignment_status: "synthetic_test_only", cameras: { A: lens("A"), B: lens("B") } } });
+      await page.selectOption("#view", "perspective");
+    };
+    const perspective = () => page.evaluate(() => window.pigeonGround.snapshot().perspective);
+    const wheel = deltaY => page.locator("#image").dispatchEvent("wheel", { deltaY, cancelable: true });
+    const key = "pigeonvision.perspectiveDefaultFov.v1";
+    const factory = 110 * Math.PI / 180;
+    await lookAround();
+    assert.equal(await page.locator("#perspective-controls").isVisible(), true);
+    assert.equal(await page.locator("#focus-control").isVisible(), false);
+    assert.equal(await page.locator("#perspective-zoom-value").textContent(), "1.00×");
+    assert.equal((await perspective()).fov, factory);
+    await page.waitForFunction(() => document.getElementById("view-caption").textContent.startsWith("1.00× · 110° look-around"));
+    await wheel(-250);
+    const chosen = await perspective();
+    const expectedZoom = Math.tan(factory / 2) / Math.tan(chosen.fov / 2);
+    assert.equal(await page.locator("#perspective-zoom-value").textContent(), `${expectedZoom.toFixed(2)}×`);
+    assert.equal(await page.locator("#perspective-fov-value").textContent(), `${(chosen.fov * 180 / Math.PI).toFixed(1)}° horizontal FOV`);
+    await page.waitForFunction(prefix => document.getElementById("view-caption").textContent.startsWith(prefix), `${expectedZoom.toFixed(2)}× · ${Math.round(chosen.fov * 180 / Math.PI)}° look-around`);
+    await page.locator("#perspective-save-default").click();
+    assert.equal((await perspective()).fov, chosen.fov, "Saving must not move the view");
+    assert.equal(await page.evaluate(key => JSON.parse(localStorage.getItem(key)), key), chosen.fov);
+    await wheel(200);
+    await page.locator("#home").click();
+    assert.equal((await perspective()).fov, chosen.fov);
+    await page.selectOption("#view", "sphere");
+    assert.equal(await page.locator("#perspective-controls").isVisible(), false);
+    await page.selectOption("#view", "a");
+    assert.equal(await page.locator("#perspective-controls").isVisible(), false);
+    assert.equal((await page.evaluate(() => window.pigeonGround.snapshot())).focus.A.zoom, 1);
+    await page.reload();
+    await page.waitForFunction(() => window.pigeonGround?.snapshot().connected);
+    await lookAround();
+    assert.equal((await perspective()).fov, chosen.fov, "New loads use the browser's saved default");
+    assert.equal((await perspective()).zoom, expectedZoom, "Saved default does not redefine factory 1×");
+    await page.evaluate(key => localStorage.setItem(key, "2.61"), key);
+    await page.reload();
+    await page.waitForFunction(() => window.pigeonGround?.snapshot().connected);
+    assert.equal((await perspective()).fov, factory, "Out-of-range storage uses factory view");
+    await page.addInitScript(() => Object.defineProperty(window, "localStorage", {
+      get() { throw new DOMException("Synthetic blocked storage", "SecurityError"); },
+    }));
+    await page.reload();
+    await page.waitForFunction(() => window.pigeonGround?.snapshot().connected);
+    await lookAround();
+    assert.equal((await perspective()).fov, factory);
+    await wheel(-100);
+    const pageOnly = (await perspective()).fov;
+    await page.locator("#perspective-save-default").click();
+    assert.match(await page.locator("#perspective-default-status").textContent(), /page only/);
+    await wheel(150);
+    await page.locator("#home").click();
+    assert.equal((await perspective()).fov, pageOnly);
     assert.deepEqual(failures, []);
-    console.log(JSON.stringify({ passed: true, checked: ["source-error-recovery", "storage-error-retention", "raw-focus-controls", "drag-pan", "per-camera-reset", "GPU-source-crop", "independent-180-degree-rotation", "calibration-unaffected"] }));
+    console.log(JSON.stringify({ passed: true, checked: ["source-error-recovery", "storage-error-retention", "raw-focus-controls", "drag-pan", "per-camera-reset", "GPU-source-crop", "independent-180-degree-rotation", "calibration-unaffected", "perspective-focal-zoom", "saved-perspective-default", "storage-validation-and-failure"] }));
   } finally {
     await browser.close();
   }

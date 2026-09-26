@@ -6,6 +6,16 @@ const source = fs.readFileSync(path.resolve(__dirname, "../python/pigeonvision/g
 const modulePromise = import(`data:text/javascript;base64,${source.toString("base64")}`);
 const near = (actual, expected) => assert.ok(Math.abs(actual - expected) < 1e-10, `${actual} != ${expected}`);
 
+test("perspective zoom follows focal scale and stored FOV must be finite and bounded", async () => {
+  const { perspectiveZoom, validPerspectiveFov, DEFAULT_PERSPECTIVE_FOV } = await modulePromise;
+  near(perspectiveZoom(DEFAULT_PERSPECTIVE_FOV), 1);
+  near(perspectiveZoom(Math.PI / 2), Math.tan(55 * Math.PI / 180));
+  assert.ok(Math.abs(perspectiveZoom(Math.PI / 2) - 110 / 90) > .1);
+  for (const value of [.25, DEFAULT_PERSPECTIVE_FOV, 2.6]) assert.equal(validPerspectiveFov(value), true);
+  for (const value of [.249, 2.601, null, undefined, "1.2", true, NaN, Infinity, {}, []])
+    assert.equal(validPerspectiveFov(value), false);
+});
+
 test("1x fits the complete image and cannot pan out of its centred letterbox", async () => {
   const { rawViewTransform } = await modulePromise;
   const layout = rawViewTransform([1600, 900], [1552, 1552], 1, [0, 1]);
