@@ -176,3 +176,31 @@ that limitation and use a separately designed alignment measurement. Nominal
 back-to-back rotations are an initial geometric assumption, not a measured stitch.
 Lens intrinsics plus relative rotations support distant-scene alignment; the
 physical separation of the cameras still produces depth-dependent parallax.
+
+## Initial nominal opposed-camera preview
+
+An initial viewer demo can combine real lens fits with operator-supplied approximate
+mounting geometry, before a precision rig solve. `tools/nominal_rig_preview.py`
+requires explicit opposed axes, a common-roll assumption, a nominal separation
+in metres and the source date. It uses A as the rig reference and rotates B 180°
+about rig Y; both canonical camera +Y axes are assumed parallel. The 0.1524 m
+value below records an approximate six-inch separation, which is **not used to
+correct parallax** in the infinity projection.
+
+```sh
+software/.venv/bin/python software/tools/nominal_rig_preview.py \
+  --intrinsics-a PATH/A-intrinsics.json --intrinsics-b PATH/B-intrinsics.json \
+  --dataset-b PATH/B-source-dataset.json --output output/nominal-preview \
+  --baseline-m 0.1524 --geometry-source-date 2026-09-25 \
+  --opposed --common-roll-assumed
+```
+
+The normal intrinsics format identifies its source dataset and hash; a flat
+training diagnostic requires explicit source datasets (repeat `--dataset-b`
+for a combined fit). The generator checks physical IDs and full-sensor FlipY
+geometry, writes an exclusively created `calibration.json`, and preserves each
+lens fit's validation state. The bundle is labelled
+`rig_alignment_status: nominal_operator_geometry` and `qualified: false`.
+Missing angular coverage stays null; training observations do not establish
+validated seam coverage. This is a usable preliminary preview, with alignment,
+edge coverage and nearby-object parallax still visible limitations.

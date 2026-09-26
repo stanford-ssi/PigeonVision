@@ -71,23 +71,47 @@ function reset() {
   state.resetCount++;
   validateGeometry();
 }
+function alignmentDescription(bundle) {
+  if (bundle.rig_alignment_status === "nominal_operator_geometry") {
+    const baseline = bundle.nominal_geometry?.baseline_m;
+    const spacing = Number.isFinite(baseline) && baseline > 0
+      ? `, approximately ${Number(baseline.toPrecision(3))} m apart` : "";
+    return `Nominal 180° alignment${spacing}; roll is assumed. Fine alignment is unmeasured; nearby objects may double.`;
+  }
+  return `Rig alignment: ${bundle.rig_alignment_status || "unverified"}.`;
+}
+function lensValidationDescription(bundle) {
+  const validation = ["A", "B"].map((name) => bundle.validation?.cameras?.[name]);
+  if (validation.every((camera) => camera?.held_out_views === 0))
+    return "Lens fits are training-only; held-out accuracy is unverified.";
+  if (validation.some((camera) => !Number.isInteger(camera?.held_out_views) || camera.held_out_views < 3))
+    return "Lens accuracy is unverified; held-out checks are incomplete.";
+  if (validation.some((camera) => camera.thresholds_met === false))
+    return "Lens fits miss held-out accuracy targets.";
+  return validation.every((camera) => camera.thresholds_met === true)
+    ? "Lens fits meet held-out accuracy targets." : "Lens accuracy is unverified.";
+}
+function calibrationDescription(bundle) {
+  const bounded = Object.values(bundle.cameras).every((camera) => camera.max_theta_deg != null);
+  return `${alignmentDescription(bundle)} ${lensValidationDescription(bundle)} ${bounded ? "Angular limits supplied." : "Edge coverage is unvalidated."}`;
+}
 function configureCalibration(bundle) {
+  const firstCalibration = !state.calibration;
   state.calibration = bundle;
   renderer.calibration = bundle;
   for (const o of $("view").options)
     if (!["a", "b"].includes(o.value)) o.disabled = !bundle;
   if (!bundle) {
     $("calibration").textContent =
-      "Uncalibrated: raw cameras are available. A measured calibration bundle is required for the panorama.";
+      "Raw cameras are available. Lens models and a declared camera alignment are needed for the panorama.";
     $("view").value = "a";
     renderer.mode = "a";
   } else {
-    const bounded = Object.values(bundle.cameras).every(
-      (c) => c.max_theta_deg != null,
-    );
-    const alignment = bundle.rig_alignment_status || "unverified";
-    $("calibration").textContent =
-      `Mei calibration loaded. Rig alignment: ${alignment}. ${bounded ? "Angular coverage limits supplied." : "Edge angular coverage is unvalidated."} Validate fit and mounted seam alignment with held-out real images.`;
+    $("calibration").textContent = calibrationDescription(bundle);
+    if (firstCalibration) {
+      renderer.mode = "sphere";
+      $("view").value = "sphere";
+    }
   }
   validateGeometry();
   updateFocusControls();
@@ -112,11 +136,8 @@ function validateGeometry() {
     updateFocusControls();
   }
   const bundle = state.calibration;
-  const bounded = Object.values(bundle.cameras).every(
-    (c) => c.max_theta_deg != null,
-  );
   $("calibration").textContent =
-    `Mei calibration loaded. Rig alignment: ${bundle.rig_alignment_status || "unverified"}. ${bounded ? "Angular coverage limits supplied." : "Edge angular coverage is unvalidated."} ` +
+    `${calibrationDescription(bundle)} ` +
     (blocked
       ? `PANORAMA DISABLED: ${state.geometry.errors.join("; ")}.`
       : state.geometry.unverified.length
@@ -309,6 +330,13 @@ function connect() {
 }
 
 function updateFocusControls() {
+  const titles = { a: "Camera A", b: "Camera B", sphere: "360° panorama", perspective: "Look around", mask: "Source coverage" };
+  $("view-heading").textContent = titles[renderer.mode];
+  $("view-description").textContent = renderer.mode === "perspective"
+    ? "Drag to turn. Scroll to change the field of view."
+    : renderer.mode === "sphere" || renderer.mode === "mask"
+      ? "Both cameras projected across the full sphere."
+      : "Scroll to magnify. Drag to inspect the lens.";
   const raw = ["a", "b"].includes(renderer.mode);
   $("focus-control").hidden = !raw;
   $("raw-orientation").hidden = !raw;
@@ -361,8 +389,9 @@ function diagnostics() {
   else if (state.status?.state === "ended") overlay = "End of recording";
   $("overlay").textContent = overlay;
   $("overlay").hidden = !overlay;
+  const alignment = state.calibration?.rig_alignment_status === "nominal_operator_geometry" ? "Nominal alignment" : "Spherical projection";
   $("view-caption").textContent = panorama
-    ? `Infinity projection · ${Math.round((renderer.fov * 180) / Math.PI)}° view · shutter sync unverified`
+    ? `${renderer.mode === "sphere" ? "360° panorama" : renderer.mode === "mask" ? "Source coverage" : `${Math.round((renderer.fov * 180) / Math.PI)}° look-around`} · ${alignment} · shutter sync unverified`
     : `Camera ${renderer.mode.toUpperCase()} · display ${renderer.viewerRotation[renderer.mode.toUpperCase()]}° · ${renderer.rawLayout().zoom.toFixed(1).replace(/\.0$/, "")}× focus zoom · ${renderer.rawLayout().zoom > 1 ? "Drag to inspect" : "Scroll to zoom"}`;
 }
 
