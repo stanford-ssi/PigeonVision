@@ -37,6 +37,21 @@ manifest is refused. Map one or two physical device IDs explicitly to A/B.
 | `encoder_input` | `"dmabuf"` default; `"copy"` for the CPU-copy experiment |
 | `capture_allocator` | `"libcamera"` default; `"dma_heap_cached"` for imported cached buffers |
 
+Optional shared `camera_controls` supports `exposure_us` plus `analogue_gain`
+(both required to disable automatic exposure), `colour_gains:[R,B]` (positive
+gains disable AWB), and an optional 3×3 `colour_correction_matrix` with manual
+colour gains. Omit the object to preserve vendor defaults. Unknown keys and
+incomplete modes fail; each camera's reported limits are checked before capture.
+Example: `"camera_controls":{"exposure_us":9993,"analogue_gain":1.0,"colour_gains":[1.64,2.37]}`.
+These are experimental settings, not a colour calibration. Per-camera provenance
+records requests separately from frame exposure, analogue/digital gain, WB and
+CCM; absent effective values remain null. Sensor quantization and ISP saturation
+can alter results, including an explicitly requested base CCM. Compare actual
+metadata and unclipped images; common requests do not prove matched exposures.
+The stock FRAMOS tuning also adapts contrast from each camera's histogram;
+manual exposure/WB does not disable that stage. Keep any tuning experiment in
+a separate file and record its hash and the startup-confirmed file path.
+
 ## Sensor mode, rate and timestamps
 
 Capture pins **2064×1552 RAW10** and requests Rec709 YUV420. ISP output selects an

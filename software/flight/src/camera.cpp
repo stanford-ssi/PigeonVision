@@ -210,6 +210,7 @@ struct CameraSession::Impl {
   libcamera::Rectangle crop;
   libcamera::Rectangle full_sensor_crop;
   Json frame_rate_control;
+  Json manual_control_ranges = Json::object();
   AVCodecContext *encoder = nullptr;
   Outputs *outputs = nullptr;
   struct Capture {
@@ -248,6 +249,59 @@ struct CameraSession::Impl {
   const std::vector<std::unique_ptr<libcamera::FrameBuffer>> &buffers() const {
     return allocator ? allocator->buffers(stream) : imported_buffers;
   }
+  const libcamera::ControlInfo &require_control(const libcamera::ControlId &id) const {
+    const auto it = camera->controls().find(&id);
+    if (it == camera->controls().end()) throw std::runtime_error("camera does not support requested " + id.name());
+    return it->second;
+  }
+  void validate_manual_controls() {
+    const auto &c = config.camera_controls;
+    auto scalar = [&](const libcamera::ControlId &id, double value, bool integer) {
+      const auto &info = require_control(id);
+      const double lo = integer ? info.min().get<std::int32_t>() : info.min().get<float>();
+      const double hi = integer ? info.max().get<std::int32_t>() : info.max().get<float>();
+      check_manual_control_range(id.name(), value, lo, hi);
+      manual_control_ranges[id.name()] = {lo, hi};
+    };
+    if (c.exposure_us) {
+      // Camera::start expands legacy AeEnable into both modern manual modes.
+      // Validate the modes consumed by the pinned IPA rather than require the
+      // deprecated wrapper to appear in the device's advertised control map.
+      for (const auto *id : {&libcamera::controls::ExposureTimeMode, &libcamera::controls::AnalogueGainMode}) {
+        const auto &info = require_control(*id);
+        check_manual_control_range(id->name(), 1, info.min().get<std::int32_t>(), info.max().get<std::int32_t>());
+      }
+      scalar(libcamera::controls::ExposureTime, *c.exposure_us, true);
+      scalar(libcamera::controls::AnalogueGain, *c.analogue_gain, false);
+    }
+    if (c.colour_gains) {
+      const auto &enable = require_control(libcamera::controls::AwbEnable);
+      if (enable.min().get<bool>()) throw std::runtime_error("camera cannot disable AWB");
+      for (float gain : *c.colour_gains) scalar(libcamera::controls::ColourGains, gain, false);
+    }
+    if (c.colour_correction_matrix) {
+      (void)require_control(libcamera::controls::ColourCorrectionMatrix);
+      // The pinned IPA advertises 0..8, but its CCM implementation accepts
+      // negative terms and clamps signed values to [-8, 7.9999]. Config checks
+      // the signed range; record actual output instead of trusting that minimum.
+      manual_control_ranges["ColourCorrectionMatrix"] = {{"validated_signed_range", {-8, 8}}, {"maximum_exclusive", true},
+        {"note", "Vendor advertised unsigned minimum is unsuitable for signed CCM coefficients; compare reported per-frame matrix."}};
+    }
+  }
+  void apply_manual_controls(libcamera::ControlList &controls) const {
+    const auto &c = config.camera_controls;
+    if (c.exposure_us) {
+      controls.set(libcamera::controls::AeEnable, false);
+      controls.set(libcamera::controls::ExposureTime, *c.exposure_us);
+      controls.set(libcamera::controls::AnalogueGain, *c.analogue_gain);
+    }
+    if (c.colour_gains) {
+      controls.set(libcamera::controls::AwbEnable, false);
+      controls.set(libcamera::controls::ColourGains, libcamera::Span<const float, 2>(*c.colour_gains));
+    }
+    if (c.colour_correction_matrix)
+      controls.set(libcamera::controls::ColourCorrectionMatrix, libcamera::Span<const float, 9>(*c.colour_correction_matrix));
+  }
   void configure() {
     camera_config = camera->generateConfiguration({libcamera::StreamRole::VideoRecording});
     if (!camera_config || camera_config->empty()) throw std::runtime_error("camera has no video configuration");
@@ -270,6 +324,7 @@ struct CameraSession::Impl {
       throw std::runtime_error("camera cannot provide requested Rec709 colour space");
     camera_check(camera->configure(camera_config.get()), "configure camera");
     frame_rate_control = configure_framos_rate(*camera, *camera_config, config.fps);
+    validate_manual_controls();
     auto maximum = camera->properties().get(libcamera::properties::ScalerCropMaximum);
     auto array = camera->properties().get(libcamera::properties::PixelArraySize);
     if (!maximum || !array || maximum->width < 2064 || maximum->height < 1552)
@@ -334,6 +389,7 @@ struct CameraSession::Impl {
     const std::array<std::int64_t, 2> duration{1000000 / config.fps, 1000000 / config.fps};
     controls.set(libcamera::controls::FrameDurationLimits, libcamera::Span<const std::int64_t, 2>(duration));
     controls.set(libcamera::controls::ScalerCrop, crop);
+    apply_manual_controls(controls);
     camera_check(camera->start(&controls), "start camera"); active = true;
     for (auto &request : requests) camera_check(camera->queueRequest(request.get()), "queue initial request");
     logs.event("camera", "started", settings.id, settings.device);
@@ -375,6 +431,10 @@ struct CameraSession::Impl {
         colour.correction_matrix = values;
       }
       if (auto enabled = m.get(libcamera::controls::AwbEnable)) colour.awb_enabled = *enabled;
+      if (auto enabled = m.get(libcamera::controls::AeEnable)) colour.ae_enabled = *enabled;
+      if (auto gain = m.get(libcamera::controls::DigitalGain)) colour.digital_gain = *gain;
+      if (auto mode = m.get(libcamera::controls::ExposureTimeMode)) colour.exposure_time_mode = *mode;
+      if (auto mode = m.get(libcamera::controls::AnalogueGainMode)) colour.analogue_gain_mode = *mode;
       metadata.update(colour_metadata(colour));
       metadata["sensor_crop"] = nullptr;
       if (auto actual = m.get(libcamera::controls::ScalerCrop)) {
@@ -512,7 +572,8 @@ struct CameraSession::Impl {
                 {"flip_x", settings.flip_x}, {"flip_y", settings.flip_y}, {"requested_scaler_crop", rectangle(crop)},
                 {"requested_sensor_crop", sensor_crop(crop)},
                 {"frame_rate_control", frame_rate_control},
-                {"colour_control_provenance", colour_control_provenance()},
+                {"colour_control_provenance", colour_control_provenance(config.camera_controls)},
+                {"manual_control_ranges", manual_control_ranges},
                 {"sensor_coordinate_transform", {{"source", "configured full-mode ScalerCropMaximum"},
                   {"pixel_array_origin", {full_sensor_crop.x, full_sensor_crop.y}},
                   {"sensor_pixels_per_array_pixel", {2064.0/full_sensor_crop.width, 1552.0/full_sensor_crop.height}},
