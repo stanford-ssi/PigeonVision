@@ -13,4 +13,4 @@ Try the [flight demo](https://stanford-ssi.github.io/PigeonVision/) to see the c
 - [Link budget](calculations/link-budget.xlsx): RF and video bitrate calculations.
 - [Simulator](docs/README.md): camera views, flight playback and local setup.
 
-**Next:** KiCad schematics, dual-camera test and E200 bench link. Test before PCB fabrication.
+**Next:** improve cooling and camera/SPI scheduling, then test RF. Continue carrier design in parallel.

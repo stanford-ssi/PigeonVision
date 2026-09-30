@@ -11,24 +11,22 @@ lens fits with **nominal** opposed-camera alignment. One-hour performance,
 held-out seam accuracy, colour accuracy and exposure synchronization remain
 unqualified. See the [bench evidence](bench-notes/2026-09-25.md).
 
-Next: verify colour and optical coverage, measure alignment and sustained
-performance, then add altitude/attitude telemetry and flight interfaces. The
-[ground roadmap](python/pigeonvision/ground/README.md#planned-flight-telemetry)
-describes the planned telemetry display.
+`pv spi` forwards the existing MPEG-TS feed to the Pico using PV-SPI v1,
+with READY backpressure, CRC/sequence accounting and an optional UDP copy for
+the Mac viewer. Real-camera runs reached 9 Mb/s with matching Pico counts and
+checksums. Combined capture/SPI delivered 28.4–28.7 fps; a longer run stopped
+at 80°C after about 210 seconds. See the [SPI results and setup](flight/spi.md).
 
 ## Start here
 
 | Guide | Covers |
 | --- | --- |
 | [Native capture](flight/README.md) | C++20/libcamera/x264 build, buffers, recording and transport |
+| [CM5 → Pico SPI](flight/spi.md) | PV-SPI wiring, sender, backpressure, evidence and viewer copy |
 | [Ground app](python/pigeonvision/ground/README.md) | Viewing, replay, received-TS recording and colour controls |
 | [Calibration](calibration/README.md) | Board collection, lens fitting and nominal preview |
 | [Shared interfaces](shared/README.md) | Configuration, session/frame records, timestamps and calibration schema |
 | [Platform pins](platform/versions.json) | Matched OS, kernel and vendor revisions |
-
-Astra leads integration; Astra and Opus 5.5 may both implement, discuss and review.
-Neither is preferred. Give workers separate ownership and independent review;
-keep provisioning under one operator.
 
 ## Provision the CM5
 
