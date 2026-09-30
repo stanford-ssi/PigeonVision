@@ -107,25 +107,28 @@ Config Config::read(const std::filesystem::path &path) {
   c.encode = j.value("encode", c.encode); c.record = j.value("record", c.record);
   if (j.contains("udp_destination") && !j["udp_destination"].is_null()) c.udp_destination = j["udp_destination"].get<std::string>();
   if (j.contains("spi") && !j["spi"].is_null()) {
-    const auto &v=j.at("spi");
-    if(!v.is_object()) throw std::runtime_error("spi must be an object");
-    for(const auto &[k,_]:v.items())
-      if(k!="device" && k!="gpiochip" && k!="hz" && k!="ready_line") throw std::runtime_error("unknown spi key: "+k);
-    SpiConfig s;
-    s.device=v.value("device",s.device); s.gpiochip=v.value("gpiochip",s.gpiochip);
-    auto uint_value=[&](const char *key,unsigned fallback,unsigned low,unsigned high) {
-      if(!v.contains(key)) return fallback;
-      auto &n=v.at(key);
-      if(!n.is_number_integer() || n.get<double>()<low || n.get<double>()>high)
-        throw std::runtime_error(std::string("invalid spi.")+key);
+    const auto &v = j.at("spi");
+    if (!v.is_object()) throw std::runtime_error("spi must be an object");
+    const std::set<std::string> keys{"device", "gpiochip", "hz", "ready_line"};
+    for (const auto &[key, _] : v.items())
+      if (!keys.contains(key)) throw std::runtime_error("unknown spi key: " + key);
+    SpiConfig spi;
+    spi.device = v.value("device", spi.device);
+    spi.gpiochip = v.value("gpiochip", spi.gpiochip);
+    auto uint_value = [&](const char *key, unsigned fallback, unsigned low, unsigned high) {
+      if (!v.contains(key)) return fallback;
+      const auto &n = v.at(key);
+      if (!n.is_number_integer() || n.get<double>() < low || n.get<double>() > high)
+        throw std::runtime_error(std::string("invalid spi.") + key);
       return n.get<unsigned>();
     };
-    s.hz=uint_value("hz",s.hz,100000,20000000);
-    s.ready_line=uint_value("ready_line",s.ready_line,0,53);
-    if(!s.device.starts_with("/dev/spidev") || (!s.gpiochip.empty() && !s.gpiochip.starts_with("/dev/gpiochip")))
+    spi.hz = uint_value("hz", spi.hz, 100000, 20000000);
+    spi.ready_line = uint_value("ready_line", spi.ready_line, 0, 53);
+    if (!spi.device.starts_with("/dev/spidev") ||
+        (!spi.gpiochip.empty() && !spi.gpiochip.starts_with("/dev/gpiochip")))
       throw std::runtime_error("invalid SPI/GPIO device path");
-    if(!c.udp_destination.empty()) throw std::runtime_error("select SPI or UDP transport, not both");
-    c.spi=s;
+    if (!c.udp_destination.empty()) throw std::runtime_error("select SPI or UDP transport, not both");
+    c.spi = spi;
   }
   c.mux_bitrate = j.value("mux_bitrate", c.mux_bitrate);
   c.duration_seconds = j.value("duration_seconds", c.duration_seconds);
@@ -153,7 +156,8 @@ Json Config::effective() const {
           {"mux_bitrate", mux_bitrate}, {"duration_seconds", duration_seconds},
           {"sensor_mode", {{"width", 2064}, {"height", 1552}, {"bit_depth", 10}}}};
   if (!camera_controls.empty()) result["camera_controls"] = camera_controls.requested();
-  if(spi) result["spi"]={{"device",spi->device},{"gpiochip",spi->gpiochip},{"ready_line",spi->ready_line},{"hz",spi->hz}};
+  if (spi) result["spi"] = {{"device", spi->device}, {"gpiochip", spi->gpiochip},
+                            {"ready_line", spi->ready_line}, {"hz", spi->hz}};
   return result;
 }
 }  // namespace pv

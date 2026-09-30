@@ -31,7 +31,10 @@ int main() {
   rejects([&] { pv::spi_message(0,{}); });
   rejects([&] { pv::spi_message(0,std::span(payload).first(187)); });
   auto bad=payload; bad[0]=0; rejects([&] { pv::spi_message(0,bad); });
-  Port p; pv::SpiSender sender(p);
+  Port p;
+  rejects([&] { pv::SpiSender invalid(p, 0); });
+  rejects([&] { pv::SpiSender invalid(p, -1); });
+  pv::SpiSender sender(p);
   std::uint32_t chain=0;
   for(unsigned i=0;i<65538;++i) {
     auto before=p.t;
