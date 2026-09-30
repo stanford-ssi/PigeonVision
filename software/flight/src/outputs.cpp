@@ -1,4 +1,5 @@
 #include "pv/outputs.hpp"
+#include "pv/spi_output.hpp"
 #include <arpa/inet.h>
 #include <fcntl.h>
 #include <netdb.h>
@@ -142,9 +143,10 @@ struct Recorder {
   }
 };
 
-// Custom AVIO groups exactly seven TS packets and paces bytes to the configured
-// transport clock. UDP writes are nonblocking: a bad link cannot hold camera buffers.
-struct UdpWriter {
+// Group up to seven TS packets and pace the transport worker. Its bounded
+// input queue keeps a slow sink from blocking capture or local recording.
+struct TsWriter {
+  SpiOutput *spi;
   int socket = -1;
   sockaddr_storage destination{};
   socklen_t destination_size = 0;
@@ -152,7 +154,9 @@ struct UdpWriter {
   std::int64_t bitrate;
   std::uint64_t sent_bytes = 0, errors = 0;
   std::chrono::steady_clock::time_point started{};
-  explicit UdpWriter(const Config &config) : bitrate(config.mux_bitrate) {
+  explicit TsWriter(const Config &config, SpiOutput *sink) : spi(sink), bitrate(config.mux_bitrate) {
+    pending.reserve(32768 + 1316);
+    if (spi) return;
     auto address = config.udp_destination;
     std::string host, port;
     if (address.starts_with('[')) {
@@ -179,20 +183,22 @@ struct UdpWriter {
     }
     freeaddrinfo(result);
     if (socket < 0) throw std::runtime_error("cannot create UDP socket");
-    pending.reserve(32768 + 1316);
   }
-  ~UdpWriter() { if (socket >= 0) ::close(socket); }
+  ~TsWriter() { if (socket >= 0) ::close(socket); }
   void send(const std::uint8_t *data, std::size_t length) {
     if (started == std::chrono::steady_clock::time_point{}) started = std::chrono::steady_clock::now();
     auto deadline = started + std::chrono::nanoseconds(static_cast<std::int64_t>(static_cast<long double>(sent_bytes) * 8000000000.0L / bitrate));
     std::this_thread::sleep_until(deadline);
-    auto n = sendto(socket, data, length, MSG_DONTWAIT, reinterpret_cast<sockaddr *>(&destination), destination_size);
-    if (n != static_cast<ssize_t>(length)) ++errors;
+    if (spi) spi->send(std::span(data, length));
+    else {
+      auto n = sendto(socket, data, length, MSG_DONTWAIT, reinterpret_cast<sockaddr *>(&destination), destination_size);
+      if (n != static_cast<ssize_t>(length)) ++errors;
+    }
     sent_bytes += length;
   }
   static int write(void *opaque, const std::uint8_t *data, int size) noexcept {
     try {
-      auto &self = *static_cast<UdpWriter *>(opaque);
+      auto &self = *static_cast<TsWriter *>(opaque);
       self.pending.insert(self.pending.end(), data, data + size);
       std::size_t consumed = 0;
       while (self.pending.size() - consumed >= 1316) { self.send(self.pending.data() + consumed, 1316); consumed += 1316; }
@@ -201,6 +207,7 @@ struct UdpWriter {
     } catch (...) { return AVERROR(EIO); }
   }
   void flush() {
+    if (pending.size() % 188) throw std::runtime_error("incomplete TS tail");
     if (!pending.empty() && pending.size() % 188 == 0) { send(pending.data(), pending.size()); pending.clear(); }
   }
 };
@@ -215,9 +222,11 @@ struct Transport {
   std::atomic<std::uint64_t> drops{0}, packets{0}, datagram_errors{0};
   std::atomic<std::int64_t> queue_age_us{0}, max_queue_age_us{0}, last_video_a_us{-1}, last_video_b_us{-1};
   std::atomic<std::uint64_t> wire_bytes{0};
+  std::unique_ptr<SpiOutput> spi;
   std::mutex submit_mutex;
   std::uint64_t generation = 0;
   Transport(const Config &c, Logs &l, const std::vector<StreamInfo> &streams, std::int64_t epoch) : config(c), logs(l), origin(epoch) {
+    if (c.spi) spi = std::make_unique<SpiOutput>(*c.spi);
     for (const auto &s : streams) parameters[s.camera] = std::make_unique<CodecParameters>(s.codec);
     worker = std::thread([this] { run(); });
   }
@@ -235,7 +244,10 @@ struct Transport {
   void run() {
     bool in_flight = false;
     try {
-      UdpWriter udp(config);
+#ifdef __linux__
+      pthread_setname_np(pthread_self(), "pv-transport");
+#endif
+      TsWriter sink(config, spi.get());
       Format output;
       av_check(avformat_alloc_output_context2(&output.context, nullptr, "mpegts", nullptr), "create transport");
       std::map<std::string, AVStream *> streams;
@@ -251,7 +263,7 @@ struct Transport {
       auto *program = av_new_program(output.context, 1); if (!program) throw std::bad_alloc();
       for (unsigned i = 0; i < output.context->nb_streams; ++i) av_program_add_stream_index(output.context, 1, i);
       auto *buffer = static_cast<unsigned char *>(av_malloc(32768)); if (!buffer) throw std::bad_alloc();
-      output.custom_io = avio_alloc_context(buffer, 32768, 1, &udp, nullptr, UdpWriter::write, nullptr);
+      output.custom_io = avio_alloc_context(buffer, 32768, 1, &sink, nullptr, TsWriter::write, nullptr);
       if (!output.custom_io) { av_free(buffer); throw std::bad_alloc(); }
       output.context->pb = output.custom_io; output.context->flags |= AVFMT_FLAG_CUSTOM_IO;
       output.context->max_delay = 500000; output.context->max_interleave_delta = 100000;
@@ -265,7 +277,7 @@ struct Transport {
       av_dict_set(&options, "mpegts_copyts", "0", 0);
       int result = avformat_write_header(output.context, &options); av_dict_free(&options);
       av_check(result, "write transport header"); output.header = true;
-      logs.event("transport", "started", "", config.udp_destination);
+      logs.event("transport", "started", "", config.spi ? config.spi->device : config.udp_destination);
       std::uint64_t observed_generation = 0;
       std::map<std::string, bool> waiting_for_keyframe;
       for (const auto &[id, _] : parameters) waiting_for_keyframe[id] = true;
@@ -305,13 +317,13 @@ struct Transport {
         av_packet_rescale_ts(metadata.get(), us_timebase, data->time_base);
         av_check(av_interleaved_write_frame(output.context, metadata.get()), "mux metadata");
         avio_flush(output.context->pb);
-        datagram_errors = udp.errors;
-        wire_bytes = udp.sent_bytes;
+        datagram_errors = sink.errors;
+        wire_bytes = sink.sent_bytes;
         in_flight = false;
       }
       av_check(av_interleaved_write_frame(output.context, nullptr), "flush transport");
-      output.close(true); udp.flush(); datagram_errors = udp.errors;
-      wire_bytes = udp.sent_bytes;
+      output.close(true); sink.flush(); datagram_errors = sink.errors;
+      wire_bytes = sink.sent_bytes;
     } catch (const std::exception &e) {
       failed = true; logs.event("transport", "failed", "", e.what());
       if (in_flight) ++drops;
@@ -326,7 +338,7 @@ struct Outputs::Impl {
   std::unique_ptr<Transport> transport;
   Impl(const Config &c, Logs &l, const std::vector<StreamInfo> &s, std::int64_t origin) : logs(l) {
     if (c.record) for (const auto &stream : s) recorders[stream.camera] = std::make_unique<Recorder>(c, l, stream);
-    if (!c.udp_destination.empty()) transport = std::make_unique<Transport>(c, l, s, origin);
+    if (!c.udp_destination.empty() || c.spi) transport = std::make_unique<Transport>(c, l, s, origin);
   }
 };
 Outputs::Outputs(const Config &c, Logs &l, const std::vector<StreamInfo> &s, std::int64_t origin) : impl_(std::make_unique<Impl>(c,l,s,origin)) {}
@@ -355,6 +367,7 @@ Json Outputs::stats() const {
     out["transport"] = {{"failed", t->failed.load()}, {"queue", t->queue.size()}, {"queue_high_water", t->queue.high_water()}, {"dropped_packets", t->drops.load()}, {"video_packets", t->packets.load()}, {"datagram_errors", t->datagram_errors.load()},
       {"queue_age_us", t->queue_age_us.load()}, {"max_queue_age_us", t->max_queue_age_us.load()},
       {"wire_bytes", t->wire_bytes.load()}, {"last_video_pts_us", {{"A", t->last_video_a_us.load()}, {"B", t->last_video_b_us.load()}}}};
+  if (impl_->transport && impl_->transport->spi) out["transport"]["spi"] = impl_->transport->spi->stats();
   return out;
 }
 }  // namespace pv

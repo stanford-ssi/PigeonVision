@@ -106,6 +106,30 @@ Config Config::read(const std::filesystem::path &path) {
   c.min_free_bytes = j.value("min_free_bytes", c.min_free_bytes);
   c.encode = j.value("encode", c.encode); c.record = j.value("record", c.record);
   if (j.contains("udp_destination") && !j["udp_destination"].is_null()) c.udp_destination = j["udp_destination"].get<std::string>();
+  if (j.contains("spi") && !j["spi"].is_null()) {
+    const auto &v = j.at("spi");
+    if (!v.is_object()) throw std::runtime_error("spi must be an object");
+    const std::set<std::string> keys{"device", "gpiochip", "hz", "ready_line"};
+    for (const auto &[key, _] : v.items())
+      if (!keys.contains(key)) throw std::runtime_error("unknown spi key: " + key);
+    SpiConfig spi;
+    spi.device = v.value("device", spi.device);
+    spi.gpiochip = v.value("gpiochip", spi.gpiochip);
+    auto uint_value = [&](const char *key, unsigned fallback, unsigned low, unsigned high) {
+      if (!v.contains(key)) return fallback;
+      const auto &n = v.at(key);
+      if (!n.is_number_integer() || n.get<double>() < low || n.get<double>() > high)
+        throw std::runtime_error(std::string("invalid spi.") + key);
+      return n.get<unsigned>();
+    };
+    spi.hz = uint_value("hz", spi.hz, 100000, 20000000);
+    spi.ready_line = uint_value("ready_line", spi.ready_line, 0, 53);
+    if (!spi.device.starts_with("/dev/spidev") ||
+        (!spi.gpiochip.empty() && !spi.gpiochip.starts_with("/dev/gpiochip")))
+      throw std::runtime_error("invalid SPI/GPIO device path");
+    if (!c.udp_destination.empty()) throw std::runtime_error("select SPI or UDP transport, not both");
+    c.spi = spi;
+  }
   c.mux_bitrate = j.value("mux_bitrate", c.mux_bitrate);
   c.duration_seconds = j.value("duration_seconds", c.duration_seconds);
   const std::set<std::string> presets{"ultrafast", "superfast", "veryfast", "faster", "fast", "medium", "slow", "slower", "veryslow"};
@@ -115,8 +139,8 @@ Config Config::read(const std::filesystem::path &path) {
     throw std::runtime_error("invalid encoder settings");
   if (!c.segment_seconds || c.segment_seconds > 86400 || !std::isfinite(c.duration_seconds) || c.duration_seconds < 0)
     throw std::runtime_error("invalid duration");
-  if (!c.encode && (c.record || !c.udp_destination.empty())) throw std::runtime_error("capture-only requires record=false and no UDP destination");
-  if (!c.udp_destination.empty() && (c.mux_bitrate < c.bitrate * static_cast<std::int64_t>(c.cameras.size()) + 500000 || c.mux_bitrate > 100000000))
+  if (!c.encode && (c.record || !c.udp_destination.empty() || c.spi)) throw std::runtime_error("capture-only requires record=false and no transport");
+  if ((!c.udp_destination.empty() || c.spi) && (c.mux_bitrate < c.bitrate * static_cast<std::int64_t>(c.cameras.size()) + 500000 || c.mux_bitrate > 100000000))
     throw std::runtime_error("transport needs at least 500 kbit/s headroom above combined video bitrate");
   return c;
 }
@@ -132,6 +156,8 @@ Json Config::effective() const {
           {"mux_bitrate", mux_bitrate}, {"duration_seconds", duration_seconds},
           {"sensor_mode", {{"width", 2064}, {"height", 1552}, {"bit_depth", 10}}}};
   if (!camera_controls.empty()) result["camera_controls"] = camera_controls.requested();
+  if (spi) result["spi"] = {{"device", spi->device}, {"gpiochip", spi->gpiochip},
+                            {"ready_line", spi->ready_line}, {"hz", spi->hz}};
   return result;
 }
 }  // namespace pv

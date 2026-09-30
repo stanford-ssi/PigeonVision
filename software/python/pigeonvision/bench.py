@@ -73,15 +73,30 @@ def validate_config(config: dict[str, Any]) -> dict[str, Any]:
         raise ValueError("udp_destination must be a host:port string or null.")
     if out["udp_destination"] == "":
         out["udp_destination"] = None
-    if not out["encode"] and (out["record"] or out["udp_destination"]):
-        raise ValueError("Capture-only mode requires record=false and no UDP destination.")
+    spi = out.get("spi")
+    if spi is not None:
+        if not isinstance(spi, dict) or set(spi) - {"device", "gpiochip", "hz", "ready_line"}:
+            raise ValueError("spi must contain only device, gpiochip, hz and ready_line.")
+        spi = {"device": "/dev/spidev0.0", "gpiochip": "", "hz": 1_000_000, "ready_line": 25} | spi
+        for key, lo, hi in (("hz", 100_000, 20_000_000), ("ready_line", 0, 53)):
+            if type(spi[key]) is not int or not lo <= spi[key] <= hi:
+                raise ValueError(f"Invalid spi.{key}.")
+        if not isinstance(spi["device"], str) or not spi["device"].startswith("/dev/spidev"):
+            raise ValueError("Invalid SPI device path.")
+        if not isinstance(spi["gpiochip"], str) or (spi["gpiochip"] and not spi["gpiochip"].startswith("/dev/gpiochip")):
+            raise ValueError("Invalid GPIO device path.")
+        if out["udp_destination"]:
+            raise ValueError("Select SPI or UDP transport, not both.")
+        out["spi"] = spi
+    if not out["encode"] and (out["record"] or out["udp_destination"] or spi is not None):
+        raise ValueError("Capture-only mode requires record=false and no transport.")
     if out["preset"] not in {"ultrafast", "superfast", "veryfast", "faster", "fast", "medium", "slow", "slower", "veryslow"}:
         raise ValueError("Unsupported x264 preset.")
     if not isinstance(out["encoder_input"], str) or out["encoder_input"] not in ("dmabuf", "copy"):
         raise ValueError("encoder_input must be dmabuf or copy.")
     if not isinstance(out["capture_allocator"], str) or out["capture_allocator"] not in ("libcamera", "dma_heap_cached"):
         raise ValueError("capture_allocator must be libcamera or dma_heap_cached.")
-    if out["udp_destination"] and out["mux_bitrate"] < out["bitrate"] * len(cameras) + 500_000:
+    if (out["udp_destination"] or spi is not None) and out["mux_bitrate"] < out["bitrate"] * len(cameras) + 500_000:
         raise ValueError("Transport needs at least 500 kbit/s headroom above combined video bitrate.")
     out["cameras"] = [{"flip_x": False, "flip_y": True} | c for c in cameras]
     return out

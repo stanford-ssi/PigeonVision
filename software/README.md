@@ -11,11 +11,11 @@ lens fits with **nominal** opposed-camera alignment. One-hour performance,
 held-out seam accuracy, colour accuracy and exposure synchronization remain
 unqualified. See the [bench evidence](bench-notes/2026-09-25.md).
 
-`pv spi` forwards the existing MPEG-TS feed to the Pico using PV-SPI v1,
-with READY backpressure, CRC/sequence accounting and an optional UDP copy for
-the Mac viewer. Real-camera runs reached 9 Mb/s with matching Pico counts and
-checksums. Combined capture/SPI delivered 28.4–28.7 fps; a longer run stopped
-at 80°C after about 210 seconds. See the [SPI results and setup](flight/spi.md).
+Native SPI is the baseline CM5-to-Pico link. With a fan, the two-minute test
+reached **29.99 fps per camera and 9 Mb/s TS**, with matching Pico counts and
+CRC. CPU averaged 61.4%; maximum temperature was 56.75°C. Each camera had one
+66.7 ms interval after warm-up. Keep `pv spi` for patterns and file tests.
+See [SPI results and setup](flight/spi.md). RF remains untested.
 
 ## Start here
 

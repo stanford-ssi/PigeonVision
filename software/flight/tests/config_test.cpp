@@ -78,6 +78,21 @@ int main() {
   for (const auto &value : pv::Json::array({{1,0,0}, {{1,0,0},{0,1,0}}, {{1,0},{0,1,0},{0,0,1}}})) {
     auto bad = controls; bad["colour_correction_matrix"] = value; rejects("camera_controls", bad);
   }
+  {
+    auto j=valid; j["encode"]=true; j["spi"]={{"hz",20000000}}; write(j);
+    auto cfg=pv::Config::read(file);
+    assert(cfg.spi && cfg.spi->hz==20000000 && cfg.effective()["spi"]["ready_line"]==25);
+    for(const auto &bad:pv::Json::array({true, 1, "spi", pv::Json{{"hz",20000001}},
+        pv::Json{{"hz",1.5}}, pv::Json{{"hz",true}}, pv::Json{{"ready_line",-1}},
+        pv::Json{{"wat",1}}, pv::Json{{"device","/tmp/device"}}})) {
+      j["spi"]=bad; write(j); bool threw=false;
+      try { (void)pv::Config::read(file); } catch(const std::exception &) { threw=true; }
+      assert(threw);
+    }
+    j["spi"]=pv::Json::object(); j["udp_destination"]="127.0.0.1:1234"; write(j);
+    bool threw=false; try { (void)pv::Config::read(file); } catch(const std::exception &) { threw=true; } assert(threw);
+  }
+  rejects("spi",pv::Json::object()); // capture-only cannot own a transport
   rejects("cameras",{{{"id","A"},{"device","same"}},{{"id","B"},{"device","same"}}});
   std::filesystem::remove(file);
   std::cout << "PASS: strict config types, bounds, unique device identities, capture-only and CWD paths\n";
