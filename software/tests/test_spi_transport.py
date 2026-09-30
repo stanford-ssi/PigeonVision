@@ -101,8 +101,17 @@ def test_pattern_matches_firmware_period_cc_and_packet_payload():
         assert packet[4:] == bytes(((k % 112) + j) % 256 for j in range(184))
 
 
-def test_single_transfer_cs_hold_before_ready_seq_wrap_and_chain():
-    send, spi, ready, clock = sender(hz=20_000_000)
+@pytest.mark.parametrize("transfer", ["duplex", "tx-only"])
+def test_single_transfer_cs_hold_before_ready_seq_wrap_and_chain(monkeypatch, transfer):
+    send, spi, ready, clock = sender(hz=20_000_000, transfer=transfer)
+    if transfer == "tx-only":
+        spi.fileno = lambda: 23
+        def write(fd, data):
+            assert fd == 23
+            spi.calls.append((data, 20_000_000, 0, 8, clock()))
+            clock.now += len(data) * 8 / 20_000_000
+            return len(data)
+        monkeypatch.setattr(tx.os, "write", write)
     send.stats.next_seq = 65535
     send.send(tx.pattern_packet(0))
     first_return = clock()
@@ -442,3 +451,60 @@ def test_hardware_preflight_buffer_and_explicit_spi_settings(monkeypatch):
         assert (spi.mode, spi.bits_per_word, spi.max_speed_hz) == (0, 8, 1_000_000)
         assert (spi.lsbfirst, spi.cshigh, spi.no_cs) == (False, False, False)
     assert spi.closed
+
+
+@pytest.mark.parametrize("length", [None, 0, 100])
+def test_tx_only_single_write_and_no_retry(monkeypatch, length):
+    send, spi, ready, clock = sender(transfer="tx-only")
+    spi.fileno = lambda: 23
+    writes = []
+    def write(fd, data):
+        writes.append((fd, data, clock()))
+        return len(data) if length is None else length
+    monkeypatch.setattr(tx.os, "write", write)
+    if length is None:
+        send.send(tx.pattern_payload(0))
+        assert send.stats.messages == 1 and not send.stats.transfer_uncertain
+        assert send.stats.crc_chain == zlib.crc32(writes[0][1][-4:])
+    else:
+        with pytest.raises(RuntimeError, match="SPI wrote"):
+            send.send(tx.pattern_payload(0))
+        assert send.stats.messages == 0 and send.stats.transfer_uncertain
+    assert len(writes) == 1 and not spi.calls
+    assert writes[0][0] == 23 and writes[0][1] == tx.message(0, tx.pattern_payload(0))
+    assert writes[0][2] >= tx.CS_HIGH_SECONDS
+
+
+def test_tx_only_write_error_is_uncertain(monkeypatch):
+    send, spi, *_ = sender(transfer="tx-only")
+    spi.fileno = lambda: 23
+    def write(fd, data):
+        raise OSError("write failed")
+    monkeypatch.setattr(tx.os, "write", write)
+    with pytest.raises(OSError, match="write failed"):
+        send.send(tx.pattern_packet(0))
+    assert send.stats.transfer_uncertain and send.stats.messages == 0
+
+
+def test_direct_udp_reads_without_worker_and_marks_kernel_pending(monkeypatch):
+    source, sock = udp_source(monkeypatch, [datagram(tx.pattern_packet(0))], threaded=False)
+    assert source.thread is None
+    assert next(iter(source)) == tx.pattern_packet(0)
+    assert source.stats.datagrams_received == 1 and source.stats.bytes_received == 188
+    assert source.queue.empty()
+    monkeypatch.setattr(tx.select, 'select', lambda *args: ([sock], [], []))
+    source.close()
+    assert source.stats.kernel_pending_on_close
+    source.close()  # Closing twice must not query a closed socket.
+
+
+@pytest.mark.parametrize('kind', ['kernel_drop', 'truncated', 'invalid'])
+def test_direct_udp_errors_prevent_delivery(monkeypatch, kind):
+    ancillary = [(socket.SOL_SOCKET, 40, struct.pack('=I', 1))] if kind == 'kernel_drop' else []
+    payload = b'bad' if kind == 'invalid' else tx.pattern_packet(0)
+    flags = socket.MSG_TRUNC if kind == 'truncated' else 0
+    source, _ = udp_source(monkeypatch, [datagram(payload, ancillary, flags)], threaded=False)
+    with pytest.raises((RuntimeError, ValueError)):
+        next(iter(source))
+    monkeypatch.setattr(tx.select, 'select', lambda *args: ([], [], []))
+    source.close()

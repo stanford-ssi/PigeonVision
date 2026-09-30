@@ -30,6 +30,10 @@ struct CameraControls {
     return result;
   }
 };
+struct SpiConfig {
+  std::string device="/dev/spidev0.0", gpiochip;
+  unsigned ready_line=25, hz=1000000;
+};
 struct Config {
   std::filesystem::path session_dir;
   std::vector<CameraConfig> cameras;
@@ -44,6 +48,7 @@ struct Config {
   std::uintmax_t min_free_bytes = 2147483648ULL;
   bool encode = true, record = true;
   std::string udp_destination;
+  std::optional<SpiConfig> spi;
   std::int64_t mux_bitrate = 9000000;
   double duration_seconds = 0;
   Json original;

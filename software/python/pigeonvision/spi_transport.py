@@ -1,6 +1,6 @@
 """CM5 PV-SPI v1 sender. Hardware imports are optional until a run starts.
 
-Each xfer2 call is one 1332-byte SPI_IOC_MESSAGE(1), with hardware CS. The
+Each transfer sends one 1332-byte message with hardware CS. The
 summary's crc_chain covers completed TS_DATA writes, not receiver acknowledgments
 (PV-SPI v1 has none). Compare it with the Pico's accepted-message chain.
 Framing and pattern follow RP2350_IQ_Benchmark/host/cm5/pv_spi_tx.py.
@@ -14,8 +14,10 @@ from functools import lru_cache
 import ipaddress
 import json
 import math
+import os
 from pathlib import Path
 import queue
+import select
 import signal
 import socket
 import struct
@@ -117,7 +119,10 @@ class Sender:
     def __init__(self, spi, ready, *, hz=1_000_000, ready_timeout=1., poll_us=20.,
                  control: Control | None = None, clock=time.monotonic,
                  sleep=time.sleep, warning: Callable[[str], None] | None = None,
-                 source_check: Callable[[], None] | None = None, mirror=None):
+                 source_check: Callable[[], None] | None = None, mirror=None, transfer="duplex"):
+        if transfer not in ("duplex", "tx-only"):
+            raise ValueError("transfer must be duplex or tx-only")
+        self.transfer = transfer
         self.spi, self.ready = spi, ready
         self.hz, self.ready_timeout = hz, ready_timeout
         self.poll_seconds = poll_us * 1e-6
@@ -172,13 +177,20 @@ class Sender:
         self.stats.pending_payload_bytes = len(payload)
         frame = message(self.stats.next_seq, payload)
         # Convert before READY is sampled, leaving only the ioctl after it.
-        tx = list(frame)
+        tx = frame if self.transfer == "tx-only" else list(frame)
         self._ready()
         self.stats.attempted_messages += 1
         try:
-            rx = self.spi.xfer2(tx, self.hz, 0, 8)
-            if len(rx) != MESSAGE_BYTES:
-                raise RuntimeError(f"SPI returned {len(rx)} bytes, expected {MESSAGE_BYTES}")
+            if self.transfer == "tx-only":
+                # One write is one CS assertion. Preflight rejects buffers smaller
+                # than the complete message; a short write is never retried.
+                written = os.write(self.spi.fileno(), tx)
+                if written != MESSAGE_BYTES:
+                    raise RuntimeError(f"SPI wrote {written} bytes, expected {MESSAGE_BYTES}")
+            else:
+                rx = self.spi.xfer2(tx, self.hz, 0, 8)
+                if len(rx) != MESSAGE_BYTES:
+                    raise RuntimeError(f"SPI returned {len(rx)} bytes, expected {MESSAGE_BYTES}")
         except BaseException:
             # The Pico may have accepted some/all bytes. Retrying could duplicate TS.
             self.stats.transfer_uncertain = True
@@ -251,6 +263,7 @@ class UdpStats:
     kernel_drops: int = 0
     queue_high_water: int = 0
     buffered_unsent: int = 0
+    kernel_pending_on_close: bool = False
     receive_buffer_requested_bytes: int = 0
     receive_buffer_bytes: int = 0
     receive_buffer_below_spec: bool = False
@@ -265,13 +278,14 @@ detect loss upstream of this socket, or a final drop with no subsequent arrival.
 """
     def __init__(self, address: str, control: Control, *, interface="0.0.0.0",
                  queue_messages=256, rcvbuf=4 << 20, idle_timeout=2.,
-                 socket_factory=socket.socket, overflow_option: int | None = None):
+                 socket_factory=socket.socket, overflow_option: int | None = None, threaded=True):
         host, port = endpoint(address)
         interface = str(ipaddress.IPv4Address(interface))
         if overflow_option is None:
             if not sys.platform.startswith("linux"):
                 raise RuntimeError("UDP SPI input requires Linux SO_RXQ_OVFL drop accounting")
             overflow_option = getattr(socket, "SO_RXQ_OVFL", 40)
+        self.threaded = threaded
         self.control, self.idle_timeout = control, idle_timeout
         self.queue = queue.Queue(maxsize=queue_messages)
         self.stats, self.error = UdpStats(), None
@@ -300,40 +314,45 @@ detect loss upstream of this socket, or a final drop with no subsequent arrival.
             if multicast:
                 self.sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP,
                                      socket.inet_aton(host) + socket.inet_aton(interface))
-            self.thread = threading.Thread(target=self._receive, name="pv-spi-udp", daemon=True)
-            self.thread.start()
+            if threaded:
+                self.thread = threading.Thread(target=self._receive, name="pv-spi-udp", daemon=True)
+                self.thread.start()
         except BaseException:
             self.sock.close()
             raise
 
-    def _receive(self):
+    def _datagrams(self):
         last_data = self.control.clock()
+        while not self.closed.is_set():
+            self.control.check()
+            try:
+                payload, ancillary, flags, _ = self.sock.recvmsg(65535, socket.CMSG_SPACE(4))
+            except socket.timeout:
+                if self.control.clock() - last_data >= self.idle_timeout:
+                    raise TimeoutError(f"No UDP TS datagram for {self.idle_timeout:g} s")
+                continue
+            last_data = self.control.clock()
+            self.stats.datagrams_received += 1
+            self.stats.bytes_received += len(payload)
+            for level, kind, data in ancillary:
+                if level == socket.SOL_SOCKET and kind == self.overflow_option and len(data) >= 4:
+                    total = struct.unpack("=I", data[:4])[0]
+                    self.stats.kernel_drops += (total - self.last_drop_count) & 0xffffffff
+                    self.last_drop_count = total
+            if self.stats.kernel_drops:
+                raise RuntimeError(f"UDP kernel receive queue dropped {self.stats.kernel_drops} datagrams")
+            try:
+                if flags & (socket.MSG_TRUNC | socket.MSG_CTRUNC):
+                    raise ValueError("UDP datagram or overflow metadata was truncated")
+                validate_payload(payload)
+            except ValueError:
+                self.stats.invalid_datagrams += 1
+                raise
+            yield payload
+
+    def _receive(self):
         try:
-            while not self.closed.is_set():
-                self.control.check()
-                try:
-                    payload, ancillary, flags, _ = self.sock.recvmsg(65535, socket.CMSG_SPACE(4))
-                except socket.timeout:
-                    if self.control.clock() - last_data >= self.idle_timeout:
-                        raise TimeoutError(f"No UDP TS datagram for {self.idle_timeout:g} s")
-                    continue
-                last_data = self.control.clock()
-                self.stats.datagrams_received += 1
-                self.stats.bytes_received += len(payload)
-                for level, kind, data in ancillary:
-                    if level == socket.SOL_SOCKET and kind == self.overflow_option and len(data) >= 4:
-                        total = struct.unpack("=I", data[:4])[0]
-                        self.stats.kernel_drops += (total - self.last_drop_count) & 0xffffffff
-                        self.last_drop_count = total
-                if self.stats.kernel_drops:
-                    raise RuntimeError(f"UDP kernel receive queue dropped {self.stats.kernel_drops} datagrams")
-                try:
-                    if flags & (socket.MSG_TRUNC | socket.MSG_CTRUNC):
-                        raise ValueError("UDP datagram or overflow metadata was truncated")
-                    validate_payload(payload)
-                except ValueError:
-                    self.stats.invalid_datagrams += 1
-                    raise
+            for payload in self._datagrams():
                 try:
                     self.queue.put_nowait(payload)
                 except queue.Full as exc:
@@ -351,6 +370,9 @@ detect loss upstream of this socket, or a final drop with no subsequent arrival.
             raise self.error
 
     def __iter__(self):
+        if not self.threaded:
+            yield from self._datagrams()
+            return
         while True:
             self.control.check()
             self.check()
@@ -360,7 +382,13 @@ detect loss upstream of this socket, or a final drop with no subsequent arrival.
                 continue
 
     def close(self):
+        if self.closed.is_set():
+            return
         self.closed.set()
+        if not self.threaded:
+            # Do not silently report an empty source when unread datagrams remain
+            # in the kernel. This is a presence flag, not a packet count.
+            self.stats.kernel_pending_on_close = bool(select.select([self.sock], [], [], 0)[0])
         self.sock.close()
         if self.thread is not None:
             self.thread.join(timeout=.2)
@@ -437,6 +465,10 @@ def add_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--count", type=int, help="Stop after this many messages (pattern default: 10000)")
     parser.add_argument("--duration", type=float, help="Stop after this many seconds, including READY/source waits")
     parser.add_argument("--hz", type=float, default=1e6, help="SPI SCK in Hz; bring-up 1e6, service 20e6")
+    parser.add_argument("--udp-mode", choices=["threaded", "direct"], default="threaded",
+                        help="UDP receive path; direct avoids the Python worker queue")
+    parser.add_argument("--transfer", choices=["duplex", "tx-only"], default="duplex",
+                        help="SPI transfer path; tx-only avoids unused MISO reads")
     parser.add_argument("--bus", type=int, default=0)
     parser.add_argument("--cs", type=int, default=0)
     parser.add_argument("--ready", type=int, default=25, help="READY GPIO line offset on RP1 (default 25)")
@@ -514,7 +546,7 @@ def run_from_args(args) -> int:
             if args.udp:
                 source = UdpSource(args.udp, control, interface=args.interface,
                                    queue_messages=args.queue_messages, rcvbuf=args.rcvbuf,
-                                   idle_timeout=args.idle_timeout)
+                                   idle_timeout=args.idle_timeout, threaded=args.udp_mode == "threaded")
                 cleanup.callback(source.close)
                 payloads = source
             elif args.file:
@@ -524,7 +556,7 @@ def run_from_args(args) -> int:
                 payloads = pattern_payloads()
             sender = Sender(spi, ready, hz=int(args.hz), ready_timeout=args.ready_timeout,
                             poll_us=args.poll_us, control=control,
-                            source_check=source.check if source else None, mirror=mirror)
+                            source_check=source.check if source else None, mirror=mirror, transfer=args.transfer)
             reason = sender.run(payloads, args.count)
             if source:
                 # Stop/join before checking the terminal worker error and counts.
@@ -547,7 +579,7 @@ def run_from_args(args) -> int:
             stats["crc_chain"] = f"0x{stats['crc_chain']:08x}"
             result = {"protocol": "PV-SPI v1", "status": "error" if error else "stopped" if code else "complete",
                       "stop_reason": reason, "error": error, "seconds": round(elapsed, 6),
-                      "sck_hz": args.hz, **stats,
+                      "sck_hz": args.hz, "transfer": args.transfer, "udp_mode": args.udp_mode, **stats,
                       "msg_per_s": round(stats["messages"] / elapsed, 3) if elapsed else 0.,
                       "ts_mbps": round(stats["payload_bytes"] * 8 / elapsed / 1e6, 6) if elapsed else 0.,
                       "receiver_acceptance": "unverified: compare Pico counters and crc_chain",

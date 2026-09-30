@@ -221,3 +221,15 @@ def test_exact_hour_includes_final_frame_period(tmp_path):
     rows[-1]["sensor_timestamp_ns"] -= 33_333_333
     (tmp_path / "frames.jsonl").write_text("".join(json.dumps(row) + "\n" for row in rows))
     assert summarize(tmp_path)["checks"]["one_hour_camera_timestamps"]["status"] == "not_met"
+
+
+def test_native_spi_config():
+    base = {"session_dir": "output/test", "cameras": [{"id": "A", "device": "camera-a"}]}
+    configured = validate_config(base | {"spi": {"hz": 20_000_000}})
+    assert configured["spi"] == {"device": "/dev/spidev0.0", "gpiochip": "", "hz": 20_000_000, "ready_line": 25}
+    for bad in (True, [], {"hz": True}, {"hz": 20_000_001}, {"ready_line": -1}, {"other": 1}, {"device": None}):
+        with pytest.raises(ValueError):
+            validate_config(base | {"spi": bad})
+    for extra in ({"udp_destination": "localhost:1234"}, {"encode": False, "record": False}, {"mux_bitrate": 4_000_000}):
+        with pytest.raises(ValueError):
+            validate_config(base | {"spi": {}} | extra)

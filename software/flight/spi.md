@@ -1,8 +1,43 @@
 # CM5 → RP2350: PV-SPI v1
 
-`pv spi` sends native MPEG-TS to the Pico, which owns its output clock and inserts
-null packets below capacity. Two-camera bench runs reached 9 Mb/s over 20 MHz
-SPI with matching CM5/Pico counts and CRC chains. RF remains untested.
+`pv-capture` can send MPEG-TS directly to the Pico from its transport worker.
+The Pico owns its output clock and inserts null packets below capacity. RF remains untested.
+
+## Native camera output
+
+Use the existing camera config with these settings:
+
+```json
+{
+  "capture_allocator": "dma_heap_cached",
+  "encoder_input": "dmabuf",
+  "encoder_threads": 3,
+  "udp_destination": null,
+  "mux_bitrate": 9000000,
+  "spi": {"device": "/dev/spidev0.0", "hz": 20000000, "ready_line": 25}
+}
+```
+
+Start a fresh Pico `pvtx` run first, then `pv-capture --config capture.json`.
+SPI uses Linux spidev and GPIO v2 directly; no Python SPI packages are needed for
+this path. Omit `spi` to retain UDP output. The two transports are mutually exclusive.
+`spi.gpiochip` optionally selects the RP1 device; otherwise discovery resolves device aliases.
+
+The existing bounded transport queue isolates SPI from capture and recording.
+READY low for two seconds stops transport. A failed or short write is never retried.
+The health/session-end `outputs.transport.spi` record contains counts, pending bytes
+and CRC chain. Compare the final record with the Pico report; SPI has no acknowledgment.
+
+With a fan, two 2064×1552 cameras, 4 Mb/s each, simultaneous recording and 20 MHz
+SPI, a 120-second run delivered **29.99 fps per camera**, 9.0006 Mb/s TS, and
+102,801 accepted messages with CRC chain `0x0f20927e`. CPU averaged 61.4% across
+four cores; maximum temperature was 56.75°C. Each camera had one startup error
+and one 66.7 ms interval after warm-up. No steady application drops, transport
+loss, Pico protocol errors or underruns were observed. This is a two-minute
+bench result, not a thermal or RF qualification.
+
+The optimized Python bridge reached 29.78/29.80 fps and 78.8% CPU in its 60-second
+comparison. Prefer native SPI for camera tests; keep `pv spi` for file/pattern tests.
 
 ## Install
 
@@ -55,7 +90,7 @@ with ground beside SCK. Recheck pin ownership against active camera overlays.
 
 Mode 0 (CPOL=0, CPHA=0), MSB first, 8-bit words. Default bring-up clock is
 **1 MHz**; service target is **20 MHz**. Exactly **1332 bytes per CS_N assertion**,
-using one `xfer2` call; a spidev buffer smaller than 1332 bytes is rejected.
+using one SPI write (native or `--transfer tx-only`) or one `xfer2` call; a spidev buffer smaller than 1332 bytes is rejected.
 CS_N stays high ≥10 µs before sampling READY for the next transfer. READY must
 be high immediately before every transfer; its default timeout is 1 s.
 
@@ -109,37 +144,32 @@ For live capture use a freshly built `pv-capture`, `capture_allocator:
 Verify these values in the resulting `session.json`. An older executable silently
 ignored the allocator and thread settings during initial bring-up.
 
-For a 60-second capture, start the Pico for 80 seconds and the bridge for 70:
+For a Python bridge comparison, start the Pico first and use:
 
 ```sh
 sudo /usr/sbin/sysctl -w net.core.rmem_max=4194304
-pv spi --udp 127.0.0.1:1234 --hz 20e6 --idle-timeout 15 --duration 70 \
-  --summary output/spi/live-20mhz.json &
+pv spi --udp 127.0.0.1:1234 --hz 20e6 --transfer tx-only --udp-mode direct \
+  --idle-timeout 15 --duration 70 --summary output/spi/live-20mhz.json &
 spi_pid=$!
-sudo renice -n -5 -p "$spi_pid"
 pv capture --config capture.json --binary /path/to/current/pv-capture
 wait "$spi_pid"
 ```
 
-The higher sender scheduling priority prevented the queue overflow seen with
-three encoder threads per camera at normal priority. It is a bench setting,
-not a sustained-30-fps guarantee. Allow the bridge to drain after capture ends.
+Here capture uses UDP and no `spi` object. Allow the bridge to drain after capture
+ends. Direct UDP removes the receiver thread and software queue; kernel overflow
+and unread datagrams remain checked. Defaults retain the older threaded/duplex
+path for comparison. Raising sender priority is not needed for the direct path.
 
 Add `--mirror-udp MAC_IP:1234` for a raw TS copy to the viewer. This adds load;
 it was not enabled in the SPI comparison runs. Mirroring happens after each SPI
 write, so backpressure delays preview and the preview does not prove acceptance.
 Only the bridge binds the local input.
 
-## Measured limits
+## Earlier measurements
 
-Both IMX900s used 2064×1552, a 30 fps request, x264 ultrafast at 4 Mb/s each,
-9 Mb/s total MPEG-TS, and simultaneous local recording. Cached buffers and
-three encoder threads delivered 28.4–28.7 fps with SPI. The 90-second local
-UDP control delivered 30.00 fps per camera with no steady-state drops.
-
-The ten-minute SPI attempt stopped at 80°C after about 210 seconds on the passive
-CM5 heatsink. This does not establish a ten-minute or flight-qualified system.
-Cooling and combined camera/SPI scheduling need further work.
+The original Python bridge delivered 28.4–28.7 fps. Its passive-heatsink run
+stopped at 80°C after 210 seconds. The fan and native sender address different
+limits; native results above do not establish passive cooling performance.
 
 Raw logs, chart-ready CSVs, exact Pico firmware and the test harnesses are in
 [RP2350_IQ_Benchmark/results/cm5-spi](https://github.com/Rivercraft911/RP2350_IQ_Benchmark/tree/main/results/cm5-spi).
