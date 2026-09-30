@@ -36,6 +36,9 @@ def parser() -> argparse.ArgumentParser:
     bench.add_argument("--preset", choices=["ultrafast", "superfast", "veryfast"], action="append")
     bench.add_argument("--binary", default="pv-capture")
     bench.add_argument("--dry-run", action="store_true")
+    spi = commands.add_parser("spi", help="Send MPEG-TS to the RP2350 over PV-SPI v1")
+    from .spi_transport import add_arguments
+    add_arguments(spi)
     calibration = commands.add_parser("calibrate", help="Fit checkerboard or ChArUco Mei intrinsics and evaluate held-out observations")
     calibration.add_argument("--dataset", required=True, type=Path)
     calibration_mode = calibration.add_mutually_exclusive_group(required=True)
@@ -107,6 +110,9 @@ def main(argv: list[str] | None = None) -> int:
                 print(json.dumps(matrix(config, args.output, args.duration, args.udp, args.preset), indent=2))
             else:
                 return run_matrix(config, args.output, args.duration, args.udp, args.binary, args.preset)
+        elif args.command == "spi":
+            from .spi_transport import run_from_args
+            return run_from_args(args)
         elif args.command == "calibrate":
             if (args.camera or args.allow_unvalidated) and not args.intrinsics_only:
                 raise ValueError("--camera and --allow-unvalidated are only supported with --intrinsics-only.")

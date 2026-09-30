@@ -17,6 +17,10 @@ dependencies = [
 
 [project.optional-dependencies]
 test = ["pytest>=8,<10"]
+spi = [
+  "spidev==3.8; sys_platform == 'linux'",
+  "gpiod==2.5.0; sys_platform == 'linux'",
+]
 
 [project.scripts]
 pv = "pigeonvision.cli:main"
