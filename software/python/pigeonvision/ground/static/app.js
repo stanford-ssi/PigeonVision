@@ -1,10 +1,12 @@
 import { Renderer, rawDragCenter, DEFAULT_PERSPECTIVE_FOV, MIN_PERSPECTIVE_FOV,
   MAX_PERSPECTIVE_FOV, validPerspectiveFov, perspectiveZoom } from "./projection.js";
 import { checkGeometry } from "./geometry.js";
+import { TelemetryState } from "./telemetry.js";
 import { ErrorState } from "./errors.js";
 
 const $ = (id) => document.getElementById(id);
 const errors = new ErrorState();
+const telemetry = new TelemetryState();
 const perspectiveDefaultKey = "pigeonvision.perspectiveDefaultFov.v1";
 let perspectiveDefaultFov = DEFAULT_PERSPECTIVE_FOV;
 let perspectiveDefaultStatus = "1× is the 110° factory view. Scroll to choose.";
@@ -321,6 +323,11 @@ async function accessUnit(buffer, epoch) {
 
 function message(value) {
   if (value.type === "status") {
+    // Replay restart rewinds acquisition timestamps. Decoder recovery within a
+    // receiver generation must retain telemetry ordering and retired sessions.
+    const replayRestart = value.replay &&
+      (value.source !== state.status?.source || value.generation !== state.status?.generation);
+    if (replayRestart) telemetry.reset();
     state.status = value;
     if (value.state === "ready") clearError("source");
     state.replay = value.replay;
@@ -338,6 +345,7 @@ function message(value) {
     fail(value.message, value.component || "viewer", value.recoverable === true);
   else if (value.type === "metadata") {
     const record = value.record;
+    if (telemetry.accept(record, performance.now()) === false) return;
     state.metadata[record.camera_id || record.type || "latest"] = record;
     if (record.type === "session") {
       state.descriptions = {};
@@ -388,6 +396,7 @@ function connect() {
     if (epoch !== connectionEpoch) return;
     accepting = false;
     state.connected = false;
+    telemetry.reset({ preserveSessionHistory: true });
     reset();
     setTimeout(connect, 1500);
   };
@@ -428,6 +437,7 @@ function updatePerspectiveControls() {
 
 function diagnostics() {
   const now = performance.now();
+  $("flight-telemetry").textContent = telemetry.lines(now).join("\n");
   $("connection").textContent = state.connected
     ? `${state.status?.state || "Connected"}${state.replay ? (state.playing ? " · playing" : " · paused") : ""}`
     : "Disconnected";

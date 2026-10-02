@@ -1,0 +1,244 @@
+{
+  "date_utc": "2026-10-02",
+  "scope": "CM5 dual real IMX900 cameras and local recording. UDP transport, no Pico or RF in these runs. Sensor/FC inputs in after/final runs are simulation.",
+  "duration_seconds_each": 120,
+  "video": {
+    "width": 2064,
+    "height": 1552,
+    "fps": 30,
+    "bitrate_each": 4000000,
+    "mux_bitrate": 9000000,
+    "encoder_threads_each": 3,
+    "capture_allocator": "dma_heap_cached"
+  },
+  "method": {
+    "fps": "(frames - 1) / (last_pts - first_pts), excluding first 10 s",
+    "cpu": "whole-system /proc/stat; final run additionally captures UDP into tmpfs with a Python receiver",
+    "startup_errors": "one camera_frame_error per camera at startup, in all three runs",
+    "before": "previous optimized native capture binary, no carrier telemetry",
+    "after": "initial supervisor, 500 ms expiry; rejected because valid video bursts expired",
+    "final": "1 s queue protection and omitted null frame fields; measured packet deadlines separately"
+  },
+  "runs": [
+    {
+      "run": "udp-before-120s",
+      "binary_sha256": "d7a26d49cb7ed1fb0d5f598207d7c6f16635e1428f11825f1ce58ff50b755b08",
+      "cameras": {
+        "A": {
+          "encoded_frames": 3600,
+          "fps_after_10s": 29.999535753790596,
+          "max_interval_after_10s_us": 33399
+        },
+        "B": {
+          "encoded_frames": 3599,
+          "fps_after_10s": 29.99951267759949,
+          "max_interval_after_10s_us": 33417
+        }
+      },
+      "capture_drop_reasons": {
+        "camera_frame_error": 2
+      },
+      "cpu_busy_percent_after_10s": 58.91428143951145,
+      "max_temperature_c": 62.25,
+      "throttled_bits": [
+        0
+      ],
+      "outputs": {
+        "recorders": {
+          "A": {
+            "dropped_packets": 0,
+            "failed": false,
+            "queue": 0,
+            "queue_high_water": 1,
+            "written_packets": 3600
+          },
+          "B": {
+            "dropped_packets": 0,
+            "failed": false,
+            "queue": 0,
+            "queue_high_water": 1,
+            "written_packets": 3599
+          }
+        },
+        "transport": {
+          "datagram_errors": 0,
+          "dropped_packets": 0,
+          "failed": false,
+          "last_video_pts_us": {
+            "A": 120522317,
+            "B": 120524309
+          },
+          "max_queue_age_us": 457591,
+          "queue": 0,
+          "queue_age_us": 204322,
+          "queue_high_water": 28,
+          "video_packets": 7199,
+          "wire_bytes": 135285740
+        }
+      }
+    },
+    {
+      "run": "udp-after-120s",
+      "binary_sha256": "fbfa942b96633120a4d14aead162356d1cabc4f755c1a46554156b6ae1bc4806",
+      "cameras": {
+        "A": {
+          "encoded_frames": 3601,
+          "fps_after_10s": 29.999556115165174,
+          "max_interval_after_10s_us": 33372
+        },
+        "B": {
+          "encoded_frames": 3600,
+          "fps_after_10s": 29.999536527063846,
+          "max_interval_after_10s_us": 33393
+        }
+      },
+      "capture_drop_reasons": {
+        "camera_frame_error": 2
+      },
+      "cpu_busy_percent_after_10s": 59.10121324176622,
+      "max_temperature_c": 65.55,
+      "throttled_bits": [
+        0
+      ],
+      "outputs": {
+        "recorders": {
+          "A": {
+            "dropped_packets": 0,
+            "failed": false,
+            "queue": 0,
+            "queue_high_water": 1,
+            "written_packets": 3601
+          },
+          "B": {
+            "dropped_packets": 0,
+            "failed": false,
+            "queue": 0,
+            "queue_high_water": 1,
+            "written_packets": 3600
+          }
+        },
+        "transport": {
+          "datagram_errors": 0,
+          "dropped_packets": 141,
+          "expired_records": 16,
+          "failed": false,
+          "last_video_pts_us": {
+            "A": 120532175,
+            "B": 120552851
+          },
+          "max_queue_age_us": 499985,
+          "queue": 0,
+          "queue_age_us": 175260,
+          "queue_high_water": 44,
+          "telemetry_dropped_records": 13,
+          "telemetry_dropped_samples": 144,
+          "telemetry_queue": 0,
+          "telemetry_rate_drops": 0,
+          "video_packets": 7057,
+          "video_queue": 0,
+          "video_queue_drops": 3,
+          "wire_bytes": 135407376
+        }
+      }
+    },
+    {
+      "run": "udp-final-120s",
+      "binary_sha256": "2216cb16d5c838cd3ceb761aaf2d2c8d1f1e06fc96495ec88d00b151906bc79d",
+      "cameras": {
+        "A": {
+          "encoded_frames": 3601,
+          "fps_after_10s": 29.99938372797963,
+          "max_interval_after_10s_us": 33385
+        },
+        "B": {
+          "encoded_frames": 3600,
+          "fps_after_10s": 29.999363101579508,
+          "max_interval_after_10s_us": 33372
+        }
+      },
+      "capture_drop_reasons": {
+        "camera_frame_error": 2
+      },
+      "cpu_busy_percent_after_10s": 62.90361229914945,
+      "max_temperature_c": 63.9,
+      "throttled_bits": [
+        0
+      ],
+      "outputs": {
+        "recorders": {
+          "A": {
+            "dropped_packets": 0,
+            "failed": false,
+            "queue": 0,
+            "queue_high_water": 1,
+            "written_packets": 3601
+          },
+          "B": {
+            "dropped_packets": 0,
+            "failed": false,
+            "queue": 0,
+            "queue_high_water": 1,
+            "written_packets": 3600
+          }
+        },
+        "transport": {
+          "datagram_errors": 0,
+          "dropped_packets": 0,
+          "expired_records": 0,
+          "failed": false,
+          "last_video_pts_us": {
+            "A": 120537221,
+            "B": 120560574
+          },
+          "max_queue_age_us": 432857,
+          "queue": 0,
+          "queue_age_us": 173642,
+          "queue_high_water": 36,
+          "telemetry_dropped_records": 0,
+          "telemetry_dropped_samples": 0,
+          "telemetry_queue": 0,
+          "telemetry_rate_drops": 0,
+          "video_packets": 7201,
+          "video_queue": 0,
+          "video_queue_drops": 0,
+          "wire_bytes": 135397224
+        }
+      }
+    }
+  ],
+  "final_transport_timing": {
+    "bytes": 135397224,
+    "mux_bitrate": 9000000,
+    "video_pes": {
+      "256": 3601,
+      "257": 3600
+    },
+    "continuity_errors": 0,
+    "pcr_samples": 6138,
+    "max_pcr_error_us": 1.4210854715202004e-08,
+    "late_video_ts_packets": 0,
+    "min_decode_margin_ms": 244.53422222221377,
+    "min_host_delivery_margin_ms": 495.75489877777557
+  },
+  "final_demux": {
+    "transport_records": {
+      "flight_status": 239,
+      "session": 118,
+      "sensors": 1932,
+      "health": 117,
+      "frame": 7203,
+      "256": 3601,
+      "257": 3600
+    },
+    "wire_sensor_samples": 28206,
+    "wire_sensor_rows": 28206,
+    "local_sensor_samples": 28206
+  },
+  "unverified": [
+    "new autonomous Pico firmware on hardware",
+    "CM5-to-Pico SPI comparison with sensor load",
+    "physical carrier sensors and FC UART",
+    "carrier power sequencing and analog RF",
+    "one-hour endurance"
+  ]
+}

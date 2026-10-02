@@ -406,3 +406,36 @@ def test_private_session_common_mux_offset(transport, tmp_path):
         assert receiver.transport_pts_offset_us == 1_000_000
     finally:
         receiver.stop()
+
+
+def test_telemetry_only_private_pid(tmp_path):
+    path = tmp_path / "telemetry-only.ts"
+    record = {"schema_version": 1, "type": "health", "phase": "COAST", "phase_stale": False}
+    with av.open(str(path), "w", format="mpegts", options={"mpegts_start_pid": "258", "mpegts_copyts": "1"}) as output:
+        metadata = output.add_data_stream("bin_data")
+        metadata.time_base = Fraction(1, 90000)
+        for index in range(5):
+            packet = av.Packet(json.dumps(record).encode())
+            packet.stream = metadata
+            packet.pts = packet.dts = 90000 + index * 9000
+            packet.time_base = Fraction(1, 90000)
+            output.mux(packet)
+    with av.open(str(path)) as source:
+        assert [(stream.id, stream.type) for stream in source.streams] == [(258, "data")]
+    receiver = Receiver(str(path))
+    receiver.start()
+    receiver.control("play")
+    seen = []
+    try:
+        while True:
+            message = receiver.messages.get(timeout=3)
+            assert not isinstance(message, bytes)
+            if message.get("type") == "error":
+                pytest.fail(message["message"])
+            if message.get("type") == "metadata":
+                seen.append(message["record"])
+            if message.get("state") == "ended":
+                break
+        assert seen == [record] * 5
+    finally:
+        receiver.stop()

@@ -1,7 +1,8 @@
-# CM5 → Pico SPI
+# CM5 → RP2350B SPI
 
-Baseline: native `pv-capture` → 20 MHz SPI → Pico PIO receiver. The Pico owns
-its output clock and inserts null packets below capacity. RF remains untested.
+Baseline: native `pv-capture` → 20 MHz SPI → RP2350B PIO receiver. The RP2350B
+owns its output clock and inserts null packets below capacity. Bench wiring below
+uses a Pimoroni Pico Plus 2 development board. RF remains untested.
 
 ## Camera output
 
@@ -49,6 +50,26 @@ These are bench measurements with airflow, not passive-cooling or RF results.
 
 [Raw results and reproduction commands](https://github.com/Rivercraft911/RP2350_IQ_Benchmark/tree/main/results/cm5-spi).
 
+## Startup changes
+
+The RP2350 repository adds a separate `pvflight` build: stored modem preset,
+autonomous digital output, then READY. The existing `iqbench`/`pvtx` bench path
+remains available. USB `status` and `stop` work during flight output; a new CM5
+SPI session still requires a coordinated transmitter restart.
+
+The [supervisor comparison](../bench-notes/flight-startup.json) uses real cameras
+and simulated carrier/FC data over UDP, not SPI. The final 120-second run delivered
+30 fps per camera, all 7,201 encoded frames and all 28,206 sensor samples. No
+transport drops, continuity errors or late video packets occurred; minimum
+video DTS-to-PCR margin was 245 ms. Two startup camera errors remain, one per camera.
+
+An initial 500 ms queue expiry dropped valid bursts. The final build omits null
+frame fields on the wire and uses a 1 s queue age limit; measured maximum queue
+age was 433 ms. Full metadata stays in local logs. CPU was 62.9%, including the
+extra UDP capture process; maximum temperature was 63.9°C with no throttling.
+Next hardware check: repeat the two-minute SPI/CRC comparison with `pvflight`.
+Physical carrier sensors, autonomous RP2350B timing and RF remain unverified.
+
 ## Wiring
 
 3.3 V signals. Physical pins refer to the CM5 IO-board and Pico Plus 2 headers.
@@ -86,7 +107,8 @@ be high before every transfer. All multibyte fields are little-endian.
 
 CRC init/final XOR: `0xFFFFFFFF`; `crc32("123456789") = 0xCBF43926`.
 `pv spi --vector` produces CRC `0x51be328d` without hardware. File tails,
-malformed UDP and invalid TS sync are errors. USB starts/configures the Pico.
+malformed UDP and invalid TS sync are errors. USB starts/configures `iqbench`;
+the separate `pvflight` build starts automatically.
 Use a fresh receiver run for each sender, which starts at sequence zero.
 
 The Pico report must match sent messages, TS packets, bytes and the CRC chain,
