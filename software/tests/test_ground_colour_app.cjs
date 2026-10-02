@@ -11,24 +11,45 @@ const assets = path.resolve(__dirname, "../python/pigeonvision/ground/static");
     const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
     const failures = [];
     page.on("pageerror", error => failures.push(error.message));
-    await page.route("http://127.0.0.1:9876/**", route => {
+    await page.route("http://127.0.0.1:8773/**", route => {
       const resource = new URL(route.request().url()).pathname;
       const file = resource === "/" ? "index.html" : resource.replace(/^\/static\//, "");
       if (file.includes("..") || !fs.existsSync(path.join(assets, file))) return route.abort();
-      const contentType = file.endsWith(".js") ? "application/javascript" : file.endsWith(".css") ? "text/css" : "text/html";
+      const contentType = file.endsWith(".js") ? "application/javascript" : file.endsWith(".css") ? "text/css" : file.endsWith(".ttf") ? "font/ttf" : file.endsWith(".png") ? "image/png" : "text/html";
       return route.fulfill({ body: fs.readFileSync(path.join(assets, file)), contentType });
     });
     await page.addInitScript(() => {
+      // Produce real solid-color VideoFrames without a camera or H.264 source.
+      window.VideoDecoder = class {
+        static async isConfigSupported(config) { return { supported: true, config }; }
+        constructor({ output }) { this.output = output; this.state = "unconfigured"; this.decodeQueueSize = 0; }
+        configure() { this.state = "configured"; }
+        close() { this.state = "closed"; }
+        decode(chunk) {
+          const pixels = new Uint8Array(chunk.byteLength); chunk.copyTo(pixels);
+          const source = new OffscreenCanvas(256, 256), context = source.getContext("2d");
+          context.fillStyle = `rgb(${[...pixels].join(",")})`; context.fillRect(0, 0, 256, 256);
+          const frame = new VideoFrame(source, { timestamp: chunk.timestamp });
+          queueMicrotask(() => { if (this.state === "closed") frame.close(); else this.output(frame); });
+        }
+      };
+      const ResizeObserver = window.ResizeObserver;
+      window.ResizeObserver = class extends ResizeObserver {
+        constructor(callback) { super(callback); window.testRedraw = callback; }
+      };
       window.socketCount = 0;
       window.WebSocket = class {
         static OPEN = 1;
-        constructor() { this.readyState = 1; window.testSocket = this; window.socketCount++; queueMicrotask(() => this.onopen?.()); }
-        send() { throw Error("No outbound controls are expected in this offline fixture"); }
+        constructor() { this.readyState = 1; window.testSocket = this; window.socketCount++; queueMicrotask(() => { this.onopen?.(); this.onmessage?.({ data: JSON.stringify({ type: "control_owner", can_control: true }) }); }); }
+        send(message) { if (JSON.parse(message).type !== "view") throw Error("Only ground view publications are expected in this fixture"); }
         close() { this.readyState = 3; this.onclose?.(); }
       };
     });
-    await page.goto("http://127.0.0.1:9876/");
-    await page.waitForFunction(() => window.pigeonGround?.snapshot().connected);
+    await page.goto("http://127.0.0.1:8773/");
+    await page.waitForFunction(() => window.pigeonGround?.snapshot().connected && window.pigeonGround.snapshot().station.controlling);
+    await page.locator("#controls-toggle").click();
+    await page.locator("#operator-controls").waitFor({ state: "visible" });
+    await page.locator("#advanced-controls > summary").click();
     const emit = value => page.evaluate(value => window.testSocket.onmessage({ data: JSON.stringify(value) }), value);
     const snapshot = () => page.evaluate(() => window.pigeonGround.snapshot());
     const strength = async (name, percent) => page.locator("#colour-strength-" + name.toLowerCase()).evaluate((input, value) => {
@@ -48,8 +69,8 @@ const assets = path.resolve(__dirname, "../python/pigeonvision/ground/static");
         gains: { A: [1,1,1], B: [1.05,.98,1.08] }, devices: { A: "synthetic-A", B: "synthetic-B" } } };
     const descriptions = () => ["A", "B"].map(id => ({ id, device: `synthetic-${id}`,
       sensor_size: [256,256], width: 256, height: 256, flip_x: false, flip_y: true }));
-    const geometry = async (alter = value => value) => {
-      await emit({ type: "metadata", record: { type: "session", cameras: alter(descriptions()) } });
+    const geometry = async (alter = value => value, session_id = undefined) => {
+      await emit({ type: "metadata", record: { type: "session", session_id, cameras: alter(descriptions()) } });
       for (const camera_id of ["A", "B"])
         await emit({ type: "metadata", record: { type: "frame", camera_id, sensor_crop: [0,0,256,256] } });
     };
@@ -180,6 +201,96 @@ const assets = path.resolve(__dirname, "../python/pigeonvision/ground/static");
     gainsNear(await snapshot(), "A", [1, 1, 1]);
     gainsNear(await snapshot(), "B", [1, 1, 1]);
     assert.deepEqual(failures, []);
-    console.log(JSON.stringify({ passed: true, checked: ["missing-identity-gate", "original-colour-toggle", "reconnect-preference", "physical-identity-mismatch", "crop-mismatch", "session-reset", "view-reset", "profile-removal", "no-profile-default", "independent-strengths", "identity-baseline", "shared-headroom-baseline", "profile-strength-defaults", "headroom-reconnect-preference"] }));
+
+    // Runtime recovery invalidates NEW content, but must not recolor verified
+    // pixels already held in the raw and paired textures during a redraw.
+    const flashProfile = structuredClone(profile);
+    flashProfile.display_colour.gains.B = [1, .75, .5];
+    flashProfile.cameras.B.R_camera_from_rig = flashProfile.cameras.A.R_camera_from_rig;
+    await emit({ type: "calibration", calibration: flashProfile });
+    await geometry();
+    const view = async mode => emit({ type: "view", initial: true,
+      view: { mode, yaw: 0, pitch: 0, roll: 0, fov: 1.5 } });
+    const frame = async (camera_id, timestamp_us) => {
+      const before = (await snapshot()).decoded[camera_id];
+      await page.evaluate(({ camera_id, timestamp_us }) => {
+        const header = new TextEncoder().encode(JSON.stringify({ type: "frame", camera_id,
+          timestamp_us, keyframe: true, codec: "avc1.42001f" }));
+        const packet = new Uint8Array(4 + header.length + 3);
+        new DataView(packet.buffer).setUint32(0, header.length);
+        packet.set(header, 4); packet.set([90, 120, 180], 4 + header.length);
+        window.testSocket.onmessage({ data: packet.buffer });
+      }, { camera_id, timestamp_us });
+      await page.waitForFunction(({ camera_id, before }) => window.pigeonGround.snapshot().decoded[camera_id] > before,
+        { camera_id, before });
+    };
+    const pixel = () => page.evaluate(() => {
+      window.testRedraw();
+      const canvas = document.getElementById("image"), gl = canvas.getContext("webgl2"), pixel = new Uint8Array(4);
+      gl.readPixels(Math.floor(canvas.width / 2), Math.floor(canvas.height / 2), 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+      return [...pixel].slice(0, 3);
+    });
+    const near = (actual, expected, message) => expected.forEach((value, index) =>
+      assert.ok(Math.abs(actual[index] - value) <= 1, `${message}: ${actual} expected ${expected}`));
+    await view("perspective");
+    await page.locator("#seam").evaluate(input => {
+      input.value = "3"; input.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+    await frame("A", 1000000); await frame("B", 1000000);
+    await view("b"); near(await pixel(), [90, 90, 90], "Verified raw frame is corrected");
+    await view("perspective"); near(await pixel(), [90, 90, 90], "Verified paired frame is corrected");
+    await emit({ type: "status", source: "udp://synthetic:1234", state: "ready", replay: false, playing: true, reset: true });
+    assert.equal((await snapshot()).colourEnabled, false, "Current metadata eligibility must still reset");
+    near(await pixel(), [90, 90, 90], "Reset must preserve the held pair's correction");
+    await view("b"); near(await pixel(), [90, 90, 90], "Reset must preserve the held raw frame's correction");
+    await page.evaluate(() => window.testSocket.close());
+    near(await pixel(), [90, 90, 90], "Disconnected redraw must keep held correction");
+    await page.waitForFunction(() => window.socketCount === 4 && window.pigeonGround.snapshot().connected);
+    await emit({ type: "status", source: "udp://synthetic:1234", state: "ready", replay: false, playing: true, reset: true });
+    await emit({ type: "calibration", calibration: flashProfile });
+    near(await pixel(), [90, 90, 90], "Same-profile reconnect must keep held correction");
+    await frame("B", 2000000);
+    near(await pixel(), [90, 120, 180], "New unverified content must use original colors");
+    await geometry();
+    near(await pixel(), [90, 120, 180], "Later metadata must not retroactively verify an uploaded frame");
+    await frame("A", 3000000); await frame("B", 3000000);
+    near(await pixel(), [90, 90, 90], "New verified content restores correction");
+    await page.locator("#colour-toggle").click();
+    near(await pixel(), [90, 120, 180], "The original-color choice must bypass held correction");
+    await page.locator("#colour-toggle").click();
+    await geometry(cameras => { cameras[1].device = "synthetic-other-camera"; return cameras; });
+    await view("b");
+    await frame("B", 4000000);
+    near(await pixel(), [90, 120, 180], "New mismatched-camera content must use original colors");
+    await geometry(); await view("b"); await frame("B", 5000000);
+    near(await pixel(), [90, 90, 90], "Matching hardware can verify a subsequent new frame");
+    const recoveryStatus = { type: "status", source: "udp://synthetic:1234", generation: 7,
+      state: "ready", replay: false, playing: true };
+    await emit(recoveryStatus);
+    await emit({ ...recoveryStatus, reset: true, preserve_geometry: true });
+    assert.equal((await snapshot()).colourEnabled, true, "Same-stream queue recovery must preserve capture geometry");
+    await frame("A", 6000000); await frame("B", 6000000);
+    near(await pixel(), [90, 90, 90], "Recovered video must stay corrected before metadata repeats");
+    await emit({ ...recoveryStatus, generation: 8, reset: true, preserve_geometry: true });
+    assert.equal((await snapshot()).colourEnabled, false, "A new receiver generation cannot preserve capture geometry");
+    await frame("B", 7000000);
+    near(await pixel(), [90, 120, 180], "New-generation unverified video must remain uncorrected");
+    await geometry(undefined, "session-one");
+    await emit({ ...recoveryStatus, generation: 8, source: "udp://other-source:1234", reset: true, preserve_geometry: true });
+    assert.equal((await snapshot()).colourEnabled, false, "A different source cannot preserve capture geometry");
+    await geometry(undefined, "session-one");
+    await emit({ type: "metadata", record: { type: "session", session_id: "session-two", cameras: descriptions() } });
+    assert.equal((await snapshot()).colourEnabled, false, "A new capture session must require fresh per-frame crop evidence");
+    assert.match((await snapshot()).geometry.unverified.join(" "), /actual crop/);
+    await geometry(undefined, "session-two"); await view("b"); await frame("B", 8000000);
+    near(await pixel(), [90, 90, 90], "New-session frame metadata restores correction");
+    const otherCamera = structuredClone(flashProfile);
+    otherCamera.cameras.B.provenance.device_id = "synthetic-other-camera";
+    otherCamera.display_colour.devices.B = "synthetic-other-camera";
+    await emit({ type: "calibration", calibration: otherCamera });
+    await view("b");
+    near(await pixel(), [90, 120, 180], "A different calibration cannot reuse held verification");
+    assert.deepEqual(failures, []);
+    console.log(JSON.stringify({ passed: true, checked: ["missing-identity-gate", "original-colour-toggle", "reconnect-preference", "physical-identity-mismatch", "crop-mismatch", "session-reset", "view-reset", "profile-removal", "no-profile-default", "independent-strengths", "identity-baseline", "shared-headroom-baseline", "profile-strength-defaults", "headroom-reconnect-preference", "held-raw-colour", "held-paired-colour", "unverified-new-frame-gate", "mismatched-new-frame-gate", "same-stream-recovery", "new-source-generation-gate", "new-session-crop-gate", "held-frame-profile-identity"] }));
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });

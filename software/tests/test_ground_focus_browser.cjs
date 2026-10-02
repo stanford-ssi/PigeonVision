@@ -11,23 +11,26 @@ const assets = path.resolve(__dirname, "../python/pigeonvision/ground/static");
     const page = await browser.newPage({ viewport: { width: 1280, height: 900 }, deviceScaleFactor: 1 });
     const failures = [];
     page.on("pageerror", error => failures.push(error.message));
-    await page.route("http://127.0.0.1:9876/**", route => {
+    await page.route("http://127.0.0.1:8773/**", route => {
       const resource = new URL(route.request().url()).pathname;
       const file = resource === "/" ? "index.html" : resource.replace(/^\/static\//, "");
       if (file.includes("..") || !fs.existsSync(path.join(assets, file))) return route.abort();
-      const contentType = file.endsWith(".js") ? "application/javascript" : file.endsWith(".css") ? "text/css" : "text/html";
+      const contentType = file.endsWith(".js") ? "application/javascript" : file.endsWith(".css") ? "text/css" : file.endsWith(".ttf") ? "font/ttf" : file.endsWith(".png") ? "image/png" : "text/html";
       return route.fulfill({ body: fs.readFileSync(path.join(assets, file)), contentType });
     });
     await page.addInitScript(() => {
       window.WebSocket = class {
         static OPEN = 1;
-        constructor() { this.readyState = 1; window.testSocket = this; queueMicrotask(() => this.onopen?.()); }
+        constructor() { this.readyState = 1; window.testSocket = this; queueMicrotask(() => { this.onopen?.(); this.onmessage?.({ data: JSON.stringify({ type: "control_owner", can_control: true }) }); }); }
         send() {}
         close() { this.readyState = 3; }
       };
     });
-    await page.goto("http://127.0.0.1:9876/");
-    await page.waitForFunction(() => window.pigeonGround?.snapshot().connected);
+    await page.goto("http://127.0.0.1:8773/");
+    await page.waitForFunction(() => window.pigeonGround?.snapshot().connected && window.pigeonGround.snapshot().station.controlling);
+    await page.locator("#controls-toggle").click();
+    await page.locator("#operator-controls").waitFor({ state: "visible" });
+    await page.locator("#advanced-controls > summary").click();
     assert.equal(await page.locator("#perspective-controls").isVisible(), false);
     const emit = value => page.evaluate(value => window.testSocket.onmessage({ data: JSON.stringify(value) }), value);
     await emit({ type: "error", component: "source", recoverable: true, message: "No UDP transport received for two seconds" });
@@ -167,19 +170,28 @@ const assets = path.resolve(__dirname, "../python/pigeonvision/ground/static");
     assert.equal(await page.locator("#perspective-controls").isVisible(), false);
     assert.equal((await page.evaluate(() => window.pigeonGround.snapshot())).focus.A.zoom, 1);
     await page.reload();
-    await page.waitForFunction(() => window.pigeonGround?.snapshot().connected);
+    await page.waitForFunction(() => window.pigeonGround?.snapshot().connected && window.pigeonGround.snapshot().station.controlling);
+    await page.locator("#controls-toggle").click();
+    await page.locator("#operator-controls").waitFor({ state: "visible" });
+    await page.locator("#advanced-controls > summary").click();
     await lookAround();
     assert.equal((await perspective()).fov, chosen.fov, "New loads use the browser's saved default");
     assert.equal((await perspective()).zoom, expectedZoom, "Saved default does not redefine factory 1×");
     await page.evaluate(key => localStorage.setItem(key, "2.61"), key);
     await page.reload();
-    await page.waitForFunction(() => window.pigeonGround?.snapshot().connected);
+    await page.waitForFunction(() => window.pigeonGround?.snapshot().connected && window.pigeonGround.snapshot().station.controlling);
+    await page.locator("#controls-toggle").click();
+    await page.locator("#operator-controls").waitFor({ state: "visible" });
+    await page.locator("#advanced-controls > summary").click();
     assert.equal((await perspective()).fov, factory, "Out-of-range storage uses factory view");
     await page.addInitScript(() => Object.defineProperty(window, "localStorage", {
       get() { throw new DOMException("Synthetic blocked storage", "SecurityError"); },
     }));
     await page.reload();
-    await page.waitForFunction(() => window.pigeonGround?.snapshot().connected);
+    await page.waitForFunction(() => window.pigeonGround?.snapshot().connected && window.pigeonGround.snapshot().station.controlling);
+    await page.locator("#controls-toggle").click();
+    await page.locator("#operator-controls").waitFor({ state: "visible" });
+    await page.locator("#advanced-controls > summary").click();
     await lookAround();
     assert.equal((await perspective()).fov, factory);
     await wheel(-100);

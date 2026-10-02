@@ -3,6 +3,7 @@ import { Renderer, rawDragCenter, DEFAULT_PERSPECTIVE_FOV, MIN_PERSPECTIVE_FOV,
 import { checkGeometry } from "./geometry.js";
 import { TelemetryState } from "./telemetry.js";
 import { ErrorState } from "./errors.js";
+import { Station } from "./station.js";
 
 const $ = (id) => document.getElementById(id);
 const errors = new ErrorState();
@@ -23,11 +24,13 @@ const state = {
   playing: false,
   status: null,
   calibration: null,
+  colourCalibrationKey: null,
   pair: null,
   pairs: 0,
   resetCount: 0,
   metadata: {},
   descriptions: {},
+  geometrySessionId: null,
   frames: {},
   geometry: { errors: [], unverified: [] },
   error: null,
@@ -46,9 +49,13 @@ const camera = () => ({
   lastArrival: 0,
   lastTimestamp: null,
   size: null,
+  submitted: 0,
+  outputs: 0,
 });
 const cameras = { A: camera(), B: camera() };
-let renderer,
+const frameColourVerification = new WeakMap();
+let pairLimit = Number($("max-skew").value);
+let renderer, station,
   socket,
   connectionEpoch = 0;
 function renderErrors() {
@@ -77,12 +84,16 @@ function resetCamera(name) {
   c.lastArrival = 0;
   c.lastTimestamp = null;
   c.size = null;
+  c.submitted = c.outputs = 0;
 }
-function reset() {
+function reset({ preserveGeometry = false } = {}) {
   for (const n of ["A", "B"]) resetCamera(n);
   state.pair = null;
-  state.frames = {};
-  state.descriptions = {};
+  if (!preserveGeometry) {
+    state.frames = {};
+    state.descriptions = {};
+    state.geometrySessionId = null;
+  }
   state.resetCount++;
   validateGeometry();
 }
@@ -115,6 +126,10 @@ function configureCalibration(bundle) {
   const hadColour = !!state.calibration?.display_colour;
   state.calibration = bundle;
   renderer.calibration = bundle;
+  // Gains may change without changing the physical capture they apply to.
+  // A different camera/geometry bundle must not inherit held-frame verification.
+  state.colourCalibrationKey = JSON.stringify(bundle?.cameras ?? null);
+  renderer.colourCalibrationKey = state.colourCalibrationKey;
   const colour = bundle?.display_colour;
   if (!colour || !hadColour) state.colourRequested = !!colour;
   if (colour && !hadColour)
@@ -134,8 +149,8 @@ function configureCalibration(bundle) {
   } else {
     $("calibration").textContent = calibrationDescription(bundle);
     if (firstCalibration) {
-      renderer.mode = "sphere";
-      $("view").value = "sphere";
+      renderer.mode = "perspective";
+      $("view").value = "perspective";
     }
   }
   validateGeometry();
@@ -189,7 +204,8 @@ function updateColourControls() {
   const profile = state.calibration?.display_colour;
   const verified = !state.geometry.errors.length && !state.geometry.unverified.length;
   $("colour-controls").hidden = !profile;
-  renderer.colourEnabled = !!profile && state.colourRequested && verified;
+  renderer.colourRequested = !!profile && state.colourRequested;
+  renderer.colourEnabled = renderer.colourRequested && verified;
   $("colour-toggle").disabled = !verified;
   $("colour-toggle").setAttribute("aria-pressed", String(renderer.colourEnabled));
   $("colour-toggle").textContent = renderer.colourEnabled ? "Show original colours" : "Match camera colours";
@@ -215,15 +231,15 @@ function updateColourControls() {
 function pairFrames() {
   const a = cameras.A.pending,
     b = cameras.B.pending;
-  const maxSkew = Number($("max-skew").value) * 1000;
+  const maxSkew = pairLimit * 1000;
   while (a.length && b.length) {
     const delta = a[0].timestamp - b[0].timestamp;
     // Timestamp order is retained. Never manufacture a frame or rebase a camera.
     if (Math.abs(delta) <= maxSkew) {
       const fa = a.shift(),
         fb = b.shift();
-      renderer.upload("A", fa, true);
-      renderer.upload("B", fb, true);
+      renderer.upload("A", fa, true, frameColourVerification.get(fa));
+      renderer.upload("B", fb, true, frameColourVerification.get(fb));
       state.pair = {
         a: fa.timestamp,
         b: fb.timestamp,
@@ -233,6 +249,9 @@ function pairFrames() {
       state.pairs++;
       fa.close();
       fb.close();
+      station.updateViewFrame({ pts: Math.min(state.pair.a, state.pair.b),
+        now: state.pair.at, replay: state.replay, frameAgeMs: 0,
+        paired: state.pair.a === state.pair.b });
       renderer.draw();
     } else {
       const name = delta < 0 ? "A" : "B";
@@ -254,11 +273,15 @@ function decoded(name, frame, epoch) {
     return;
   }
   c.decoded++;
+  c.outputs++;
   c.lastArrival = performance.now();
   c.lastTimestamp = frame.timestamp;
   c.size = [frame.displayWidth, frame.displayHeight];
   validateGeometry();
-  renderer.upload(name, frame);
+  const verification = !state.geometry.errors.length && !state.geometry.unverified.length
+    ? state.colourCalibrationKey : null;
+  frameColourVerification.set(frame, verification);
+  renderer.upload(name, frame, false, verification);
   c.pending.push(frame);
   c.pending.sort((x, y) => x.timestamp - y.timestamp);
   pairFrames();
@@ -319,15 +342,51 @@ async function accessUnit(buffer, epoch) {
       data: bytes.subarray(4 + length),
     }),
   );
+  c.submitted++;
 }
 
-function message(value) {
+async function message(value, epoch = connectionEpoch) {
+  if (value.type === "control_owner") {
+    station.owner(value.can_control);
+    return;
+  }
+  if (value.type === "view") { station.receiveView(value.view, value.initial === true); return; }
+  if (value.type === "reference") { station.reference(value.reference); return; }
+  if (value.type === "bootstrap_start") {
+    for (const item of value.metadata || []) await message(item, epoch);
+    return;
+  }
+  if (value.type === "bootstrap_checkpoint") {
+    // flush() would require another keyframe. Wait for actual output callbacks
+    // before acknowledging the next bounded batch in this same GOP instead.
+    const deadline = performance.now() + 2000;
+    const currentSocket = socket;
+    const generations = Object.values(cameras).map(c => c.epoch);
+    while (Object.values(cameras).some(c => c.outputs < c.submitted)) {
+      if (epoch !== connectionEpoch || currentSocket.readyState !== WebSocket.OPEN) return;
+      if (performance.now() > deadline) {
+        fail("Could not load the held frame; reconnecting.", "connection", true);
+        currentSocket.close();
+        return;
+      }
+      await new Promise(resolve => setTimeout(resolve, 5));
+    }
+    if (epoch !== connectionEpoch || currentSocket.readyState !== WebSocket.OPEN) return;
+    if (Object.values(cameras).some((c, i) => c.epoch !== generations[i])) {
+      currentSocket.close();
+      return;
+    }
+    currentSocket.send(JSON.stringify({ type: "bootstrap_ack", id: value.id, sequence: value.sequence }));
+    return;
+  }
   if (value.type === "status") {
+    const preserveGeometry = value.preserve_geometry === true && Number.isSafeInteger(value.generation) &&
+      value.source === state.status?.source && value.generation === state.status?.generation;
     // Replay restart rewinds acquisition timestamps. Decoder recovery within a
     // receiver generation must retain telemetry ordering and retired sessions.
     const replayRestart = value.replay &&
       (value.source !== state.status?.source || value.generation !== state.status?.generation);
-    if (replayRestart) telemetry.reset();
+    if (replayRestart) { telemetry.reset(); station.resetMission(); }
     state.status = value;
     if (value.state === "ready") clearError("source");
     state.replay = value.replay;
@@ -337,7 +396,7 @@ function message(value) {
       ? `Recorded · ${value.source.split("/").pop()}`
       : "Live camera transport";
     $("receiver").textContent = JSON.stringify(value, null, 2);
-    if (value.reset) reset();
+    if (value.reset) reset({ preserveGeometry });
     if (value.reset_camera) resetCamera(value.reset_camera);
   } else if (value.type === "calibration")
     configureCalibration(value.calibration);
@@ -346,8 +405,12 @@ function message(value) {
   else if (value.type === "metadata") {
     const record = value.record;
     if (telemetry.accept(record, performance.now()) === false) return;
+    station.metadata(record, performance.now());
     state.metadata[record.camera_id || record.type || "latest"] = record;
     if (record.type === "session") {
+      const sessionId = record.session_id ?? null;
+      if (sessionId !== state.geometrySessionId) state.frames = {};
+      state.geometrySessionId = sessionId;
       state.descriptions = {};
       for (const camera of record.cameras || record.hardware?.cameras || [])
         state.descriptions[camera.id] = camera;
@@ -368,7 +431,7 @@ function connect() {
     pending = 0,
     accepting = true;
   socket = new WebSocket(
-    `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/ws`,
+    `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/ws?role=${station.audience ? "audience" : "operator"}`,
   );
   socket.binaryType = "arraybuffer";
   socket.onopen = () => {
@@ -386,7 +449,7 @@ function connect() {
     chain = chain
       .then(async () => {
         if (!accepting || epoch !== connectionEpoch) return;
-        if (typeof e.data === "string") message(JSON.parse(e.data));
+        if (typeof e.data === "string") await message(JSON.parse(e.data), epoch);
         else await accessUnit(e.data, epoch);
       })
       .catch((e) => fail(e.message))
@@ -396,6 +459,7 @@ function connect() {
     if (epoch !== connectionEpoch) return;
     accepting = false;
     state.connected = false;
+    station.owner(false);
     telemetry.reset({ preserveSessionHistory: true });
     reset();
     setTimeout(connect, 1500);
@@ -435,6 +499,15 @@ function updatePerspectiveControls() {
   $("perspective-default-status").textContent = perspectiveDefaultStatus;
 }
 
+function displayedFrame(now = performance.now()) {
+  const raw = ["a", "b"].includes(renderer.mode);
+  const camera = raw ? cameras[renderer.mode.toUpperCase()] : null;
+  const pts = raw ? camera.lastTimestamp : state.pair ? Math.min(state.pair.a, state.pair.b) : null;
+  const at = raw ? camera.lastArrival : state.pair?.at;
+  return { pts, now, replay: state.replay, frameAgeMs: at == null || !at ? null : now - at,
+    paired: !!state.pair && state.pair.a === state.pair.b };
+}
+
 function diagnostics() {
   const now = performance.now();
   $("flight-telemetry").textContent = telemetry.lines(now).join("\n");
@@ -472,6 +545,7 @@ function diagnostics() {
   else if (state.status?.state === "ended") overlay = "End of recording";
   $("overlay").textContent = overlay;
   $("overlay").hidden = !overlay;
+  station.update({ ...displayedFrame(now), connected: state.connected, sourceState: state.status?.state });
   const alignment = state.calibration?.rig_alignment_status === "nominal_operator_geometry" ? "Nominal alignment" : "Spherical projection";
   $("view-caption").textContent = panorama
     ? `${renderer.mode === "sphere" ? "360° panorama" : renderer.mode === "mask" ? "Source coverage" : `${perspectiveZoom(renderer.fov).toFixed(2)}× · ${Math.round((renderer.fov * 180) / Math.PI)}° look-around`} · ${alignment} · shutter sync unverified`
@@ -485,6 +559,30 @@ try {
     );
   renderer = new Renderer($("image"));
   renderer.fov = perspectiveDefaultFov;
+  station = new Station(renderer, {
+    frame: displayedFrame,
+    send: value => { if (socket?.readyState === WebSocket.OPEN) socket.send(JSON.stringify(value)); },
+    changed: updateFocusControls,
+    display: () => ({
+      focus: renderer.focus,
+      rotation: renderer.viewerRotation,
+      seam: renderer.seam,
+      colour: { requested: state.colourRequested, strength: state.colourStrength },
+      maxSkew: pairLimit,
+    }),
+    applyDisplay: display => {
+      renderer.focus = structuredClone(display.focus);
+      renderer.viewerRotation = { ...display.rotation };
+      renderer.seam = display.seam;
+      $("seam").value = display.seam;
+      $("max-skew").value = display.maxSkew;
+      pairLimit = display.maxSkew;
+      state.colourRequested = display.colour.requested;
+      state.colourStrength = { ...display.colour.strength };
+      applyColourStrengths();
+      updateColourControls();
+    },
+  });
   $("perspective-save-default").onclick = () => {
     if (renderer.mode !== "perspective" || !validPerspectiveFov(renderer.fov)) return;
     perspectiveDefaultFov = renderer.fov;
@@ -497,55 +595,70 @@ try {
     updatePerspectiveControls();
   };
   $("colour-toggle").onclick = () => {
+    if (!station.controlling) return;
     state.colourRequested = !state.colourRequested;
     updateColourControls();
-    renderer.draw();
+    station.viewChanged();
   };
   for (const name of ["A", "B"]) {
     const input = $("colour-strength-" + name.toLowerCase());
     input.oninput = () => {
       const percent = input.valueAsNumber;
-      if (!input.disabled && Number.isFinite(percent)) {
+      if (station.controlling && !input.disabled && Number.isFinite(percent)) {
         state.colourStrength[name] = Math.max(0, Math.min(1, percent / 100));
         applyColourStrengths();
-        renderer.draw();
+        station.viewChanged();
       }
       updateColourControls();
     };
   }
   $("view").onchange = () => {
+    if (!station.controlling) { $("view").value = renderer.mode; return; }
+    station.navigation.stop();
     renderer.mode = $("view").value;
     drag = null;
     updateFocusControls();
-    renderer.draw();
+    station.viewChanged();
   };
   $("seam").onchange = () => {
+    if (!station.controlling) { $("seam").value = renderer.seam; return; }
     renderer.seam = Number($("seam").value);
-    renderer.draw();
+    station.viewChanged();
+  };
+  $("max-skew").onchange = () => {
+    const value = Number($("max-skew").value);
+    if (station.controlling && Number.isFinite(value) && value >= .05 && value <= 100) {
+      pairLimit = value;
+      station.viewChanged();
+    } else $("max-skew").value = pairLimit;
   };
   $("home").onclick = () => {
-    renderer.yaw = renderer.pitch = 0;
+    if (!station.controlling) return;
+    station.navigation.stop();
+    renderer.yaw = renderer.pitch = renderer.roll = 0;
     renderer.fov = perspectiveDefaultFov;
     renderer.resetRawView();
     updateFocusControls();
-    renderer.draw();
+    station.viewChanged();
   };
   $("rotate-view").onclick = () => {
+    if (!station.controlling) return;
     drag = null;
     $("image").classList.remove("dragging");
     renderer.rotateRawView();
     updateFocusControls();
-    renderer.draw();
+    station.viewChanged();
   };
   $("focus-zoom").oninput = () => {
+    if (!station.controlling) { updateFocusControls(); return; }
     renderer.setRawZoom(Number($("focus-zoom").value));
     updateFocusControls();
-    renderer.draw();
+    station.viewChanged();
   };
   updateFocusControls();
   for (const button of document.querySelectorAll("[data-action]"))
     button.onclick = () => {
-      if (socket.readyState === WebSocket.OPEN)
+      if (station.controlling && socket.readyState === WebSocket.OPEN)
         socket.send(
           JSON.stringify({ type: "control", action: button.dataset.action }),
         );
@@ -553,11 +666,15 @@ try {
   let drag = null;
   const canvas = $("image");
   canvas.onpointerdown = (e) => {
+    if (!station.controlling || e.button !== 0) return;
+    station.navigation.stop();
+    canvas.focus({ preventScroll: true });
     drag = { x: e.clientX, y: e.clientY, yaw: renderer.yaw, pitch: renderer.pitch, layout: renderer.rawLayout(), rotation: renderer.viewerRotation[renderer.mode.toUpperCase()] || 0 };
     canvas.classList.add("dragging");
     canvas.setPointerCapture(e.pointerId);
   };
   canvas.onpointermove = (e) => {
+    if (!station.controlling) { endDrag(); return; }
     if (!drag) return;
     if (["a", "b"].includes(renderer.mode)) {
       renderer.panRaw(rawDragCenter(drag.layout,
@@ -568,14 +685,17 @@ try {
       renderer.pitch = Math.max(-1.56, Math.min(1.56,
         drag.pitch + (e.clientY - drag.y) * 0.004));
     } else return;
-    renderer.draw();
+    station.viewChanged();
   };
   const endDrag = () => { drag = null; canvas.classList.remove("dragging"); };
   canvas.onpointerup = endDrag;
   canvas.onpointercancel = endDrag;
+  canvas.onlostpointercapture = endDrag;
   canvas.addEventListener(
     "wheel",
     (e) => {
+      if (!station.controlling) return;
+      station.navigation.stop();
       e.preventDefault();
       if (["a", "b"].includes(renderer.mode)) {
         renderer.setRawZoom(renderer.rawLayout().zoom * Math.exp(-e.deltaY * 0.001));
@@ -584,11 +704,12 @@ try {
         renderer.fov = Math.max(MIN_PERSPECTIVE_FOV, Math.min(MAX_PERSPECTIVE_FOV, renderer.fov * Math.exp(e.deltaY * 0.001)));
         updatePerspectiveControls();
       }
-      renderer.draw();
+      station.viewChanged();
     },
     { passive: false },
   );
   canvas.onkeydown = (e) => {
+    if (!station.controlling || socket.readyState !== WebSocket.OPEN) return;
     if (e.code === "Space" && state.replay) {
       e.preventDefault();
       socket.send(
@@ -615,6 +736,11 @@ try {
       errors: state.error,
       focus: renderer.focus,
       perspective: { fov: renderer.fov, defaultFov: perspectiveDefaultFov, zoom: perspectiveZoom(renderer.fov) },
+      navigation: { yaw: renderer.yaw, pitch: renderer.pitch, roll: renderer.roll, mode: renderer.mode },
+      pairingGapMs: pairLimit,
+      station: { audience: station.audience, controlling: station.controlling,
+        horizon: station.horizonStatus,
+        mission: station.mission.sample(station.lastUpdate.pts, performance.now(), state.replay) },
       viewerRotation: renderer.viewerRotation,
       colourEnabled: renderer.colourEnabled,
       colourStrength: { ...state.colourStrength },

@@ -27,6 +27,7 @@ const path = require("node:path");
       Number(process.env.GROUND_EXPECTED_SKEW ?? -10000),
     );
     const initial = snapshot.pairs;
+    await page.locator('#controls-toggle').click();
     await page.getByRole("button", { name: "Step pair" }).click();
     await page.waitForFunction(
       (n) => window.pigeonGround.snapshot().pairs > n,
