@@ -10,6 +10,23 @@ export function perspectiveZoom(fov) {
   return Math.tan(DEFAULT_PERSPECTIVE_FOV / 2) / Math.tan(fov / 2);
 }
 
+// Column-major screen-right, screen-up, forward basis in rig coordinates.
+// Positive roll rotates the viewing frame clockwise looking along forward.
+export function perspectiveBasis(yaw, pitch, roll = 0) {
+  const sy = Math.sin(yaw), cy = Math.cos(yaw), sp = Math.sin(pitch), cp = Math.cos(pitch);
+  const cr = Math.cos(roll), sr = Math.sin(roll);
+  const right = [cy, 0, -sy], up = [-sy * sp, -cp, -cy * sp];
+  return [...right.map((v, i) => v * cr - up[i] * sr),
+    ...right.map((v, i) => v * sr + up[i] * cr), sy * cp, -sp, cy * cp];
+}
+
+export function multiplyBasis(left, right) {
+  const result = Array(9).fill(0);
+  for (let column = 0; column < 3; column++) for (let row = 0; row < 3; row++)
+    for (let k = 0; k < 3; k++) result[column * 3 + row] += left[k * 3 + row] * right[column * 3 + k];
+  return result;
+}
+
 // At 1x the complete image fits. Zoom reduces the visible source span, and each
 // centre coordinate is bounded so panning cannot reveal extra space at an edge.
 export function rawViewTransform(viewport, imageSize, zoom = 1, center = [0.5, 0.5]) {
@@ -37,7 +54,8 @@ uniform sampler2D imageA,imageB;
 uniform vec3 colourGainA,colourGainB;
 uniform vec2 viewport,rawSpan,rawCenter;
 uniform int mode,seam;
-uniform float yaw,pitch,fov,rawDirection;
+uniform float fov,rawDirection;
+uniform mat3 viewBasis;
 struct Camera{mat3 rotation;vec4 k;float skew;vec4 distortion;float xi;vec4 crop;vec2 outputSize;vec2 flips;float radius;float maxTheta;};
 uniform Camera cameraA,cameraB;
 const float PI=3.141592653589793;
@@ -46,7 +64,8 @@ const float PI=3.141592653589793;
 // This is a relative visual correction, not physical linear-light calibration.
 vec3 correctColour(vec3 rgb,vec3 gain){return clamp(rgb*gain,0.,1.);}
 vec3 missing(){float stripe=step(.5,fract((gl_FragCoord.x+gl_FragCoord.y)/20.));return mix(vec3(.12,.15,.16),vec3(.19,.21,.22),stripe);}
-vec4 project(Camera c,sampler2D image,vec3 gain,vec3 rig){
+vec4 project(Camera c,sampler2D image,vec3 gain,vec3 rig,out float edgeConfidence){
+ edgeConfidence=0.;
  vec3 d=normalize(c.rotation*rig);float theta=acos(clamp(d.z,-1.,1.));
  if(c.maxTheta>0.&&theta>c.maxTheta||d.z+c.xi<=1e-8||c.xi>1.&&d.z<=-1./c.xi)return vec4(0.);
  vec2 p=d.xy/(d.z+c.xi);float r2=dot(p,p);vec4 D=c.distortion;
@@ -54,6 +73,10 @@ vec4 project(Camera c,sampler2D image,vec3 gain,vec3 rig){
  vec2 pixel=vec2(c.k.x*q.x+c.skew*q.y+c.k.z,c.k.y*q.y+c.k.w);
  if(c.radius>0.&&length(pixel-c.k.zw)>c.radius)return vec4(0.);
  if(any(lessThan(pixel,c.crop.xy))||any(greaterThanEqual(pixel,c.crop.xy+c.crop.zw)))return vec4(0.);
+ // Fade toward the accepted crop bounds in full-sensor pixels, before resize
+ // and flips. This changes overlap weights, never the recorded coverage mask.
+ vec2 margin=min(pixel-c.crop.xy,c.crop.xy+c.crop.zw-pixel);
+ edgeConfidence=smoothstep(0.,48.,min(margin.x,margin.y));
  vec2 mapped=(pixel-c.crop.xy+.5)/c.crop.zw;
  mapped=mix(mapped,1.-mapped,c.flips);
  return vec4(correctColour(texture(image,mapped).rgb,gain),2.+d.z);
@@ -65,11 +88,21 @@ void main(){
  }
  vec3 d;
  if(mode==3||mode==4){float lon=(uv.x*2.-1.)*PI,lat=(uv.y-.5)*PI;d=vec3(sin(lon)*cos(lat),-sin(lat),cos(lon)*cos(lat));}
- else{vec3 forward=vec3(sin(yaw)*cos(pitch),-sin(pitch),cos(yaw)*cos(pitch));vec3 right=vec3(cos(yaw),0.,-sin(yaw));vec3 up=cross(right,forward);vec2 p=uv*2.-1.;d=normalize(forward+right*p.x*tan(fov*.5)+up*p.y*tan(fov*.5)*viewport.y/viewport.x);}
- vec4 a=project(cameraA,imageA,colourGainA,d),b=project(cameraB,imageB,colourGainB,d);
+ else{vec2 p=uv*2.-1.;d=normalize(viewBasis*vec3(p.x*tan(fov*.5),p.y*tan(fov*.5)*viewport.y/viewport.x,1.));}
+ float edgeA,edgeB;
+ vec4 a=project(cameraA,imageA,colourGainA,d,edgeA),b=project(cameraB,imageB,colourGainB,d,edgeB);
  if(a.a==0.&&b.a==0.){color=vec4(missing(),1.);return;}
  float w=a.a>0.?1.:0.;
- if(a.a>0.&&b.a>0.){w=smoothstep(-.0872,.0872,a.a-b.a);if(seam==1)w=step(b.a,a.a);if(seam==2)w=1.;if(seam==3)w=0.;}
+ if(a.a>0.&&b.a>0.){
+  w=smoothstep(-.0872,.0872,a.a-b.a);
+  if(seam==0&&mode!=4){
+   // Reopen the other source near an edge even when facing preference is 0/1.
+   // Both interior confidences preserve the existing narrow-facing feather.
+   float wa=edgeA*((1.-edgeB)+edgeB*w),wb=edgeB*((1.-edgeA)+edgeA*(1.-w));
+   float total=wa+wb;if(total>0.)w=wa/total;
+  }
+  if(seam==1)w=step(b.a,a.a);if(seam==2)w=1.;if(seam==3)w=0.;
+ }
  vec3 rgb=mix(b.rgb,a.rgb,w);
  if(mode==4){rgb=mix(vec3(.64,.48,.78),vec3(.25,.69,.55),w);if(a.a>0.&&b.a>0.)rgb=mix(rgb,vec3(.94,.83,.44),.5);}
  color=vec4(rgb,1.);
@@ -114,11 +147,15 @@ export class Renderer {
     this.seam = 0;
     this.yaw = 0;
     this.pitch = 0;
+    this.roll = 0;
+    this.viewTransform = null; // Optional DEMO reference-to-current-image basis.
     this.fov = DEFAULT_PERSPECTIVE_FOV;
     this.calibration = null;
     this.focus = { A: { zoom: 1, center: [0.5, 0.5] }, B: { zoom: 1, center: [0.5, 0.5] } };
     this.viewerRotation = { A: 0, B: 0 };
     this.colourEnabled = false;
+    this.colourRequested = null; // The app separates operator intent from current metadata eligibility.
+    this.colourCalibrationKey = null;
     this.colourMethod = "display_rgb_gain";
     this.colour = { A: { enabled: false, gain: [1, 1, 1] }, B: { enabled: false, gain: [1, 1, 1] } };
     this.draw();
@@ -177,7 +214,7 @@ export class Renderer {
     );
     return { texture: t, width: 1, height: 1 };
   }
-  upload(name, frame, paired = false) {
+  upload(name, frame, paired = false, colourVerification = undefined) {
     const g = this.gl,
       t = (paired ? this.pair : this.raw)[name];
     g.bindTexture(g.TEXTURE_2D, t.texture);
@@ -185,6 +222,9 @@ export class Renderer {
     g.texImage2D(g.TEXTURE_2D, 0, g.RGBA, g.RGBA, g.UNSIGNED_BYTE, frame);
     t.width = frame.displayWidth;
     t.height = frame.displayHeight;
+    // Keep eligibility with these pixels across decoder/metadata resets. null
+    // explicitly rejects new unverified content; undefined keeps standalone use.
+    t.colourVerification = colourVerification;
   }
   uniform(name, value, integer = false) {
     const g = this.gl,
@@ -245,8 +285,12 @@ export class Renderer {
       g.activeTexture(g.TEXTURE0 + index);
       g.bindTexture(g.TEXTURE_2D, sources[name].texture);
       this.uniform("image" + name, index, true);
+      const verification = sources[name].colourVerification;
+      const verified = verification === undefined ? this.colourEnabled
+        : verification !== null && verification === this.colourCalibrationKey;
       this.uniform("colourGain" + name,
-        this.colourEnabled && this.colour[name].enabled ? this.colour[name].gain : [1, 1, 1]);
+        (this.colourRequested ?? this.colourEnabled) && verified && this.colour[name].enabled
+          ? this.colour[name].gain : [1, 1, 1]);
       if (this.calibration)
         this.setCamera(name, this.calibration.cameras[name]);
     }
@@ -260,8 +304,8 @@ export class Renderer {
       this.uniform("rawCenter", layout.center);
       this.uniform("rawDirection", this.viewerRotation[name] === 180 ? -1 : 1);
     }
-    this.uniform("yaw", this.yaw);
-    this.uniform("pitch", this.pitch);
+    const basis = perspectiveBasis(this.yaw, this.pitch, this.roll);
+    this.uniform("viewBasis", this.viewTransform ? multiplyBasis(this.viewTransform, basis) : basis);
     this.uniform("fov", this.fov);
     g.drawArrays(g.TRIANGLES, 0, 6);
   }

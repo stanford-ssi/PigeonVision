@@ -439,3 +439,172 @@ def test_telemetry_only_private_pid(tmp_path):
         assert seen == [record] * 5
     finally:
         receiver.stop()
+
+
+def test_late_audience_joins_paused_replay_without_rewind_and_control_is_owned(transport):
+    """Decode the cached complete GOP while the shared replay stays at its frame."""
+    async def scenario():
+        from pigeonvision.ground.server import PRESENTATION
+        app = create_app(str(transport))
+        runner = web.AppRunner(app)
+        await runner.setup()
+        site = web.TCPSite(runner, "127.0.0.1", 0)
+        await site.start()
+        url = f"http://127.0.0.1:{site._server.sockets[0].getsockname()[1]}/ws"
+
+        async def receive_until(ws, predicate, frames=None, events=None):
+            for _ in range(1000):
+                message = await ws.receive(timeout=3)
+                assert message.type in (WSMsgType.TEXT, WSMsgType.BINARY), message
+                if message.type == WSMsgType.BINARY:
+                    header, payload = unpack_message(message.data)
+                    if frames is not None:
+                        frames.append((header, payload))
+                    continue
+                value = json.loads(message.data)
+                if events is not None:
+                    events.append(value)
+                if value["type"] == "bootstrap_checkpoint":
+                    await ws.send_json({"type": "bootstrap_ack", "id": value["id"], "sequence": value["sequence"]})
+                if predicate(value):
+                    return value
+            pytest.fail("Expected presentation response was not received")
+
+        try:
+            async with ClientSession() as client:
+                async with client.ws_connect(url) as operator:
+                    initial = []
+                    await receive_until(operator, lambda value: value.get("step_complete"), events=initial)
+                    assert any(value.get("can_control") is True for value in initial)
+                    for _ in range(4):
+                        await operator.send_json({"type": "control", "action": "step"})
+                        await receive_until(operator, lambda value: value.get("step_complete"))
+                    receiver = app[RECEIVER]
+                    generation = receiver.generation
+                    position = dict(receiver.metrics["last_pts_us"])
+                    assert not receiver.playing and receiver.steps == 0
+                    async with client.ws_connect(url + "?role=audience") as audience:
+                        frames, events = [], []
+                        await receive_until(audience, lambda value: value["type"] == "bootstrap_end", frames, events)
+                        assert any(value.get("can_control") is False for value in events)
+                        assert receiver.generation == generation and receiver.metrics["last_pts_us"] == position
+                        assert not receiver.playing and receiver.steps == 0
+                        assert len([value for value in events if value["type"] == "bootstrap_checkpoint"]) >= 2
+                        for name in ("A", "B"):
+                            units = [(header, payload) for header, payload in frames if header["camera_id"] == name]
+                            assert len(units) == 5 and units[0][0]["keyframe"]
+                            assert units[-1][0]["timestamp_us"] == position[name]
+                            decoder = av.CodecContext.create("h264", "r")
+                            decoded = []
+                            for header, payload in units:
+                                packet = av.Packet(payload)
+                                packet.pts = header["timestamp_us"]
+                                packet.time_base = Fraction(1, 1_000_000)
+                                decoded.extend(decoder.decode(packet))
+                            decoded.extend(decoder.decode(None))
+                            assert len(decoded) == 5 and decoded[-1].pts == position[name]
+                        for command in ({"type": "control", "action": "play"}, {"type": "claim_control"},
+                                        {"type": "view", "view": {"mode": "b", "yaw": 0, "pitch": 0, "fov": 1}},
+                                        {"type": "reference", "reference": None}):
+                            await audience.send_json(command)
+                            await receive_until(audience, lambda value: value["type"] == "error")
+                        assert receiver.generation == generation and not receiver.playing
+                        async with client.ws_connect(url) as other:
+                            other_events = []
+                            await receive_until(other, lambda value: value["type"] == "bootstrap_end", events=other_events)
+                            assert any(value.get("can_control") is False for value in other_events)
+                            await other.send_json({"type": "claim_control"})
+                            assert (await receive_until(other, lambda value: value["type"] == "control_owner"))["can_control"]
+                            assert not (await receive_until(operator, lambda value: value["type"] == "control_owner"))["can_control"]
+                            await operator.send_json({"type": "control", "action": "step"})
+                            await receive_until(operator, lambda value: value["type"] == "error")
+                            assert receiver.metrics["last_pts_us"] == position
+                            view = {"mode": "perspective", "yaw": .4, "pitch": -.1, "roll": .25, "fov": 1.2, "horizon": False}
+                            await other.send_json({"type": "view", "view": view})
+                            assert (await receive_until(other, lambda value: value["type"] == "view"))["view"] == view
+                            assert (await receive_until(audience, lambda value: value["type"] == "view"))["view"] == view
+                            await other.send_json({"type": "view", "view": {**view, "pitch": 2}})
+                            await receive_until(other, lambda value: value["type"] == "error")
+                            assert app[PRESENTATION].view == view
+                            receiver.messages.put_nowait({"type": "metadata", "record": {"type": "session", "session_id": "test-session"}})
+                            await receive_until(other, lambda value: value["type"] == "metadata")
+                            reference = {"pressure": 100123, "pts": position["A"], "sessionId": "test-session"}
+                            await other.send_json({"type": "reference", "reference": reference})
+                            assert (await receive_until(other, lambda value: value["type"] == "reference"))["reference"] == reference
+                            await other.send_json({"type": "reference"})
+                            await receive_until(other, lambda value: value["type"] == "error")
+                            assert app[PRESENTATION].reference == reference
+                            # A third audience gets the transported session before
+                            # its datum, and receives the accepted view too.
+                            async with client.ws_connect(url + "?role=audience") as late:
+                                cached = []
+                                await receive_until(late, lambda value: value["type"] == "bootstrap_end", events=cached)
+                                start = next(i for i, value in enumerate(cached) if value["type"] == "bootstrap_start")
+                                datum = next(i for i, value in enumerate(cached) if value["type"] == "reference")
+                                assert start < datum and cached[datum]["reference"] == reference
+                                assert cached[start]["metadata"][0]["record"]["session_id"] == "test-session"
+                                cached_view = next(value for value in cached if value["type"] == "view")
+                                assert cached_view["view"] == view and cached_view["initial"] is True
+                        # Ownership returns to the next operator when its owner leaves.
+                        assert (await receive_until(operator, lambda value: value["type"] == "control_owner"))["can_control"]
+        finally:
+            await runner.cleanup()
+    asyncio.run(scenario())
+
+
+def test_ongoing_replay_follows_bootstrap_snapshot_without_missing_or_reordered_units(transport):
+    async def scenario():
+        app = create_app(str(transport))
+        runner = web.AppRunner(app)
+        await runner.setup()
+        site = web.TCPSite(runner, "127.0.0.1", 0)
+        await site.start()
+        url = f"http://127.0.0.1:{site._server.sockets[0].getsockname()[1]}/ws"
+
+        async def receive_until(ws, predicate, units=None, acknowledge=True):
+            for _ in range(1000):
+                message = await ws.receive(timeout=3)
+                assert message.type in (WSMsgType.TEXT, WSMsgType.BINARY), message
+                if message.type == WSMsgType.BINARY:
+                    if units is not None:
+                        units.append(unpack_message(message.data))
+                    continue
+                value = json.loads(message.data)
+                if acknowledge and value["type"] == "bootstrap_checkpoint":
+                    await ws.send_json({"type": "bootstrap_ack", "id": value["id"], "sequence": value["sequence"]})
+                if predicate(value):
+                    return value
+            pytest.fail("Expected bootstrap continuation was not received")
+
+        try:
+            async with ClientSession() as client, client.ws_connect(url) as operator:
+                await receive_until(operator, lambda value: value.get("step_complete"))
+                for _ in range(4):
+                    await operator.send_json({"type": "control", "action": "step"})
+                    await receive_until(operator, lambda value: value.get("step_complete"))
+                async with client.ws_connect(url + "?role=audience") as audience:
+                    units = []
+                    held = await receive_until(audience, lambda value: value["type"] == "bootstrap_checkpoint", units, acknowledge=False)
+                    # Let the entire remainder reach the shared pump while this
+                    # viewer is still waiting at its first cached GOP batch.
+                    await operator.send_json({"type": "control", "action": "play"})
+                    await receive_until(operator, lambda value: value.get("state") == "ended")
+                    generation = app[RECEIVER].generation
+                    position = dict(app[RECEIVER].metrics["last_pts_us"])
+                    await audience.send_json({"type": "bootstrap_ack", "id": held["id"], "sequence": held["sequence"]})
+                    await receive_until(audience, lambda value: value["type"] == "bootstrap_end", units)
+                    assert app[RECEIVER].generation == generation
+                    for name in ("A", "B"):
+                        camera_units = [(header, payload) for header, payload in units if header["camera_id"] == name]
+                        stamps = [header["timestamp_us"] for header, _ in camera_units]
+                        assert len(stamps) == 12 and stamps == sorted(set(stamps))
+                        assert stamps[-1] == position[name]
+                        decoder = av.CodecContext.create("h264", "r")
+                        decoded = []
+                        for _, payload in camera_units:
+                            decoded.extend(decoder.decode(av.Packet(payload)))
+                        decoded.extend(decoder.decode(None))
+                        assert len(decoded) == 12
+        finally:
+            await runner.cleanup()
+    asyncio.run(scenario())

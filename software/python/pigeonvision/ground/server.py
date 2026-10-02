@@ -1,5 +1,6 @@
 """Bounded MPEG-TS receiver and localhost WebSocket/static HTTP service."""
 import asyncio
+from collections import deque
 import json
 import logging
 from pathlib import Path
@@ -13,7 +14,8 @@ import av
 from aiohttp import web, WSMsgType
 
 from .projection import validate_calibration
-from .transport import H264Normalizer, METADATA_PID, VIDEO_PIDS, pts_microseconds, read_metadata
+from .presentation import GroundPresentation, message_size
+from .transport import H264Normalizer, METADATA_PID, VIDEO_PIDS, pts_microseconds, read_metadata, unpack_message
 from .ts_input import TsInput
 from .recording import TransportRecorder
 
@@ -293,7 +295,8 @@ class Receiver:
                     self._clear()
                     for normalizer in normalizers.values():
                         normalizer.waiting_for_keyframe = True
-                    self._put(self.status(reset=True, reason="Receive queue full; waiting for IDRs"))
+                    self._put(self.status(reset=True, preserve_geometry=True,
+                                          reason="Receive queue full; waiting for IDRs"))
                     continue
                 if self.first_unit_at is None:
                     self.first_unit_at = time.monotonic()
@@ -315,6 +318,58 @@ class Receiver:
 RECEIVER = web.AppKey("receiver", Receiver)
 CLIENTS = web.AppKey("clients", set)
 CALIBRATION = web.AppKey("calibration", dict)
+PRESENTATION = web.AppKey("presentation", GroundPresentation)
+
+
+class ViewerConnection:
+    """A joining viewer cannot block the shared pump or drop its own deltas."""
+    MAX_MESSAGES = 256
+    MAX_BYTES = 16 * 1024 * 1024
+
+    def __init__(self, ws, bootstrap_id):
+        self.ws = ws
+        self.bootstrap_id = bootstrap_id
+        self.pending = deque()
+        self.pending_bytes = 0
+        self.wake = asyncio.Event()
+        self.overflowed = False
+        self.checkpoint = None
+        self.ack = None
+        self.task = None
+
+    def enqueue(self, message):
+        if self.overflowed:
+            return False
+        size = message_size(message)
+        if len(self.pending) >= self.MAX_MESSAGES or self.pending_bytes + size > self.MAX_BYTES:
+            self.pending.clear()
+            self.pending_bytes = 0
+            self.overflowed = True
+            return False
+        self.pending.append((message, size))
+        self.pending_bytes += size
+        self.wake.set()
+        return True
+
+    def pop(self):
+        message, size = self.pending.popleft()
+        self.pending_bytes -= size
+        if not self.pending:
+            self.wake.clear()
+        return message
+
+    def batch(self):
+        """At most eight messages and four decode submissions per camera."""
+        counts, result = {"A": 0, "B": 0}, []
+        while self.pending and len(result) < 8:
+            message = self.pending[0][0]
+            name = unpack_message(message)[0]["camera_id"] if isinstance(message, bytes) else None
+            if name in counts:
+                if counts[name] == 4:
+                    break
+                counts[name] += 1
+            result.append(self.pop())
+        return result
 
 
 def create_app(source: str, *, calibration: str | None = None,
@@ -332,41 +387,143 @@ def create_app(source: str, *, calibration: str | None = None,
     async def health(request):
         return web.json_response(app[RECEIVER].status())
 
+    connections = {}
+    app[PRESENTATION] = GroundPresentation()
+    bootstrap_counter = 0
+
+    def enqueue(connection, message):
+        if not connection.enqueue(message) and not connection.ws.closed:
+            # Preserve other viewers and the receiver's wait-for-IDR recovery.
+            # Only the viewer whose complete compressed chain cannot fit closes.
+            asyncio.create_task(connection.ws.close(code=1013, message=b"Viewer too slow; reconnect for keyframes"))
+
+    def broadcast(message):
+        for connection in tuple(connections.values()):
+            enqueue(connection, message)
+
+    def notify_ownership():
+        for ws, connection in tuple(connections.items()):
+            enqueue(connection, {"type": "control_owner", "can_control": app[PRESENTATION].can_control(ws)})
+
+    async def send(ws, message):
+        task = ws.send_bytes(message) if isinstance(message, bytes) else ws.send_json(message)
+        await asyncio.wait_for(task, timeout=.5)
+
+    async def checkpoint(connection, sequence):
+        connection.checkpoint = sequence
+        connection.ack = asyncio.get_running_loop().create_future()
+        try:
+            await send(connection.ws, {"type": "bootstrap_checkpoint", "id": connection.bootstrap_id, "sequence": sequence})
+            await asyncio.wait_for(connection.ack, timeout=3)
+        finally:
+            connection.ack = None
+            connection.checkpoint = None
+
+    async def deliver(connection, initial, records, video, reference):
+        try:
+            for message in initial:
+                await send(connection.ws, message)
+            await send(connection.ws, {"type": "bootstrap_start", "id": connection.bootstrap_id, "metadata": records})
+            # Apply the transported session before the pressure datum that uses it.
+            await send(connection.ws, {"type": "reference", "reference": reference})
+            sequence = 0
+            snapshot = ViewerConnection(connection.ws, connection.bootstrap_id)
+            for message in video:
+                if not snapshot.enqueue(message):
+                    raise RuntimeError("Late-join snapshot exceeded its bounded queue")
+            while snapshot.pending:
+                for message in snapshot.batch():
+                    await send(connection.ws, message)
+                sequence += 1
+                await checkpoint(connection, sequence)
+            # The pump continued while the snapshot decoded. Drain that strictly
+            # ordered continuation with the same limits before normal streaming.
+            while connection.pending:
+                for message in connection.batch():
+                    await send(connection.ws, message)
+                sequence += 1
+                await checkpoint(connection, sequence)
+            await send(connection.ws, {"type": "bootstrap_end", "id": connection.bootstrap_id})
+            while True:
+                await connection.wake.wait()
+                while connection.pending:
+                    await send(connection.ws, connection.pop())
+        except (ConnectionError, asyncio.TimeoutError, RuntimeError):
+            await connection.ws.close(code=1013, message=b"Viewer too slow; reconnect for keyframes")
+
     async def websocket(request):
+        nonlocal bootstrap_counter
+        role = request.query.get("role", "operator")
+        if role not in {"operator", "audience"}:
+            raise web.HTTPBadRequest(text="Unknown ground viewer role")
         ws = web.WebSocketResponse(heartbeat=10, max_msg_size=16384)
         await ws.prepare(request)
+        receiver, presentation = app[RECEIVER], app[PRESENTATION]
+        bootstrap_counter += 1
+        connection = ViewerConnection(ws, bootstrap_counter)
         app[CLIENTS].add(ws)
-        receiver = app[RECEIVER]
-        await ws.send_json(receiver.status(reset=True))
-        await ws.send_json({"type": "calibration", "calibration": app.get(CALIBRATION)})
-        if receiver.replay:
-            receiver.control("restart")
+        connections[ws] = connection
+        presentation.join(ws, role)
+        # Snapshot and registration are synchronous on this loop. Messages the
+        # pump accepts after this point enter the viewer's continuation queue.
+        records, video = presentation.cache.bootstrap_parts()
+        initial = [receiver.status(reset=True),
+                   {"type": "calibration", "calibration": app.get(CALIBRATION)},
+                   {"type": "control_owner", "can_control": presentation.can_control(ws)}]
+        if presentation.view is not None:
+            initial.append({"type": "view", "view": presentation.view, "initial": True})
+        connection.task = asyncio.create_task(deliver(connection, initial, records, video, presentation.reference))
+        if receiver.replay and not presentation.viewer_started:
+            presentation.viewer_started = True
+            # Load only the first pair. Reconnecting and late joining use the
+            # cache and never restart, resume, or advance an established replay.
+            if not receiver.playing and not any(presentation.cache.video.values()):
+                receiver.control("step")
         try:
             async for message in ws:
                 if message.type == WSMsgType.TEXT:
                     try:
                         value = json.loads(message.data)
-                        if value.get("type") != "control":
-                            raise ValueError("Expected ground playback control")
-                        receiver.control(value.get("action", ""))
-                        await ws.send_json(receiver.status())
-                    except (ValueError, AttributeError) as exc:
-                        await ws.send_json({"type": "error", "message": str(exc)})
+                        if not isinstance(value, dict):
+                            raise ValueError("Expected ground presentation control")
+                        kind = value.get("type")
+                        if kind == "bootstrap_ack":
+                            if (type(value.get("id")) is int and value["id"] == connection.bootstrap_id and
+                                    type(value.get("sequence")) is int and value["sequence"] == connection.checkpoint and
+                                    connection.ack is not None and not connection.ack.done()):
+                                connection.ack.set_result(None)
+                        elif kind == "claim_control":
+                            presentation.claim_control(ws)
+                            notify_ownership()
+                        elif kind == "control":
+                            presentation.require_control(ws)
+                            receiver.control(value.get("action", ""))
+                            broadcast(receiver.status())
+                        elif kind == "view":
+                            broadcast(presentation.set_view(ws, value.get("view")))
+                        elif kind == "reference":
+                            if "reference" not in value:
+                                raise ValueError("Expected pad pressure reference")
+                            broadcast(presentation.set_reference(ws, value["reference"]))
+                        else:
+                            raise ValueError("Unknown ground presentation control")
+                    except (ValueError, AttributeError, TypeError) as exc:
+                        enqueue(connection, {"type": "error", "message": str(exc)})
                 elif message.type == WSMsgType.ERROR:
                     break
         finally:
             app[CLIENTS].discard(ws)
+            connections.pop(ws, None)
+            if presentation.leave(ws):
+                notify_ownership()
+            connection.task.cancel()
+            try:
+                await connection.task
+            except asyncio.CancelledError:
+                pass
             if receiver.replay and not app[CLIENTS]:
                 receiver.control("pause")
         return ws
-
-    async def send(ws, message):
-        try:
-            task = ws.send_bytes(message) if isinstance(message, bytes) else ws.send_json(message)
-            await asyncio.wait_for(task, timeout=.5)
-        except (ConnectionError, asyncio.TimeoutError, RuntimeError):
-            app[CLIENTS].discard(ws)
-            await ws.close(code=1013, message=b"Viewer too slow; reconnect for keyframes")
 
     async def pump():
         while True:
@@ -374,7 +531,11 @@ def create_app(source: str, *, calibration: str | None = None,
                 message = await asyncio.to_thread(app[RECEIVER].messages.get, True, .25)
             except queue.Empty:
                 continue
-            await asyncio.gather(*(send(ws, message) for ws in tuple(app[CLIENTS])))
+            reference_change = app[PRESENTATION].accept(message)
+            if app[PRESENTATION].should_relay(message):
+                broadcast(message)
+            if reference_change is not None:
+                broadcast(reference_change)
 
     async def close_clients(application):
         # Shutdown precedes aiohttp's wait for active request handlers. Closing
@@ -393,6 +554,11 @@ def create_app(source: str, *, calibration: str | None = None,
         except asyncio.CancelledError:
             pass
 
+    async def revalidate_assets(request, response):
+        if request.path.startswith("/static/"):
+            response.headers["Cache-Control"] = "no-cache"
+
+    app.on_response_prepare.append(revalidate_assets)
     app.on_shutdown.append(close_clients)
     app.cleanup_ctx.append(lifecycle)
     app.router.add_get("/", index)

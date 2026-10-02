@@ -11,23 +11,26 @@ const assets = path.resolve(__dirname, '../python/pigeonvision/ground/static');
     const page = await browser.newPage({viewport:{width:1440,height:1000}});
     const errors = [];
     page.on('pageerror', e => errors.push(e.message));
-    await page.route('http://127.0.0.1:9876/**', route => {
+    await page.route('http://127.0.0.1:8773/**', route => {
       const resource = new URL(route.request().url()).pathname;
       const file = resource === '/' ? 'index.html' : resource.replace(/^\/static\//,'');
       if (file === 'favicon.ico') return route.fulfill({status:204});
       if (file.includes('..')) return route.abort();
-      return route.fulfill({body:fs.readFileSync(path.join(assets,file)),contentType:file.endsWith('.js')?'application/javascript':file.endsWith('.css')?'text/css':'text/html'});
+      return route.fulfill({body:fs.readFileSync(path.join(assets,file)),contentType:file.endsWith('.js')?'application/javascript':file.endsWith('.css')?'text/css':file.endsWith('.ttf')?'font/ttf':file.endsWith('.png')?'image/png':'text/html'});
     });
     await page.addInitScript(() => {
       window.WebSocket = class {
         static OPEN = 1;
-        constructor() { this.readyState=1; window.testSocket=this; queueMicrotask(()=>this.onopen?.()); }
-        send() { throw Error('Mocked telemetry reset check must not send outbound controls'); }
+        constructor() { this.readyState=1; window.testSocket=this; queueMicrotask(() => { this.onopen?.(); this.onmessage?.({ data: JSON.stringify({ type: "control_owner", can_control: true }) }); }); }
+        send(message) { if (JSON.parse(message).type !== "view") throw Error("Only ground view publications are expected in this fixture"); }
         close() { this.readyState=3; this.onclose?.(); }
       };
     });
-    await page.goto('http://127.0.0.1:9876/');
-    await page.waitForFunction(()=>window.pigeonGround?.snapshot().connected);
+    await page.goto('http://127.0.0.1:8773/');
+    await page.waitForFunction(() => window.pigeonGround?.snapshot().connected && window.pigeonGround.snapshot().station.controlling);
+    await page.locator("#controls-toggle").click();
+    await page.locator("#operator-controls").waitFor({ state: "visible" });
+    await page.locator("#advanced-controls > summary").click();
     await page.selectOption('#view','b');
     await page.click('#rotate-view');
     const before = await page.evaluate(()=>window.pigeonGround.snapshot());

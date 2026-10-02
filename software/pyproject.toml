@@ -29,7 +29,7 @@ pv = "pigeonvision.cli:main"
 where = ["python"]
 
 [tool.setuptools.package-data]
-"pigeonvision.ground" = ["static/*"]
+"pigeonvision.ground" = ["static/*", "static/fonts/*.ttf", "static/fonts/OFL.txt"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

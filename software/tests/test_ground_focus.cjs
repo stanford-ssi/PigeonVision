@@ -81,3 +81,34 @@ test("rotated focus panning follows the pointer without changing source crop bou
     }
   }
 });
+
+
+test("perspective roll rotates the screen basis about the unchanged optical axis", async () => {
+  const { perspectiveBasis } = await modulePromise;
+  const dot = (a, b) => a.reduce((sum, value, i) => sum + value * b[i], 0);
+  const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+  const basis = (yaw, pitch, roll) => {
+    const matrix = perspectiveBasis(yaw, pitch, roll);
+    return [matrix.slice(0, 3), matrix.slice(3, 6), matrix.slice(6, 9)];
+  };
+  assert.deepEqual(perspectiveBasis(0, 0), perspectiveBasis(0, 0, 0));
+  const [right90, up90, forward90] = basis(0, 0, Math.PI / 2);
+  [0, 1, 0].forEach((value, i) => near(right90[i], value));
+  [1, 0, 0].forEach((value, i) => near(up90[i], value));
+  assert.deepEqual(forward90, [0, -0, 1]);
+  for (const [yaw, pitch] of [[0, 0], [.8, -.6], [-2.4, 1.5]]) {
+    const [right0, up0, forward] = basis(yaw, pitch, 0);
+    for (const roll of [-Math.PI, -.7, 0, .7, Math.PI]) {
+      const [right, up, center] = basis(yaw, pitch, roll);
+      for (const vector of [right, up, center]) near(dot(vector, vector), 1);
+      near(dot(right, up), 0); near(dot(right, center), 0); near(dot(up, center), 0);
+      center.forEach((value, i) => near(value, forward[i]));
+      // Rodrigues rotation around forward, independently expressed as a cross
+      // product, must match both screen axes even near a vertical look angle.
+      for (const [before, after] of [[right0, right], [up0, up]]) {
+        const tangent = cross(forward, before);
+        after.forEach((value, i) => near(value, before[i] * Math.cos(roll) + tangent[i] * Math.sin(roll)));
+      }
+    }
+  }
+});

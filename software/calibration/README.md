@@ -1,7 +1,36 @@
 # Lens calibration and the initial panorama
 
-The bench has preliminary Mei lens fits and a nominal opposed-camera panorama;
-held-out lens/seam accuracy and measured rig alignment remain incomplete. See the
+## Saved bench setup
+
+[October 2 configuration](bench-2026-10-02/) preserves the accepted live view:
+full 2064×1552 capture, Camera A physically rolled 180°, refined lens models,
+separate A/B colour gains and fixed ISP contrast. Both colour strengths are 100%.
+The viewer uses narrow feathering with a 48-pixel crop-edge fade.
+
+On the CM5, set `udp_destination` in `capture.json` to the ground computer, then
+run from the repository root:
+
+```sh
+LIBCAMERA_RPI_TUNING_FILE="$PWD/software/calibration/bench-2026-10-02/fr_imx900-fixed-contrast.json" \
+  build/flight/pv-capture --config software/calibration/bench-2026-10-02/capture.json
+```
+
+On the ground computer:
+
+```sh
+pv view udp://0.0.0.0:1234 --no-browser \
+  --calibration software/calibration/bench-2026-10-02/calibration.json
+```
+
+Open `http://localhost:8768/`. Recording is off; each capture run gets a new session
+directory. Exposure and colour suit the current indoor lighting. Lens checks use
+held-out images; precise rig alignment and flight-lighting calibration remain
+unfinished. Source images and fitting records stay in the local `build/` archive.
+
+## Calibration workflow
+
+The bench has measured Mei lens fits and a nominal opposed-camera panorama;
+edge/seam accuracy and measured rig alignment remain incomplete. See the
 [bench evidence](../bench-notes/2026-09-25.md) for results. This guide covers
 collection, independent lens fitting and the initial preview; detailed paired
 alignment is in [rig-alignment.md](rig-alignment.md).

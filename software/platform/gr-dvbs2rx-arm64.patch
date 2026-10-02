@@ -1,0 +1,10 @@
+--- a/lib/ldpc_decoder/CMakeLists.txt
++++ b/lib/ldpc_decoder/CMakeLists.txt
+@@ -1,6 +1,6 @@
+ if(CMAKE_SYSTEM_PROCESSOR MATCHES "(^arm)|(^aarch64)")
+   add_library(ldpc_decoder_neon STATIC ldpc_decoder_neon.cc)
+-  if(NOT CMAKE_SYSTEM_PROCESSOR MATCHES "(^aarch64)")
++  if(NOT CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64|arm64)")
+     target_compile_options(ldpc_decoder_neon PRIVATE -mfpu=neon)
+   endif()
+   list(APPEND LDPC_LIBS ldpc_decoder_neon)

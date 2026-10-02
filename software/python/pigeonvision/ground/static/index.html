@@ -2,244 +2,196 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="theme-color" content="#e9e5db" />
-    <title>PigeonVision · Optical bench</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <meta name="theme-color" content="#080a0c" />
+    <title>PigeonVision · Ground station</title>
     <link rel="stylesheet" href="/static/style.css" />
   </head>
   <body>
-    <div class="bench-app">
-    <header class="masthead">
-      <div class="identity">
-        <img class="brand-mark" src="/static/pigeonvision.png" width="44" height="44" alt="" />
-        <div class="wordmark">
-          <strong>PigeonVision<span class="brand-stop">.</span></strong
-          ><span>GROUND IMAGING SYSTEM</span>
-        </div>
-      </div>
-      <div class="station-label">
-        <span>OPTICAL BENCH</span><span>IMX900 / CM5</span>
-      </div>
-      <div class="connection-status">
-        <span class="status-tick" aria-hidden="true"></span
-        ><span id="connection" role="status">Connecting…</span>
-      </div>
-    </header>
+    <div class="ground-app">
+      <main class="viewport" aria-label="Ground station camera view">
+        <canvas id="image" tabindex="0" aria-label="Camera image; drag to look around and scroll to zoom"></canvas>
+        <div class="stage-shade" aria-hidden="true"></div>
+        <div id="overlay" role="status">Waiting for camera data</div>
+      </main>
 
-    <main class="workbench">
-      <section class="image-column" aria-label="Camera inspection">
-        <div class="image-heading">
-          <span class="eyebrow">IMAGE PLANE</span><span id="source-type"></span>
+      <header class="masthead">
+        <div class="identity" aria-label="PigeonVision">
+          <img class="brand-mark" src="/static/pigeonvision.png" width="42" height="42" alt="" />
+          <span class="wordmark">PigeonVision</span>
         </div>
-        <div class="viewport">
-          <canvas
-            id="image"
-            tabindex="0"
-            aria-label="Camera image; drag to inspect and scroll to zoom"
-          ></canvas>
-          <div id="overlay">Waiting for camera data</div>
-          <span class="frame-corner top-left" aria-hidden="true"></span
-          ><span class="frame-corner top-right" aria-hidden="true"></span>
-          <span class="frame-corner bottom-left" aria-hidden="true"></span
-          ><span class="frame-corner bottom-right" aria-hidden="true"></span>
-        </div>
-        <div class="image-caption">
-          <span class="caption-marker" aria-hidden="true"></span
-          ><span id="view-caption">Raw view</span
-          ><span class="image-hint">DRAG / SCROLL</span>
-        </div>
-        <div
-          class="playback"
-          id="playback"
-          hidden
-          aria-label="Recording playback"
-        >
-          <div class="playback-buttons">
-            <button data-action="restart">Restart</button
-            ><button data-action="play" class="primary-button">Play</button
-            ><button data-action="pause">Pause</button
-            ><button data-action="step">Step pair</button>
+
+        <section id="hud-view-direction" class="direction-hud" aria-label="View direction relative to the camera body">
+          <div class="bearing-labels" aria-hidden="true"><span id="hud-bearing-left">B</span><span id="hud-bearing-center">A</span><span id="hud-bearing-right">B</span></div>
+          <div id="hud-bearing" class="bearing-track" role="img" aria-label="Body-relative view direction unavailable">
+            <span id="hud-bearing-window" class="bearing-window" hidden></span>
+            <span id="hud-bearing-wrap" class="bearing-window" hidden></span>
+            <span id="hud-bearing-marker" class="bearing-marker"></span>
+            <span class="bearing-axis" aria-hidden="true"></span>
           </div>
-          <span id="position">No frame yet</span>
+          <div class="bearing-caption"><span id="hud-direction">A / 0°</span><span id="hud-fov">BODY RELATIVE</span></div>
+          <div class="pitch-readout">
+            <div class="pitch-meter" aria-hidden="true"><span id="hud-pitch-marker"></span></div>
+            <div><span class="hud-label">PITCH</span><output id="hud-pitch">0°</output></div>
+          </div>
+        </section>
+
+        <div class="station-status">
+          <div class="broadcast-status"><span id="hud-feed-mode">LIVE</span><span id="hud-simulated" hidden>SIMULATED</span></div>
+          <div class="connection-status"><span class="status-dot" aria-hidden="true"></span><span id="connection" role="status">Connecting…</span></div>
+          <span id="hud-link-state" class="link-state">VIDEO WAITING</span>
         </div>
-        <div class="camera-readouts">
-          <section aria-labelledby="camera-a-heading">
-            <h2 id="camera-a-heading">
-              <span class="camera-letter">A</span><span>CAMERA A</span>
-            </h2>
-            <pre id="camera-a">Waiting for IDR</pre>
+      </header>
+
+      <section class="mission-hud" aria-label="Mission telemetry">
+        <div class="flight-readouts">
+          <section class="clock-readout" aria-label="Mission clock and barometric altitude history">
+            <svg class="altitude-plot" viewBox="0 0 220 65" role="img" aria-labelledby="hud-plot-title">
+              <title id="hud-plot-title">Barometric altitude history; no data</title>
+              <path class="plot-grid" d="M1 64H219 M44 15V64 M88 15V64 M132 15V64 M176 15V64" />
+              <path id="hud-altitude-plot" class="plot-line" d="" />
+              <circle id="hud-altitude-dot" class="plot-dot" r="2.5" hidden />
+            </svg>
+            <span class="hud-label">T+ <span class="label-detail">(FC RX)</span></span>
+            <output id="hud-clock" class="mission-clock">—</output>
+            <span id="hud-phase" class="mission-phase">UNKNOWN</span>
           </section>
-          <section aria-labelledby="camera-b-heading">
-            <h2 id="camera-b-heading">
-              <span class="camera-letter">B</span><span>CAMERA B</span>
-            </h2>
-            <pre id="camera-b">Waiting for IDR</pre>
+
+          <section class="altitude-readout" aria-label="Barometric altitude above pad reference">
+            <svg class="flight-curves" viewBox="0 0 1000 160" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M0 156 Q90 55 264 12 M276 10 L290 8 M710 8 L724 10 M736 12 Q910 55 1000 156" />
+            </svg>
+            <span class="hud-label">BARO AGL</span>
+            <div class="altitude-value"><output id="hud-altitude">—</output><span class="unit">m</span></div>
+            <span id="hud-pressure-status" class="telemetry-note">NO PAD REFERENCE</span>
+          </section>
+
+          <section class="speed-readout" aria-label="Barometric vertical speed">
+            <span class="hud-label">BARO VERTICAL SPEED</span>
+            <div class="speed-value"><output id="hud-speed">—</output><span class="unit">m/s</span></div>
           </section>
         </div>
+
+        <ol class="event-rail" aria-label="Received flight events">
+          <li data-event="LAUNCH"><span class="event-marker" aria-hidden="true"></span><span class="event-name">LAUNCH</span><span class="event-time">—</span></li>
+          <li data-event="APOGEE"><span class="event-marker" aria-hidden="true"></span><span class="event-name">APOGEE</span><span class="event-time">—</span></li>
+          <li data-event="DEPLOYMENT"><span class="event-marker" aria-hidden="true"></span><span class="event-name">DEPLOYMENT</span><span class="event-time">—</span></li>
+          <li data-event="LANDED"><span class="event-marker" aria-hidden="true"></span><span class="event-name">LANDED</span><span class="event-time">—</span></li>
+        </ol>
       </section>
 
-      <aside class="control-rail" aria-label="Inspection controls">
-        <div class="rail-heading">
-          <span class="eyebrow">INSPECTION CONTROLS</span>
-          <h1 id="view-heading">Lens inspection</h1>
-          <p id="view-description">Select a camera, then inspect its field.</p>
+      <div id="error" role="alert" hidden></div>
+
+      <footer class="station-toolbar">
+        <div class="view-caption"><span class="view-dot" aria-hidden="true"></span><span id="view-caption">Raw view</span></div>
+        <div class="pilot-row ownership-control" aria-label="Ground view control">
+          <span id="pilot-status" role="status">Connecting…</span>
+          <button id="take-control" type="button" hidden>Take control</button>
         </div>
-        <section class="control-section">
-          <div class="section-heading">
-            <span class="section-number" aria-hidden="true">01</span>
-            <h2>Source</h2>
-          </div>
-          <label class="field-label" for="view">Viewing mode</label>
+        <a class="audience-return" href="/">Operator view</a>
+        <div class="toolbar-actions">
+          <button id="fullscreen" class="icon-button" type="button" aria-label="Enter fullscreen" title="Fullscreen"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 2H2V7M13 2H18V7M2 13V18H7M18 13V18H13" /></svg></button>
+          <button id="controls-toggle" type="button" aria-label="Controls" aria-controls="operator-controls" aria-expanded="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5H17M3 10H17M3 15H17M7 3V7M13 8V12M8 13V17" /></svg><span>Controls</span></button>
+        </div>
+      </footer>
+
+      <aside id="operator-controls" class="control-drawer" aria-label="Operator controls">
+        <div class="drawer-heading">
+          <div><span class="eyebrow">CONTROLS</span><h1 id="view-heading">Camera A</h1></div>
+          <button id="audience-open" type="button" aria-label="Open audience view">Audience <span aria-hidden="true">↗</span></button>
+          <p id="view-description" hidden></p>
+        </div>
+        <section class="control-section view-controls">
+          <label class="field-label" for="view">View</label>
           <select id="view">
             <option value="a">A / Camera A</option>
             <option value="b">B / Camera B</option>
-            <option value="perspective" disabled>
-              Look around · drag and zoom
-            </option>
+            <option value="perspective" disabled>Look around</option>
             <option value="sphere" disabled>360° panorama</option>
             <option value="mask" disabled>Source coverage</option>
           </select>
-        </section>
-        <section id="colour-controls" class="control-section" hidden>
-          <div class="section-heading"><h2>Colour match</h2></div>
-          <button id="colour-toggle" type="button" aria-pressed="false">Match camera colours</button>
-          <p id="colour-status" role="status" class="control-hint"></p>
-          <fieldset class="colour-strength-controls">
-            <legend class="field-label">Balance strength</legend>
-            <label class="colour-strength" for="colour-strength-a">
-              <span>A</span>
-              <input id="colour-strength-a" type="range" min="0" max="100" step="1" value="100" disabled aria-label="Camera A balance strength" />
-              <output id="colour-strength-value-a" for="colour-strength-a">100%</output>
+          <div class="horizon-control">
+            <label class="horizon-toggle" title="Uses attitude matched to the video timestamp. Exact demo scene attitude is available; live attitude support is pending.">
+              <input id="horizon-lock" type="checkbox" disabled />
+              <span>Level horizon</span>
             </label>
-            <label class="colour-strength" for="colour-strength-b">
-              <span>B</span>
-              <input id="colour-strength-b" type="range" min="0" max="100" step="1" value="100" disabled aria-label="Camera B balance strength" />
-              <output id="colour-strength-value-b" for="colour-strength-b">100%</output>
-            </label>
-          </fieldset>
-          <p id="colour-strength-hint" class="control-hint">0% removes the balance. Toggle shows originals.</p>
-          <p class="control-hint">Preview only; recordings keep their original colour. Recheck after lighting changes.</p>
-        </section>
-        <section class="control-section inspection-controls">
-          <div class="section-heading">
-            <span class="section-number" aria-hidden="true">02</span>
-            <h2>Inspect</h2>
+            <span id="horizon-status" class="horizon-status" role="status">Needs timed attitude</span>
           </div>
-          <label id="focus-control" class="focus-control"
-            ><span class="field-label">Focus zoom</span
-            ><output id="focus-value" for="focus-zoom">1×</output
-            ><input
-              id="focus-zoom"
-              type="range"
-              min="1"
-              max="8"
-              step="0.1"
-              value="1"
-              aria-label="Focus zoom"
-            /><span class="range-endpoints" aria-hidden="true"
-              ><span>1× / FULL FRAME</span><span>8× / DETAIL</span></span
-            ></label
-          >
-          <div id="raw-orientation" class="orientation-control">
-            <div class="orientation-label"><span class="field-label">Display rotation</span><output id="orientation-value">0°</output></div>
-            <button id="rotate-view" type="button" aria-pressed="false">Rotate 180°</button>
-          </div>
-          <div id="perspective-controls" class="perspective-control" hidden>
-            <div class="perspective-readout">
-              <span class="field-label">Look-around zoom</span>
-              <output id="perspective-zoom-value">1.00×</output>
-            </div>
-            <output id="perspective-fov-value">110.0° horizontal FOV</output>
-            <button id="perspective-save-default" type="button">Use as default</button>
-            <p id="perspective-default-status" class="control-hint" role="status"></p>
-          </div>
-          <button id="home" class="reset-button">
-            <span aria-hidden="true">↶</span> Reset view
-          </button>
-          <p class="control-hint">
-            Scroll to magnify. Drag to inspect the centre and edges while
-            adjusting the lens.
-          </p>
+          <div id="view-presets" class="view-presets" aria-label="Body-relative views"></div>
+          <p class="navigation-hint">WASD / arrows · Q/E roll · Shift fine · 1–9 views</p>
         </section>
 
-        <div id="error" role="alert" hidden></div>
-
-        <details class="rail-details">
-          <summary>
-            <span>Projection &amp; pairing</span
-            ><span class="detail-indicator" aria-hidden="true">+</span>
-          </summary>
-          <div class="detail-content">
-            <label class="field-label" for="seam">Overlap seam</label
-            ><select id="seam">
-              <option value="0">Narrow feather</option>
-              <option value="1">Hard boundary</option>
-              <option value="2">Prefer A</option>
-              <option value="3">Prefer B</option>
-            </select>
-            <label class="inline-field" for="max-skew"
-              ><span>Maximum pairing gap</span
-              ><span class="number-unit"
-                ><input
-                  id="max-skew"
-                  type="number"
-                  min="0.05"
-                  max="100"
-                  step="0.1"
-                  value="16.7"
-                /><span>ms</span></span
-              ></label
-            >
-            <pre id="pair">No pair</pre>
-            <p class="detail-note">
-              Projection is at infinity. Nearby objects can disagree across the
-              seam. Timestamp agreement does not verify simultaneous exposures.
-            </p>
+        <div class="playback control-section" id="playback" hidden aria-label="Recording playback">
+          <div class="playback-buttons">
+            <button data-action="restart" type="button">Restart</button>
+            <button data-action="play" type="button">Play</button>
+            <button data-action="pause" type="button">Pause</button>
+            <button data-action="step" type="button" aria-label="Step frame pair">Step</button>
           </div>
-        </details>
-        <details class="rail-details calibration-details">
-          <summary>
-            <span>Calibration</span
-            ><span class="detail-indicator" aria-hidden="true">+</span>
-          </summary>
-          <div class="detail-content">
-            <p id="calibration">
-              Uncalibrated: raw cameras are available. A measured calibration
-              bundle is required for the panorama.
-            </p>
-          </div>
-        </details>
-        <details class="rail-details" open>
-          <summary><span>Flight telemetry</span><span class="detail-indicator" aria-hidden="true">+</span></summary>
-          <div class="detail-content"><pre id="flight-telemetry">Waiting for telemetry.</pre></div>
-        </details>
-        <details class="rail-details metadata-details">
-          <summary>
-            <span>Capture metadata</span
-            ><span class="detail-indicator" aria-hidden="true">+</span>
-          </summary>
-          <div class="detail-content">
-            <span class="field-label">Receiver</span>
-            <pre id="receiver"></pre>
-            <span class="field-label metadata-label">Capture</span>
-            <pre id="metadata">No transported capture metadata received.</pre>
-          </div>
-        </details>
-        <div class="rail-footnote">
-          <span class="crosshair" aria-hidden="true">⌖</span
-          ><span
-            >Focus is adjusted on the lens.<br />Zoom changes this view
-            only.</span
-          >
+          <span id="position" hidden>No frame yet</span>
         </div>
+
+        <section class="control-section pad-controls">
+          <button id="pad-reference" type="button" class="wide-button">Set barometric zero</button>
+          <span id="pad-status" role="status" class="compact-status">PAD pressure required</span>
+        </section>
+
+        <details id="advanced-controls" class="advanced-controls rail-details">
+          <summary><span>Advanced</span><span class="advanced-caption">Optics &amp; diagnostics</span><span class="detail-indicator" aria-hidden="true">+</span></summary>
+          <div class="advanced-content">
+            <section class="extra-view-controls">
+              <span class="field-label">Saved views</span>
+              <div id="extra-presets" class="view-presets" aria-label="Additional saved views"></div>
+            </section>
+
+            <section class="control-section optical-controls">
+              <div class="section-heading"><h2>Optical bench</h2></div>
+              <label id="focus-control" class="focus-control">
+                <span class="field-label">Focus zoom</span>
+                <output id="focus-value" for="focus-zoom">1×</output>
+                <input id="focus-zoom" type="range" min="1" max="8" step="0.1" value="1" aria-label="Focus zoom" />
+              </label>
+              <div id="raw-orientation" class="orientation-control">
+                <div class="orientation-label"><span class="field-label">Display rotation</span><output id="orientation-value">0°</output></div>
+                <button id="rotate-view" type="button" aria-pressed="false">Rotate 180°</button>
+              </div>
+              <div id="perspective-controls" class="perspective-control" hidden>
+                <div class="perspective-readout"><span class="field-label">Look-around zoom</span><output id="perspective-zoom-value">1.00×</output></div>
+                <output id="perspective-fov-value">110.0° horizontal FOV</output>
+                <button id="perspective-save-default" type="button">Use as default</button>
+                <p id="perspective-default-status" class="compact-status" role="status"></p>
+              </div>
+              <button id="home" type="button" class="wide-button">Reset view</button>
+            </section>
+
+            <section id="colour-controls" class="control-section" hidden>
+              <div class="section-heading"><h2>Colour match</h2></div>
+              <button id="colour-toggle" type="button" aria-pressed="false">Match camera colours</button>
+              <p id="colour-status" role="status" class="compact-status"></p>
+              <fieldset class="colour-strength-controls">
+                <legend class="field-label">Strength</legend>
+                <label class="colour-strength" for="colour-strength-a"><span>A</span><input id="colour-strength-a" type="range" min="0" max="100" step="1" value="100" disabled aria-label="Camera A balance strength" /><output id="colour-strength-value-a" for="colour-strength-a">100%</output></label>
+                <label class="colour-strength" for="colour-strength-b"><span>B</span><input id="colour-strength-b" type="range" min="0" max="100" step="1" value="100" disabled aria-label="Camera B balance strength" /><output id="colour-strength-value-b" for="colour-strength-b">100%</output></label>
+              </fieldset>
+              <p id="colour-strength-hint" hidden></p>
+            </section>
+
+            <details class="rail-details">
+              <summary>Projection &amp; pairing <span class="detail-indicator" aria-hidden="true">+</span></summary>
+              <div class="detail-content">
+                <label class="field-label" for="seam">Overlap seam</label>
+                <select id="seam"><option value="0" selected>Narrow feather</option><option value="1">Hard boundary</option><option value="2">Prefer A</option><option value="3">Prefer B</option></select>
+                <label class="inline-field" for="max-skew"><span>Maximum pairing gap</span><span class="number-unit"><input id="max-skew" type="number" min="0.05" max="100" step="0.1" value="16.7" /><span>ms</span></span></label>
+                <pre id="pair">No pair</pre>
+              </div>
+            </details>
+            <details class="rail-details"><summary>Calibration <span class="detail-indicator" aria-hidden="true">+</span></summary><div class="detail-content"><p id="calibration">Awaiting calibration.</p></div></details>
+            <details class="rail-details"><summary>Flight telemetry <span class="detail-indicator" aria-hidden="true">+</span></summary><div class="detail-content"><pre id="flight-telemetry">Waiting for telemetry.</pre></div></details>
+            <details class="rail-details"><summary>Camera diagnostics <span class="detail-indicator" aria-hidden="true">+</span></summary><div class="detail-content camera-readouts"><section aria-labelledby="camera-a-heading"><h2 id="camera-a-heading">CAMERA A</h2><pre id="camera-a">Waiting for IDR</pre></section><section aria-labelledby="camera-b-heading"><h2 id="camera-b-heading">CAMERA B</h2><pre id="camera-b">Waiting for IDR</pre></section></div></details>
+            <details class="rail-details"><summary>Capture metadata <span class="detail-indicator" aria-hidden="true">+</span></summary><div class="detail-content"><span id="source-type"></span><span class="field-label metadata-label">Receiver</span><pre id="receiver"></pre><span class="field-label metadata-label">Capture</span><pre id="metadata">No transported capture metadata received.</pre></div></details>
+          </div>
+        </details>
       </aside>
-    </main>
-    <footer class="bench-footer">
-      <span
-        >PIGEON VISION<span class="footer-rule" aria-hidden="true"></span
-        >STANFORD SSI</span
-      ><span>DUAL CAMERA / GROUND VIEW</span>
-    </footer>
     </div>
     <script type="module" src="/static/app.js"></script>
   </body>
