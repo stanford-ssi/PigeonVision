@@ -37,6 +37,7 @@ The mounting footprint includes the [official CM5 STEP model](https://pip.raspbe
 | Camera LDO | TLV75801PDRVR | C2876308 |
 | Input controller | LM74502DDFR | C3236215 |
 | Battery monitor | INA226AIDGSR | C49851 |
+| Battery-current shunt | WSL25125L000FEA18 | C844694 |
 | Camera I²C | TCA9406DCUR | C840107 |
 | Camera reset/sync | SN74AXC4T245PWR | C2867798 |
 | Ethernet ESD | TPD4EUSB30DQAR | C90627 |

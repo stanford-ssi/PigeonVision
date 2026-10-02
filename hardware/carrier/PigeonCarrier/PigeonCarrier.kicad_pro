@@ -632,7 +632,7 @@
         "uuid": "6c8da0f4-34cf-43b9-a25b-857048b8016b"
       }
     ],
-    "used_designators": "D1,C1,#PWR1-2,Q1,U1-4",
+    "used_designators": "",
     "variants": []
   },
   "sheets": [
@@ -666,7 +666,15 @@
     ],
     [
       "5cfee8fd-be42-4d20-a596-3803ac02496d",
-      "VBAT->5V_SDR"
+      "VBAT->5V_RF"
+    ],
+    [
+      "17555969-2eda-43db-b79c-7f717ad137dd",
+      "5V_MAIN -> Cam Regs"
+    ],
+    [
+      "3fd690c9-ba8e-46b1-b510-ac104a57139b",
+      "Yapogee_Interface"
     ]
   ],
   "text_variables": {},

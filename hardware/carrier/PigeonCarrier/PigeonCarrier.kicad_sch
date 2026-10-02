@@ -5,6 +5,187 @@
 	(uuid "6c8da0f4-34cf-43b9-a25b-857048b8016b")
 	(paper "A4")
 	(lib_symbols
+		(symbol "Connector:Conn_01x02_Pin"
+			(pin_names
+				(offset 1.016)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "J"
+				(at 0 2.54 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "Conn_01x02_Pin"
+				(at 0 -5.08 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Generic connector, single row, 01x02, script generated"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_locked" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "connector"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "Connector*:*_1x??_*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "Conn_01x02_Pin_1_1"
+				(rectangle
+					(start 0.8636 0.127)
+					(end 0 -0.127)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(rectangle
+					(start 0.8636 -2.413)
+					(end 0 -2.667)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 0) (xy 0.8636 0)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 -2.54) (xy 0.8636 -2.54)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(pin passive line
+					(at 5.08 0 180)
+					(length 3.81)
+					(name "Pin_1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 5.08 -2.54 180)
+					(length 3.81)
+					(name "Pin_2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "PCM_JLCPCB-Diodes:TVS-Bi,SMBJ18CA"
 			(pin_numbers
 				(hide yes)
@@ -396,7 +577,17 @@
 		)
 		(uuid "25c9d882-7d3a-4356-9a14-adf37fe32aa8")
 	)
-	(text "VBATT = 9-12.6V\nNominal Voltage = 10.8V"
+	(text "XT-60"
+		(exclude_from_sim no)
+		(at 23.876 92.71 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "79bdf566-ff47-4a32-9a9d-13294a91ed04")
+	)
+	(text "VBATT = 8.1-12.6V\nNominal Voltage = 10.8V"
 		(exclude_from_sim no)
 		(at 31.75 77.724 0)
 		(effects
@@ -405,6 +596,16 @@
 			)
 		)
 		(uuid "8d29b0ae-146b-4b52-8614-b8cff71bf4e9")
+	)
+	(text "18V TVS"
+		(exclude_from_sim no)
+		(at 47.498 94.488 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+		)
+		(uuid "cd437b92-01a2-4150-b32d-e535fe031652")
 	)
 	(text "3S"
 		(exclude_from_sim no)
@@ -416,9 +617,25 @@
 		)
 		(uuid "e3fbd8da-f3ab-4fd4-9609-c1d8cb238155")
 	)
+	(junction
+		(at 41.91 87.63)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "749ce701-dc27-4c28-a49e-215e8131319e")
+	)
 	(wire
 		(pts
-			(xy 41.91 95.25) (xy 41.91 96.52)
+			(xy 27.94 85.09) (xy 29.21 85.09)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6e3e4353-33dc-42ab-ac61-58f8823c15e0")
+	)
+	(wire
+		(pts
+			(xy 41.91 96.52) (xy 41.91 97.79)
 		)
 		(stroke
 			(width 0)
@@ -426,9 +643,39 @@
 		)
 		(uuid "844d121a-f105-471e-a44c-c79c9674a1bf")
 	)
+	(wire
+		(pts
+			(xy 41.91 87.63) (xy 41.91 88.9)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9c724345-9d00-4c3e-aca7-e672667f2703")
+	)
+	(wire
+		(pts
+			(xy 41.91 87.63) (xy 55.88 87.63)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ad2bbdab-a43c-4d26-bc02-3733ffb9a997")
+	)
+	(wire
+		(pts
+			(xy 27.94 87.63) (xy 41.91 87.63)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "eae46ddd-5332-4b85-a58f-80c8f261545f")
+	)
 	(symbol
 		(lib_id "PCM_SparkFun-PowerSymbol:GND")
-		(at 41.91 96.52 0)
+		(at 41.91 97.79 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -439,7 +686,7 @@
 		(fields_autoplaced yes)
 		(uuid "13da83c9-23e9-466b-997e-2be6de397b5d")
 		(property "Reference" "#PWR02"
-			(at 41.91 102.87 0)
+			(at 41.91 104.14 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -450,7 +697,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 41.91 100.33 0)
+			(at 41.91 101.6 0)
 			(show_name no)
 			(do_not_autoplace yes)
 			(effects
@@ -460,7 +707,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 41.91 96.52 0)
+			(at 41.91 97.79 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -471,7 +718,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 41.91 96.52 0)
+			(at 41.91 97.79 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -482,7 +729,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 41.91 105.41 0)
+			(at 41.91 106.68 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -505,8 +752,8 @@
 		)
 	)
 	(symbol
-		(lib_id "PCM_JLCPCB-Diodes:TVS-Bi,SMBJ18CA")
-		(at 41.91 91.44 0)
+		(lib_id "PCM_SparkFun-PowerSymbol:GND")
+		(at 29.21 85.09 90)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -514,10 +761,176 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(fields_autoplaced yes)
+		(uuid "1491f7eb-b048-43ff-b91c-7d2fd73d1dc2")
+		(property "Reference" "#PWR03"
+			(at 35.56 85.09 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 34.29 85.09 90)
+			(show_name no)
+			(do_not_autoplace yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 29.21 85.09 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 29.21 85.09 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 38.1 85.09 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "73c5d2f1-7943-48e7-b8f6-91d2de05fbbc")
+		)
+		(instances
+			(project "PigeonCarrier"
+				(path "/6c8da0f4-34cf-43b9-a25b-857048b8016b"
+					(reference "#PWR03")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:Conn_01x02_Pin")
+		(at 22.86 85.09 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "4f7a01b2-4f60-431a-ba7d-75b217392253")
+		(property "Reference" "J3"
+			(at 22.86 83.058 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "BATT CONN"
+			(at 23.876 89.916 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Connector_AMASS:AMASS_XT60PW-M_1x02_P7.20mm_Horizontal"
+			(at 22.86 85.09 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 22.86 85.09 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x02, script generated"
+			(at 22.86 85.09 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C98732"
+			(at 22.86 85.09 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "8b3d4cc3-4a6e-457e-9ae0-f42a1f1d0f60")
+		)
+		(pin "1"
+			(uuid "454d2660-bca2-4c37-9954-71ca7ce2e365")
+		)
+		(instances
+			(project "PigeonCarrier"
+				(path "/6c8da0f4-34cf-43b9-a25b-857048b8016b"
+					(reference "J3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "PCM_JLCPCB-Diodes:TVS-Bi,SMBJ18CA")
+		(at 41.91 92.71 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
 		(uuid "8a7911e9-0173-40bd-b4a5-1c81ccdd6028")
 		(property "Reference" "D1"
-			(at 45.72 90.1699 0)
+			(at 44.45 90.678 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -528,7 +941,7 @@
 			)
 		)
 		(property "Value" "SMBJ18CA"
-			(at 45.72 92.71 0)
+			(at 44.704 92.456 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -539,7 +952,7 @@
 			)
 		)
 		(property "Footprint" "PCM_JLCPCB:D_SMB"
-			(at 40.132 91.44 90)
+			(at 40.132 92.71 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -550,7 +963,7 @@
 			)
 		)
 		(property "Datasheet" "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2312221742_hongjiacheng-SMBJ18CA_C19077574.pdf"
-			(at 41.91 91.44 0)
+			(at 41.91 92.71 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -561,7 +974,7 @@
 			)
 		)
 		(property "Description" "20.55A 600W 29.2V 22.1V Bidirectional 18V SMB ESD and Surge Protection (TVS/ESD) ROHS"
-			(at 41.91 91.44 0)
+			(at 41.91 92.71 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -572,7 +985,7 @@
 			)
 		)
 		(property "LCSC" "C19077574"
-			(at 41.91 91.44 0)
+			(at 41.91 92.71 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -583,7 +996,7 @@
 			)
 		)
 		(property "Stock" "46569"
-			(at 41.91 91.44 0)
+			(at 41.91 92.71 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -594,7 +1007,7 @@
 			)
 		)
 		(property "Price" "0.048USD"
-			(at 41.91 91.44 0)
+			(at 41.91 92.71 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -605,7 +1018,7 @@
 			)
 		)
 		(property "Process" "SMT"
-			(at 41.91 91.44 0)
+			(at 41.91 92.71 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -616,7 +1029,7 @@
 			)
 		)
 		(property "Minimum Qty" "5"
-			(at 41.91 91.44 0)
+			(at 41.91 92.71 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -627,7 +1040,7 @@
 			)
 		)
 		(property "Attrition Qty" "2"
-			(at 41.91 91.44 0)
+			(at 41.91 92.71 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -638,7 +1051,7 @@
 			)
 		)
 		(property "Class" "Preferred Component"
-			(at 41.91 91.44 0)
+			(at 41.91 92.71 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -649,7 +1062,7 @@
 			)
 		)
 		(property "Category" "TVS/Fuse/Board Level Protection,Electrostatic And Surge Protection (TVS/ESD)"
-			(at 41.91 91.44 0)
+			(at 41.91 92.71 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -660,7 +1073,7 @@
 			)
 		)
 		(property "Manufacturer" "hongjiacheng"
-			(at 41.91 91.44 0)
+			(at 41.91 92.71 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -671,7 +1084,7 @@
 			)
 		)
 		(property "Part" "SMBJ18CA"
-			(at 41.91 91.44 0)
+			(at 41.91 92.71 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -692,6 +1105,52 @@
 				(path "/6c8da0f4-34cf-43b9-a25b-857048b8016b"
 					(reference "D1")
 					(unit 1)
+				)
+			)
+		)
+	)
+	(sheet
+		(at 196.215 119.38)
+		(size 39.37 17.78)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "3fd690c9-ba8e-46b1-b510-ac104a57139b")
+		(property "Sheetname" "Yapogee_Interface"
+			(at 196.215 118.6684 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "yapogee.kicad_sch"
+			(at 196.215 137.7446 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "PigeonCarrier"
+				(path "/6c8da0f4-34cf-43b9-a25b-857048b8016b"
+					(page "10")
 				)
 			)
 		)
@@ -732,6 +1191,56 @@
 					(size 1.27 1.27)
 				)
 				(justify left top)
+			)
+		)
+		(pin "VBAT_RAW" input
+			(at 55.88 87.63 180)
+			(uuid "84f3a852-4770-4fa2-a2a5-73b297425d76")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "SDA_0" bidirectional
+			(at 89.535 92.71 0)
+			(uuid "2db1b8e1-042d-45ce-bd0c-0643190cd725")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "SCL_0" input
+			(at 89.535 95.25 0)
+			(uuid "9dba100f-f795-4176-b0ba-b4c023cb79b8")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "1V8_CAM_EN" input
+			(at 89.535 82.55 0)
+			(uuid "e6be3709-52d4-444e-b1b2-384fab9b2ef2")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "4V_CAM_EN" input
+			(at 89.535 85.09 0)
+			(uuid "24624ef5-ca6c-4ada-9100-399ae82b8142")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
 			)
 		)
 		(instances
@@ -835,7 +1344,7 @@
 		)
 	)
 	(sheet
-		(at 55.88 120.65)
+		(at 55.245 115.57)
 		(size 34.29 26.035)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -851,7 +1360,7 @@
 		)
 		(uuid "bc6b4cfb-4458-4642-98fd-90f3b1bceecc")
 		(property "Sheetname" "Cameras"
-			(at 55.88 119.9384 0)
+			(at 55.245 114.8584 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -862,7 +1371,7 @@
 			)
 		)
 		(property "Sheetfile" "Cameras.kicad_sch"
-			(at 55.88 147.2696 0)
+			(at 55.245 142.1896 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
