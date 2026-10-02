@@ -28,7 +28,7 @@ const path = require("node:path");
     );
     const initial = snapshot.pairs;
     await page.locator('#controls-toggle').click();
-    await page.getByRole("button", { name: "Step pair" }).click();
+    await page.getByRole("button", { name: "Step frame pair" }).click();
     await page.waitForFunction(
       (n) => window.pigeonGround.snapshot().pairs > n,
       initial,

@@ -1,6 +1,6 @@
 # Ground receiver
 
-The Mac ground station receives both camera streams, presents a full-bleed video
+The ground station receives both camera streams, presents a full-bleed video
 view with mission telemetry, and records/replays received transport. It uses PyAV,
 WebSockets, WebCodecs and WebGL2 with the
 [version 1 contracts](../../../shared/README.md). Controls change the ground
@@ -18,6 +18,75 @@ Open `http://127.0.0.1:8768/` in desktop Chrome. Python API:
 `pigeonvision.ground.run(source, host="127.0.0.1", port=8768, calibration=None, open_browser=True, replay=None, record_transport=None)`.
 `replay=None` distinguishes files from UDP URLs; the async app factory is
 `pigeonvision.ground.server.create_app`.
+
+## Radio input
+
+The primary field computer is the M4 Pro MacBook: radio decoding, viewing,
+recording and broadcast. Keep Linux compatible without requiring a desktop or
+RTX 3070. GNU Radio runs separately in its own environment; radio reception and
+full-rate decoding remain untested. Upscaling and frame interpolation are
+optional later work, subject to measured laptop headroom.
+
+```text
+Ground antenna → E200 RX1 → wired Gigabit Ethernet → ground computer
+  gr-dvbs2rx → TSDuck → UDP :5000 → PigeonVision viewer / recording
+```
+
+Use the E200's Pluto/IIO firmware. USB-C provides serial maintenance; Ethernet
+carries I/Q. Its documented default address is `192.168.1.10`; a direct-connected
+computer can use an otherwise unused `192.168.1.100/24` Ethernet interface. A
+MacBook needs a USB-C/Thunderbolt Gigabit Ethernet adapter.
+
+| Setting | Baseline |
+| --- | --- |
+| Waveform | DVB-S2 CCM, single stream, QPSK 2/3 |
+| Frames | Normal, pilots on, Gold code 0 |
+| Symbol rate / roll-off | 8 Msymbol/s / 0.20 |
+| Nominal occupied bandwidth | 9.6 MHz |
+| E200 receive sampling | 16 Mcomplex samples/s |
+| Transport | 9 Mb/s TS; A/B video PIDs 256/257, JSON PID 258 |
+
+I/Q alone uses `16e6 × 2 × 16 = 512 Mb/s` before network overhead. The nominal
+9.6 MHz waveform fits the AD9363 model's 20 MHz analog bandwidth. Sustained IIO
+transfer and CPU decoding still need measurement; neither proves RF link margin.
+
+The launcher targets [gr-dvbs2rx](https://github.com/igorauad/gr-dvbs2rx/tree/130c31576cfeebb1a5842b24ccaf4a561b6a9990)
+at `130c31576cfeebb1a5842b24ccaf4a561b6a9990`, GNU Radio 3.10 with
+`gnuradio.iio.fmcomms2_source_fc32`, compatible libiio/libad9361, and
+[TSDuck](https://tsduck.io/). The receiver also imports PyQt5 and GNU Radio UHD.
+Keep its Python installation separate from the viewer's virtual environment.
+Use [conda-forge GNU Radio](https://github.com/conda-forge/gnuradio-feedstock/blob/main/recipe/meta.yaml)
+as the common dependency route: its IIO packages cover Linux and native Apple
+Silicon. Stock Homebrew GNU Radio omits IIO. Apply
+[`gr-dvbs2rx-arm64.patch`](../../../platform/gr-dvbs2rx-arm64.patch) to the pinned
+receiver source before building; it removes a 32-bit-only compiler flag on
+Apple's `arm64` target while retaining NEON. Patch application was checked;
+the complete environments and receiver builds remain unverified.
+
+From the repository root, start the viewer, then receive in a second terminal:
+
+```sh
+pv view udp://127.0.0.1:5000 --record-transport output/radio-001/transport.ts \
+  --calibration software/calibration/bench-2026-10-02/calibration.json
+RX_FREQ_HZ=REPLACE_WITH_BENCH_FREQUENCY_IN_HZ
+bash software/tools/e200_receive.sh "$RX_FREQ_HZ"
+```
+
+Use a new recording path each run. `E200_URI`, `RX_GAIN_DB` and `TS_DEST` override
+the launcher defaults; append `--dry-run` to inspect commands. Gain starts at
+0 dB for bench setup and must be adjusted to the received signal. TSDuck forwards
+seven original TS packets per UDP datagram without transcoding or removing
+telemetry. Initial preload and input batches are seven packets to avoid the
+default multi-megabyte startup buffer. Receiver diagnostics stay on stderr.
+
+Next: decode a bounded RP2350 reference waveform offline, then measure real-time
+decoding on the MacBook. When the E200 arrives, check sustained 16 MS/s IIO
+capture before adding decoding, viewing and recording. RF lock/SNR/FEC status
+still needs integration into the viewer; the current HUD only knows TS health.
+
+References: [E200 setup](https://antsdr-docs.microphase.cn/en/latest/device_and_usage_manual/ANTSDR_E_Series_Module/ANTSDR_E200_Reference_Manual/AntsdrE200_Unpacking_examination.html),
+[receiver installation](https://igorauad.github.io/gr-dvbs2rx/docs/installation.html),
+[receiver interfaces](https://igorauad.github.io/gr-dvbs2rx/docs/usage.html).
 
 ## Operator and audience
 
@@ -110,8 +179,10 @@ Retain source frames, lighting, fit/check evidence and limitations with the prof
 Independent A/B strength sliders use `scale + strength*(gain-scale)`: 0% removes
 balance while retaining common dimming. The original-colour toggle bypasses
 both. Choices survive WebSocket reconnects within the page. Missing or mismatched
-identity/orientation/crop gates correction. Raw and panoramic views change;
-recorded pixels, camera controls, timestamps and coverage masks do not.
+identity/orientation/crop gates correction. During metadata recovery, the last
+verified corrected image is held until new frames can be verified. Held video is
+labeled and cannot advance telemetry. Explicit camera or crop mismatches still
+disable correction. Recorded pixels and camera controls do not change.
 
 Measure unclipped neutral patches, check other frames and remeasure after
 lighting or ISP changes. Neutral balance does not establish absolute colour or

@@ -35,7 +35,7 @@ and 28,206 sensor samples arrived. The new RP2350B startup still needs a SPI run
 | --- | --- |
 | [Native capture](flight/README.md) | C++20/libcamera/x264 build, buffers, recording and transport |
 | [CM5 → Pico SPI](flight/spi.md) | PV-SPI wiring, sender, backpressure, evidence and viewer copy |
-| [Ground app](python/pigeonvision/ground/README.md) | Viewing, replay, received-TS recording and colour controls |
+| [Ground app](python/pigeonvision/ground/README.md) | Viewing, replay, E200 receive setup, recording and colour controls |
 | [Calibration](calibration/README.md) | Board collection, lens fitting and nominal preview |
 | [Shared interfaces](shared/README.md) | Configuration, session/frame records, timestamps and calibration schema |
 | [Architecture source](architecture.drawio) | Five editable data-flow and lifecycle pages |

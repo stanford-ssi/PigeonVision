@@ -26,6 +26,7 @@ const state = {
   calibration: null,
   colourCalibrationKey: null,
   pair: null,
+  presentedPair: null,
   pairs: 0,
   resetCount: 0,
   metadata: {},
@@ -48,6 +49,11 @@ const camera = () => ({
   resets: 0,
   lastArrival: 0,
   lastTimestamp: null,
+  presentedAt: null,
+  presentedTimestamp: null,
+  presentationCurrent: false,
+  heldForMetadata: false,
+  colourHeldFrames: 0,
   size: null,
   submitted: 0,
   outputs: 0,
@@ -83,6 +89,8 @@ function resetCamera(name) {
   c.resets++;
   c.lastArrival = 0;
   c.lastTimestamp = null;
+  c.presentationCurrent = false;
+  c.heldForMetadata = false;
   c.size = null;
   c.submitted = c.outputs = 0;
 }
@@ -96,6 +104,7 @@ function reset({ preserveGeometry = false } = {}) {
   }
   state.resetCount++;
   validateGeometry();
+  station.updateViewFrame(displayedFrame());
 }
 function alignmentDescription(bundle) {
   if (bundle.rig_alignment_status === "nominal_operator_geometry") {
@@ -130,6 +139,9 @@ function configureCalibration(bundle) {
   // A different camera/geometry bundle must not inherit held-frame verification.
   state.colourCalibrationKey = JSON.stringify(bundle?.cameras ?? null);
   renderer.colourCalibrationKey = state.colourCalibrationKey;
+  for (const name of ["A", "B"])
+    if (![renderer.raw[name], renderer.pair[name]].some(t => t.colourVerification === state.colourCalibrationKey))
+      cameras[name].heldForMetadata = false;
   const colour = bundle?.display_colour;
   if (!colour || !hadColour) state.colourRequested = !!colour;
   if (colour && !hadColour)
@@ -167,6 +179,8 @@ function validateGeometry() {
     { A: cameras.A.size, B: cameras.B.size },
   );
   const blocked = state.geometry.errors.length > 0;
+  if (blocked)
+    for (const c of Object.values(cameras)) c.heldForMetadata = false;
   updateColourControls();
   renderer.calibration = blocked ? null : state.calibration;
   for (const option of $("view").options)
@@ -219,7 +233,9 @@ function updateColourControls() {
   $("colour-strength-hint").textContent = colourBaseline(profile) < 1
     ? "0% removes the balance but keeps the preview dimming. Toggle shows originals."
     : "0% removes the balance. Toggle shows originals.";
-  $("colour-status").textContent = !verified
+  $("colour-status").textContent = Object.values(cameras).some(c => c.heldForMetadata)
+    ? "Waiting for camera metadata · image held"
+    : !verified
     ? "Waiting for camera identity and geometry."
     : renderer.colourEnabled
       ? ["colorchecker_neutrals", "measured_neutral_surfaces"].includes(profile.reference_target)
@@ -246,6 +262,7 @@ function pairFrames() {
         skew: delta,
         at: performance.now(),
       };
+      state.presentedPair = state.pair;
       state.pairs++;
       fa.close();
       fb.close();
@@ -280,8 +297,28 @@ function decoded(name, frame, epoch) {
   validateGeometry();
   const verification = !state.geometry.errors.length && !state.geometry.unverified.length
     ? state.colourCalibrationKey : null;
+  // Missing metadata must not replace a verified corrected image with a brief
+  // original-colour frame. Keep decoding its reference chain, but discard this
+  // output until fresh evidence verifies it. Explicit mismatches still expose
+  // new content without applying correction, as does a different calibration.
+  const hold = verification === null && !state.geometry.errors.length && renderer.colourRequested &&
+    [renderer.raw[name], renderer.pair[name]].some(t => t.colourVerification === state.colourCalibrationKey);
+  c.heldForMetadata = hold;
+  if (hold) {
+    c.colourHeldFrames = Math.min(Number.MAX_SAFE_INTEGER, c.colourHeldFrames + 1);
+    c.presentationCurrent = false;
+    state.pair = null;
+    frame.close();
+    updateColourControls();
+    station.updateViewFrame(displayedFrame());
+    return;
+  }
   frameColourVerification.set(frame, verification);
   renderer.upload(name, frame, false, verification);
+  c.presentedTimestamp = frame.timestamp;
+  c.presentedAt = c.lastArrival;
+  c.presentationCurrent = true;
+  updateColourControls();
   c.pending.push(frame);
   c.pending.sort((x, y) => x.timestamp - y.timestamp);
   pairFrames();
@@ -405,11 +442,17 @@ async function message(value, epoch = connectionEpoch) {
   else if (value.type === "metadata") {
     const record = value.record;
     if (telemetry.accept(record, performance.now()) === false) return;
-    station.metadata(record, performance.now());
     state.metadata[record.camera_id || record.type || "latest"] = record;
     if (record.type === "session") {
       const sessionId = record.session_id ?? null;
-      if (sessionId !== state.geometrySessionId) state.frames = {};
+      if (sessionId !== state.geometrySessionId) {
+        state.frames = {};
+        state.pair = null;
+        // Retire queued frames and asynchronous outputs from the old capture.
+        // resetCamera preserves the held textures and their presentation age.
+        for (const name of ["A", "B"]) resetCamera(name);
+        station.updateViewFrame(displayedFrame());
+      }
       state.geometrySessionId = sessionId;
       state.descriptions = {};
       for (const camera of record.cameras || record.hardware?.cameras || [])
@@ -420,6 +463,7 @@ async function message(value, epoch = connectionEpoch) {
       ("sensor_crop" in record || "scaler_crop" in record)
     )
       state.frames[record.camera_id] = record;
+    station.metadata(record, performance.now());
     validateGeometry();
     $("metadata").textContent = JSON.stringify(state.metadata, null, 2);
   }
@@ -502,9 +546,13 @@ function updatePerspectiveControls() {
 function displayedFrame(now = performance.now()) {
   const raw = ["a", "b"].includes(renderer.mode);
   const camera = raw ? cameras[renderer.mode.toUpperCase()] : null;
-  const pts = raw ? camera.lastTimestamp : state.pair ? Math.min(state.pair.a, state.pair.b) : null;
-  const at = raw ? camera.lastArrival : state.pair?.at;
-  return { pts, now, replay: state.replay, frameAgeMs: at == null || !at ? null : now - at,
+  // Arrival describes decoder activity; presentation describes the pixels the
+  // operator can see. Held pixels retain their age, but cannot advance telemetry
+  // after a decoder/session reset or a withheld unknown frame.
+  const pts = raw ? camera.presentationCurrent ? camera.presentedTimestamp : null
+    : state.pair ? Math.min(state.pair.a, state.pair.b) : null;
+  const at = raw ? camera.presentedAt : state.presentedPair?.at;
+  return { pts, now, replay: state.replay, frameAgeMs: at == null ? null : now - at,
     paired: !!state.pair && state.pair.a === state.pair.b };
 }
 
@@ -518,7 +566,7 @@ function diagnostics() {
   for (const name of ["A", "B"]) {
     const c = cameras[name],
       stale = !state.replay && now - c.lastArrival > 1000;
-    const status = c.lastArrival
+    const status = c.heldForMetadata ? "Waiting for camera metadata · image held" : c.lastArrival
       ? stale
         ? "Stale"
         : "Receiving"
@@ -526,7 +574,7 @@ function diagnostics() {
     if (!c.lastArrival || stale)
       missing.push(`${name}: ${status.toLowerCase()}`);
     $("camera-" + name.toLowerCase()).textContent =
-      `${status}${c.size ? " · " + c.size.join(" × ") : ""}\nPTS: ${c.lastTimestamp ?? "—"} µs\nDecoded: ${c.decoded} · unmatched: ${c.unmatched}\nDecode queue: ${c.decoder?.decodeQueueSize ?? 0} · waiting pairs: ${c.pending.length}`;
+      `${status}${c.size ? " · " + c.size.join(" × ") : ""}\nDisplayed PTS: ${c.presentedTimestamp ?? "—"} µs · decoded: ${c.lastTimestamp ?? "—"} µs\nDecoded: ${c.decoded} · held for colour: ${c.colourHeldFrames} · unmatched: ${c.unmatched}\nDecode queue: ${c.decoder?.decodeQueueSize ?? 0} · waiting pairs: ${c.pending.length}`;
   }
   $("pair").textContent = state.pair
     ? `Presented pairs: ${state.pairs}\nA−B timestamp gap: ${(state.pair.skew / 1000).toFixed(3)} ms\nExposure sync: unverified\nDecoder resets A/B: ${cameras.A.resets}/${cameras.B.resets}`
@@ -537,6 +585,7 @@ function diagnostics() {
   const panorama = !["a", "b"].includes(renderer.mode);
   let overlay = "";
   if (!state.connected) overlay = "Disconnected — image held";
+  else if (Object.values(cameras).some(c => c.heldForMetadata)) overlay = "Waiting for camera metadata · image held";
   else if (missing.length) overlay = missing.join(" · ");
   else if (panorama && !state.pair)
     overlay = "Waiting for a matched frame pair";
@@ -747,6 +796,13 @@ try {
       colourGains: { A: [...renderer.colour.A.gain], B: [...renderer.colour.B.gain] },
       decoded: { A: cameras.A.decoded, B: cameras.B.decoded },
       pending: { A: cameras.A.pending.length, B: cameras.B.pending.length },
+      colourHeldFrames: { A: cameras.A.colourHeldFrames, B: cameras.B.colourHeldFrames },
+      presentation: {
+        raw: { A: cameras.A.presentedTimestamp, B: cameras.B.presentedTimestamp },
+        pair: state.presentedPair,
+        frame: displayedFrame(),
+        heldForMetadata: { A: cameras.A.heldForMetadata, B: cameras.B.heldForMetadata },
+      },
     }),
   };
 } catch (error) {
