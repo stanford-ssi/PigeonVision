@@ -141,10 +141,12 @@ int main(int argc, char **argv) {
     std::signal(SIGINT, signal_handler);
     std::signal(SIGTERM, signal_handler);
     std::signal(SIGPIPE, SIG_IGN);
+    bool runtime_failed = cameras.size() != config.cameras.size();
     for (auto &camera : cameras) {
       try {
         camera->start(*outputs);
       } catch (const std::exception &e) {
+        runtime_failed = true;
         logs.event("camera", "start_failed", "", e.what());
         camera->stop();
       }
@@ -189,7 +191,6 @@ int main(int argc, char **argv) {
     outputs->metadata(wire_session);
     auto next_health = run_start;
     auto next_telemetry = run_start;
-    bool runtime_failed = cameras.size() != config.cameras.size();
     while (!interrupted) {
       const auto now = pv::boot_ns();
       if (now >= next_telemetry) {
@@ -267,6 +268,7 @@ int main(int argc, char **argv) {
         health["log_records_lost"] = logs.lost();
         health["log_failed"] = logs.failed();
         health["type"] = "health";
+        health["session_id"] = manifest["session_id"];
         health["pts_us"] = (now - origin) / 1000;
         health["clock_domain"] = "CLOCK_BOOTTIME";
         health["timestamp_ns"] = now;
@@ -305,6 +307,7 @@ int main(int argc, char **argv) {
                  {"outputs", final_stats},
                  {"failed", runtime_failed}});
     logs.finish();
+    runtime_failed = runtime_failed || logs.failed() || logs.lost();
     supervisor.transition(pv::Lifecycle::stopped);
     {
       pv::Json stopped{{"type", "health"},

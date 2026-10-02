@@ -6,15 +6,34 @@ const sensorFields = {
 };
 // Receiver freshness and producer validity remain independent.
 export class TelemetryState {
-  constructor() { this.sources = {}; this.health = null; this.healthAt = null; this.sessionId = null; }
+  constructor() { this.reset(); }
+  reset({ preserveSessionHistory = false } = {}) {
+    this.sources = {};
+    this.health = null;
+    this.healthAt = null;
+    if (!preserveSessionHistory) {
+      this.sessionId = null;
+      this.retiredSessions = new Set();
+    }
+  }
   accept(record, now) {
     if (record.session_id && record.session_id !== this.sessionId) {
+      if (this.retiredSessions.has(record.session_id)) return false;
+      if (this.sessionId) {
+        this.retiredSessions.add(this.sessionId);
+        if (this.retiredSessions.size > 32) this.retiredSessions.delete(this.retiredSessions.values().next().value);
+      }
       this.sessionId = record.session_id;
       this.sources = {};
       this.health = null;
       this.healthAt = null;
     }
-    if (record.type === "health") { this.health = record; this.healthAt = now; }
+    if (record.type === "health") {
+      if (typeof record.pts_us === "number" && typeof this.health?.pts_us === "number" &&
+          record.pts_us <= this.health.pts_us) return false;
+      this.health = record;
+      this.healthAt = now;
+    }
     if (record.type === "sensors") {
       for (const source of record.sources || []) {
         const row = source.rows?.at(-1);
@@ -34,7 +53,7 @@ export class TelemetryState {
         // Group order reflects first occurrence, not latest acquisition. UDP can also reorder batches.
         if (previous && typeof previous.sample.monotonic_us === "number" && typeof sample.monotonic_us === "number" &&
             (sample.monotonic_us < previous.sample.monotonic_us ||
-             (sample.monotonic_us === previous.sample.monotonic_us && sample.sequence < previous.sample.sequence))) continue;
+             (sample.monotonic_us === previous.sample.monotonic_us && sample.sequence <= previous.sample.sequence))) continue;
         this.sources[source.source] = { sample, receivedAt: now, units: source.units || {} };
       }
     } else if (record.type === "sensor_sample") {

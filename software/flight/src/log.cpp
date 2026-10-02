@@ -12,17 +12,26 @@ Logs::Logs(const std::filesystem::path &path) {
       failed_ = true;
   }
   worker_ = std::thread([this] {
+    auto check_write = [this](const std::ofstream &file) {
+      if (!file && !failed_.exchange(true))
+        std::cerr << "session log write failed\n";
+    };
     std::uint64_t sensor_batch = 0;
     while (auto item = queue_.pop()) {
       files_[item->file] << item->value.dump() << '\n';
-      // One flush per record makes timing/drop evidence available while running.
+      // Frame/health/index records flush immediately; sensor records flush in batches.
       if (item->file != 3 || ++sensor_batch % 32 == 0)
         files_[item->file].flush();
-      if (!files_[item->file] && !failed_.exchange(true))
-        std::cerr << "session log write failed\n";
+      check_write(files_[item->file]);
     }
-    for (auto &file : files_)
+    for (auto &file : files_) {
       file.flush();
+      check_write(file);
+      if (file.is_open()) {
+        file.close();
+        check_write(file);
+      }
+    }
   });
 }
 Logs::~Logs() {

@@ -323,6 +323,11 @@ async function accessUnit(buffer, epoch) {
 
 function message(value) {
   if (value.type === "status") {
+    // Replay restart rewinds acquisition timestamps. Decoder recovery within a
+    // receiver generation must retain telemetry ordering and retired sessions.
+    const replayRestart = value.replay &&
+      (value.source !== state.status?.source || value.generation !== state.status?.generation);
+    if (replayRestart) telemetry.reset();
     state.status = value;
     if (value.state === "ready") clearError("source");
     state.replay = value.replay;
@@ -340,7 +345,7 @@ function message(value) {
     fail(value.message, value.component || "viewer", value.recoverable === true);
   else if (value.type === "metadata") {
     const record = value.record;
-    telemetry.accept(record, performance.now());
+    if (telemetry.accept(record, performance.now()) === false) return;
     state.metadata[record.camera_id || record.type || "latest"] = record;
     if (record.type === "session") {
       state.descriptions = {};
@@ -391,6 +396,7 @@ function connect() {
     if (epoch !== connectionEpoch) return;
     accepting = false;
     state.connected = false;
+    telemetry.reset({ preserveSessionHistory: true });
     reset();
     setTimeout(connect, 1500);
   };

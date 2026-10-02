@@ -83,7 +83,7 @@ class Capture:
             except TimeoutError:
                 pass
 
-    def stop(self):
+    def stop(self, expected_code=None, expected_failed=None):
         if self.process.poll() is None:
             self.process.send_signal(signal.SIGTERM)
         try:
@@ -97,11 +97,20 @@ class Capture:
             self.stderr.close()
             self.socket.close()
         assert code in (0, 1), f"unexpected shutdown status {code}"
-        assert json.loads(self.status.read_text())["lifecycle"] == "stopped"
+        status = json.loads(self.status.read_text())
+        assert status["lifecycle"] == "stopped"
+        if expected_code is not None:
+            assert code == expected_code, f"shutdown status {code}, expected {expected_code}"
+        if expected_failed is not None:
+            assert status["failed"] is expected_failed
 
     def health(self):
         records = [r for r in self.metadata.records if r.get("type") == "health"]
         assert records, "no health JSON received over PID 258"
+        sessions = {r["session_id"] for r in self.metadata.records if r.get("type") == "session"}
+        assert len(sessions) == 1, "missing or inconsistent session metadata"
+        assert all(record.get("session_id") in sessions for record in records), \
+            "health records must identify their acquisition session"
         return records[-1]
 
     def types(self):
@@ -126,13 +135,24 @@ def run(binary, output):
         status = subprocess.run([str(binary), "--status", str(active.status)],
                                 capture_output=True, text=True, timeout=2)
         assert status.returncode == 0 and json.loads(status.stdout)["lifecycle"] == "running"
-        active.stop()
+        active.stop(expected_code=0, expected_failed=False)
         active = None
         sessions = list((root / "nominal" / "sessions").iterdir())
         assert len(sessions) == 1
         samples = [json.loads(line) for line in (sessions[0] / "sensors.jsonl").read_text().splitlines()]
         assert any(r.get("type") == "sensor_sample" and r["valid"] for r in samples)
         print("nominal simulation, telemetry, exclusive lock, SIGTERM: verified", flush=True)
+
+        active = Capture(binary, root / "missing-camera", {
+            "cameras": [{"id": "A", "device": "nonexistent-pv-camera"}]})
+        active.collect(2.2)
+        assert active.health()["degraded"] is True
+        assert active.health()["cameras"] == []
+        assert {"sensors", "flight_status"} <= active.types()
+        active.stop(expected_code=1, expected_failed=True)
+        active = None
+        print("camera initialization failure retains telemetry and unsuccessful session result: verified",
+              flush=True)
 
         missing = root / "absent-device"
         mappings = {name: {"device": str(missing), "address": address} for name, address in
@@ -169,7 +189,7 @@ def run(binary, output):
         assert active.health()["log_failed"] is True
         assert active.health()["degraded"] is True
         assert "sensors" in active.types() and active.metadata.bytes > 0
-        active.stop()
+        active.stop(expected_code=1, expected_failed=True)
         active = None
         print("unwritable session path leaves actual UDP telemetry running: verified", flush=True)
 

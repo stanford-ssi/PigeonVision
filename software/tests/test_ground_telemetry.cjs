@@ -30,7 +30,45 @@ const path = require("node:path");
   assert.equal(ordered.sources.bmi088_accel.receivedAt,100); // Old UDP packets cannot refresh freshness.
   ordered.accept({type:"sensors",session_id:"one",backend:"i2c",sources:[group(true,[[4,40,38,40,[1,2,3]]])]},300);
   assert.equal(ordered.sources.bmi088_accel.sample.backend,"i2c");
-  ordered.accept({type:"session",session_id:"two"},400);
+  ordered.accept({type:"sensors",session_id:"one",backend:"i2c",sources:[group(true,[[4,40,38,40,[1,2,3]]])]},4000);
+  assert.equal(ordered.sources.bmi088_accel.receivedAt,300); // Duplicate rows cannot refresh freshness.
+  assert(ordered.lines(4001).some(x=>x.includes("bmi088_accel: stale")));
+  ordered.accept({type:"health",session_id:"one",pts_us:500,phase:"ASCENT",phase_stale:false},4000);
+  assert.equal(ordered.accept({type:"health",session_id:"one",pts_us:500,phase:"ASCENT",phase_stale:false},8000),false);
+  assert.equal(ordered.accept({type:"health",session_id:"one",pts_us:400,phase:"PAD",phase_stale:false},8000),false);
+  assert.equal(ordered.healthAt,4000);
+  assert.equal(ordered.health.phase,"ASCENT");
+  assert(ordered.lines(8001).includes("Phase: UNKNOWN · stale"));
+  ordered.reset(); // Receiver restart/disconnect clears the previous replay timeline.
   assert.deepEqual(ordered.sources,{});
+  assert.equal(ordered.health,null);
+  assert.equal(ordered.healthAt,null);
+  assert.equal(ordered.sessionId,null);
+  ordered.accept({type:"session",session_id:"one"},4100);
+  ordered.accept({type:"sensors",session_id:"one",backend:"i2c",sources:[group(true,[[1,10,8,10,[4,5,6]]])]},4200);
+  assert.equal(ordered.sources.bmi088_accel.sample.sequence,1);
+  assert.equal(ordered.sources.bmi088_accel.receivedAt,4200);
+  ordered.accept({type:"session",session_id:"two"},4300);
+  assert.deepEqual(ordered.sources,{});
+  ordered.accept({type:"health",session_id:"two",pts_us:10,phase:"PAD",phase_stale:false},4300);
+  assert.equal(ordered.health.pts_us,10); // A new session has its own health timeline.
+  ordered.accept({type:"sensors",session_id:"two",sources:[group(true,[[1,50,48,50,[7,8,9]]])]},4400);
+  const retiredBatch={type:"sensors",session_id:"one",sources:[group(true,[[5,60,58,60,[10,11,12]]])]};
+  assert.equal(ordered.accept(retiredBatch,4500),false); // A delayed old-session PES must not restore that session.
+  assert.equal(ordered.accept({type:"session",session_id:"one"},4500),false);
+  assert.equal(ordered.sessionId,"two");
+  assert.equal(ordered.sources.bmi088_accel.receivedAt,4400);
+  ordered.reset({preserveSessionHistory:true}); // A disconnected live receiver may recover to the same session.
+  assert.equal(ordered.accept(retiredBatch,4600),false);
+  assert.equal(ordered.sessionId,"two");
+  ordered.accept({type:"sensors",session_id:"two",sources:[group(true,[[2,70,68,70,[7,8,9]]])]},4700);
+  assert.equal(ordered.sources.bmi088_accel.sample.sequence,2);
+  ordered.reset(); // An explicit replay restart may revisit previously retired sessions.
+  ordered.accept({type:"session",session_id:"one"},4800);
+  ordered.accept({type:"sensors",session_id:"one",sources:[group(true,[[1,10,8,10,[1,2,3]]])]},4900);
+  assert.equal(ordered.sessionId,"one");
+  assert.equal(ordered.sources.bmi088_accel.sample.sequence,1);
+  for(let i=0;i<40;i++) ordered.accept({type:"session",session_id:`bounded-${i}`},5000+i);
+  assert.equal(ordered.retiredSessions.size,32);
   console.log("ground telemetry freshness passed");
 })();

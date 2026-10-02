@@ -11,7 +11,9 @@ lens fits with **nominal** opposed-camera alignment. One-hour performance,
 held-out seam accuracy, colour accuracy and exposure synchronization remain
 unqualified. See the [bench evidence](bench-notes/2026-09-25.md).
 
-Native SPI is the baseline CM5-to-Pico link. With a fan, the two-minute test
+Native SPI is the baseline CM5-to-RP2350B link. The bench uses a Pimoroni Pico
+Plus 2 development board; the flight transmitter will use the RP2350B chip.
+With a fan, the two-minute test
 reached **29.99 fps per camera and 9 Mb/s TS**, with matching Pico counts and
 CRC. CPU averaged 61.4%; maximum temperature was 56.75°C. Each camera had one
 66.7 ms interval after warm-up. Keep `pv spi` for patterns and file tests.
@@ -25,7 +27,7 @@ sequencing and AFE/LO/PA control have no mapped implementation.
 
 The [startup comparison](bench-notes/flight-startup.json) held dual 30 fps for
 two minutes with simulated sensor telemetry over UDP. All 7,201 encoded frames
-and 28,206 sensor samples arrived. The new Pico startup still needs a SPI run.
+and 28,206 sensor samples arrived. The new RP2350B startup still needs a SPI run.
 
 ## Start here
 
