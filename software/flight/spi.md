@@ -49,6 +49,26 @@ These are bench measurements with airflow, not passive-cooling or RF results.
 
 [Raw results and reproduction commands](https://github.com/Rivercraft911/RP2350_IQ_Benchmark/tree/main/results/cm5-spi).
 
+## Startup changes
+
+The RP2350 repository adds a separate `pvflight` build: stored modem preset,
+autonomous digital output, then READY. The existing `iqbench`/`pvtx` bench path
+remains available. USB `status` and `stop` work during flight output; a new CM5
+SPI session still requires a coordinated transmitter restart.
+
+The [supervisor comparison](../bench-notes/flight-startup.json) uses real cameras
+and simulated carrier/FC data over UDP, not SPI. The final 120-second run delivered
+30 fps per camera, all 7,201 encoded frames and all 28,206 sensor samples. No
+transport drops, continuity errors or late video packets occurred; minimum
+video DTS-to-PCR margin was 245 ms. Two startup camera errors remain, one per camera.
+
+An initial 500 ms queue expiry dropped valid bursts. The final build omits null
+frame fields on the wire and uses a 1 s queue age limit; measured maximum queue
+age was 433 ms. Full metadata stays in local logs. CPU was 62.9%, including the
+extra UDP capture process; maximum temperature was 63.9°C with no throttling.
+Repeat the two-minute SPI/CRC comparison with `pvflight` before merging startup
+changes. Physical carrier sensors, autonomous Pico timing and RF remain unverified.
+
 ## Wiring
 
 3.3 V signals. Physical pins refer to the CM5 IO-board and Pico Plus 2 headers.

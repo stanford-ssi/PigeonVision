@@ -1,4 +1,4 @@
-# PigeonVision bench software
+# PigeonVision software
 
 The CM5 bench captures both colour IMX900 cameras, records their original video,
 and streams to the Mac's interactive A/B and panorama viewer. It uses the official
@@ -17,6 +17,16 @@ CRC. CPU averaged 61.4%; maximum temperature was 56.75°C. Each camera had one
 66.7 ms interval after warm-up. Keep `pv spi` for patterns and file tests.
 See [SPI results and setup](flight/spi.md). RF remains untested.
 
+The native service also supports autonomous CM5 acquisition: unique sessions,
+independent camera/sensor/UART workers, bounded telemetry and status reporting.
+The carrier sensor and UART backends are implemented; their physical wiring,
+measurements and FC firmware acceptance remain unverified. Carrier power/reset
+sequencing and AFE/LO/PA control have no mapped implementation.
+
+The [startup comparison](bench-notes/flight-startup.json) held dual 30 fps for
+two minutes with simulated sensor telemetry over UDP. All 7,201 encoded frames
+and 28,206 sensor samples arrived. The new Pico startup still needs a SPI run.
+
 ## Start here
 
 | Guide | Covers |
@@ -26,7 +36,14 @@ See [SPI results and setup](flight/spi.md). RF remains untested.
 | [Ground app](python/pigeonvision/ground/README.md) | Viewing, replay, received-TS recording and colour controls |
 | [Calibration](calibration/README.md) | Board collection, lens fitting and nominal preview |
 | [Shared interfaces](shared/README.md) | Configuration, session/frame records, timestamps and calibration schema |
+| [Architecture source](architecture.drawio) | Five editable data-flow and lifecycle pages |
 | [Platform pins](platform/versions.json) | Matched OS, kernel and vendor revisions |
+
+Diagram previews: [data flow](diagrams/data-flow.svg),
+[CM5 lifecycle](diagrams/cm5-lifecycle.svg),
+[sensors and telemetry](diagrams/sensors-telemetry.svg),
+[RP2350 lifecycle](diagrams/rp2350-lifecycle.svg),
+[startup and shutdown](diagrams/startup-shutdown.svg).
 
 ## Provision the CM5
 
@@ -117,6 +134,16 @@ Use Chrome at `http://127.0.0.1:8768`. Raw views need no calibration; add
 source, never an automatic fallback. See the linked guides for capture options,
 received-TS recording and calibration commands.
 
+## Autonomous startup
+
+[Flight and bench profiles](platform/flight/) are configuration templates, not
+verified carrier mappings. Flight defaults to full-sensor capture, native 20 MHz
+SPI and an I²C backend with no supplied sensor addresses; its camera list is empty
+and UART disabled until explicitly configured. See the [native guide](flight/README.md#autonomous-startup-and-status)
+for installation and device mapping. Installation preserves deployed configuration
+and neither enables nor starts the service. `Restart=no`: a new SPI session requires
+coordinated transmitter/link reset; transfer completion is not an RP2350 ACK.
+
 ## Benchmark and qualify
 
 ```sh
@@ -140,9 +167,9 @@ remain unsynchronized until adapter XVS/XHS wiring and levels are verified and
 ≤100 µs exposure skew is measured optically/electrically. Missing evidence stays
 unknown; portable/synthetic tests do not qualify hardware.
 
-After wired qualification: BMI088/BMP581 and receive-only flight-controller UART;
-E200 cable/attenuator transport; custom-carrier power/reset/GPIO; then systemd
-startup/recovery and storage interruption tests. Keep video independent of
+Remaining qualification includes physical BMI088/BMP581/INA226 acquisition and
+receive-only FC UART; autonomous digital startup and bounded shutdown; cable/attenuator
+RF transport; custom-carrier power/reset/GPIO; and storage interruption tests. Keep video independent of
 recovery functions. The radio target remains DVB-S2 QPSK 2/3, normal frames,
 pilots, 8 MSymbol/s and 9 Mb/s TS; E200 firmware needs hardware qualification.
 PA control stays off pending its own authorized procedure. Keep generated

@@ -175,8 +175,8 @@ class Receiver:
                 transport, mode="r", format="mpegts", options={"probesize": "262144", "analyzeduration": "1000000"}) as container:
             streams = {stream.index: VIDEO_PIDS[stream.id] for stream in container.streams
                        if stream.id in VIDEO_PIDS and stream.type == "video"}
-            if not streams:
-                raise ValueError("Expected H.264 camera streams on MPEG-TS PIDs 256 and 257")
+            if not streams and not any(stream.id == METADATA_PID for stream in container.streams):
+                raise ValueError("Expected camera or telemetry streams on MPEG-TS PIDs 256, 257, or 258")
             for stream in container.streams:
                 if stream.index in streams and stream.codec_context.name != "h264":
                     raise ValueError(f"Camera {streams[stream.index]} is not H.264")

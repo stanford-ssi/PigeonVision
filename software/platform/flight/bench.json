@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "profile": "bench",
+  "session_root": "output/sessions",
+  "cameras": [],
+  "encode": false,
+  "record": false,
+  "sensors": {
+    "backend": "disabled"
+  },
+  "flight_uart": {
+    "backend": "disabled"
+  }
+}

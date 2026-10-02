@@ -1,10 +1,12 @@
 import { Renderer, rawDragCenter, DEFAULT_PERSPECTIVE_FOV, MIN_PERSPECTIVE_FOV,
   MAX_PERSPECTIVE_FOV, validPerspectiveFov, perspectiveZoom } from "./projection.js";
 import { checkGeometry } from "./geometry.js";
+import { TelemetryState } from "./telemetry.js";
 import { ErrorState } from "./errors.js";
 
 const $ = (id) => document.getElementById(id);
 const errors = new ErrorState();
+const telemetry = new TelemetryState();
 const perspectiveDefaultKey = "pigeonvision.perspectiveDefaultFov.v1";
 let perspectiveDefaultFov = DEFAULT_PERSPECTIVE_FOV;
 let perspectiveDefaultStatus = "1× is the 110° factory view. Scroll to choose.";
@@ -338,6 +340,7 @@ function message(value) {
     fail(value.message, value.component || "viewer", value.recoverable === true);
   else if (value.type === "metadata") {
     const record = value.record;
+    telemetry.accept(record, performance.now());
     state.metadata[record.camera_id || record.type || "latest"] = record;
     if (record.type === "session") {
       state.descriptions = {};
@@ -428,6 +431,7 @@ function updatePerspectiveControls() {
 
 function diagnostics() {
   const now = performance.now();
+  $("flight-telemetry").textContent = telemetry.lines(now).join("\n");
   $("connection").textContent = state.connected
     ? `${state.status?.state || "Connected"}${state.replay ? (state.playing ? " · playing" : " · paused") : ""}`
     : "Disconnected";
