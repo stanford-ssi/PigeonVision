@@ -1,6 +1,7 @@
+import { nominalProfile, finOutline, finAngles, ORK, STATIONS } from "./rocket.js";
 import { CameraRenderer, PRESETS } from "./engine.js";
 import { RigView } from "./rig.js";
-import { opticalState } from "./scene.js";
+import { opticalState, recoveryPose, boosterToWorld, worldToBody, bodyRadius } from "./scene.js";
 import { SCENARIO, linkMargin, radialPixels } from "./scenario.js";
 const $ = (id) => document.getElementById(id),
   rad = (x) => (x * Math.PI) / 180,
@@ -26,9 +27,10 @@ let source = "received",
   mode = 0,
   earth = true,
   policy = 0,
-  yaw = 0,
-  pitch = 0,
+  yaw = 25,
+  pitch = -8,
   fov = 90;
+let activeLook = null;
 let time = 0,
   playing = false,
   lastTick = 0,
@@ -94,6 +96,7 @@ function stateAt(t) {
 }
 function drawMain() {
   if (!frameState) return;
+  followLook();
   const s = { ...frameState, yaw, pitch, fov, earth, policy };
   const view = mode;
   renderer.draw(s, {
@@ -124,20 +127,7 @@ function bodyDirection() {
   ];
   if (mode === 1 || mode === 7 || mode === 2) d = [1, 0, 0];
   if (mode === 3) d = [-1, 0, 0];
-  if (earth && mode !== 2 && mode !== 3) {
-    const t = rad(frameState.tilt),
-      r = rad(frameState.roll),
-      q = [
-        Math.cos(t) * d[0] - Math.sin(t) * d[2],
-        d[1],
-        Math.sin(t) * d[0] + Math.cos(t) * d[2],
-      ];
-    d = [
-      Math.cos(r) * q[0] + Math.sin(r) * q[1],
-      -Math.sin(r) * q[0] + Math.cos(r) * q[1],
-      q[2],
-    ];
-  }
+  if (earth && mode !== 2 && mode !== 3) d = worldToBody(d, frameState);
   return d;
 }
 function markers() {
@@ -188,10 +178,12 @@ function syncUi(force = false) {
     p = PRESETS[preset];
   $("time-label").textContent = `T + ${time.toFixed(2)} s`;
   $("timeline").value = time;
+  const phaseButtons = [...$("phases").children];
+  phaseButtons.forEach((b,i) => b.classList.toggle("active", time >= Number(b.dataset.time) && (!phaseButtons[i+1] || time < Number(phaseButtons[i+1].dataset.time))));
   $("phase-label").textContent =
-    time < 3
+    time < (flight.summary.ignition_time_s ?? 3)
       ? "ON THE PAD"
-      : time < 9
+      : time < (flight.summary.burnout_time_s ?? 9)
         ? "POWERED ASCENT"
         : time < flight.summary.apogee_time_s
           ? "COAST"
@@ -206,13 +198,14 @@ function syncUi(force = false) {
     (r.slant_range_m / 1000).toFixed(2) + " <small>km</small>";
   $("flight-margin").innerHTML =
     linkMargin(r.slant_range_m).toFixed(1) + " <small>dB</small>";
-  $("play").textContent = playing ? "Ⅱ" : "▶";
+  $("play-label").textContent = playing ? "Pause" : time < 1 / SCENARIO.fps ? "Launch" : "Play";
+  $("play").classList.toggle("is-playing", playing);
   $("play").setAttribute(
     "aria-label",
     playing ? "Pause launch" : "Play launch",
   );
   const names = {
-    0: "Panoramic viewport",
+    0: "Ground view",
     1: "Full direction map",
     2: "Camera A · fisheye",
     3: "Camera B · fisheye",
@@ -220,12 +213,12 @@ function syncUi(force = false) {
     5: "Camera B · perspective",
     7: "Source coverage map",
   };
-  $("view-title").textContent = source === "received" && mode === 0 ? "Ground panorama" : names[mode];
+  $("view-title").textContent = source === "received" && mode === 0 ? "Ground view" : names[mode];
   $("source-badge").textContent = source === "received" ? "Encoded simulation" : "Ideal model";
   $("stage-label").textContent = source === "received" ? "2 × 1552² / 30 fps / 4 Mb/s each" : "Synthetic scene / no codec";
   $("view-reference").textContent = mode === 2 || mode === 3 ? "CAMERA CROP" : earth ? "EARTH FIXED" : "BODY FIXED";
   $("view-angle").textContent = mode === 2 || mode === 3 ? (preset === "900" ? "197° MIN. MODELED FOV" : p.field + "° FISHEYE") : mode === 1 || mode === 7 ? "360° × 180°" : Math.round(fov) + "° VIEW";
-  $("view-note").textContent = source === "received" ? "Two decoded camera streams, stitched here. Drag to look around." : sourceNotice || "Synthetic optics and geometry. Pause for full crop resolution.";
+  $("view-note").textContent = source === "received" ? "Drag to look around · Scroll to zoom" : sourceNotice || "Synthetic optics and geometry. Pause for full crop resolution.";
   for (const b of document.querySelectorAll("[data-source]")) {
     b.classList.toggle("active", b.dataset.source === source);
     b.disabled = b.dataset.source === "received" && (!manifest || $("scenario").value !== "launch.json" || preset !== "900");
@@ -235,8 +228,8 @@ function syncUi(force = false) {
   $("earth").checked = earth;
   $("view-mode").value = String(mode);
   for (const b of document.querySelectorAll("[data-look]")) b.disabled = false;
-  $("inspection-status").textContent = playing && !$("live-inspection").checked ? `Held at T+${inspectionTime.toFixed(2)} s` : source === "received" ? "Both decoded cameras at the same capture time." : "Synthetic camera crops before encoding.";
-  $("rig-description").textContent = `${params.diameter} mm body · ${params.stand} mm assumed pupil offset · external geometry view`;
+  $("inspection-status").textContent = playing && !$("live-inspection").checked ? `Held at T+${inspectionTime.toFixed(2)} s` : source === "received" ? "Synchronized camera frames" : "Camera crops before encoding.";
+  $("rig-description").textContent = `Ø ${params.diameter} mm · lens pupils ${params.stand} mm outside the skin`;
   $("seam-description").textContent = ["Selects each camera's outward half.", "Blends the overlap. Nearby surfaces can ghost.", "Uses A wherever it has coverage.", "Uses B wherever it has coverage."][policy];
   const detail = Math.round(2 * radialPixels(Math.PI / 4, p));
   $("detail-head").textContent = `${detail} samples across a centred 90° view`;
@@ -247,7 +240,9 @@ function syncUi(force = false) {
     ["Camera crops", "2 × 1552 × 1552"], ["Capture / video", "30 fps / 4 Mb/s each"],
     ["Transport target", "9.00 Mb/s"], ["RF allowance", `${allowance.toFixed(2)} Mb/s`],
     ["PA average / frequency", "0.5 W / 1.28 GHz"], ["Antenna gain TX / RX", "0 / 15 dBi assumed"],
-    ["Loss / NF / reserve", "7 / 3 / 10 dB assumed"], ["Receiver C/N threshold", "8 dB assumed"],
+    ["Fixed losses / noise figure", "7 / 3 dB assumed"],
+    ["Design reserve", `${rconf.reserve_db} dB assumed`],
+    ["Receiver C/N threshold", "8 dB assumed"],
   ].map(([a,b]) => `<div><dt>${a}</dt><dd>${b}</dd></div>`).join("");
   $("codec-status").textContent = manifest ? `${manifest.frames} frames per camera · ${manifest.transport.measured_ts_mbps.toFixed(3)} Mb/s measured transport. ${manifest.transport.mux_delay_s.toFixed(2)} s mux buffer. RF packet loss is not simulated.` : "No matching encoded clip. Showing the ideal model.";
   const qa = video.getVideoPlaybackQuality?.(), qb = videoB.getVideoPlaybackQuality?.();
@@ -314,7 +309,7 @@ function plot() {
 }
 function resetParams() {
   Object.assign(params, {
-    diameter: 152.4,
+    diameter: SCENARIO.geometry.diameter_mm,
     stand: 8,
     height: 150,
     exposure: 0.5,
@@ -354,7 +349,12 @@ async function loadVideo(t, resume = false) {
   }
   loading = true;
   offset = manifest.start_s ?? 0;
-  const paths = [manifest.cameras.a.mp4, manifest.cameras.b.mp4].map(p => new URL(p, MEDIA_ROOT).href);
+  const revision = manifest.fingerprint.scene_sha256.slice(0, 12) + "-" + manifest.fingerprint.config_sha256.slice(0, 12);
+  const paths = [manifest.cameras.a.mp4, manifest.cameras.b.mp4].map(p => {
+    const url = new URL(p, MEDIA_ROOT);
+    url.searchParams.set("v", revision);
+    return url.href;
+  });
   const key = paths.join("|");
   if (currentClip !== key) {
     currentClip = key;
@@ -398,16 +398,15 @@ async function seek(t) {
 async function setSource(s) {
   pause();
   source = s;
-  mode = 0;
   if (s === "received") {
     resetParams();
-    policy = 0;
     await loadVideo(time);
   } else sourceFrame(time);
   inspect();
   syncUi(true);
 }
 async function setMode(value) {
+  activeLook = null;
   pause();
   mode = Number(value);
 
@@ -431,14 +430,16 @@ async function loadFlight(file) {
   $("phases").replaceChildren();
   for (const [name, t] of [
     ["Pad", 0],
-    ["Ignition", 3],
-    ["Burnout", 9],
+    ["Ignition", flight.summary.ignition_time_s ?? 3],
+    ["Burnout", flight.summary.burnout_time_s ?? 9],
     ["Airbrakes", 12],
     ["Apogee", flight.summary.apogee_time_s],
     ["Separation", flight.summary.deployment_time_s],
   ]) {
     const b = document.createElement("button");
-    b.textContent = name + " · " + t.toFixed(1) + "s";
+    b.textContent = name;
+    b.title = `T + ${t.toFixed(1)} s`;
+    b.dataset.time = t;
     b.onclick = () => seek(t).catch(error);
     $("phases").append(b);
   }
@@ -499,20 +500,44 @@ function tick(now) {
     syncUi();
   }
 }
+function followLook() {
+  if (!frameState || !["airbrakes", "canopy"].includes(activeLook)) return;
+  const pose = recoveryPose(frameState);
+  if (!pose.separated) {
+    [yaw, pitch, earth] = activeLook === "airbrakes" ? [0,-72,false] : [0,85,true];
+    return;
+  }
+  const p = activeLook === "canopy" ? pose.canopy
+    : boosterToWorld([bodyRadius(frameState),0,-frameState.height/1000], pose.booster);
+  yaw = Math.atan2(p[1],p[0])*180/Math.PI;
+  pitch = Math.atan2(p[2],Math.hypot(p[0],p[1]))*180/Math.PI;
+  earth = true;
+}
 function look(name) {
   const views = {
     horizon: [0, 0, true],
     airbrakes: [0, -72, false],
-    nadir: [0, -89.9, false],
-    canopy: [0, 85, false],
+    nadir: [0, -89.9, true],
+    canopy: [0, 85, true],
     seam: [90, -65, false],
   };
+  activeLook = name;
   [yaw, pitch, earth] = views[name];
   mode = 0;
   drawMain();
   syncUi(true);
 }
 function bind() {
+  $("restart").onclick = async () => {
+    activeLook = null;
+    yaw = 25;
+    pitch = -8;
+    fov = 90;
+    earth = true;
+    modelClock = 0;
+    lastSourceFrame = -1;
+    try { await seek(0); } catch (e) { error(e); }
+  };
   for (const b of document.querySelectorAll("[data-source]"))
     b.onclick = () => setSource(b.dataset.source).catch(error);
   for (const b of document.querySelectorAll("[data-look]"))
@@ -530,6 +555,7 @@ function bind() {
             : 5,
       ).catch(error);
   $("earth").onchange = () => {
+    activeLook = null;
     earth = $("earth").checked;
     drawMain();
     syncUi(true);
@@ -648,6 +674,9 @@ function bind() {
   };
   $("screen").onpointerdown = (e) => {
     if (![0, 4, 5].includes(mode)) return;
+    e.preventDefault();
+    $("screen").focus({ preventScroll: true });
+    activeLook = null;
     drag = [e.clientX, e.clientY, yaw, pitch];
     $("screen").setPointerCapture(e.pointerId);
   };
@@ -683,12 +712,13 @@ function bind() {
     }[e.key];
     if (!d) return;
     e.preventDefault();
+    activeLook = null;
     yaw += d[0];
     pitch = clamp(pitch + d[1], -89.9, 89.9);
     redraw();
   };
   videos.forEach(v => v.onended = () => {
-    if (source === "received" && manifest && !loading)
+    if (source === "received" && manifest && !loading && playing && v.ended)
       seek(offset + (manifest.frames - 1) / SCENARIO.fps).catch(error);
   });
   new IntersectionObserver(
@@ -699,7 +729,16 @@ function bind() {
   ).observe(document.querySelector(".pipeline"));
   videos.forEach((v,i) => v.requestVideoFrameCallback?.((n,m) => decoded(i,n,m)));
 }
+function drawRocketKey() {
+  const scale = 130 / (STATIONS.tip - STATIONS.tail);
+  const point = (r,z) => `${(44+r*scale).toFixed(3)} ${(7+(STATIONS.tip-z)*scale).toFixed(3)}`;
+  const profile = nominalProfile();
+  const body = [...profile.map(([z,r])=>point(r,z)), ...profile.toReversed().map(([z,r])=>point(-r,z))];
+  $("rocket-profile").setAttribute("d", "M"+body.join(" L")+" Z");
+  $("rocket-fins").setAttribute("d", finAngles().map(a=>"M"+finOutline(ORK.radius).map(([r,z])=>point(r*Math.cos(a),z)).join(" L")+" Z").join(" "));
+}
 try {
+  drawRocketKey();
   renderer = new CameraRenderer($("screen"));
   work = new CameraRenderer($("work-canvas"));
   rig = new RigView($("rig"));
@@ -746,6 +785,7 @@ try {
         time,
         mode,
         earth,
+        yaw, pitch, activeLook,
         playing,
         policy,
         params: { ...params },

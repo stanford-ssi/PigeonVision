@@ -1,0 +1,85 @@
+{
+  "source": "THE Rocket 7-26-2026 .ork",
+  "sha256": "7cd22013359340f2e9ae044466c07e8728f033079e22b516593a42072fe91a27",
+  "length_m": 2.9532000000000003,
+  "external": [
+    {
+      "name": "Nose Cone",
+      "type": "nosecone",
+      "from_tip_m": 0.0,
+      "length_m": 0.75,
+      "aftradius": 0.078359,
+      "thickness": 0.002,
+      "shapeparameter": 1.0,
+      "shape": "ogive"
+    },
+    {
+      "name": "Nosecone Straight Section",
+      "type": "bodytube",
+      "from_tip_m": 0.75,
+      "length_m": 0.1016,
+      "radius": 0.078359,
+      "thickness": 0.002
+    },
+    {
+      "name": "Switchband",
+      "type": "bodytube",
+      "from_tip_m": 0.8516,
+      "length_m": 0.1016,
+      "radius": 0.078359,
+      "thickness": 0.0018589999999999995
+    },
+    {
+      "name": "Main Airframe",
+      "type": "bodytube",
+      "from_tip_m": 0.9532,
+      "length_m": 1.6,
+      "radius": 0.078359,
+      "thickness": 0.0011
+    },
+    {
+      "name": "Boattail",
+      "type": "transition",
+      "from_tip_m": 2.5532000000000004,
+      "length_m": 0.4,
+      "foreradius": 0.078359,
+      "aftradius": 0.06,
+      "thickness": 0.003,
+      "shape": "ellipsoid",
+      "shapeclipped": "true"
+    }
+  ],
+  "fins": {
+    "rootchord": 0.48,
+    "tipchord": 0.12000000000000005,
+    "sweeplength": 0.47216048927824744,
+    "height": 0.2386,
+    "thickness": 0.0075,
+    "fincount": 3.0,
+    "rotation": 0.0,
+    "cant": 0.0,
+    "filletradius": 0.01,
+    "axial_offset_m": 0.14000000000000007,
+    "axial_method": "bottom"
+  },
+  "parachutes": [
+    {
+      "diameter": 2.1336,
+      "linelength": 0.3,
+      "linecount": 6.0,
+      "deployaltitude": 200.0,
+      "deploydelay": 0.0,
+      "name": "Main Parachute",
+      "event": "altitude"
+    },
+    {
+      "diameter": 0.61,
+      "linelength": 0.3,
+      "linecount": 6.0,
+      "deployaltitude": 200.0,
+      "deploydelay": 0.0,
+      "name": "Drogue Parachute",
+      "event": "apogee"
+    }
+  ]
+}

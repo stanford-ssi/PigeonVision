@@ -13,4 +13,4 @@ Try the [flight demo](https://stanford-ssi.github.io/PigeonVision/) to see the c
 - [Link budget](calculations/link-budget.xlsx): RF and video bitrate calculations.
 - [Simulator](docs/README.md): camera views, flight playback and local setup.
 
-**Next:** finish the carrier interfaces and build the transmitter RF prototype.
+**Next:** finish the carrier interfaces, autonomous flight software and transmitter RF prototype.

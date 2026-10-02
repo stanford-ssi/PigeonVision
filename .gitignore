@@ -3,6 +3,9 @@ build/
 output/
 __pycache__/
 .venv/
+.venv-spi/
+*.egg-info/
+.pytest_cache/
 node_modules/
 ~$*
 *.lck

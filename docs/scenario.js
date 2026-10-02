@@ -7,7 +7,7 @@ export const SCENARIO = {
     pixel_pitch_mm: 0.00225, lens: "CIL212", image_circle_mm: 3.9,
     field_deg: 225.8, efl_mm: 1.1, distortion_b: 0.4,
   },
-  geometry: { diameter_mm: 152.4, pupil_standoff_mm: 8, airbrake_offset_mm: 150 },
+  geometry: { diameter_mm: 156.718, pupil_standoff_mm: 8, airbrake_offset_mm: 150 },
   capture: { exposure_ms: 0.5, skew_ms: 0, readout_ms: 0 },
   video: { per_camera_mbps: 4, transport_mbps: 9 },
   radio: {

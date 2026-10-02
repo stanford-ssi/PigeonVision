@@ -67,8 +67,9 @@ class Handler(SimpleHTTPRequestHandler):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--port', type=int, default=8767)
+    parser.add_argument('--directory', type=Path, help='Serve a checked preview snapshot')
     args = parser.parse_args()
-    root = Path(__file__).resolve().parents[2]
+    root = args.directory.resolve() if args.directory else Path(__file__).resolve().parents[2]
     server = ThreadingHTTPServer(('127.0.0.1', args.port), partial(Handler, directory=str(root)))
     print(f'Pigeon Vision: http://127.0.0.1:{args.port}/docs/', flush=True)
     try:

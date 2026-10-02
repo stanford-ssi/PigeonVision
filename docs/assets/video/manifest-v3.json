@@ -1,15 +1,15 @@
 {
   "pipeline_version": 3,
   "camera_scope": "two-fisheyes-ground-stitch",
-  "generated_at": "2026-09-16T17:58:16.251Z",
+  "generated_at": "2026-09-25T01:23:32.035Z",
   "smoke": false,
   "preset": "900",
   "sensor": "IMX900",
   "lens": "CIL212",
   "crop_px": 1552,
   "fps": 30,
-  "frames": 1098,
-  "duration_s": 36.6,
+  "frames": 990,
+  "duration_s": 33,
   "start_s": 0,
   "parameters": {
     "preset": "900",
@@ -24,9 +24,9 @@
       1552
     ],
     "fps": 30,
-    "frames": 1098,
+    "frames": 990,
     "start_s": 0,
-    "duration_s": 36.6,
+    "duration_s": 33,
     "video_target_mbps_each": 4,
     "mux_target_mbps": 9,
     "mux_delay_s": 0.5,
@@ -46,7 +46,7 @@
         "distortion_b": 0.4
       },
       "geometry": {
-        "diameter_mm": 152.4,
+        "diameter_mm": 156.718,
         "pupil_standoff_mm": 8,
         "airbrake_offset_mm": 150
       },
@@ -78,17 +78,20 @@
   },
   "fingerprint": {
     "algorithm": "sha256",
-    "scene_sha256": "ac7ded42a10cb5d323e49960fabebd22818cf128008891bc29ba27feec07f779",
-    "flight_sha256": "a8388b89f18ae12c433bf7c8d580fa082d1c16b09e47fe4cb81049723772d114",
-    "config_sha256": "7ccbf0f06f8e31535dc84fcbdb5b4a766a71a78793ddb519de954df67f6e018e",
+    "scene_sha256": "4b23134ff9d115b3d6a275c206e616d83c185f4fe7c666dfcbb48c400a0b2949",
+    "flight_sha256": "cd6b0db4adbd32fe13ca087c6b7c79d642737241fda068b8bce99830c4b47563",
+    "config_sha256": "cb07e9aa463c3772c05a1a39d6ad2ea9f71a409944da25657522ea5d38fcf721",
     "inputs": {
-      "scenario.js": "e1bd45622bcf1afc5b5b1720c0959cdc86fb0dc91077c0154c8dceed3b598c65",
-      "scene.js": "96e760b8d70ff5e0b1d259f7369e95350dee6a7fe69d665c94dac93577bb7966",
-      "engine.js": "715b3e5b5c149cc4af1b9e529de1b07dc8c718a6ba86dd2b3b9f75c0b67335e5",
-      "assets/launch.json": "a8388b89f18ae12c433bf7c8d580fa082d1c16b09e47fe4cb81049723772d114",
+      "scenario.js": "ae2ff57c4704da7d2b97ea9ac68f168838b3c72fc2296827d4a5ef7c60979495",
+      "scene.js": "a9faecfb12ac695a868b6260786a04960daad14ceb4574fde4bb1218964f80cf",
+      "engine.js": "41ee8cec51caaee6230f1627215b39f90604f84e302c677256363cd599c65e5f",
+      "terrain.js": "6c380326487b71d434caee2248b52ef95a701a7708656e5fd201598808e987af",
+      "rocket.js": "1833c1535df762b8d5326816d7981efc29185abce4e497c11080f15c58a4798f",
+      "assets/launch.json": "cd6b0db4adbd32fe13ca087c6b7c79d642737241fda068b8bce99830c4b47563",
+      "assets/rocket.json": "8a30d95d67eeef1c82410fbc7419fd1dddde5a371a82c72fd400d5f650dc3316",
       "assets/airbrakes.json": "29b046972da30e674c6439eafe77091d2487a3e56412655964a4f0a73aea728c"
     },
-    "generator_sha256": "004dd8e9d8777a50a1e7fbb1c8a7a135d653ea96a62bb88ad06b8c7230736d34"
+    "generator_sha256": "1e55eed34ac2a5ed5dffb647ba8dbe4d73a7a9548d045b2bdf6d6652cf6f8185"
   },
   "flight": "launch.json",
   "flight_target_m": 3048,
@@ -103,11 +106,11 @@
       "width": 1552,
       "height": 1552,
       "fps": 30,
-      "frames": 1098,
+      "frames": 990,
       "start_s": 0,
-      "duration_s": 36.6,
+      "duration_s": 33,
       "video_target_mbps": 4,
-      "decoded_frames": 1098,
+      "decoded_frames": 990,
       "codec": "H.264 High",
       "pixel_format": "yuv420p"
     },
@@ -116,11 +119,11 @@
       "width": 1552,
       "height": 1552,
       "fps": 30,
-      "frames": 1098,
+      "frames": 990,
       "start_s": 0,
-      "duration_s": 36.6,
+      "duration_s": 33,
       "video_target_mbps": 4,
-      "decoded_frames": 1098,
+      "decoded_frames": 990,
       "codec": "H.264 High",
       "pixel_format": "yuv420p"
     }
@@ -129,7 +132,7 @@
     "ts": "cil212-dual.ts",
     "video_streams": 2,
     "mux_target_mbps": 9,
-    "measured_ts_mbps": 8.998933333333332,
+    "measured_ts_mbps": 8.998933333333333,
     "mux_delay_s": 0.5,
     "pcr_period_ms": 20,
     "pat_period_s": 0.1,
@@ -140,18 +143,18 @@
         "256": {
           "first_dts_s": 1,
           "first_decode_lead_ms": 499.4888888888889,
-          "min_packet_slack_ms": 190.95822222222213,
-          "pes_count": 1098
+          "min_packet_slack_ms": 191.58222222222145,
+          "pes_count": 990
         },
         "257": {
           "first_dts_s": 1,
           "first_decode_lead_ms": 499.4888888888889,
-          "min_packet_slack_ms": 175.1733333333334,
-          "pes_count": 1098
+          "min_packet_slack_ms": 173.78933333333356,
+          "pes_count": 990
         }
       }
     },
-    "measured_bytes": 41170120,
+    "measured_bytes": 37120600,
     "measurement": "Whole TS file bytes × 8 / decoded frame duration"
   },
   "encoder_arguments": {
