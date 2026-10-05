@@ -2810,7 +2810,7 @@
 	(netclass_flag ""
 		(length 2.54)
 		(shape dot)
-		(at 203.2 45.72 0)
+		(at 200.66 45.72 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -2819,7 +2819,7 @@
 		)
 		(uuid "99acab9e-4256-5439-a8e1-9c8800aabeef")
 		(property "Net Class" "CSI_100R"
-			(at 202.502 43.18 0)
+			(at 199.644 42.672 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects

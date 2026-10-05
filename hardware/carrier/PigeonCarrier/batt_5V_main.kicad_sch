@@ -3631,6 +3631,16 @@
 		)
 		(uuid "0413230b-0a66-44b9-9cb0-d838167a3b53")
 	)
+	(text "VBATT = 8.1-12.6V\nNominal Voltage = 10.8V"
+		(exclude_from_sim no)
+		(at 63.754 81.026 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "4214d328-59e8-4fc6-8011-e7b1d7611160")
+	)
 	(text "Zero: 107.199 kHz\nPole: 371.276 kHz"
 		(exclude_from_sim no)
 		(at 190.246 110.49 0)
