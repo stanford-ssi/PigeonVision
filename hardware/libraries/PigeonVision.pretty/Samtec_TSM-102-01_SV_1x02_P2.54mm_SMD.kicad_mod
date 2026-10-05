@@ -1,0 +1,78 @@
+(footprint "Samtec_TSM-102-01_SV_1x02_P2.54mm_SMD"
+	(version 20240108)
+	(generator "pcbnew")
+	(layer "F.Cu")
+	(descr "Samtec TSM single-row vertical recommended PCB layout RevD; pads1.27x3.43 separated2.54; no-A/no-LC holes")
+	(attr smd)
+	(property "Reference" "REF**"
+		(at 0 -4 0)
+		(layer "F.SilkS")
+		(effects
+			(font
+				(size .8 .8)
+				(thickness .12)
+			)
+		)
+	)
+	(property "Value" "TSM-102-01-L-SV-P-TR"
+		(at 0 4 0)
+		(layer "F.Fab")
+		(effects
+			(font
+				(size .8 .8)
+				(thickness .12)
+			)
+		)
+	)
+	(fp_rect
+		(start -2.54 -1.27)
+		(end 2.54 1.27)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(fill none)
+		(layer "F.Fab")
+	)
+	(fp_rect
+		(start -2.79 -3.425)
+		(end 2.79 3.425)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(fill none)
+		(layer "F.CrtYd")
+	)
+	(pad "1" smd rect
+		(at 1.27 1.46)
+		(size 1.27 3.43)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+	)
+	(pad "2" smd rect
+		(at -1.27 -1.46)
+		(size 1.27 3.43)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+	)
+	(fp_text user "1"
+		(at 2.3 2.3 0)
+		(layer "F.SilkS")
+		(effects
+			(font
+				(size .8 .8)
+				(thickness .12)
+			)
+		)
+	)
+	(model "${KIPRJMOD}/../../libraries/3dmodels/Samtec_TSM-102-01_SV_1x02_P2.54mm_SMD.step"
+		(offset
+			(xyz 0 0 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 0 0)
+		)
+	)
+)

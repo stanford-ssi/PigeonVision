@@ -1,0 +1,29 @@
+{
+  "checked_utc": "2026-10-02T09:21:33.723495+00:00",
+  "models": [
+    {
+      "relative_stock_model": "Connector_AMASS.3dshapes/AMASS_XT60PW-M_1x02_P7.20mm_Horizontal.step",
+      "status": "resolved_by_project_drawing_envelope",
+      "attempts": [
+        {
+          "url": "https://gitlab.com/kicad/libraries/kicad-packages3D/-/raw/master/Connector_AMASS.3dshapes/AMASS_XT60PW-M_1x02_P7.20mm_Horizontal.step",
+          "error": "HTTP Error 404: Not Found"
+        },
+        {
+          "url": "https://raw.githubusercontent.com/KiCad/kicad-packages3D/master/Connector_AMASS.3dshapes/AMASS_XT60PW-M_1x02_P7.20mm_Horizontal.step",
+          "error": "HTTP Error 404: Not Found"
+        }
+      ],
+      "stock_status": "unavailable",
+      "resolution_manifest": "hardware/carrier/review/amass-xt60pw-model-manifest.json",
+      "resolution_model": "hardware/libraries/3dmodels/AMASS_XT60PW_M_DrawingEnvelope.step",
+      "resolution_note": "This is project-authored simplified nominal geometry, not a downloaded or substituted KiCad stock model."
+    }
+  ],
+  "license": {
+    "file": "hardware/libraries/3dmodels/KiCad_packages3D_LICENSE.txt",
+    "source_url": "https://gitlab.com/kicad/libraries/kicad-packages3D/-/raw/master/LICENSE.md",
+    "sha256": "45d2bce75e5a4208f5afb01b8fb2c406e700371c4fe2b5f5cd5c443d46db4d8f"
+  },
+  "scope": "Model downloads only; no footprints/schematics modified. Upstream models are representative geometry, not exact manufacturer certified CAD."
+}

@@ -1,0 +1,13 @@
+# XT60PW-M local envelope model
+
+J3 uses the exact AMASS XT60PW-M horizontal two-contact connector and KiCad's matching through-hole footprint. Pad1 is negative/GND and pad2 is positive/BATTERY_RAW; the exported design netlist agrees with the stock footprint polarity marks. The footprint's requested horizontal STEP is absent from the installed KiCad10 library and both official upstream repositories. The available vertical XT60 STEP files are different parts. No XT60 asset was found in the repository's JLCImport_Auto files. Public JLC C98732 identifies AMASS XT60PW-M and a3D UUID, but its public STEP request returned no bytes.
+
+`hardware/libraries/3dmodels/AMASS_XT60PW_M_DrawingEnvelope.step` is therefore a project-authored simplified envelope, not downloaded KiCad or manufacturer CAD. Its source and SHA256 records are in `amass-xt60pw-model-manifest.json`.
+
+The [current manufacturer catalog](https://www.china-amass.com/public/upload/20260207/7fa24f5a6f35ec66c7a115c07a34ab06.pdf), printed page17, gives XT60PW-M body dimensions15.90×18.25×8.45 mm and weld-leg length3.0 mm. The [manufacturer-authored V1.2 drawing](https://www.shoptronica.com/ficheros/XT60PW.pdf), page2, verifies the mounting map:7.2 mm power-contact pitch,13.5 mm retention pitch,6 mm retention offset,1.85 mm rear edge from the power-contact line,2.7 mm power holes and0.6×1.7 mm retention slots. Those positions match the assigned footprint. The drawing is hosted by a public reseller; the original TME URL in the KiCad footprint returned403 during this audit.
+
+The body is centered at X=3.6 mm relative to contact1, and the PCB rear edge remains Y=+1.85 mm. STEP Y is the negative of footprint PCB Y, so zero model offset/rotation and unit scale put the body toward footprint Y<0. The model was re-read with OpenCascade and bounds checked: X−4.35..11.55 mm, Y−1.85..16.40 mm, Z−3.00..8.45 mm. Body-only dimensions are15.90×18.25×8.45 mm.
+
+The filled body omits rounded corners, mating cavity, mould details and optional rear cover. Below-board volumes are clearance blocks at the verified hole extents, not exact contact-metal profiles. Current catalog dimensions have no listed tolerances, so this is not a tolerance-qualified maximum envelope. Hole datums come from the older exact-MPN drawing; verify incoming connector revision and physical dimensions before PCB release. Mating plug, cable bend and pull-out clearance, solder standoff and assembly tolerances still need mechanical allowance.
+
+The KiCad packages3D license copied beside the project's stock model copies applies to those upstream assets; it does not describe this locally generated envelope. No footprint or schematic was changed by this model task.

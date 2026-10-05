@@ -286,8 +286,7 @@
 		(roundrect_rratio 0.25)
 	)
 	(embedded_fonts no)
-
-	(model "${KICAD10_3DMODEL_DIR}/Package_TO_SOT_SMD.3dshapes/SOT-23-8.step"
+	(model "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Package_TO_SOT_SMD_SOT-23-8.step"
 		(offset
 			(xyz 0 0 0)
 		)

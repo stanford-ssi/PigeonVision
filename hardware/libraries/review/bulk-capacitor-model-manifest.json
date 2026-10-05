@@ -1,0 +1,354 @@
+{
+  "mpn": "CL32B106KBJZW6E",
+  "manufacturer": "Samsung Electro-Mechanics",
+  "source": "https://product.samsungsem.com/mlcc/CL32B106KBJZW6.do",
+  "nominal_mm": [
+    3.2,
+    2.5,
+    2.5
+  ],
+  "tolerance_mm": [
+    0.3,
+    0.2,
+    0.2
+  ],
+  "maximum_mm": [
+    3.5,
+    2.7,
+    2.7
+  ],
+  "footprint": "PigeonVision:Samsung_CL32B106KBJZW6E_C1210_MaxEnvelope",
+  "stock_source": "Capacitor_SMD:C_1210_3225Metric",
+  "copper_pad_nodes_identical_to_stock": true,
+  "pads": [
+    {
+      "number": "1",
+      "at_mm": [
+        -1.475,
+        0.0
+      ],
+      "size_mm": [
+        1.15,
+        2.7
+      ]
+    },
+    {
+      "number": "2",
+      "at_mm": [
+        1.475,
+        0.0
+      ],
+      "size_mm": [
+        1.15,
+        2.7
+      ]
+    }
+  ],
+  "courtyard_half_extents_mm": [
+    2.3,
+    1.6
+  ],
+  "model": "hardware/libraries/3dmodels/Samsung_CL32B106KBJZW6E_C1210_MaxEnvelope.step",
+  "model_provenance": "Drawing-derived solid maximum component envelope, not manufacturer STEP. Solder standoff and board/assembly tolerances not included.",
+  "model_bounds_mm": [
+    -1.7500001,
+    -1.3500001000000001,
+    -1e-07,
+    1.7500001,
+    1.3500001000000001,
+    2.7000001
+  ],
+  "footprint_sha256": "2dc794a64c6ee6cbbb7c80c532fd581fed2c2afb3079ed4ecebd98c40072e3e7",
+  "model_sha256": "0f48698bff8bdeda4d5dbe9269b712962156901ef6ae70983f6b89669fcfe9df",
+  "footprint_file": "hardware/libraries/PigeonVision.pretty/Samsung_CL32B106KBJZW6E_C1210_MaxEnvelope.kicad_mod",
+  "pad_map": [
+    {
+      "number": "1",
+      "at_mm": [
+        -1.475,
+        0.0
+      ],
+      "size_mm": [
+        1.15,
+        2.7
+      ],
+      "type": "smd",
+      "shape": "roundrect"
+    },
+    {
+      "number": "2",
+      "at_mm": [
+        1.475,
+        0.0
+      ],
+      "size_mm": [
+        1.15,
+        2.7
+      ],
+      "type": "smd",
+      "shape": "roundrect"
+    }
+  ],
+  "models": [
+    {
+      "reference": "${KIPRJMOD}/../../libraries/3dmodels/Samsung_CL32B106KBJZW6E_C1210_MaxEnvelope.step",
+      "file": "hardware/libraries/3dmodels/Samsung_CL32B106KBJZW6E_C1210_MaxEnvelope.step",
+      "sha256": "0f48698bff8bdeda4d5dbe9269b712962156901ef6ae70983f6b89669fcfe9df",
+      "offset": [
+        "0",
+        "0",
+        "0"
+      ],
+      "scale": [
+        "1",
+        "1",
+        "1"
+      ],
+      "rotation": [
+        "0",
+        "0",
+        "0"
+      ]
+    }
+  ],
+  "local_model": "${KIPRJMOD}/../../libraries/3dmodels/Samsung_CL32B106KBJZW6E_C1210_MaxEnvelope.step",
+  "saved_instances": [
+    {
+      "sheet": "Camera_Regulators.kicad_sch",
+      "ref": "C601",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "Camera_Regulators.kicad_sch",
+      "ref": "C602",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "Camera_Regulators.kicad_sch",
+      "ref": "C606",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "Camera_Regulators.kicad_sch",
+      "ref": "C607",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "Camera_Regulators.kicad_sch",
+      "ref": "C608",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "Camera_Regulators.kicad_sch",
+      "ref": "C609",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "Camera_Regulators.kicad_sch",
+      "ref": "C610",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "Camera_Regulators.kicad_sch",
+      "ref": "C611",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "batt_5V_main.kicad_sch",
+      "ref": "C10",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "batt_5V_main.kicad_sch",
+      "ref": "C11",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "batt_5V_main.kicad_sch",
+      "ref": "C12",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "batt_5V_main.kicad_sch",
+      "ref": "C13",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "batt_5V_main.kicad_sch",
+      "ref": "C14",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "batt_5V_main.kicad_sch",
+      "ref": "C15",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "batt_5V_main.kicad_sch",
+      "ref": "C16",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "batt_5V_main.kicad_sch",
+      "ref": "C17",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "batt_5V_main.kicad_sch",
+      "ref": "C18",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "batt_5V_main.kicad_sch",
+      "ref": "C19",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "batt_5V_main.kicad_sch",
+      "ref": "C20",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "batt_5V_main.kicad_sch",
+      "ref": "C21",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "batt_5V_main.kicad_sch",
+      "ref": "C22",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "batt_5V_main.kicad_sch",
+      "ref": "C23",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "batt_5V_main.kicad_sch",
+      "ref": "C24",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "batt_5V_main.kicad_sch",
+      "ref": "C25",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "batt_5V_main.kicad_sch",
+      "ref": "C26",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "batt_5V_main.kicad_sch",
+      "ref": "C27",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "batt_5V_main.kicad_sch",
+      "ref": "C28",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "batt_5V_main.kicad_sch",
+      "ref": "C29",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "batt_5V_sdr.kicad_sch",
+      "ref": "C31",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "batt_5V_sdr.kicad_sch",
+      "ref": "C32",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "batt_5V_sdr.kicad_sch",
+      "ref": "C39",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "batt_5V_sdr.kicad_sch",
+      "ref": "C40",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "batt_5V_sdr.kicad_sch",
+      "ref": "C41",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "batt_5V_sdr.kicad_sch",
+      "ref": "C42",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "batt_5V_sdr.kicad_sch",
+      "ref": "C44",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    },
+    {
+      "sheet": "batt_5V_sdr.kicad_sch",
+      "ref": "C45",
+      "digikey": "1276-7052-1-ND",
+      "jlc": "C17498688"
+    }
+  ],
+  "assigned_quantity": 36,
+  "checked_utc": "2026-10-02T09:21:33.723495+00:00",
+  "model_reference": "${KIPRJMOD}/../../libraries/3dmodels/Samsung_CL32B106KBJZW6E_C1210_MaxEnvelope.step",
+  "digikey": "1276-7052-1-ND",
+  "jlc": "C17498688",
+  "jlc_snapshot": {
+    "lcsc": "C17498688",
+    "name": "Samsung Electro-Mechanics CL32B106KBJZW6E",
+    "model": "CL32B106KBJZW6E",
+    "brand": "Samsung Electro-Mechanics",
+    "package": "1210",
+    "category": "Multilayer Ceramic Capacitors MLCC - SMD/SMT",
+    "stock": 223,
+    "type": "Extended",
+    "price": 0.4504,
+    "description": "10uF 50V X7R \u00b110% 1210 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
+    "url": "https://www.lcsc.com/product-detail/multilayer-ceramic-capacitors-mlcc-smd-smt_samsung-electro-mechanics-cl32b106kbjzw6e_C17498688.html",
+    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2311151421_Samsung-Electro-Mechanics-CL32B106KBJZW6E_C17498688.pdf"
+  },
+  "snapshot_source": "build/carrier-completion/root-extra-catalog.json",
+  "snapshot_note": "Unreserved public catalog quantity; exact supplier codes do not guarantee an assembly quote or inventory at order time."
+}

@@ -1,0 +1,320 @@
+{
+  "date": "2026-10-02",
+  "scope": "Three new library parts only; no active schematic, project or PCB changes",
+  "parts": [
+    {
+      "symbol": "PigeonVision:PTS636_SK25_SMTR_LFS",
+      "footprint": "PigeonVision:CK_PTS636_SK25_SMTR_LFS_GullWing_SMD",
+      "MPN": "PTS636 SK25 SMTR LFS",
+      "DigiKey Part #": "CKN12322-1-ND",
+      "LCSC Part #": "C2689642",
+      "JLCPCB Part #": "C2689642"
+    },
+    {
+      "symbol": "PigeonVision:BSS138BK,215",
+      "footprint": "PigeonVision:Nexperia_SOT23_BSS138BK",
+      "MPN": "BSS138BK,215",
+      "DigiKey Part #": "1727-1141-1-ND",
+      "LCSC Part #": "C282529"
+    },
+    {
+      "symbol": "PigeonVision:TPD1E05U06DYAR",
+      "footprint": "PigeonVision:TI_DYA0002A_SOD523_TPD1E05U06",
+      "MPN": "TPD1E05U06DYAR",
+      "DigiKey Part #": "296-TPD1E05U06DYARCT-ND",
+      "LCSC Part #": "C3702980"
+    }
+  ],
+  "button_evidence": {
+    "selected_mpn": "PTS636 SK25 SMTR LFS",
+    "selection_reason": "Exact gull-wing part verified at DigiKey, LCSC and JLC; stock footprint matches current land dimensions; retain detailed licensed stock model.",
+    "datasheet": "PTS636-lcsc-manufacturer.pdf",
+    "datasheet_sha256": "2015aeeef741ee7eff1ec5bdb3c2229233d4b0605be9a8cfe73bff851ef5dceb",
+    "visual_review": "2020 physical outline and two-terminal topology were visually reviewed. Current2026 primary landdimensiontext was independently reviewed by root/subagent; rendering did not supply image.",
+    "body_nominal_mm": [
+      6.1,
+      3.7,
+      2.5
+    ],
+    "body_tolerances_mm": [
+      0.2,
+      0.2,
+      0.2
+    ],
+    "terminal_tip_span_mm": 8.0,
+    "span_tolerance_mm": 0.1,
+    "manufacturer_land_outer_span_mm": 9,
+    "manufacturer_land_inner_gap_mm": 6.5,
+    "manufacturer_land_y_mm": 1,
+    "pad_width_equation": "(9-6.5)/2 =1.25mm",
+    "pad_center_equation": "(9+6.5)/4 =3.875mm",
+    "pads": [
+      {
+        "number": "1",
+        "xy_mm": [
+          -3.875,
+          0
+        ],
+        "size_mm": [
+          1.25,
+          1
+        ]
+      },
+      {
+        "number": "2",
+        "xy_mm": [
+          3.875,
+          0
+        ],
+        "size_mm": [
+          1.25,
+          1
+        ]
+      }
+    ],
+    "contact_topology": "Normally open SPST; pressing connects terminals 1 and 2. No polarity. Either terminal may be GND.",
+    "gullwing_stock_discrepancy": "Retracted: current2026 manufacturer land Y is1mm and matches stock. Earlier widening recommendation used obsolete2020mirror.1.3/1.9 are part side-view dimensions, not land dimensions.",
+    "symbol": "PTS636_SK25_SMTR_LFS derived from Switch:SW_Push; pins1/2passive",
+    "model_selected": "Unmodified detailed KiCadstock model for exactgull-wing2.5mmvariant. Source path Button_Switch_SMD.3dshapes/SW_Tactile_SPST_NO_Straight_CK_PTS636Sx25SMTRLFS.step; NOT manufacturerCAD. Nominal overallmatches8x3.7x2.5; modelnot tolerancemaximum.",
+    "sourcing_checked": "2026-10-02",
+    "digikey": {
+      "url": "https://www.digikey.com/en/products/detail/c-k/PTS636SK25SMTR-LFS/10071735",
+      "part": "CKN12322-1-ND",
+      "stock_observed": 20644,
+      "one_usd": 0.25
+    },
+    "lcsc": {
+      "url": "https://www.lcsc.com/product-detail/Tactile-Switches_C-K-PTS636SK25SMTRLFS_C2689642.html",
+      "part": "C2689642",
+      "stock_observed": 3360,
+      "min_qty": 5,
+      "unit_at_5_usd": 0.3565
+    },
+    "jlc_assembly": {
+      "url": "https://jlcpcb.com/partdetail/CK-PTS636SK25SMTRLFS/C2689642",
+      "part": "C2689642",
+      "classification": "Extended",
+      "type": "SMT, Economic and Standard",
+      "stock_observed": 5495,
+      "available_assembly_qty_observed": 4025,
+      "unit_at_1_usd": 0.2591
+    },
+    "files": {
+      "symbol": "proposed/Button_Proposal.kicad_sym",
+      "footprint": "proposed/PigeonVision.pretty/CK_PTS636_SK25_SMTR_LFS_GullWing_SMD.kicad_mod",
+      "model": "proposed/3dmodels/CK_PTS636_SK25_SMTR_LFS_KiCad.step"
+    },
+    "kicad_footprint_load": {
+      "version": "10.0.0",
+      "pads": [
+        {
+          "pin": "1",
+          "center_mm": [
+            -3.875,
+            0.0
+          ],
+          "size_mm": [
+            1.25,
+            1.0
+          ]
+        },
+        {
+          "pin": "2",
+          "center_mm": [
+            3.875,
+            0.0
+          ],
+          "size_mm": [
+            1.25,
+            1.0
+          ]
+        }
+      ],
+      "coupon_roundtrip": true
+    },
+    "current_primary_source": "https://www.littelfuse.com/assetdocs/littelfuse-ck-tactile-pts636-series-datasheet?assetguid=8a16fd39-1f87-4545-ab06-9e057a0fe304",
+    "source_revision": "MI09/02/26, copyright2026, page3 SMT G leads2.5mm",
+    "source_review": "Current2026 manufacturer extracted land dimensions independently checked:9mm outer span,6.5mm inner gap,two1mm lands. Current PDF pixels unavailable through enabled tools; older2020 mirror is not the current land recommendation.",
+    "model_clearance_limit": "Detailed stock STEP is nominal, not tolerance envelope. Part2.5+/-0.2mm height needs2.7mm clearance minimum before additional mechanical allowance.",
+    "flat_alternate_status": "Preliminary drawing from2020mirror only; do not publish flatalternate without current2026drawing check.",
+    "current_primary_qualification": "Root and subagent independently traced current2026 dimension list:9 outer,6.5 gap,2-1mmY. Padwidth(9-6.5)/2=1.25mm; center(9+6.5)/4=3.875mm; Y1mm. Primary image rendering unavailable; currentqualification is exacttextdimensionreview plus independentlychecked formula. Older2020mirror is not currentrecommendation.",
+    "symbol_cli_svg_export_success": true,
+    "model_step_load_valid": true,
+    "footprint_status": "Ready for root review: current manufacturer geometry matches unmodified stock pads. The proposed copy changes library name, exactpart metadata andportablemodel path only.",
+    "model_render": "selected-button-3d.png; inspected, terminalstwoalignwithlands, nominalpackageoutlineandgull-winggeometrymatch manufacturerpart drawing.",
+    "superseded_work": "2020 mirror widening to2.1mm was retracted. Flatvariant retainedforreferenceonly; do not publishits2020-derivedproposal withoutcurrentdrawingreview.",
+    "step_roundtrip_valid": true,
+    "portable_model_path": "${KIPRJMOD}/../../libraries/3dmodels/CK_PTS636_SK25_SMTR_LFS_KiCad.step"
+  },
+  "detector_evidence": {
+    "scope": "Proposals only; no active CAD/library changes",
+    "BSS138BK,215": {
+      "pins": {
+        "1": "G",
+        "2": "S",
+        "3": "D"
+      },
+      "datasheet": "https://assets.nexperia.com/documents/data-sheet/BSS138BK.pdf",
+      "land": "Existing standard KiCad SOT-23 footprint, pinmap preserved",
+      "model": "Representative cached KiCad SOT-23, not exact manufacturer CAD",
+      "LCSC": "C282529",
+      "DigiKey": "1727-1141-1-ND; catalogued, presently backordered",
+      "symbol_pin_check": {
+        "1": "G",
+        "2": "S",
+        "3": "D"
+      }
+    },
+    "TPD1E05U06DYAR": {
+      "pins": {
+        "1": "I/O",
+        "2": "GND"
+      },
+      "datasheet": "https://www.ti.com/lit/ds/symlink/tpd1e05u06.pdf",
+      "drawing": "DYA0002A 4224978/B 09/2021, datasheet pages 24-26",
+      "pads_mm": {
+        "1": [
+          -0.74,
+          0,
+          0.67,
+          0.4
+        ],
+        "2": [
+          0.74,
+          0,
+          0.67,
+          0.4
+        ]
+      },
+      "package_mm": {
+        "body_nominal": [
+          1.2,
+          0.8
+        ],
+        "lead_span": [
+          1.5,
+          1.7
+        ],
+        "height_max": 0.77
+      },
+      "model": "Nominal plan rectangular body and leads, maximum height envelope; not detailed CAD",
+      "model_bounds_mm": {
+        "min": [
+          -0.8000001,
+          -0.4000001,
+          -1e-07
+        ],
+        "max": [
+          0.8000001,
+          0.4000001,
+          0.7700001
+        ]
+      },
+      "symbol_pin_check": {
+        "1": "I/O",
+        "2": "GND"
+      },
+      "DigiKey": "296-TPD1E05U06DYARCT-ND",
+      "LCSC": "C3702980"
+    },
+    "wiring": {
+      "VBUS": "connector VBUS -> TVS IO1 shunt (GND2) -> 1k -> BSS gate1; 10k gate to GND",
+      "BSS": "S2 GND, D3 TS3 /OE6, /OE 10k to 3V3_CM5",
+      "TPD4E05U06DQAR": {
+        "1": "USB_D+",
+        "2": "USB_D-",
+        "4": "USB_CC1",
+        "5": "USB_CC2",
+        "3": "GND",
+        "8": "GND",
+        "6": "NC",
+        "7": "NC",
+        "9": "NC",
+        "10": "NC"
+      },
+      "CM5_power": "Host VBUS does not power carrier or CM5"
+    },
+    "checks": {
+      "gate_at_4V35_VBUS_V": 3.9545454545454546,
+      "OE_sink_current_A": 0.00033,
+      "OE_low_using_25C_Rds_max_V": 0.002145,
+      "host_VBUS_detector_draw_at_5V_A": 0.00045454545454545455
+    },
+    "limits": [
+      "6.5 ohm FET maximum specified at 25C; no claim at every temperature",
+      "TVS clamp 10V at 1A and 14V at 5A TLP are typical, not maximum guaranteed residual voltage",
+      "ESD waveform, routing inductance, power ramp and USB enumeration need hardware qualification"
+    ],
+    "footprint_load_check": {
+      "Nexperia_SOT23_BSS138BK": [
+        {
+          "number": "1",
+          "position_mm": [
+            -0.9375,
+            -0.95
+          ],
+          "size_mm": [
+            1.475,
+            0.6
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            -0.9375,
+            0.95
+          ],
+          "size_mm": [
+            1.475,
+            0.6
+          ]
+        },
+        {
+          "number": "3",
+          "position_mm": [
+            0.9375,
+            0.0
+          ],
+          "size_mm": [
+            1.475,
+            0.6
+          ]
+        }
+      ],
+      "TI_DYA0002A_SOD523_TPD1E05U06": [
+        {
+          "number": "1",
+          "position_mm": [
+            -0.74,
+            0.0
+          ],
+          "size_mm": [
+            0.67,
+            0.4
+          ]
+        },
+        {
+          "number": "2",
+          "position_mm": [
+            0.74,
+            0.0
+          ],
+          "size_mm": [
+            0.67,
+            0.4
+          ]
+        }
+      ]
+    }
+  },
+  "sources": {
+    "button": "https://www.littelfuse.com/assetdocs/littelfuse-ck-tactile-pts636-series-datasheet?assetguid=8a16fd39-1f87-4545-ab06-9e057a0fe304",
+    "button_DigiKey": "https://www.digikey.com/en/products/detail/c-k/PTS636SK25SMTR-LFS/10071735",
+    "button_LCSC": "https://www.lcsc.com/product-detail/Tactile-Switches_C-K-PTS636SK25SMTRLFS_C2689642.html",
+    "button_JLC": "https://jlcpcb.com/partdetail/CK-PTS636SK25SMTRLFS/C2689642",
+    "FET": "https://assets.nexperia.com/documents/data-sheet/BSS138BK.pdf",
+    "VBUS_TVS": "https://www.ti.com/lit/ds/symlink/tpd1e05u06.pdf",
+    "VBUS_TVS_LCSC": "https://www.lcsc.com/product-detail/ESD-and-Surge-Protection-TVS-ESD_Texas-Instruments-TPD1E05U06DYAR_C3702980.html"
+  },
+  "qualification_limits": "Manufacturer pins/lands and KiCad loading reviewed. Nominal/representative models do not prove seating tolerance, production assembly, USB compliance or board ESD performance."
+}

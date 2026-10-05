@@ -34,7 +34,7 @@
 (pad "9" smd roundrect (at 0.5 2.1125) (size 0.25 0.675) (layers "F.Cu" "F.Mask" "F.Paste") (roundrect_rratio 0.2))
 (pad "8" smd roundrect (at 0 2.0375) (size 0.25 0.825) (layers "F.Cu" "F.Mask" "F.Paste") (roundrect_rratio 0.2))
 (pad "16" smd roundrect (at 0 -0.9625) (size 0.35 2.975) (layers "F.Cu" "F.Mask" "F.Paste") (roundrect_rratio 0.14285714285714288))
-	(model "${KICAD10_3DMODEL_DIR}/Package_DFN_QFN.3dshapes/Texas_RVE0028A_VQFN-28-1EP_3.5x4.5mm_P0.4mm_EP2.1x3.1mm.step"
+	(model "${KIPRJMOD}/../../libraries/3dmodels/TI_RPH0016B.stp"
 		(offset
 			(xyz 0 0 0)
 		)

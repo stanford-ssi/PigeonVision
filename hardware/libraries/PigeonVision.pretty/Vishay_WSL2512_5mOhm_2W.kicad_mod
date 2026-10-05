@@ -1,19 +1,99 @@
-(footprint "Vishay_WSL2512_5mOhm_2W" (version 20240108) (generator "pcbnew")
-  (layer "F.Cu")
-  (descr "Vishay WSL2512...18 high-power resistor, 5 mOhm to 6.9 mOhm range; 6.35 x 3.18 mm body; manufacturer land pattern a=2.11, b=3.68, l=3.18 mm; document 31057 rev. 09-Sep-2024")
-  (tags "resistor shunt current sense WSL2512 5mOhm 2W")
-  (attr smd)
-  (property "Reference" "REF**" (at 0 -2.65 0) (layer "F.SilkS") (effects (font (size 1 1) (thickness 0.15))))
-  (property "Value" "Vishay_WSL2512_5mOhm_2W" (at 0 2.65 0) (layer "F.Fab") (effects (font (size 0.8 0.8) (thickness 0.12))))
-  (fp_line (start -1.34 -1.75) (end 1.34 -1.75) (stroke (width 0.12) (type default)) (layer "F.SilkS"))
-  (fp_line (start -1.34 1.75) (end 1.34 1.75) (stroke (width 0.12) (type default)) (layer "F.SilkS"))
-  (fp_rect (start -3.95 -2.1) (end 3.95 2.1) (stroke (width 0.05) (type default)) (fill none) (layer "F.CrtYd"))
-  (fp_rect (start -3.175 -1.59) (end 3.175 1.59) (stroke (width 0.1) (type default)) (fill none) (layer "F.Fab"))
-  (fp_line (start -1.985 -1.59) (end -1.985 1.59) (stroke (width 0.1) (type default)) (layer "F.Fab"))
-  (fp_line (start 1.985 -1.59) (end 1.985 1.59) (stroke (width 0.1) (type default)) (layer "F.Fab"))
-  (pad "1" smd roundrect (at -2.645 0) (size 2.11 3.68) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio 0.0237))
-  (pad "2" smd roundrect (at 2.645 0) (size 2.11 3.68) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio 0.0237))
-	(model "${KICAD10_3DMODEL_DIR}/Resistor_SMD.3dshapes/R_2512_6332Metric.step"
+(footprint "Vishay_WSL2512_5mOhm_2W"
+	(version 20240108)
+	(generator "pcbnew")
+	(layer "F.Cu")
+	(descr "Vishay WSL2512...18 high-power resistor, 5 mOhm to 6.9 mOhm range; 6.35 x 3.18 mm body; manufacturer land pattern a=2.11, b=3.68, l=3.18 mm; document 31057 rev. 09-Sep-2024")
+	(tags "resistor shunt current sense WSL2512 5mOhm 2W")
+	(attr smd)
+	(property "Reference" "REF**"
+		(at 0 -2.65 0)
+		(layer "F.SilkS")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "Vishay_WSL2512_5mOhm_2W"
+		(at 0 2.65 0)
+		(layer "F.Fab")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.12)
+			)
+		)
+	)
+	(fp_line
+		(start -1.34 -1.75)
+		(end 1.34 -1.75)
+		(stroke
+			(width 0.12)
+			(type default)
+		)
+		(layer "F.SilkS")
+	)
+	(fp_line
+		(start -1.34 1.75)
+		(end 1.34 1.75)
+		(stroke
+			(width 0.12)
+			(type default)
+		)
+		(layer "F.SilkS")
+	)
+	(fp_rect
+		(start -3.95 -2.1)
+		(end 3.95 2.1)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(fill none)
+		(layer "F.CrtYd")
+	)
+	(fp_rect
+		(start -3.175 -1.59)
+		(end 3.175 1.59)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(fill none)
+		(layer "F.Fab")
+	)
+	(fp_line
+		(start -1.985 -1.59)
+		(end -1.985 1.59)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "F.Fab")
+	)
+	(fp_line
+		(start 1.985 -1.59)
+		(end 1.985 1.59)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "F.Fab")
+	)
+	(pad "1" smd roundrect
+		(at -2.645 0)
+		(size 2.11 3.68)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(roundrect_rratio 0.0237)
+	)
+	(pad "2" smd roundrect
+		(at 2.645 0)
+		(size 2.11 3.68)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(roundrect_rratio 0.0237)
+	)
+	(model "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Resistor_SMD_R_2512_6332Metric.step"
 		(offset
 			(xyz 0 0 0)
 		)

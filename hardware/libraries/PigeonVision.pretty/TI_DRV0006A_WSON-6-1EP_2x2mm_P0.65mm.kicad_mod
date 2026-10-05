@@ -68,18 +68,6 @@
 		(fill yes)
 		(layer "F.SilkS")
 	)
-
-
-
-
-
-
-
-
-
-
-
-
 	(fp_poly
 		(pts
 			(xy -0.5 -1)
@@ -105,29 +93,72 @@
 			)
 		)
 	)
-
-
-
-
-
-
-
-
-
 	(embedded_fonts no)
-
-(solder_mask_margin 0.05)
-(fp_rect (start -1.45 -1.25) (end 1.45 1.25) (stroke (width 0.05) (type default)) (fill none) (layer "F.CrtYd"))
-(pad "1" smd roundrect (at -0.975 -0.65) (size 0.45 0.3) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio 0.1666667))
-(pad "2" smd roundrect (at -0.975 0) (size 0.45 0.3) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio 0.1666667))
-(pad "3" smd roundrect (at -0.975 0.65) (size 0.45 0.3) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio 0.1666667))
-(pad "4" smd roundrect (at 0.975 0.65) (size 0.45 0.3) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio 0.1666667))
-(pad "5" smd roundrect (at 0.975 0) (size 0.45 0.3) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio 0.1666667))
-(pad "6" smd roundrect (at 0.975 -0.65) (size 0.45 0.3) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio 0.1666667))
-(pad "7" smd rect (at 0 0) (size 1 1.6) (layers "F.Cu" "F.Mask"))
-(pad "" smd roundrect (at 0 -0.45) (size 1 0.7) (layers "F.Paste") (roundrect_rratio 0.07142857))
-(pad "" smd roundrect (at 0 0.45) (size 1 0.7) (layers "F.Paste") (roundrect_rratio 0.07142857))
-	(model "${KICAD10_3DMODEL_DIR}/Package_SON.3dshapes/WSON-6-1EP_2x2mm_P0.65mm_EP1x1.6mm.step"
+	(solder_mask_margin 0.05)
+	(fp_rect
+		(start -1.45 -1.25)
+		(end 1.45 1.25)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(fill none)
+		(layer "F.CrtYd")
+	)
+	(pad "1" smd roundrect
+		(at -0.975 -0.65)
+		(size 0.45 0.3)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(roundrect_rratio 0.1666667)
+	)
+	(pad "2" smd roundrect
+		(at -0.975 0)
+		(size 0.45 0.3)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(roundrect_rratio 0.1666667)
+	)
+	(pad "3" smd roundrect
+		(at -0.975 0.65)
+		(size 0.45 0.3)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(roundrect_rratio 0.1666667)
+	)
+	(pad "4" smd roundrect
+		(at 0.975 0.65)
+		(size 0.45 0.3)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(roundrect_rratio 0.1666667)
+	)
+	(pad "5" smd roundrect
+		(at 0.975 0)
+		(size 0.45 0.3)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(roundrect_rratio 0.1666667)
+	)
+	(pad "6" smd roundrect
+		(at 0.975 -0.65)
+		(size 0.45 0.3)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(roundrect_rratio 0.1666667)
+	)
+	(pad "7" smd rect
+		(at 0 0)
+		(size 1 1.6)
+		(layers "F.Cu" "F.Mask")
+	)
+	(pad "" smd roundrect
+		(at 0 -0.45)
+		(size 1 0.7)
+		(layers "F.Paste")
+		(roundrect_rratio 0.07142857)
+	)
+	(pad "" smd roundrect
+		(at 0 0.45)
+		(size 1 0.7)
+		(layers "F.Paste")
+		(roundrect_rratio 0.07142857)
+	)
+	(model "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Package_SON_WSON-6-1EP_2x2mm_P0.65mm_EP1x1.6mm.step"
 		(offset
 			(xyz 0 0 0)
 		)

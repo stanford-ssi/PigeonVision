@@ -14,13 +14,13 @@
         <mxCell id="pv_auto_3" value="RF FRONTEND PCB" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=16;fontColor=#222222;fontStyle=1;" vertex="1" parent="1">
           <mxGeometry x="118" y="105" width="1414" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="pwr" value="&lt;b&gt;Carrier interface&lt;/b&gt;&lt;br&gt;5 V / GND&lt;br&gt;Enable / temperature" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#d4e4f4;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=5;" vertex="1" parent="1">
+        <mxCell id="pwr" value="&lt;b&gt;Carrier interface&lt;/b&gt;&lt;br&gt;5 V / GND&lt;br&gt;PA_EN (3.3 V)" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#d4e4f4;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=5;" vertex="1" parent="1">
           <mxGeometry x="30" y="190" width="230" height="100" as="geometry" />
         </mxCell>
         <mxCell id="bias" value="&lt;b&gt;Power / bias / enable&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#ffffff;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=5;" vertex="1" parent="1">
           <mxGeometry x="490" y="190" width="350" height="100" as="geometry" />
         </mxCell>
-        <mxCell id="thermal" value="&lt;b&gt;Temperature&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#ffffff;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=5;" vertex="1" parent="1">
+        <mxCell id="thermal" value="&lt;b&gt;Temperature&lt;/b&gt;&lt;br&gt;(optional future)" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#ffffff;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=5;" vertex="1" parent="1">
           <mxGeometry x="1190" y="190" width="185" height="90" as="geometry" />
         </mxCell>
         <mxCell id="e7" parent="1" edge="1" source="pwr" target="bias" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=0;rounded=0;html=0;strokeColor=#d92d2d;strokeWidth=2.5;endArrow=block;endFill=1;startArrow=none;startFill=1;exitX=1;exitY=0.25;exitPerimeter=0;entryX=0;entryY=0.25;entryPerimeter=0;">
@@ -36,7 +36,7 @@
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="pv_auto_10" value="PA_ENABLE" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=14;fontColor=#222222;fontStyle=0;" vertex="1" parent="1">
+        <mxCell id="pv_auto_10" value="PA_EN" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=14;fontColor=#222222;fontStyle=0;" vertex="1" parent="1">
           <mxGeometry x="322" y="235" width="80" height="22" as="geometry" />
         </mxCell>
         <mxCell id="e11" parent="1" edge="1" source="bias" target="thermal" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=0;rounded=0;html=0;strokeColor=#d92d2d;strokeWidth=2.5;endArrow=block;endFill=1;startArrow=none;startFill=1;exitX=1;exitY=0.25;exitPerimeter=0;entryX=0;entryY=0.2777777777777778;entryPerimeter=0;">
@@ -55,7 +55,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="pv_auto_14" value="Temperature" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=14;fontColor=#222222;fontStyle=0;" vertex="1" parent="1">
+        <mxCell id="pv_auto_14" value="Temperature (future)" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=14;fontColor=#222222;fontStyle=0;" vertex="1" parent="1">
           <mxGeometry x="936" y="114" width="88" height="22" as="geometry" />
         </mxCell>
         <mxCell id="in" value="&lt;b&gt;RF input&lt;/b&gt;&lt;br&gt;AFE7071 / E200" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#d4e4f4;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=5;" vertex="1" parent="1">
@@ -64,13 +64,13 @@
         <mxCell id="pad" value="&lt;b&gt;Input pad&lt;/b&gt;&lt;br&gt;Source-specific" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#ffffff;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=5;" vertex="1" parent="1">
           <mxGeometry x="260" y="385" width="150" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="driver" value="&lt;b&gt;Driver&lt;/b&gt;&lt;br&gt;GRF2011" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#ffffff;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=5;" vertex="1" parent="1">
+        <mxCell id="driver" value="&lt;b&gt;Driver&lt;/b&gt;&lt;br&gt;GRF2011&lt;br&gt;(optional)" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#ffffff;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=5;" vertex="1" parent="1">
           <mxGeometry x="490" y="385" width="170" height="80" as="geometry" />
         </mxCell>
         <mxCell id="inter" value="&lt;b&gt;Pad&lt;/b&gt;&lt;br&gt;Value TBD" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#ffffff;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=5;" vertex="1" parent="1">
           <mxGeometry x="740" y="385" width="135" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="pa" value="&lt;b&gt;Final PA&lt;/b&gt;&lt;br&gt;5115 / 5613&lt;br&gt;Selection open" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#ffffff;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=5;" vertex="1" parent="1">
+        <mxCell id="pa" value="&lt;b&gt;Final PA&lt;/b&gt;&lt;br&gt;GRF5613&lt;br&gt;EVB184 tune" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#ffffff;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=5;" vertex="1" parent="1">
           <mxGeometry x="950" y="385" width="170" height="80" as="geometry" />
         </mxCell>
         <mxCell id="rf_output_filter" value="&lt;b&gt;Output LPF&lt;/b&gt;&lt;br&gt;LFCN-1500+&lt;br&gt;Candidate" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#ffffff;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=5;" vertex="1" parent="1">

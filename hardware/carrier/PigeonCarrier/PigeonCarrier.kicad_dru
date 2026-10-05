@@ -1,0 +1,51 @@
+(version 1)
+
+# BEGIN GENERATED CARRIER IMPEDANCE RULES
+# Router widths/gaps come from netclasses. Connector escapes and nearby
+# surface copper require layout review of the noncoplanar model.
+(rule "CSI within-pair matching"
+ (condition "A.hasNetclass('CSI_100R')")
+ (constraint skew (max 0.15mm) (within_diff_pairs)))
+(rule "Ethernet within-pair matching"
+ (condition "A.hasNetclass('ETH_100R')")
+ (constraint skew (max 0.15mm) (within_diff_pairs)))
+(rule "USB within-pair matching"
+ (condition "A.hasNetclass('USB_90R')")
+ (constraint skew (max 0.15mm) (within_diff_pairs)))
+# This is the spacing policy for the noncoplanar model, not an impedance
+# simulation. Future connector escape regions need separate layout review.
+(rule "Controlled impedance spacing to unrelated copper"
+ (condition "(A.hasNetclass('CSI_100R') || A.hasNetclass('ETH_100R') || A.hasNetclass('USB_90R') || A.hasNetclass('SE_50R')) && !AB.isCoupledDiffPair() && !(A.Type == 'Pad' && B.Type == 'Pad' && A.Parent == B.Parent)")
+ (constraint clearance (min 0.5mm)))
+# END GENERATED CARRIER IMPEDANCE RULES
+
+# BEGIN GENERATED JLC FABRICATION RULES
+# 4-layer, 1 oz outer copper, standard green mask, ENIG; checked 2026-10-04.
+# Fixed same-package pads are exempt only from the 0.5 mm impedance-model
+# spacing above. Routing, vias and pads in other footprints retain it.
+# JLC minimum different-net SMD land spacing applies to all SMD pad pairs.
+(rule "JLC SMD pad spacing"
+ (condition "A.Type == 'Pad' && B.Type == 'Pad' && A.Pad_Type == 'SMD' && B.Pad_Type == 'SMD' && A.Parent == B.Parent")
+ (constraint clearance (min 0.15mm)))
+(rule "JLC separate SMD footprint pad spacing"
+ (condition "A.Type == 'Pad' && B.Type == 'Pad' && A.Pad_Type == 'SMD' && B.Pad_Type == 'SMD' && A.Parent != B.Parent && !(A.hasNetclass('CSI_100R') || B.hasNetclass('CSI_100R') || A.hasNetclass('ETH_100R') || B.hasNetclass('ETH_100R') || A.hasNetclass('USB_90R') || B.hasNetclass('USB_90R') || A.hasNetclass('SE_50R') || B.hasNetclass('SE_50R'))")
+ (constraint clearance (min 0.15mm)))
+(rule "JLC PTH annular ring"
+ (condition "A.Type == 'Pad' && A.Pad_Type == 'Through-hole'")
+ (constraint annular_width (min 0.15mm)))
+(rule "JLC PTH hole to unrelated copper"
+ (condition "A.Type == 'Pad' && A.Pad_Type == 'Through-hole'")
+ (constraint hole_clearance (min 0.28mm)))
+(rule "JLC inner PTH hole to unrelated copper"
+ (layer inner)
+ (condition "A.Type == 'Pad' && A.Pad_Type == 'Through-hole'")
+ (constraint hole_clearance (min 0.30mm)))
+(rule "JLC drilled pad hole separation"
+ (condition "A.Type == 'Pad' || B.Type == 'Pad'")
+ (constraint hole_to_hole (min 0.45mm)))
+(rule "JLC round NPTH minimum"
+ (condition "A.Type == 'Pad' && A.Pad_Type == 'NPTH, mechanical'")
+ (constraint hole_size (min 0.50mm)))
+(rule "Standard through-via process"
+ (constraint disallow micro_via blind_via buried_via))
+# END GENERATED JLC FABRICATION RULES

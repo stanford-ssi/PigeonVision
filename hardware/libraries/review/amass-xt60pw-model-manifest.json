@@ -1,0 +1,76 @@
+{
+  "checked_utc": "2026-10-02T09:10:24.879790+00:00",
+  "mpn": "XT60PW-M",
+  "lcsc": "C98732",
+  "model_file": "hardware/libraries/3dmodels/AMASS_XT60PW_M_DrawingEnvelope.step",
+  "model_sha256": "fdbccf2e974b4f0a65262e07ed4b176951ad039298b38ecc020021200f9c93c9",
+  "model_type": "Locally generated drawing-derived simplified envelope; not native manufacturer or KiCad CAD",
+  "license": "Project-authored simple geometry derived from published dimensional facts; upstream KiCad package-model license does not describe this model.",
+  "sources": [
+    {
+      "url": "https://www.china-amass.com/public/upload/20260207/7fa24f5a6f35ec66c7a115c07a34ab06.pdf",
+      "local_evidence": "build/carrier-completion/amass/AMASS_XT60PW_2026_catalog.pdf",
+      "page": 17,
+      "sha256": "763e2058896f87fb8839ebfa82917bb04ab7421d2a320190fbaf9aef66ab8699",
+      "verified_dimensions_mm": {
+        "body_width": 15.9,
+        "body_length": 18.25,
+        "body_height": 8.45,
+        "weld_leg_length": 3.0
+      }
+    },
+    {
+      "url": "https://www.shoptronica.com/ficheros/XT60PW.pdf",
+      "local_evidence": "build/carrier-completion/amass/AMASS_XT60PW-M_V1.2_Drawing.pdf",
+      "page": 2,
+      "document": "Manufacturer-authored AMASS XT60PW-M V1.2 drawing, public reseller mirror",
+      "sha256": "e3fdf88692c131f1ed05b798d241d40ed6c5ae06fe331f84335a91b71a991f1f",
+      "verified_dimensions_mm": {
+        "contact_pitch": 7.2,
+        "retention_pitch": 13.5,
+        "retention_offset": 6.0,
+        "rear_edge_from_contact_line": 1.85,
+        "power_hole_diameter": 2.7,
+        "retention_hole": [
+          0.6,
+          1.7
+        ]
+      }
+    }
+  ],
+  "bounds_mm": [
+    -4.3500001,
+    -1.8500001000000001,
+    -3.0000001,
+    11.5500001,
+    16.4000001,
+    8.450000099999999
+  ],
+  "expected_bounds_mm": [
+    -4.35,
+    -1.85,
+    -3.0,
+    11.55,
+    16.4,
+    8.45
+  ],
+  "body_dimensions_mm": [
+    15.9,
+    18.25,
+    8.45
+  ],
+  "datum": "Contact1 origin. Body X centered on two power contacts(3.6 mm). Body rear edge PCB Y=+1.85 mm. STEP Y is negative footprint Y. Zero model rotation/offset; unit scale.",
+  "simplifications": [
+    "Body is a filled rectangular bounding box; rounded corners, mating cavity, mould details and optional rear cover omitted.",
+    "Below-board tail volumes are clearance blocks at the verified hole extents, not exact contact-metal profiles.",
+    "Current catalog dimensions are nominal with no listed tolerance; do not call this a maximum tolerance envelope.",
+    "Datum and hole map come from the older exact-MPN V1.2 drawing. Current catalog does not provide a complete hole-position drawing; incoming physical parts/revision must be checked before PCB release.",
+    "No mating plug, bend-radius, cable pull-out or assembly standoff allowance is modeled."
+  ],
+  "unavailable_native_model": {
+    "jlc_uuid_3d": "ef17ba496d2c4535be64443b96d0d0de",
+    "public_supplier_STEP_result": "No STEP bytes returned",
+    "kicad_expected_path": "Connector_AMASS.3dshapes/AMASS_XT60PW-M_1x02_P7.20mm_Horizontal.step",
+    "upstream_result": "Exact horizontal file absent from installed library and official GitLab/GitHub repository; available vertical models are not substitutes."
+  }
+}

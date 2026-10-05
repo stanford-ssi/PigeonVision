@@ -1,0 +1,109 @@
+{
+  "date": "2026-10-02",
+  "target_below_carrier_mm": 12.7,
+  "mounting_scope": "Library only. No thermal land, via array, symbol or carrier placement added.",
+  "candidates": [
+    {
+      "part": "ATS-CPX050050010-121-C1-R0",
+      "status": "mechanical planning candidate; no active placement; not fabrication or thermal qualified",
+      "footprint": "hardware/libraries/PigeonVision.pretty/ATS_CPX050050010_121_C1_R0_Mechanical_Planning.kicad_mod",
+      "footprint_sha256": "64540a64b652db07d26dd83322b564b3aff6579358181f3216a60f52099d7a7f",
+      "model": "hardware/libraries/3dmodels/ATS_CPX050050010_121_C1_R0_50x50x10_ENVELOPE.step",
+      "model_sha256": "89d553bbf79157a9694fc3a9db3f7e1848a387b2fd2cfd30d2954074d1f6eb0b",
+      "model_scope": "nominal solid envelope only; not detailed manufacturer CAD; omits fins, holes and hardware",
+      "manufacturer_source": "https://www.qats.com/DataSheet/ATS-CPX050050010-121-C1-R0",
+      "body_mm": [
+        50,
+        50,
+        10
+      ],
+      "pad_centers_mm": [
+        [
+          -21.5,
+          -21.5
+        ],
+        [
+          21.5,
+          -21.5
+        ],
+        [
+          21.5,
+          21.5
+        ],
+        [
+          -21.5,
+          21.5
+        ]
+      ],
+      "model_offset_z_mm": 0.5,
+      "nominal_below_carrier_body_and_TIM_mm": 10.5,
+      "height_limitations": "Hardware assembled projection, TIM compression and mechanical load path unverified; catalog 14 mm hardware overall does not establish projection below PCB.",
+      "source_and_KiCad_verification": "build/pa-heatsink-options-2026-10-02/planning-footprint-proof.json"
+    },
+    {
+      "part": "Wakefield 623A",
+      "status": "mechanical planning candidate; no active placement; not fabrication or thermal qualified",
+      "footprint": "hardware/libraries/PigeonVision.pretty/Wakefield_623A_M4_NPTH_Mechanical_Planning.kicad_mod",
+      "footprint_sha256": "cf1264f17fd30831d90ad9a7eaea18019c11caae047446c5883bf88b7d5f6c98",
+      "model": "hardware/libraries/3dmodels/Wakefield_623A_120.65x76.2x11.7_ENVELOPE.step",
+      "model_sha256": "2c0857af9d2094b3f445dea4b99302b254dcc07de48777f465a1f312556ba8bc",
+      "model_scope": "nominal solid envelope only; not detailed manufacturer CAD; omits fins, holes and hardware",
+      "manufacturer_source": "https://wakefieldthermal.com/content/data_sheets/2021_data_sheets/Wakefield-Thermal-Extrusion-Profile-Guide.pdf",
+      "body_mm": [
+        120.64999999999999,
+        76.19999999999999,
+        11.7
+      ],
+      "pad_centers_mm": [
+        [
+          -55.5625,
+          -31.75
+        ],
+        [
+          55.5625,
+          -31.75
+        ],
+        [
+          55.5625,
+          31.75
+        ],
+        [
+          -55.5625,
+          31.75
+        ]
+      ],
+      "model_offset_z_mm": 0.5,
+      "nominal_below_carrier_body_and_TIM_mm": 12.2,
+      "height_limitations": "Fastener heads/nuts may sit in fin-free chassis flange zone but assembled projection is unverified. No guarantee total hardware fits 12.7mm.",
+      "source_and_KiCad_verification": "build/pa-heatsink-options-2026-10-02/proposed/Wakefield_623A_planning-proof.json"
+    }
+  ],
+  "ATS_mounting": {
+    "hardware_candidate": "ATS-HK76-R0; assembled screw/PEM projection and preload remain unverified",
+    "PCB_drill_mm": 3.0,
+    "manufacturer_hardware_hole_tolerance_mm": 0.05,
+    "PCB_pad_copper_diameter_mm": 6.0,
+    "land_basis": "designer-selected GND lands; assign all pad 1 to GND when placed",
+    "thermal_limit": "Manufacturer data starts at 0.5 m/s airflow; no still-air qualification obtained",
+    "buy_link": "https://www.digikey.com/en/products/detail/advanced-thermal-solutions-inc/ATS-CPX050050010-121-C1-R0/4753784"
+  },
+  "Wakefield_mounting": {
+    "PCB_drill_mm": 4.5,
+    "land_basis": "designer M4 clearance NPTH, no copper; 10mm washer guides are visual, not keepouts",
+    "factory_slot_width_mm": 4.826,
+    "variant": "623A has central TO-3 holes; review sample/contact patch before layout",
+    "carrier_fit": "Nominal centered body leaves only 1.04mm radial corner clearance on 144.78mm circle; courtyard exceeds circle at corners. Actual placement/fastener access unverified.",
+    "thermal_source_point": "52C sink rise at15W in manufacturer natural-convection test; not proof of assembled carrier performance",
+    "buy_link": "https://www.digikey.com/en/products/detail/wakefield-thermal-solutions/623A/5068199"
+  },
+  "TIM": {
+    "candidate": "t-Global TG-A3500-100-100-0.5",
+    "manufacturer_source": "https://www.tglobaltechnology.com/wp-content/uploads/2023/08/TG-A3500_UK.pdf",
+    "buy_link": "https://www.digikey.com/en/products/detail/t-global-technology/TG-A3500-100-100-0-5/10464870",
+    "nominal_thickness_mm": 0.5,
+    "thermal_conductivity_W_per_m_K": 3.5,
+    "bulk_only_R_20x20mm_C_per_W": 0.3571428571428571,
+    "interface_graph_estimate": "0.73C in^2/W at10psi for0.5mm -> about1.18C/W over20x20mm and27.6N clamp force; graph estimates, not torque or guaranteed assembled values",
+    "interface_contact_and_clamp": "Final area, flatness, support/preload and compression remain unverified"
+  }
+}
