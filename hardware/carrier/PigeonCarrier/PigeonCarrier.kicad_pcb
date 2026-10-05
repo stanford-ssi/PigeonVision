@@ -13986,7 +13986,7 @@
 			(uuid "38cb04c9-8461-4e00-ad2d-be6efde6706d")
 		)
 		(embedded_fonts no)
-		(model "${KICAD10_3DMODEL_DIR}/Connector_AMASS.3dshapes/AMASS_XT60PW-M_1x02_P7.20mm_Horizontal.step"
+		(model "${KIPRJMOD}/../../libraries/3dmodels/AMASS_XT60PW_M_PublicDetailed_2019.step"
 			(offset
 				(xyz 0 0 0)
 			)
