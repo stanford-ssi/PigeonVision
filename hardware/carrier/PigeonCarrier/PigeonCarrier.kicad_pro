@@ -654,6 +654,18 @@
     },
     "net_colors": null,
     "netclass_assignments": {
+      "/CM5/ETH0_P": [
+        "ETH_100R"
+      ],
+      "/CM5/ETH1_P": [
+        "ETH_100R"
+      ],
+      "/CM5/ETH2_P": [
+        "ETH_100R"
+      ],
+      "/CM5/ETH3_P": [
+        "ETH_100R"
+      ],
       "/CM5/MIPI0_CLK_N": [
         "CSI_100R"
       ],

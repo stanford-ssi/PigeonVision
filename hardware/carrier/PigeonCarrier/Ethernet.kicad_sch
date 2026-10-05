@@ -2619,7 +2619,7 @@
 		(uuid "c94d0a8c-b469-4cc4-b010-c94264fde9f9")
 	)
 	(label "ETH1_N"
-		(at 83.82 91.44 0)
+		(at 82.55 91.44 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -2660,6 +2660,198 @@
 			(justify right)
 		)
 		(uuid "eabc52a4-b38d-41d1-a56e-622ac091eaf1")
+	)
+	(netclass_flag ""
+		(length 2.54)
+		(shape dot)
+		(at 94.0085 110.49 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "1ff52c9c-da58-44a6-b69f-499c9a1fe3f7")
+		(property "Net Class" "ETH_100R"
+			(at 92.9925 107.442 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 0.9 0.9)
+					(italic yes)
+				)
+				(justify right)
+			)
+		)
+	)
+	(netclass_flag ""
+		(length 2.54)
+		(shape dot)
+		(at 95.25 88.9 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "2fd88f52-631f-4520-94ca-a72a9631dbda")
+		(property "Net Class" "ETH_100R"
+			(at 94.234 85.852 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 0.9 0.9)
+					(italic yes)
+				)
+				(justify right)
+			)
+		)
+	)
+	(netclass_flag ""
+		(length 2.54)
+		(shape dot)
+		(at 158.75 81.28 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "868bbb7a-c3fd-4811-8a5b-6b6e17a1eb27")
+		(property "Net Class" "ETH_100R"
+			(at 157.734 78.232 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 0.9 0.9)
+					(italic yes)
+				)
+				(justify right)
+			)
+		)
+	)
+	(netclass_flag ""
+		(length 2.54)
+		(shape dot)
+		(at 95.25 81.28 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "8d271846-676e-40a4-b3ab-67785eee8fd0")
+		(property "Net Class" "ETH_100R"
+			(at 94.234 78.232 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 0.9 0.9)
+					(italic yes)
+				)
+				(justify right)
+			)
+		)
+	)
+	(netclass_flag ""
+		(length 2.54)
+		(shape dot)
+		(at 158.7105 104.14 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "9e3c797d-9425-4202-8a77-03c09e476d58")
+		(property "Net Class" "ETH_100R"
+			(at 157.6945 101.092 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 0.9 0.9)
+					(italic yes)
+				)
+				(justify right)
+			)
+		)
+	)
+	(netclass_flag ""
+		(length 2.54)
+		(shape dot)
+		(at 93.98 118.11 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "af2d452a-35b5-4477-8959-cf3ba0e881a6")
+		(property "Net Class" "ETH_100R"
+			(at 92.964 115.062 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 0.9 0.9)
+					(italic yes)
+				)
+				(justify right)
+			)
+		)
+	)
+	(netclass_flag ""
+		(length 2.54)
+		(shape dot)
+		(at 158.75 88.9 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "b5109a48-171d-426a-8125-0f8b7410d671")
+		(property "Net Class" "ETH_100R"
+			(at 157.734 85.852 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 0.9 0.9)
+					(italic yes)
+				)
+				(justify right)
+			)
+		)
+	)
+	(netclass_flag ""
+		(length 2.54)
+		(shape dot)
+		(at 158.7105 96.52 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "e38199ef-ba86-44dd-aca0-ddd875eac154")
+		(property "Net Class" "ETH_100R"
+			(at 157.6945 93.472 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 0.9 0.9)
+					(italic yes)
+				)
+				(justify right)
+			)
+		)
 	)
 	(symbol
 		(lib_id "PigeonVision:A70-112-331N126")
