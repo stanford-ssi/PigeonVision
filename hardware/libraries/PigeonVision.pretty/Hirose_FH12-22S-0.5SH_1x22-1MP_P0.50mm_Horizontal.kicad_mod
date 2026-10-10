@@ -461,13 +461,13 @@
 		(layers "F.Cu" "F.Paste" "F.Mask")
 		(tstamp f9eefa8f-1e5a-4ca5-9d9c-01150f569d57)
 	)
-	(pad "MP" smd rect
+	(pad "" smd rect
 		(at -7.15 1.4)
 		(size 1.8 2.2)
 		(layers "F.Cu" "F.Paste" "F.Mask")
 		(tstamp 6d9e35d5-792c-42bc-9824-d2b9fad42806)
 	)
-	(pad "MP" smd rect
+	(pad "" smd rect
 		(at 7.15 1.4)
 		(size 1.8 2.2)
 		(layers "F.Cu" "F.Paste" "F.Mask")

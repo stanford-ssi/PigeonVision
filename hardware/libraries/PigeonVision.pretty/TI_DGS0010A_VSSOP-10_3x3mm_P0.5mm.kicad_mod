@@ -6,7 +6,7 @@
 	(tags "TSSOP SO Texas_DGS0010A Texas_VSSOP-10 NXP_SOT552-1 MSOP-10_3x3mm_P0.5mm VSSOP-10_3x3mm_P0.5mm")
 	(property "Reference" "REF**"
 		(at 0 -2.45 0)
-		(layer "F.SilkS")
+		(layer "F.SilkS") (hide yes)
 		(effects
 			(font
 				(size 1 1)

@@ -1,11 +1,11 @@
-(footprint "JST_GH_BM02B-GHS-TBT_1x02-1MP_P1.25mm_Vertical"
+(footprint "JST_SH_BM03B-SRSS-TB_1x03-1MP_P1.00mm_Vertical"
 	(version 20260206)
 	(generator "kicad-footprint-generator")
 	(layer "F.Cu")
-	(descr "JST BM02B-GHS-TBT GH2 top-entry; JST eGH pp2-3 verified land dimensions and numbering. Local licensed KiCad representative STEP; height4.20mm=4.05mm body+0.15mm standoff; mated assembly7.3mm not included.")
-	(tags "connector JST GH vertical")
+	(descr "Unnumbered mounting tabs (no symbol pin needed); otherwise identical to KiCad stock Connector_JST footprint. JST SH series connector, BM03B-SRSS-TB (http://www.jst-mfg.com/product/pdf/eng/eSH.pdf)")
+	(tags "connector JST SH vertical")
 	(property "Reference" "REF**"
-		(at 0 -4 0)
+		(at 0 -3.3 0)
 		(layer "F.SilkS") (hide yes)
 		(effects
 			(font
@@ -14,9 +14,20 @@
 			)
 		)
 	)
-	(property "Value" "JST_GH_BM02B-GHS-TBT_1x02-1MP_P1.25mm_Vertical"
-		(at 0 4 0)
+	(property "Value" "JST_SH_BM03B-SRSS-TB_1x03-1MP_P1.00mm_Vertical"
+		(at 0 3.3 0)
 		(layer "F.Fab")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "KiLib_Generator" "connector/SMD_single_row_plus_mounting_pad"
+		(at 0 0 0)
+		(layer "F.SilkS")
+		(hide yes)
 		(effects
 			(font
 				(size 1 1)
@@ -27,8 +38,8 @@
 	(attr smd)
 	(duplicate_pad_numbers_are_jumpers no)
 	(fp_line
-		(start -2.985 0.26)
-		(end -2.985 1.86)
+		(start -2.61 -0.04)
+		(end -2.61 1.11)
 		(stroke
 			(width 0.12)
 			(type solid)
@@ -36,8 +47,8 @@
 		(layer "F.SilkS")
 	)
 	(fp_line
-		(start -2.985 1.86)
-		(end -1.185 1.86)
+		(start -2.61 1.11)
+		(end -1.56 1.11)
 		(stroke
 			(width 0.12)
 			(type solid)
@@ -45,8 +56,8 @@
 		(layer "F.SilkS")
 	)
 	(fp_line
-		(start -1.715 -2.61)
-		(end 1.715 -2.61)
+		(start -1.56 1.11)
+		(end -1.56 2.1)
 		(stroke
 			(width 0.12)
 			(type solid)
@@ -54,8 +65,8 @@
 		(layer "F.SilkS")
 	)
 	(fp_line
-		(start -1.185 1.86)
-		(end -1.185 2.8)
+		(start -1.44 -2.01)
+		(end 1.44 -2.01)
 		(stroke
 			(width 0.12)
 			(type solid)
@@ -63,8 +74,8 @@
 		(layer "F.SilkS")
 	)
 	(fp_line
-		(start 2.985 0.26)
-		(end 2.985 1.86)
+		(start 2.61 -0.04)
+		(end 2.61 1.11)
 		(stroke
 			(width 0.12)
 			(type solid)
@@ -72,8 +83,8 @@
 		(layer "F.SilkS")
 	)
 	(fp_line
-		(start 2.985 1.86)
-		(end 1.185 1.86)
+		(start 2.61 1.11)
+		(end 1.56 1.11)
 		(stroke
 			(width 0.12)
 			(type solid)
@@ -81,8 +92,8 @@
 		(layer "F.SilkS")
 	)
 	(fp_line
-		(start -3.48 -3.3)
-		(end -1.47 -3.3)
+		(start -3.4 -2.6)
+		(end -1.19 -2.6)
 		(stroke
 			(width 0.05)
 			(type solid)
@@ -90,8 +101,8 @@
 		(layer "F.CrtYd")
 	)
 	(fp_line
-		(start -3.48 0.5)
-		(end -3.48 -3.3)
+		(start -3.4 0.2)
+		(end -3.4 -2.6)
 		(stroke
 			(width 0.05)
 			(type solid)
@@ -99,8 +110,8 @@
 		(layer "F.CrtYd")
 	)
 	(fp_line
-		(start -3.38 0.5)
-		(end -3.48 0.5)
+		(start -3 0.2)
+		(end -3.4 0.2)
 		(stroke
 			(width 0.05)
 			(type solid)
@@ -108,8 +119,8 @@
 		(layer "F.CrtYd")
 	)
 	(fp_line
-		(start -3.38 2.25)
-		(end -3.38 0.5)
+		(start -3 1.5)
+		(end -3 0.2)
 		(stroke
 			(width 0.05)
 			(type solid)
@@ -117,8 +128,8 @@
 		(layer "F.CrtYd")
 	)
 	(fp_line
-		(start -1.47 -3.3)
-		(end -1.47 -3)
+		(start -1.8 1.5)
+		(end -3 1.5)
 		(stroke
 			(width 0.05)
 			(type solid)
@@ -126,8 +137,8 @@
 		(layer "F.CrtYd")
 	)
 	(fp_line
-		(start -1.47 -3)
-		(end 1.47 -3)
+		(start -1.8 2.6)
+		(end -1.8 1.5)
 		(stroke
 			(width 0.05)
 			(type solid)
@@ -135,8 +146,8 @@
 		(layer "F.CrtYd")
 	)
 	(fp_line
-		(start -1.43 2.25)
-		(end -3.38 2.25)
+		(start -1.19 -2.6)
+		(end -1.19 -2.4)
 		(stroke
 			(width 0.05)
 			(type solid)
@@ -144,8 +155,8 @@
 		(layer "F.CrtYd")
 	)
 	(fp_line
-		(start -1.43 3.3)
-		(end -1.43 2.25)
+		(start -1.19 -2.4)
+		(end 1.19 -2.4)
 		(stroke
 			(width 0.05)
 			(type solid)
@@ -153,8 +164,8 @@
 		(layer "F.CrtYd")
 	)
 	(fp_line
-		(start 1.43 2.25)
-		(end 1.43 3.3)
+		(start 1.19 -2.6)
+		(end 3.4 -2.6)
 		(stroke
 			(width 0.05)
 			(type solid)
@@ -162,8 +173,8 @@
 		(layer "F.CrtYd")
 	)
 	(fp_line
-		(start 1.43 3.3)
-		(end -1.43 3.3)
+		(start 1.19 -2.4)
+		(end 1.19 -2.6)
 		(stroke
 			(width 0.05)
 			(type solid)
@@ -171,8 +182,8 @@
 		(layer "F.CrtYd")
 	)
 	(fp_line
-		(start 1.47 -3.3)
-		(end 3.48 -3.3)
+		(start 1.8 1.5)
+		(end 1.8 2.6)
 		(stroke
 			(width 0.05)
 			(type solid)
@@ -180,8 +191,8 @@
 		(layer "F.CrtYd")
 	)
 	(fp_line
-		(start 1.47 -3)
-		(end 1.47 -3.3)
+		(start 1.8 2.6)
+		(end -1.8 2.6)
 		(stroke
 			(width 0.05)
 			(type solid)
@@ -189,8 +200,8 @@
 		(layer "F.CrtYd")
 	)
 	(fp_line
-		(start 3.38 0.5)
-		(end 3.38 2.25)
+		(start 3 0.2)
+		(end 3 1.5)
 		(stroke
 			(width 0.05)
 			(type solid)
@@ -198,8 +209,8 @@
 		(layer "F.CrtYd")
 	)
 	(fp_line
-		(start 3.38 2.25)
-		(end 1.43 2.25)
+		(start 3 1.5)
+		(end 1.8 1.5)
 		(stroke
 			(width 0.05)
 			(type solid)
@@ -207,8 +218,8 @@
 		(layer "F.CrtYd")
 	)
 	(fp_line
-		(start 3.48 -3.3)
-		(end 3.48 0.5)
+		(start 3.4 -2.6)
+		(end 3.4 0.2)
 		(stroke
 			(width 0.05)
 			(type solid)
@@ -216,8 +227,8 @@
 		(layer "F.CrtYd")
 	)
 	(fp_line
-		(start 3.48 0.5)
-		(end 3.38 0.5)
+		(start 3.4 0.2)
+		(end 3 0.2)
 		(stroke
 			(width 0.05)
 			(type solid)
@@ -225,8 +236,8 @@
 		(layer "F.CrtYd")
 	)
 	(fp_line
-		(start -2.875 -2.5)
-		(end 2.875 -2.5)
+		(start -2.5 -1.9)
+		(end 2.5 -1.9)
 		(stroke
 			(width 0.1)
 			(type solid)
@@ -234,8 +245,8 @@
 		(layer "F.Fab")
 	)
 	(fp_line
-		(start -2.875 1.75)
-		(end -2.875 -2.5)
+		(start -2.5 1)
+		(end -2.5 -1.9)
 		(stroke
 			(width 0.1)
 			(type solid)
@@ -243,8 +254,8 @@
 		(layer "F.Fab")
 	)
 	(fp_line
-		(start -2.875 1.75)
-		(end 2.875 1.75)
+		(start -2.5 1)
+		(end 2.5 1)
 		(stroke
 			(width 0.1)
 			(type solid)
@@ -252,8 +263,8 @@
 		(layer "F.Fab")
 	)
 	(fp_line
-		(start -1.125 1.75)
-		(end -0.625 1.042893)
+		(start -1.5 1)
+		(end -1 0.292893)
 		(stroke
 			(width 0.1)
 			(type solid)
@@ -261,8 +272,8 @@
 		(layer "F.Fab")
 	)
 	(fp_line
-		(start -0.625 1.042893)
-		(end -0.125 1.75)
+		(start -1 0.292893)
+		(end -0.5 1)
 		(stroke
 			(width 0.1)
 			(type solid)
@@ -270,8 +281,8 @@
 		(layer "F.Fab")
 	)
 	(fp_line
-		(start 2.875 1.75)
-		(end 2.875 -2.5)
+		(start 2.5 1)
+		(end 2.5 -1.9)
 		(stroke
 			(width 0.1)
 			(type solid)
@@ -279,8 +290,8 @@
 		(layer "F.Fab")
 	)
 	(fp_rect
-		(start -0.875 -0.5)
-		(end -0.375 0)
+		(start -1.15 -1.55)
+		(end -0.85 -0.95)
 		(stroke
 			(width 0.1)
 			(type solid)
@@ -289,8 +300,18 @@
 		(layer "F.Fab")
 	)
 	(fp_rect
-		(start 0.375 -0.5)
-		(end 0.875 0)
+		(start -0.15 -1.55)
+		(end 0.15 -0.95)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.Fab")
+	)
+	(fp_rect
+		(start 0.85 -1.55)
+		(end 1.15 -0.95)
 		(stroke
 			(width 0.1)
 			(type solid)
@@ -299,7 +320,7 @@
 		(layer "F.Fab")
 	)
 	(fp_text user "${REFERENCE}"
-		(at 0 -1.5 0)
+		(at 0 -0.25 0)
 		(layer "F.Fab")
 		(effects
 			(font
@@ -309,42 +330,37 @@
 		)
 	)
 	(pad "1" smd roundrect
-		(at -0.625 1.95)
-		(size 0.6 1.7)
+		(at -1 1.325)
+		(size 0.6 1.55)
 		(layers "F.Cu" "F.Mask" "F.Paste")
 		(roundrect_rratio 0.25)
 	)
 	(pad "2" smd roundrect
-		(at 0.625 1.95)
-		(size 0.6 1.7)
+		(at 0 1.325)
+		(size 0.6 1.55)
 		(layers "F.Cu" "F.Mask" "F.Paste")
 		(roundrect_rratio 0.25)
 	)
-	(pad "MP" smd roundrect
-		(at -2.475 -1.4)
-		(size 1 2.8)
+	(pad "3" smd roundrect
+		(at 1 1.325)
+		(size 0.6 1.55)
 		(layers "F.Cu" "F.Mask" "F.Paste")
 		(roundrect_rratio 0.25)
 	)
-	(pad "MP" smd roundrect
-		(at 2.475 -1.4)
-		(size 1 2.8)
+	(pad "" smd roundrect
+		(at -2.3 -1.2)
+		(size 1.2 1.8)
 		(layers "F.Cu" "F.Mask" "F.Paste")
-		(roundrect_rratio 0.25)
+		(roundrect_rratio 0.208333)
+	)
+	(pad "" smd roundrect
+		(at 2.3 -1.2)
+		(size 1.2 1.8)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.208333)
 	)
 	(embedded_fonts no)
-	(property "Datasheet" "https://www.jst-mfg.com/product/pdf/eng/eGH.pdf"
-		(at 0 0)
-		(layer "F.Fab")
-		(hide yes)
-		(effects
-			(font
-				(size 1 1)
-				(thickness .15)
-			)
-		)
-	)
-	(model "${KIPRJMOD}/../../libraries/3dmodels/JST_GH_BM02B-GHS-TBT_KICAD_LOCAL.step"
+	(model "${KICAD10_3DMODEL_DIR}/Connector_JST.3dshapes/JST_SH_BM03B-SRSS-TB_1x03-1MP_P1.00mm_Vertical.step"
 		(offset
 			(xyz 0 0 0)
 		)

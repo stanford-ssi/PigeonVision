@@ -4185,7 +4185,7 @@
 	)
 	(text "Data Switch"
 		(exclude_from_sim no)
-		(at 213.36 35.56 0)
+		(at 206.756 52.324 0)
 		(effects
 			(font
 				(size 2 2)
@@ -5042,6 +5042,54 @@
 		)
 		(uuid "9b7e2de0-32f1-5141-9e32-720ef446b66d")
 	)
+	(netclass_flag ""
+		(length 2.54)
+		(shape dot)
+		(at 250.19 66.04 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "381d01f4-92f3-4cf9-84c2-7f9282b99e32")
+		(property "Net Class" "USB_90R"
+			(at 249.174 62.992 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 0.9 0.9)
+					(italic yes)
+				)
+				(justify right)
+			)
+		)
+	)
+	(netclass_flag ""
+		(length 2.54)
+		(shape dot)
+		(at 60.96 63.5 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "4b2dab0b-8545-476f-8a0b-5ee96665fed8")
+		(property "Net Class" "USB_90R"
+			(at 59.944 60.452 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 0.9 0.9)
+					(italic yes)
+				)
+				(justify right)
+			)
+		)
+	)
 	(symbol
 		(lib_id "PCM_JLCPCB-Resistors:0402,10kΩ")
 		(at 177.8 57.15 0)
@@ -5284,6 +5332,17 @@
 			)
 		)
 		(property "Temperature Coefficient" "±100ppm/°C"
+			(at 177.8 57.15 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "0402WGF1002TCE"
 			(at 177.8 57.15 0)
 			(hide yes)
 			(show_name no)
@@ -6744,6 +6803,17 @@
 				)
 			)
 		)
+		(property "MPN" "0402WGF1002TCE"
+			(at 167.64 73.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "03e387a0-960f-5a49-8aec-b16a76c53dc6")
 		)
@@ -7156,6 +7226,17 @@
 			)
 		)
 		(property "Temperature Coefficient" "±100ppm/°C"
+			(at 63.5 55.88 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "0402WGF5101TCE"
 			(at 63.5 55.88 0)
 			(hide yes)
 			(show_name no)
@@ -7755,6 +7836,17 @@
 				)
 			)
 		)
+		(property "MPN" "0402WGF1001TCE"
+			(at 161.29 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "cdd3d89f-3198-5ca2-a9da-6fe14e30d221")
 		)
@@ -7978,6 +8070,17 @@
 			)
 		)
 		(property "Temperature Coefficient" "X7R"
+			(at 238.76 58.42 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "CL05B104KB54PNC"
 			(at 238.76 58.42 0)
 			(hide yes)
 			(show_name no)
@@ -8635,6 +8738,17 @@
 			)
 		)
 		(property "Temperature Coefficient" "±100ppm/°C"
+			(at 63.5 58.42 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "0402WGF5101TCE"
 			(at 63.5 58.42 0)
 			(hide yes)
 			(show_name no)

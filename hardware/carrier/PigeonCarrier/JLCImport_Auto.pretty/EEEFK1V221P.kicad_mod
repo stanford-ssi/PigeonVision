@@ -5,7 +5,7 @@
   (layer "F.Cu")
   (descr "-55℃~+105℃ 10.5mm 2000hrs@105℃ 220uF 35V 450mA@120Hz 8mm Polarized ±20% SMD,D8xL10.2mm Aluminum Electrolytic Capacitors - SMD ROHS")
   (tags "C178562 CAP-SMD_BD8.0-L8.3-W8.3-FD EEEFK1V221P PANASONIC")
-  (property "Reference" "REF**" (at 0 -5.226238 0) (layer "F.SilkS") (uuid "2233a371-bd7e-449b-bf88-d746329c10d6")
+  (property "Reference" "REF**" (at 0 -5.226238 0) (layer "F.SilkS") (hide yes) (uuid "2233a371-bd7e-449b-bf88-d746329c10d6")
     (effects (font (size 1 1) (thickness 0.15)))
   )
   (property "Value" "~" (at 0 5.226238 0) (layer "F.Fab") (uuid "d7b76dfb-28ff-434c-a7e7-2bc5fa11d1ef")

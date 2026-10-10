@@ -5,7 +5,7 @@
   (layer "F.Cu")
   (descr "10A 22mΩ 6.8uH 8A ±20% SMD,11.6x10.1mm Molding Power Inductors ROHS")
   (tags "C6364676 CYA1040-6.8UH IND-SMD_L11.6-W10.1 SHOU HAN")
-  (property "Reference" "REF**" (at 0 -6.050013 0) (layer "F.SilkS") (uuid "7db14b8a-16aa-4679-9f96-4bb7a1d28a67")
+  (property "Reference" "REF**" (at 0 -6.050013 0) (layer "F.SilkS") (hide yes) (uuid "7db14b8a-16aa-4679-9f96-4bb7a1d28a67")
     (effects (font (size 1 1) (thickness 0.15)))
   )
   (property "Value" "~" (at 0 6.050013 0) (layer "F.Fab") (uuid "65406d6b-b7f2-464b-8238-8477498a9736")

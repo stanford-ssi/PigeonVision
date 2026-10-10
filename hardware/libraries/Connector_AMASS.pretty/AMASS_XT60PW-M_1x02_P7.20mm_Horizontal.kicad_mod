@@ -7,7 +7,7 @@
 	(tags "RC Connector XT60")
 	(property "Reference" "REF**"
 		(at 3.6 -17.5 0)
-		(layer "F.SilkS")
+		(layer "F.SilkS") (hide yes)
 		(uuid "f503ea07-bcf1-4924-930a-6f7e9cd312f8")
 		(effects
 			(font

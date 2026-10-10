@@ -6,7 +6,7 @@
 	(descr "TI DQA0010A; .565x.20 signal and .565x.40 GND lands, .835mm rows, .5mm pitch. DQA0010B has compatible signal positions; uses .40 ground lands. Max height .55mm.")
 	(property "Reference" "REF**"
 		(at 0 -2.65 0)
-		(layer "F.SilkS")
+		(layer "F.SilkS") (hide yes)
 		(effects
 			(font
 				(size 1 1)

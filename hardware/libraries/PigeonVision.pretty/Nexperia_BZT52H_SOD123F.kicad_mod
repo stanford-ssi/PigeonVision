@@ -7,7 +7,7 @@
 	(tags "Nexperia_BZT52H_SOD123F")
 	(property "Reference" "REF**"
 		(at -0.127 -1.905 0)
-		(layer "F.SilkS")
+		(layer "F.SilkS") (hide yes)
 		(uuid "ba6fc0fe-3dcf-4071-a3db-32bac24f436c")
 		(effects
 			(font

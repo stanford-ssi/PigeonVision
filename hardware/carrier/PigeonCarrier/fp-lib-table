@@ -1,7 +1,7 @@
 (fp_lib_table
- (version 7)
- (lib (name "PigeonVision")(type "KiCad")(uri "${KIPRJMOD}/../../libraries/PigeonVision.pretty")(options "")(descr "PigeonVision project library"))
-  (lib (name "JLCImport_Auto")(type "KiCad")(uri "${KIPRJMOD}/JLCImport_Auto.pretty")(options "")(descr ""))
- (lib (name "PCM_JLCPCB")(type "KiCad")(uri "${KIPRJMOD}/../../libraries/PCM_JLCPCB.pretty")(options "")(descr "Selected carrier package copies with portable 3D model links"))
- (lib (name "Connector_AMASS")(type "KiCad")(uri "${KIPRJMOD}/../../libraries/Connector_AMASS.pretty")(options "")(descr "Selected carrier XT60 footprint with reviewed detailed model"))
+	(version 7)
+	(lib (name "PigeonVision") (type "KiCad") (uri "${KIPRJMOD}/../../libraries/PigeonVision.pretty") (options "") (descr "PigeonVision project library"))
+	(lib (name "JLCImport_Auto") (type "KiCad") (uri "${KIPRJMOD}/JLCImport_Auto.pretty") (options "") (descr ""))
+	(lib (name "PCM_JLCPCB") (type "KiCad") (uri "${KIPRJMOD}/../../libraries/PCM_JLCPCB.pretty") (options "") (descr "Selected carrier package copies with portable 3D model links"))
+	(lib (name "Connector_AMASS") (type "KiCad") (uri "${KIPRJMOD}/../../libraries/Connector_AMASS.pretty") (options "") (descr "Selected carrier XT60 footprint with reviewed detailed model"))
 )

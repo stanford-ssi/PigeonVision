@@ -6,7 +6,7 @@
 	(descr "TPS22919 TI DCK0006A 4214835/D 11/2024: .9x.4 mm pads, 2.2 mm row centre spacing, .65 mm pitch, max height1.1mm. KiCad generic package STEP.")
 	(property "Reference" "REF**"
 		(at 0 -1.75 0)
-		(layer "F.SilkS")
+		(layer "F.SilkS") (hide yes)
 		(effects
 			(font
 				(size 1 1)

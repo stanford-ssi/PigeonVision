@@ -967,7 +967,7 @@
 		(at 149.225 73.66)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "14400bfc-a1d3-4408-9388-a0bb06bf1ed0")
+		(uuid "2f342232-8cd8-49e0-baa6-c39f93500010")
 	)
 	(junction
 		(at 41.91 87.63)
@@ -988,7 +988,7 @@
 		(uuid "d9dda337-f411-4da0-81a8-e89b63fcf9fe")
 	)
 	(bus_entry
-		(at 106.045 80.01)
+		(at 106.68 80.01)
 		(size 2.54 -2.54)
 		(stroke
 			(width 0)
@@ -997,7 +997,7 @@
 		(uuid "21c2a8c4-be71-571b-aa59-52e47714c30d")
 	)
 	(bus_entry
-		(at 106.045 82.55)
+		(at 106.68 82.55)
 		(size 2.54 -2.54)
 		(stroke
 			(width 0)
@@ -1017,7 +1017,7 @@
 	)
 	(wire
 		(pts
-			(xy 89.535 80.01) (xy 106.045 80.01)
+			(xy 89.535 80.01) (xy 106.68 80.01)
 		)
 		(stroke
 			(width 0)
@@ -1047,7 +1047,7 @@
 	)
 	(wire
 		(pts
-			(xy 89.535 82.55) (xy 106.045 82.55)
+			(xy 89.535 82.55) (xy 106.68 82.55)
 		)
 		(stroke
 			(width 0)
@@ -1077,7 +1077,7 @@
 	)
 	(bus
 		(pts
-			(xy 108.585 73.66) (xy 108.585 80.01)
+			(xy 109.22 73.66) (xy 109.22 80.01)
 		)
 		(stroke
 			(width 0)
@@ -1167,7 +1167,7 @@
 	)
 	(bus
 		(pts
-			(xy 108.585 73.66) (xy 149.225 73.66)
+			(xy 109.22 73.66) (xy 149.225 73.66)
 		)
 		(stroke
 			(width 0)
@@ -3446,7 +3446,7 @@
 		)
 	)
 	(label "SENSOR_I2C_SDA"
-		(at 90.17 80.01 0)
+		(at 90.805 80.01 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -3456,7 +3456,7 @@
 		(uuid "2d8dad62-a144-59ec-870a-36f1bd6470e3")
 	)
 	(label "SENSOR_I2C_SCL"
-		(at 90.17 82.55 0)
+		(at 90.805 82.55 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -3865,6 +3865,28 @@
 				)
 			)
 		)
+		(property "MPN" "XT60PW-M"
+			(at 22.86 85.09 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "AMASS"
+			(at 22.86 85.09 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "2"
 			(uuid "8b3d4cc3-4a6e-457e-9ae0-f42a1f1d0f60")
 		)
@@ -4046,6 +4068,17 @@
 			)
 		)
 		(property "Part" "SMBJ18CA"
+			(at 41.91 92.71 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "SMBJ18CA"
 			(at 41.91 92.71 0)
 			(hide yes)
 			(show_name no)
@@ -4444,7 +4477,7 @@
 				(justify right)
 			)
 		)
-		(pin "ETH_LED_K" bidirectional
+		(pin "ETH_LED_Y" bidirectional
 			(at 179.07 88.9 0)
 			(uuid "6dc81499-6340-568a-b239-808b10bae083")
 			(effects
@@ -4560,7 +4593,7 @@
 				(justify left top)
 			)
 		)
-		(pin "ETH_LED_K" input
+		(pin "ETH_LED_Y" input
 			(at 196.215 88.9 180)
 			(uuid "9b0d07f0-e0cd-4958-90d7-ed98fbe35919")
 			(effects

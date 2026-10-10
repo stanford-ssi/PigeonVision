@@ -5,7 +5,7 @@
   (layer "F.Cu")
   (descr "25A 3.3uH 45A Molded Inductor ±20% SMD,13.8x12.8mm Molding Power Inductors ROHS")
   (tags "C19268665 CYA1265-3.3UH IND-SMD_L13.8-W12.8 SHOU HAN")
-  (property "Reference" "REF**" (at 0 -7.4 0) (layer "F.SilkS") (uuid "cdb95205-b459-47e6-b7f8-da13d7052097")
+  (property "Reference" "REF**" (at 0 -7.4 0) (layer "F.SilkS") (hide yes) (uuid "cdb95205-b459-47e6-b7f8-da13d7052097")
     (effects (font (size 1 1) (thickness 0.15)))
   )
   (property "Value" "~" (at 0 7.4 0) (layer "F.Fab") (uuid "e780984c-dde7-4000-a9e9-1617befb535d")

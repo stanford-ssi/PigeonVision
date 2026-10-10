@@ -6,7 +6,7 @@
 	(descr "TI DCU0008A 4225266/A; .85x.30 lands, 3.1mm rows, .5mm pitch, R.05. Max height .9mm.")
 	(property "Reference" "REF**"
 		(at 0 -2.5 0)
-		(layer "F.SilkS")
+		(layer "F.SilkS") (hide yes)
 		(effects
 			(font
 				(size 1 1)

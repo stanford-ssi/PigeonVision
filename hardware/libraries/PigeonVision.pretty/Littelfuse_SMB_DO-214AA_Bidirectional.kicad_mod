@@ -6,7 +6,7 @@
 	(descr "Littelfuse SMBJ series JC.07/04/25 v4. Bidirectional DO-214AA, no polarity marking. 2.16x2.26 lands with2.74mm gap. Max height2.61mm.")
 	(property "Reference" "REF**"
 		(at 0 -3.25 0)
-		(layer "F.SilkS")
+		(layer "F.SilkS") (hide yes)
 		(effects
 			(font
 				(size 1 1)

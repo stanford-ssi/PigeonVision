@@ -7,7 +7,7 @@
 	(attr smd)
 	(property "Reference" "REF**"
 		(at 0 -1.65 0)
-		(layer "F.SilkS")
+		(layer "F.SilkS") (hide yes)
 		(effects
 			(font
 				(size 0.8 0.8)

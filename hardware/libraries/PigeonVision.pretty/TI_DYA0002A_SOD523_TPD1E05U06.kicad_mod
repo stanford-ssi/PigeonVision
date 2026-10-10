@@ -2,7 +2,7 @@
  (version 20241229) (generator "pcbnew") (layer "F.Cu")
  (descr "TI DYA0002A 4224978/B 09/2021: 0.67x0.40mm pads, 1.48mm pitch; pin1 IO pin2 GND; 0.77mm maximum package height")
  (tags "SOD523 ESD DYA") (attr smd)
- (property "Reference" "REF**" (at 0 -1.15) (layer "F.SilkS") (effects (font (size 0.8 0.8) (thickness 0.12))))
+ (property "Reference" "REF**" (at 0 -1.15) (layer "F.SilkS") (hide yes) (effects (font (size 0.8 0.8) (thickness 0.12))))
  (property "Value" "TPD1E05U06DYAR" (at 0 1.15) (layer "F.Fab") (effects (font (size 0.8 0.8) (thickness 0.12))))
  (fp_rect (start -0.6 -0.4) (end 0.6 0.4) (stroke (width 0.1) (type solid)) (fill none) (layer "F.Fab"))
  (fp_line (start -0.6 -0.4) (end -0.6 0.4) (stroke (width 0.15) (type solid)) (layer "F.Fab"))

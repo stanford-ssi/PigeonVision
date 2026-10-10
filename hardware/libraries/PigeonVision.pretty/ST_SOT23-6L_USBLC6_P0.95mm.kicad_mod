@@ -6,7 +6,7 @@
 	(descr "ST DS4260 Rev7 Fig19 SOT23-6L; 1.2x.6 pads, 2.3mm row spacing, .95mm pitch. Max height1.45mm.")
 	(property "Reference" "REF**"
 		(at 0 -2.85 0)
-		(layer "F.SilkS")
+		(layer "F.SilkS") (hide yes)
 		(effects
 			(font
 				(size 1 1)

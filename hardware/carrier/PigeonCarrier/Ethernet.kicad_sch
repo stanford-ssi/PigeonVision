@@ -2628,7 +2628,7 @@
 		)
 		(uuid "f5067e30-6e6a-47bc-a550-53aedadf0e49")
 	)
-	(hierarchical_label "ETH_LED_K"
+	(hierarchical_label "ETH_LED_Y"
 		(shape input)
 		(at 219.71 104.14 0)
 		(effects
@@ -3561,6 +3561,17 @@
 				)
 			)
 		)
+		(property "MPN" "0402WGF4700TCE"
+			(at 214.63 104.14 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "20b3d86c-b3c2-4492-8121-e3fa9ad9c21e")
 		)
@@ -4243,6 +4254,17 @@
 				)
 			)
 		)
+		(property "MPN" "CL05B104KB54PNC"
+			(at 165.1 118.11 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "c49efd00-4140-426d-bcb0-5887435c5abc")
 		)
@@ -4499,6 +4521,17 @@
 			)
 		)
 		(property "Temperature Coefficient" "±100ppm/°C"
+			(at 214.63 96.52 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "0402WGF4700TCE"
 			(at 214.63 96.52 0)
 			(hide yes)
 			(show_name no)

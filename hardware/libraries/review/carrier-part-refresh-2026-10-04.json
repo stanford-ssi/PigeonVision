@@ -1,0 +1,132 @@
+{
+  "method": "DC nodal calculation from KCL; no SPICE transistor model or hardware test",
+  "manufacturer_sources": {
+    "Q4": "https://assets.nexperia.com/documents/data-sheet/BSS138BK.pdf",
+    "U1": "https://www.ti.com/lit/ds/symlink/lm74502.pdf"
+  },
+  "assumptions": [
+    "Pin inserted opens the contact; pin removed closes it. Physical switch is not identified.",
+    "Nominal 3S input: 8.1\u201312.6V; existing UVLO governs usable low voltage.",
+    "Gate current +/-10uA is the conservative 20V, Tj=25C table value; high-temperature gate leakage is not bounded by that row."
+  ],
+  "Q4_manufacturer_and_symbol_pinout": {
+    "1": "G",
+    "2": "S",
+    "3": "D"
+  },
+  "pin_to_net": {
+    "J6.1": "Net-(J6-Pin_1)",
+    "J6.2": "GND",
+    "Q4.1": "Net-(J6-Pin_1)",
+    "Q4.2": "GND",
+    "Q4.3": "/Power & Regulators/PWR_EN"
+  },
+  "resistors": {
+    "R39": {
+      "symbol": "0402,39k\u03a9",
+      "MPN": "0402WGF3902TCE",
+      "LCSC": "C25783",
+      "ohms": 39000
+    },
+    "R40": {
+      "symbol": "0402,22k\u03a9",
+      "MPN": "0402WGF2202TCE",
+      "LCSC": "C25768",
+      "ohms": 22000
+    }
+  },
+  "formulas": {
+    "gate": "VG=(VIN/RT-IG)/(1/RT+1/RB)",
+    "EN_open_contact": "VEN=(VIN/R2)/(1/R2+1/R3+1/RDS)",
+    "EN_closed_contact": "VEN=(VIN/R2-ILEAK)/(1/R2+1/R3)"
+  },
+  "gate_voltage_corners": [
+    {
+      "vin_V": 8.1,
+      "vgs_min_V": 2.7071897955077824,
+      "vgs_max_V": 3.1378332229334007
+    },
+    {
+      "vin_V": 9.69,
+      "vgs_min_V": 3.2660500653537876,
+      "vgs_max_V": 3.7260216510670707
+    },
+    {
+      "vin_V": 10.54,
+      "vgs_min_V": 3.5648118448312114,
+      "vgs_max_V": 4.040462005729724
+    },
+    {
+      "vin_V": 12.6,
+      "vgs_min_V": 4.288869804505909,
+      "vgs_max_V": 4.80251745350039
+    },
+    {
+      "vin_V": 17.87,
+      "vgs_min_V": 6.141192837265939,
+      "vgs_max_V": 6.752047652408842
+    },
+    {
+      "vin_V": 29.2,
+      "vgs_min_V": 10.123511615476778,
+      "vgs_max_V": 10.943352615147504
+    }
+  ],
+  "at_12p6V": {
+    "open_contact_vgs_nominal_V": 4.5442622950819676,
+    "open_contact_EN_upper_V_at_25C_RDS_bound": 0.011061456228543204,
+    "low_IQ_shutdown_EN_minimum_threshold_V": 0.32,
+    "closed_contact_EN_lower_V_including_leakage": 1.4177957557917238,
+    "UVLO_rising_EN_maximum_threshold_V": 1.32,
+    "closed_contact_current_A": 0.00032307692307692305,
+    "R39_closed_contact_power_W_with_tolerance": 0.004153422335240516,
+    "OFF_input_dividers_current_approx_A": 0.002094135630755935
+  },
+  "restart_input_upper_V_with_part_corners": 11.738801654040406,
+  "29p2V_TVS_test_point_R39_power_W": 0.022306462710503114,
+  "maximum_Q4_RDS_ohms_to_keep_EN_below_0p32V_at_12p6V": 235.83461305755088,
+  "limits": [
+    "No guaranteed RDS at VGS=2.5V and hot junction is provided; large DC margin does not replace a temperature test.",
+    "No contact-bounce, hot-plug, ESD, CM5 shutdown or thermal behavior is simulated.",
+    "Startup/off and switch continuity require a bench test."
+  ],
+  "cad_review": {
+    "footprints": 150,
+    "unique_library_footprints": 35,
+    "missing_models": [],
+    "geometry_differences": []
+  },
+  "part_review": {
+    "corrected": [
+      "Q1/Q2 now use the previously verified exact TI Q5B copper/stencil pattern, with a 180-degree footprint-frame correction.",
+      "C4 now uses the previously verified Panasonic case-F footprint.",
+      "R9/R10/R15/R16 use JLC C25077; stale Yageo sourcing aliases were removed.",
+      "Imported LED, capacitor and inductor pins are passive, not unspecified.",
+      "CM5 mounting symbol has four real grounded pins; fan/camera mechanical lands are unnumbered."
+    ],
+    "current_netlist_checks": [
+      "All numbered PCB pads have a corresponding symbol pin and matching net.",
+      "Q4 G1/S2/D3 matches the Nexperia pin table and selected SOT-23 footprint.",
+      "Main feedback is (39k+1k)/10k at a 1V reference: 5V nominal.",
+      "RF feedback is (51k+1.5k)/10k at a 0.8V reference: 5V nominal.",
+      "Camera feedback is 47k/15k at a 0.8V reference: 3.3067V nominal.",
+      "Twenty 10uF main output capacitors are connected: 200uF nominal, not a guaranteed effective value.",
+      "LED pad1=anode/right, pad2=cathode/left; C4 pad1=positive, pad2=negative.",
+      "The active IC pin tables and power/strap/USB/CSI/Ethernet connections were traced. No additional confirmed pin mapping error was found."
+    ],
+    "remaining_conditions": [
+      "Each camera uses one 0.5A-rated FFC supply contact; actual adapter current and sequencing are unmeasured.",
+      "The retained FRAMOS adapter revision, pull-ups and voltage tolerance are still unknown.",
+      "Grounded BMP581 interrupt is permissible only while its interrupt output stays disabled.",
+      "Confirm the incoming XT60 revision and hole fit before fabrication.",
+      "ERC still contains unused module pins and power/driver findings; this is not a fabrication sign-off."
+    ],
+    "source_records": [
+      "hardware/libraries/review/csd18540q5b-footprint.md",
+      "hardware/libraries/review/cad-final-review.md",
+      "build/pre-rf-audit-2026-10-02/power-review.md",
+      "build/pre-rf-audit-2026-10-02/deep-usb-sensors.md",
+      "build/pre-rf-audit-2026-10-02/deep-cm5-camera-eth.md"
+    ]
+  }
+}

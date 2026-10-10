@@ -7,7 +7,7 @@
 	(tags "test point SMD pad")
 	(property "Reference" "REF**"
 		(at 0 -1.448 0)
-		(layer "F.SilkS")
+		(layer "F.SilkS") (hide yes)
 		(uuid "ed08342a-eaee-43e9-b96e-1dd00b47763e")
 		(effects
 			(font

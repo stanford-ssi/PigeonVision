@@ -7,7 +7,7 @@
 	(tags "SOD-123")
 	(property "Reference" "REF**"
 		(at 0 -2 0)
-		(layer "F.SilkS")
+		(layer "F.SilkS") (hide yes)
 		(uuid "5c813cbc-84b5-45a4-a0aa-35d3573110db")
 		(effects
 			(font

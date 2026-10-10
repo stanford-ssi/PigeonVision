@@ -315,7 +315,7 @@
 						(type none)
 					)
 				)
-				(pin unspecified line
+				(pin passive line
 					(at -5.08 0 0)
 					(length 1.016)
 					(name "1"
@@ -333,7 +333,7 @@
 						)
 					)
 				)
-				(pin unspecified line
+				(pin passive line
 					(at 5.08 0 180)
 					(length 1.016)
 					(name "2"
@@ -2585,6 +2585,121 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "power:PWR_FLAG"
+			(power global)
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "#FLG"
+				(at 0 1.905 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "PWR_FLAG"
+				(at 0 3.81 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Special symbol for telling ERC where power comes from"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "flag power"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "PWR_FLAG_0_0"
+				(pin power_out line
+					(at 0 0 90)
+					(length 0)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(symbol "PWR_FLAG_0_1"
+				(polyline
+					(pts
+						(xy 0 0) (xy 0 1.27) (xy -1.016 1.905) (xy 0 2.54) (xy 1.016 1.905) (xy 0 1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 	)
 	(text "CALCULATIONS_LINK"
 		(exclude_from_sim no)
@@ -2695,12 +2810,6 @@
 		(uuid "3a491a32-53e9-41a1-8fdc-e28c1c7e220a")
 	)
 	(junction
-		(at 224.79 95.25)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "5c26e015-708c-4f2a-b1c0-3db854e31e01")
-	)
-	(junction
 		(at 170.18 110.49)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -2789,6 +2898,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "e3b7cb14-960d-48c0-a868-333dcd3ff44a")
+	)
+	(junction
+		(at 224.79 95.25)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "f0638285-1bae-5801-9d6f-e273b2683c8c")
 	)
 	(junction
 		(at 179.07 95.25)
@@ -3065,6 +3180,16 @@
 			(type default)
 		)
 		(uuid "99c52e89-fab1-4d16-a907-dcf7c1ab0206")
+	)
+	(wire
+		(pts
+			(xy 224.79 95.25) (xy 231.14 95.25)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a9eef3c1-48cc-5229-aaee-78de5919c375")
 	)
 	(wire
 		(pts
@@ -3427,6 +3552,17 @@
 				)
 			)
 		)
+		(property "MPN" "CL32B106KBJNNNE"
+			(at 194.31 99.06 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "2"
 			(uuid "f19d3bf8-0e54-47b3-b205-bd7c5774e81a")
 		)
@@ -3529,6 +3665,17 @@
 			)
 		)
 		(property "Manufacturer Part" "CYA1040-6.8UH"
+			(at 161.29 95.25 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "CYA1040-6.8UH"
 			(at 161.29 95.25 0)
 			(hide yes)
 			(show_name no)
@@ -3796,6 +3943,17 @@
 			)
 		)
 		(property "Temperature Coefficient" "±800ppm/°C"
+			(at 140.97 95.25 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "0402WGF0000TCE"
 			(at 140.97 95.25 0)
 			(hide yes)
 			(show_name no)
@@ -4157,6 +4315,17 @@
 				)
 			)
 		)
+		(property "MPN" "CL32B106KBJNNNE"
+			(at 86.36 93.98 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "2"
 			(uuid "9b40b737-138d-468e-9d7d-18af24ce1670")
 		)
@@ -4423,6 +4592,17 @@
 				)
 			)
 		)
+		(property "MPN" "0402WGF1002TCE"
+			(at 114.3 100.33 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "6ef3f9ad-2183-4e7d-9c12-dd42bf783bfa")
 		)
@@ -4527,6 +4707,17 @@
 			)
 		)
 		(property "Manufacturer Part" "CL32B106KBJNNNE"
+			(at 224.79 99.06 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "CL32B106KBJNNNE"
 			(at 224.79 99.06 0)
 			(hide yes)
 			(show_name no)
@@ -4960,6 +5151,17 @@
 				)
 			)
 		)
+		(property "MPN" "0402WGF1501TCE"
+			(at 170.18 106.68 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "b2d64ff8-605d-40d2-9fd9-794886c865e5")
 		)
@@ -5196,6 +5398,17 @@
 				)
 			)
 		)
+		(property "MPN" "CL05B104KB54PNC"
+			(at 148.59 95.25 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "7de71a57-5249-4f08-8b7e-13d04976cf35")
 		)
@@ -5300,6 +5513,17 @@
 			)
 		)
 		(property "Manufacturer Part" "CL32B106KBJNNNE"
+			(at 93.98 93.98 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "CL32B106KBJNNNE"
 			(at 93.98 93.98 0)
 			(hide yes)
 			(show_name no)
@@ -5625,6 +5849,17 @@
 				)
 			)
 		)
+		(property "MPN" "CL05B104KB54PNC"
+			(at 114.3 105.41 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "1618ab69-2f55-4f68-b9dc-e905b06c57cf")
 		)
@@ -5860,6 +6095,17 @@
 				)
 			)
 		)
+		(property "MPN" "CL05B104KB54PNC"
+			(at 101.6 93.98 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "f67b39bd-01ed-4b50-bdb8-8891da87d223")
 		)
@@ -6041,6 +6287,17 @@
 			)
 		)
 		(property "Manufacturer Part" "CL32B106KBJNNNE"
+			(at 217.17 99.06 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "CL32B106KBJNNNE"
 			(at 217.17 99.06 0)
 			(hide yes)
 			(show_name no)
@@ -6287,6 +6544,17 @@
 				)
 			)
 		)
+		(property "MPN" "CL05B104KB54PNC"
+			(at 179.07 99.06 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "9375e993-4d18-4520-ae83-27c949c85a59")
 		)
@@ -6391,6 +6659,17 @@
 			)
 		)
 		(property "Manufacturer Part" "CL32B106KBJNNNE"
+			(at 201.93 99.06 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "CL32B106KBJNNNE"
 			(at 201.93 99.06 0)
 			(hide yes)
 			(show_name no)
@@ -6748,6 +7027,17 @@
 				)
 			)
 		)
+		(property "MPN" "0402WGF5102TCE"
+			(at 170.18 99.06 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "52eb191c-6b5d-416c-9a5b-41295d138f01")
 		)
@@ -6758,6 +7048,84 @@
 			(project "PigeonCarrier"
 				(path "/6c8da0f4-34cf-43b9-a25b-857048b8016b/7986dfff-dfed-4d72-b8d7-0f8819bc467b/5cfee8fd-be42-4d20-a596-3803ac02496d"
 					(reference "R27")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:PWR_FLAG")
+		(at 231.14 95.25 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "ba0a4c1a-1abc-5c15-80c9-d825556159d0")
+		(property "Reference" "#FLG09"
+			(at 231.14 95.25 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "PWR_FLAG"
+			(at 231.14 95.25 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 231.14 95.25 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 231.14 95.25 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Special symbol for telling ERC where power comes from"
+			(at 231.14 95.25 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "184b90ce-a1b2-5f53-8c61-f05fa2d531b8")
+		)
+		(instances
+			(project "PigeonCarrier"
+				(path "/6c8da0f4-34cf-43b9-a25b-857048b8016b/7986dfff-dfed-4d72-b8d7-0f8819bc467b/5cfee8fd-be42-4d20-a596-3803ac02496d"
+					(reference "#FLG09")
 					(unit 1)
 				)
 			)
@@ -7016,6 +7384,17 @@
 				)
 			)
 		)
+		(property "MPN" "0402WGF1002TCE"
+			(at 170.18 114.3 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "2"
 			(uuid "12ac23c9-d4a4-463a-90f8-c39a9aaf40c1")
 		)
@@ -7130,6 +7509,17 @@
 				)
 			)
 		)
+		(property "MPN" "CL32B106KBJNNNE"
+			(at 186.69 99.06 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "2"
 			(uuid "48ab36c2-9da4-4116-9771-0845cafc1f70")
 		)
@@ -7234,6 +7624,17 @@
 			)
 		)
 		(property "Manufacturer Part" "CL32B106KBJNNNE"
+			(at 209.55 99.06 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "CL32B106KBJNNNE"
 			(at 209.55 99.06 0)
 			(hide yes)
 			(show_name no)

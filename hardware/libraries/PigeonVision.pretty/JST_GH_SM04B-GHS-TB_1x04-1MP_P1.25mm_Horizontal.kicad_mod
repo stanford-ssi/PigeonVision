@@ -6,7 +6,7 @@
 	(tags "connector JST GH horizontal")
 	(property "Reference" "REF**"
 		(at 0 -3.9 0)
-		(layer "F.SilkS")
+		(layer "F.SilkS") (hide yes)
 		(effects
 			(font
 				(size 1 1)

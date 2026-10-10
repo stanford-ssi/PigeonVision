@@ -1,6 +1,6 @@
 (footprint "TI_TVS2200_DRV0006A" (version 20231120) (generator pcbnew) (layer "F.Cu")
 (descr "TI TVS2200 DRV0006A, datasheet Rev C p19 manufacturer recommended lands; generated maximum envelope STEP") (attr smd)
-(property "Reference" "REF**" (at 0 -1.9) (layer "F.SilkS") (effects (font (size 1 1) (thickness .15))))
+(property "Reference" "REF**" (at 0 -1.9) (layer "F.SilkS") (hide yes) (effects (font (size 1 1) (thickness .15))))
 (property "Value" "TVS2200DRVR" (at 0 1.9) (layer "F.Fab") (effects (font (size 1 1) (thickness .15))))
 (fp_line (start -1.05 -1.05) (end 1.05 -1.05) (stroke (width 0.1) (type solid)) (layer "F.Fab"))
 (fp_line (start 1.05 -1.05) (end 1.05 1.05) (stroke (width 0.1) (type solid)) (layer "F.Fab"))

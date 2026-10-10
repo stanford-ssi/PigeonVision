@@ -5,7 +5,7 @@
   (layer "F.Cu")
   (descr "-40℃~+85℃ 100mW 120° 2.6V~3.1V 430mcd 513nm~528nm 525nm 5mA Discrete Diode Emerald Green Water Clear 0805 LED Indication - Discrete ROHS")
   (tags "C2297 Hubei KENTO Elec KT-0805G LED0805-R-RD")
-  (property "Reference" "REF**" (at 0 -2.014732 0) (layer "F.SilkS") (uuid "04b815d3-94a4-4ebe-beab-5257a6191ca4")
+  (property "Reference" "REF**" (at 0 -2.014732 0) (layer "F.SilkS") (hide yes) (uuid "04b815d3-94a4-4ebe-beab-5257a6191ca4")
     (effects (font (size 1 1) (thickness 0.15)))
   )
   (property "Value" "~" (at 0 2.042672 0) (layer "F.Fab") (uuid "db071883-eda4-4403-a588-a63b26550023")

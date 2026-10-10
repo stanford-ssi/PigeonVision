@@ -6,7 +6,7 @@
   (descr "Same Sky PJ-102AH (formerly CUI Devices), 5 A 24 V right-angle DC jack; current manufacturer 2024-09-12 PCB layout with 1.00 x 1.60 mm plated slots; pad 1 center, 2 sleeve, 3 sleeve shunt. https://www.sameskydevices.com/product/resource/pj-102ah.pdf")
   (tags "DC power barrel jack 5.5mm 2.1mm 5A PJ-102AH PTH slotted")
   (attr through_hole)
-  (property "Reference" "REF**" (at -6.5 -6.2) (layer "F.SilkS") (effects (font (size 1 1) (thickness 0.15))))
+  (property "Reference" "REF**" (at -6.5 -6.2) (layer "F.SilkS") (hide yes) (effects (font (size 1 1) (thickness 0.15))))
   (property "Value" "PJ-102AH" (at -6.5 7.3) (layer "F.Fab") (effects (font (size 1 1) (thickness 0.15))))
   (property "Datasheet" "https://www.sameskydevices.com/product/resource/pj-102ah.pdf" (at -6.5 0) (layer "F.Fab") (hide yes) (effects (font (size 1 1) (thickness 0.15))))
   (property "Description" "5 A 24 Vdc barrel jack; pad1=center, pad2=sleeve, pad3=NC shunt" (at -6.5 0) (layer "F.Fab") (hide yes) (effects (font (size 1 1) (thickness 0.15))))

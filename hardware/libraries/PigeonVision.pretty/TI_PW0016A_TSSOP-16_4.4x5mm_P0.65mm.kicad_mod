@@ -6,7 +6,7 @@
 	(descr "TI PW0016A 4220204/B; 1.5x.45 lands, 5.8mm rows, .65mm pitch, R.05. Max height 1.2mm.")
 	(property "Reference" "REF**"
 		(at 0 -3.85 0)
-		(layer "F.SilkS")
+		(layer "F.SilkS") (hide yes)
 		(effects
 			(font
 				(size 1 1)

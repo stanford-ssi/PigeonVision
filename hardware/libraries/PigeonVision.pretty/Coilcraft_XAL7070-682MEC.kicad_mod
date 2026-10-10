@@ -6,7 +6,7 @@
 	(tags "xal")
 	(property "Reference" "REF**"
 		(at 0 -4.95 0)
-		(layer "F.SilkS")
+		(layer "F.SilkS") (hide yes)
 		(effects
 			(font
 				(size 1 1)

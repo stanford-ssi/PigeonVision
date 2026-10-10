@@ -6,7 +6,7 @@
 	(tags "connector JST SH vertical")
 	(property "Reference" "REF**"
 		(at 0 -3.3 0)
-		(layer "F.SilkS")
+		(layer "F.SilkS") (hide yes)
 		(effects
 			(font
 				(size 1 1)
@@ -363,13 +363,13 @@
 		(layers "F.Cu" "F.Mask" "F.Paste")
 		(roundrect_rratio 0.25)
 	)
-	(pad "MP" smd roundrect
+	(pad "" smd roundrect
 		(at -2.8 -1.2)
 		(size 1.2 1.8)
 		(layers "F.Cu" "F.Mask" "F.Paste")
 		(roundrect_rratio 0.208333)
 	)
-	(pad "MP" smd roundrect
+	(pad "" smd roundrect
 		(at 2.8 -1.2)
 		(size 1.2 1.8)
 		(layers "F.Cu" "F.Mask" "F.Paste")

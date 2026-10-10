@@ -1,6 +1,6 @@
 (footprint "Diodes_DMP4025LSSQ_SO8" (version 20231120) (generator pcbnew) (layer "F.Cu")
 (descr "Diodes DMP4025LSSQ SO8; manufacturer suggested lands DS38881 Rev3 p6; generated STEP maximum mechanical envelope") (tags "SO8 PMOS") (attr smd)
-(property "Reference" "REF**" (at 0 -3.4) (layer "F.SilkS") (effects (font (size 1 1) (thickness 0.15))))
+(property "Reference" "REF**" (at 0 -3.4) (layer "F.SilkS") (hide yes) (effects (font (size 1 1) (thickness 0.15))))
 (property "Value" "DMP4025LSSQ-13" (at 0 3.4) (layer "F.Fab") (effects (font (size 1 1) (thickness 0.15))))
 (fp_line (start -1.975 -2.475) (end 1.975 -2.475) (stroke (width 0.1) (type solid)) (layer "F.Fab"))
 (fp_line (start 1.975 -2.475) (end 1.975 2.475) (stroke (width 0.1) (type solid)) (layer "F.Fab"))

@@ -138,17 +138,6 @@
 		(uuid "37ddd55d-a5f8-4c46-bd7f-9853bb2f5866")
 	)
 	(fp_text user "${REFERENCE}"
-		(at 0 -1 0)
-		(layer "F.SilkS")
-		(uuid "a7ddd0d0-52a2-490e-b7cb-9254e4fa0714")
-		(effects
-			(font
-				(size 1 1)
-				(thickness 0.15)
-			)
-		)
-	)
-	(fp_text user "${REFERENCE}"
 		(at 0 0 0)
 		(layer "F.Fab")
 		(uuid "d25ca3fd-f3c6-4702-9864-e3b417745627")

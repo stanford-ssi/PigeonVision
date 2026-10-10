@@ -6,7 +6,7 @@
 	(tags "Bosch LGA NoLead")
 	(property "Reference" "REF**"
 		(at 0 -2.55 0)
-		(layer "F.SilkS")
+		(layer "F.SilkS") (hide yes)
 		(effects
 			(font
 				(size 1 1)

@@ -1,5 +1,5 @@
 (footprint "ST_ESDA25W_SOT323" (version 20231120) (generator pcbnew) (layer "F.Cu") (descr "ST ESDAxxxWx Rev2 p7 Figure12 recommended copper rotated90; STEP maximum package envelope.") (attr smd)
-(property "Reference" "REF**" (at 0 -4) (layer "F.SilkS") (effects (font (size 1 1) (thickness .15))))
+(property "Reference" "REF**" (at 0 -4) (layer "F.SilkS") (hide yes) (effects (font (size 1 1) (thickness .15))))
 (property "Value" "ST_ESDA25W_SOT323" (at 0 4) (layer "F.Fab") (effects (font (size 1 1) (thickness .15))))
 (fp_rect (start -0.625 -1) (end 0.625 1) (stroke (width 0.1) (type default)) (fill none) (layer "F.Fab"))
 (fp_rect (start -1.7 -1.35) (end 1.7 1.35) (stroke (width 0.05) (type default)) (fill none) (layer "F.CrtYd"))
