@@ -1,7 +1,7 @@
 # Native CM5 capture
 
 `pv-capture` runs dual IMX900 capture, software x264, segmented recording and
-MPEG-TS/UDP on the CM5 using FRAMOS libcamera and the Pi ISP. Initial hardware
+MPEG-TS over UDP or native PV-SPI on the CM5 using FRAMOS libcamera and the Pi ISP. Initial hardware
 runs are documented in the [bench notes](../bench-notes/2026-09-25.md);
 short-run success is not sustained qualification. There is no synthetic fallback.
 
@@ -26,7 +26,8 @@ This build does not install drivers.
 See [configuration and artifact contracts](../shared/README.md). `--config -`
 accepts stdin; relative `session_dir` resolves against execution CWD, including
 SSH. A directory containing only configuration is allowed; an existing session
-manifest is refused. Map one or two physical device IDs explicitly to A/B.
+manifest is refused. Configure zero, one or two cameras; map physical device IDs explicitly to A/B.
+Camera initialization failures leave other acquisition paths running.
 
 | Setting | Behavior |
 | --- | --- |
@@ -51,6 +52,69 @@ metadata and unclipped images; common requests do not prove matched exposures.
 The stock FRAMOS tuning also adapts contrast from each camera's histogram;
 manual exposure/WB does not disable that stage. Keep any tuning experiment in
 a separate file and record its hash and the startup-confirmed file path.
+
+## Autonomous startup and status
+
+`profile` is `bench` (default) or `flight`. Supply either `session_dir` or
+`session_root`; the latter creates `session-` plus 32 random hex digits for each
+run, independent of wall-clock availability. Linux takes an exclusive capture
+lock before camera initialization; the default is `/run/lock/pv-capture.lock`.
+Status defaults to `<session_dir>/status.json`; the flight template explicitly
+uses `/run/pv-capture-status.json`. `--status [path]` reads the last atomic
+snapshot, defaulting to that deployed flight path when no path is given.
+Lifecycle is boot → initializing → running →
+stopping → stopped; component state and FC phase are separate fields. Health is
+published at 1 Hz; unavailable enabled sensors/UART mark degraded operation. A
+normal not-ready poll does not invalidate a recent last-good sensor sample.
+
+After installing `pv-capture`, edit the [flight template](../platform/flight/flight.json)
+with verified device IDs and mappings, then install it. Coordinate RP2350/link
+reset before starting a new SPI session:
+
+```sh
+sudo sh software/platform/flight/install.sh
+# Review /etc/pigeonvision/flight.json before explicitly enabling startup:
+sudo systemctl enable --now pv-flight.service
+pv-capture --status
+sudo systemctl stop pv-flight.service
+```
+
+The installer preserves an existing configuration and does not enable/start the
+service. `Restart=no` is deliberate: every new SPI session requires coordinated
+RP2350/link reset. An uncertain SPI transfer latches the transport fault and
+returns exit 78 after shutdown; local recording continues meanwhile. Successful
+SPI ioctl completion and READY are not receiver acceptance evidence. The service
+uses SIGTERM and a 15 s stop timeout; kernel I/O itself is not userspace-bounded.
+No carrier rail/reset sequencing or AFE/LO/PA enable is implemented.
+
+## Carrier sensors and FC labels
+
+`sensors.backend` is `disabled`, `simulation` or `i2c`; `flight_uart.backend` is
+`disabled`, `simulation` or `serial`. Simulation is explicit and labelled.
+Hardware sensor mappings are per-source `device` (`/dev/i2c-N`) and numeric
+`address` for `bmi088_accel`, `bmi088_gyro`, `bmp581` and `ina226`. Serial needs an
+explicit `device`. Missing mappings report unconfigured/invalid data; no carrier
+GPIO, I²C address or UART wiring is inferred. IO-board SPI wiring in the
+[SPI guide](spi.md) does not establish a custom-carrier pin map.
+
+The acquisition settings are BMI088 accel/gyro 100 Hz, BMP581 pressure/temperature
+25 Hz, and INA226 ready results reported at 10 Hz. Gyro stream FIFO frames share
+a host FIFO-read interval; accel/gyro synchronization is not enabled. INA226 uses
+16 averages, 1.1 ms bus plus 4.156 ms shunt conversion (84.096 ms per complete
+result), calibration 1024 and a 1 mA current LSB, assuming a 5 mΩ shunt. Verify
+that shunt on hardware. Bosch driver revisions/licenses are recorded in
+[vendor provenance](vendor/PROVENANCE.md). Register readback is not sensor or
+carrier qualification.
+
+Local `sensors.jsonl` retains full numerical precision and acquired sample rate.
+Downlink groups sensor records every 100 ms into ≤2500-byte column batches,
+rounding floating values to six significant digits. Sensor/UART traffic has a
+250 kb/s TS budget within the existing 9 Mb/s mux; bounded queues report drops
+and stale data. Linux acquisition timestamps use CLOCK_BOOTTIME. Host read
+intervals and UART receive times are distinct from physical conversion time and
+FC uptime. Missing values remain null. No attitude fusion, ADXL375 acquisition
+or flight control is included. The [shared contract](../shared/README.md#carrier-telemetry-and-fc-uart)
+defines the UART proposal, pending FC acceptance and electrical verification.
 
 ## Sensor mode, rate and timestamps
 
@@ -124,12 +188,18 @@ Implementation references: [x264 input copy](https://code.videolan.org/videolan/
 ## Recording and transport
 
 Encoded packets feed independent 120-packet recording queues and a 240-item
-transport queue. Recorders rotate at IDRs after the segment duration. Space/write
+video transport queue. Telemetry has a separate 64-record queue; transport records
+older than 1 s expire. Telemetry loss never resets video keyframe recovery. Recorders rotate at IDRs after the segment duration. Space/write
 errors disable recording while transport continues; queue loss is marked at its
 actual boundary, skipping dependent frames until an IDR. Sinks have separate drop
 counters. Camera/encoder failure stops that camera; the other continues, with no
-in-process restart yet. SIGINT/SIGTERM drains work; finalization/log failures
+in-process restart. Both cameras may be absent/failed while telemetry continues.
+SIGINT/SIGTERM stops producers and drains work; finalization/log failures
 make the exit unsuccessful.
+
+Unknown optional frame controls are omitted from wire JSON when null. Local
+frame logs retain them. Queue age is a backlog limit, not a decoder deadline;
+`software/tools/check_transport_timing.py` checks a captured TS against PCR/DTS.
 
 One 9 Mb/s TS program uses video PIDs 256/257 and private JSON PID 258; UDP payloads
 contain at most seven 188-byte packets. One paced mux owner bounds interleaving;
@@ -157,6 +227,7 @@ With FFmpeg/JSON development packages, `-DPV_BUILD_MEDIA_TESTS=ON` adds
 Use `docs/assets/video/cil212-camera-a.mp4`. It exercises actual recorder/TS/UDP
 code: PID/frame counts, private JSON, PCR/decode timing, A-stop clock continuity,
 IDR segmentation, sink isolation and producer timestamps under encoder bursts.
+See [architecture](../architecture.drawio) and its [startup/shutdown preview](../diagrams/startup-shutdown.svg).
 It does not qualify acquisition, encoding speed, optics or synchronization.
 See the [qualification targets](../README.md#benchmark-and-qualify) for remaining
 long-run, latency, power, storage and calibration measurements.

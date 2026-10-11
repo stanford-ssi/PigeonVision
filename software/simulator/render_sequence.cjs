@@ -30,6 +30,7 @@ const sourceFiles = [
   "assets/launch.json", "assets/rocket.json",
   "assets/airbrakes.json",
 ];
+if (fs.existsSync(path.join(site, "recovery_attitude.js"))) sourceFiles.push("recovery_attitude.js");
 const stableJSON = (value) => JSON.stringify(value, function (_key, v) {
   return v && typeof v === "object" && !Array.isArray(v)
     ? Object.fromEntries(Object.entries(v).sort(([a], [b]) => a.localeCompare(b)))
@@ -201,6 +202,7 @@ async function main() {
       encoders.push(encoder(ffmpeg, args, path.join(stage, `${name}-encode.log`)));
     }
     const begin = Date.now();
+    const attitudes = [];
     for (let i = 0; i < frames; i++) {
       for (const [index, camera] of ["a", "b"].entries()) {
         const buffer = i === 0 ? first[camera] : Buffer.from(await page.evaluate(
@@ -210,9 +212,24 @@ async function main() {
         checkPNG(buffer);
         await encoders[index].write(buffer);
       }
+      const attitude = await page.evaluate(async () => {
+        const { bodyToWorld } = await import("./scene.js");
+        const state = window.pigeon.state.frameState;
+        // Reflected image basis: image-right, image-down, A-forward. det=-1.
+        const columns = [[0,1,0], [0,0,-1], [1,0,0]].map(v => bodyToWorld(v, state));
+        return { R_world_from_rig: [0,1,2].map(row => columns.map(column => column[row])),
+          roll_deg: state.roll, tilt_deg: state.tilt, heading_deg: state.heading };
+      });
+      attitudes.push({ sequence:i, t_s:start+i/fps, pts_us:Math.round((start+i/fps)*1e6), ...attitude });
       if (errors.length) throw Error(errors.join("\n"));
-      if (i % fps === 0) console.log(`Two fisheyes: ${i + 1}/${frames} frames each, ${((Date.now() - begin) / 1000).toFixed(1)} s elapsed`);
+      if (i % fps === 0 || i === frames-1) console.log(`Two fisheyes: ${i + 1}/${frames} frames each, ${((Date.now() - begin) / 1000).toFixed(1)} s elapsed`);
     }
+    const captureSeconds = (Date.now()-begin)/1000;
+    const attitudeName = "camera_attitudes.json";
+    fs.writeFileSync(path.join(stage, attitudeName), JSON.stringify({ schema_version:1, simulated:true,
+      frame:"ENU", source:"scene", basis:"Rig +X image-right, +Y image-down, +Z A-forward. Reflected orthogonal image basis; determinant -1, not an SO(3) rotation.",
+      timing:"Exact central-exposure scene pose captured with each pair. Nominal sample PTS; bind by sequence to encoded packet PTS.",
+      frames:attitudes }, null, 2)+"\n");
     for (const enc of encoders) enc.child.stdin.end();
     const status = await Promise.all(encoders.map((enc) => enc.done));
     status.forEach((result, i) => {
@@ -262,6 +279,8 @@ async function main() {
       pipeline_version: 3, camera_scope: "two-fisheyes-ground-stitch", generated_at: new Date().toISOString(),
       smoke: Boolean(smoke), preset, sensor: "IMX900", lens: "CIL212", crop_px: width,
       fps, frames, duration_s: frames / fps, start_s: start, parameters,
+      capture_performance: { wall_s:captureSeconds, dual_frames_per_second:frames/captureSeconds },
+      camera_attitudes: attitudeName, camera_attitudes_sha256:sha256(fs.readFileSync(path.join(stage, attitudeName))),
       fingerprint: {
         algorithm: "sha256", scene_sha256: sha256(stableJSON(inputs)),
         flight_sha256: inputs["assets/launch.json"],
@@ -269,7 +288,10 @@ async function main() {
         generator_sha256: sha256(fs.readFileSync(__filename)),
       },
       flight: "launch.json", flight_target_m: launch.inputs.target_apogee_m,
-      sequence_scope: "Pad through ascent, apogee and early descent; does not simulate landing",
+      sequence_scope: launch.summary.landing_time_s != null && start+frames/fps >= launch.summary.landing_time_s
+        ? "Saved OpenRocket translation through ground contact, with explicitly assumed recovery and grounded-tail animation"
+        : "Partial saved flight; does not include landing",
+      simulation_model: launch.model, flight_summary:launch.summary,
       projection: "Two square native sensor crops, unstitched fisheyes",
       codec_loss: true, packet_loss_simulated: false, radio_allowance_mbps: 9.809987380566072,
       cameras, transport: { ts: tsName, video_streams: 2, mux_target_mbps: muxRate, measured_ts_mbps: measured,
@@ -280,7 +302,7 @@ async function main() {
     };
     fs.writeFileSync(path.join(stage, "manifest-v3.json"), JSON.stringify(manifest, null, 2) + "\n");
     await page.screenshot({ path: path.join(stage, "cil212-render-check.png") });
-    publish.push(tsName, "cil212-mux.log", "cil212-render-check.png", "manifest-v3.json");
+    publish.push(tsName, attitudeName, "cil212-mux.log", "cil212-render-check.png", "manifest-v3.json");
     // Publish the manifest last so it never points at incomplete outputs.
     for (const name of publish) fs.renameSync(path.join(stage, name), path.join(out, name));
     fs.rmSync(stage, { recursive: true });

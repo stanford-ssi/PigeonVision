@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "profile": "flight",
+  "session_root": "/var/lib/pigeonvision/sessions",
+  "cameras": [],
+  "width": 2064,
+  "height": 1552,
+  "fps": 30,
+  "bitrate": 4000000,
+  "mux_bitrate": 9000000,
+  "encoder_threads": 3,
+  "capture_allocator": "dma_heap_cached",
+  "encoder_input": "dmabuf",
+  "record": true,
+  "encode": true,
+  "spi": {
+    "device": "/dev/spidev0.0",
+    "hz": 20000000,
+    "ready_line": 25
+  },
+  "sensors": {
+    "backend": "i2c"
+  },
+  "flight_uart": {
+    "backend": "disabled"
+  },
+  "status_path": "/run/pv-capture-status.json"
+}

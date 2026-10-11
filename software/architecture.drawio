@@ -1,0 +1,419 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" version="24.7.17">
+  <diagram name="Data flow" id="data-flow">
+    <mxGraphModel dx="1580" dy="950" grid="1" gridSize="10" guides="1" page="1" pageScale="1" pageWidth="1580" pageHeight="950" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="Data flow" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=16;fontColor=#222222;fontSize=26;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="35" width="1500" height="45" />
+        </mxCell>
+        <mxCell id="subtitle" value="Common CM5 session clock; independent recording and transport paths" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=16;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="90" width="1500" height="45" />
+        </mxCell>
+        <mxCell id="footer" value="Software implementation • hardware validation pending • analog chain untested/off" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=16;fontColor=#222222;fontSize=14;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="880" width="1500" height="30" />
+        </mxCell>
+        <mxCell id="cam" value="&lt;b&gt;Cameras A / B&lt;/b&gt;&lt;br&gt;IMX900 • 30 fps" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#d4e4f4;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="190" width="250" height="110" />
+        </mxCell>
+        <mxCell id="cap" value="&lt;b&gt;libcamera capture&lt;/b&gt;&lt;br&gt;SensorTimestamp → PTS" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="350" y="190" width="250" height="110" />
+        </mxCell>
+        <mxCell id="enc" value="&lt;b&gt;H.264 encoders&lt;/b&gt;&lt;br&gt;4 Mb/s each • bounded queues" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="660" y="190" width="250" height="110" />
+        </mxCell>
+        <mxCell id="rec" value="&lt;b&gt;Local recordings&lt;/b&gt;&lt;br&gt;A / B segmented MKV" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#d9ead3;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="970" y="190" width="250" height="110" />
+        </mxCell>
+        <mxCell id="sens" value="&lt;b&gt;Carrier + FC labels&lt;/b&gt;&lt;br&gt;I²C sensors / RX UART" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#d4e4f4;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="460" width="250" height="110" />
+        </mxCell>
+        <mxCell id="worker" value="&lt;b&gt;Acquisition workers&lt;/b&gt;&lt;br&gt;Samples + validity&lt;br&gt;Acquisition timestamps" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="350" y="460" width="250" height="110" />
+        </mxCell>
+        <mxCell id="mux" value="&lt;b&gt;MPEG-TS mux&lt;/b&gt;&lt;br&gt;A=256 • B=257 • JSON=258&lt;br&gt;Total 9 Mb/s" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="660" y="460" width="250" height="110" />
+        </mxCell>
+        <mxCell id="spi" value="&lt;b&gt;CM5 SPI sender&lt;/b&gt;&lt;br&gt;PV-SPI v1 • 1332 B / CS&lt;br&gt;20 MHz • READY gates transfer" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="970" y="460" width="250" height="110" />
+        </mxCell>
+        <mxCell id="rp" value="&lt;b&gt;RP2350 pvflight&lt;/b&gt;&lt;br&gt;TS → DVB-S2 → RRC → DMA" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="1280" y="460" width="250" height="110" />
+        </mxCell>
+        <mxCell id="ground" value="&lt;b&gt;Ground receiver&lt;/b&gt;&lt;br&gt;DVB-S2 → TS → PyAV&lt;br&gt;Video + telemetry browser" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#d4e4f4;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="660" y="710" width="250" height="110" />
+        </mxCell>
+        <mxCell id="logs" value="&lt;b&gt;Local evidence&lt;/b&gt;&lt;br&gt;JSONL samples / health / events" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#d9ead3;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="350" y="710" width="250" height="110" />
+        </mxCell>
+        <mxCell id="digital" value="&lt;b&gt;Digital I/Q bus&lt;/b&gt;&lt;br&gt;8 Msym/s • 4 samples/symbol" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#d4e4f4;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="1280" y="710" width="250" height="110" />
+        </mxCell>
+        <mxCell id="analog" value="&lt;b&gt;AFE / LO / PA&lt;/b&gt;&lt;br&gt;No enable/configuration added&lt;br&gt;RF output unverified" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="970" y="710" width="250" height="110" />
+        </mxCell>
+        <mxCell id="e1" value="frames" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="cam" target="cap">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="offset" x="0" y="-77.0" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e2" value="YUV" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="cap" target="enc">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="offset" x="0" y="-77.0" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e3" value="IDR segments" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="enc" target="rec">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="offset" x="0" y="-77.0" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e4" value="video + frame JSON" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="enc" target="mux">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e5" value="readings / labels" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="sens" target="worker">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="offset" x="0" y="-77.0" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e6" value="10 Hz telemetry" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="worker" target="mux">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="offset" x="0" y="-77.0" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e7" value="full-rate log" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="worker" target="logs">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e8" value="TS packets" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="mux" target="spi">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="offset" x="0" y="-77.0" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e9" value="SPI + CRC" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="spi" target="rp">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="offset" x="0" y="-77.0" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e10" value="shaped samples" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="rp" target="digital">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e11" value="I/Q" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=0;exitY=0.5;entryX=1;entryY=0.5;dashed=1;" edge="1" parent="1" source="digital" target="analog">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="offset" x="0" y="-77.0" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e12" value="RF path" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=0;exitY=0.5;entryX=1;entryY=0.5;dashed=1;" edge="1" parent="1" source="analog" target="ground">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="offset" x="0" y="-77.0" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="n1" value="READY indicates an armed free buffer; transfer completion is not an RP2350 acceptance acknowledgment." style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="835" width="1490" height="40" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="CM5 lifecycle" id="cm5-lifecycle">
+    <mxGraphModel dx="1580" dy="950" grid="1" gridSize="10" guides="1" page="1" pageScale="1" pageWidth="1580" pageHeight="950" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="CM5 lifecycle" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=16;fontColor=#222222;fontSize=26;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="35" width="1500" height="45" />
+        </mxCell>
+        <mxCell id="subtitle" value="pv-capture under systemd; component faults are distinct from FC phase labels" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=16;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="90" width="1500" height="45" />
+        </mxCell>
+        <mxCell id="footer" value="Software implementation • hardware validation pending • analog chain untested/off" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=16;fontColor=#222222;fontSize=14;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="880" width="1500" height="30" />
+        </mxCell>
+        <mxCell id="boot" value="&lt;b&gt;BOOT&lt;/b&gt;&lt;br&gt;Local filesystem available" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#d4e4f4;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="260" width="250" height="135" />
+        </mxCell>
+        <mxCell id="config" value="&lt;b&gt;INITIALIZING&lt;/b&gt;&lt;br&gt;Read profile • acquire lock&lt;br&gt;Create unique session" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="350" y="260" width="250" height="135" />
+        </mxCell>
+        <mxCell id="init" value="&lt;b&gt;INITIALIZING&lt;/b&gt;&lt;br&gt;Cameras / logs / outputs&lt;br&gt;Sensors + UART workers" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="660" y="260" width="250" height="135" />
+        </mxCell>
+        <mxCell id="run" value="&lt;b&gt;RUNNING&lt;/b&gt;&lt;br&gt;Capture + logs + downlink&lt;br&gt;Health / status at 1 Hz" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#d9ead3;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="970" y="260" width="250" height="135" />
+        </mxCell>
+        <mxCell id="stop" value="&lt;b&gt;STOPPING&lt;/b&gt;&lt;br&gt;Stop producers&lt;br&gt;Drain bounded outputs" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="1280" y="260" width="250" height="135" />
+        </mxCell>
+        <mxCell id="done" value="&lt;b&gt;STOPPED&lt;/b&gt;&lt;br&gt;Final counters + session end" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#d4e4f4;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="1280" y="580" width="250" height="135" />
+        </mxCell>
+        <mxCell id="fault" value="&lt;b&gt;COMPONENT FAULT&lt;/b&gt;&lt;br&gt;Camera / storage / sensor / transport&lt;br&gt;Report missing or degraded data" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#fff2cc;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="660" y="580" width="250" height="135" />
+        </mxCell>
+        <mxCell id="phase" value="&lt;b&gt;FC PHASE LABEL&lt;/b&gt;&lt;br&gt;UNKNOWN / PAD / ASCENT&lt;br&gt;DESCENT / LANDED" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#d4e4f4;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="580" width="250" height="135" />
+        </mxCell>
+        <mxCell id="c1" value="service start" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="boot" target="config">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="offset" x="0" y="-89.5" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c2" value="valid config" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="config" target="init">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="offset" x="0" y="-89.5" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c3" value="start workers" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="init" target="run">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="offset" x="0" y="-89.5" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c4" value="SIGTERM / SIGINT" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="run" target="stop">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="offset" x="0" y="-89.5" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c5" value="finalize" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="stop" target="done">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="c6" value="failed component" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="init" target="fault">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="c7" value="remaining paths continue" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;dashed=1;" edge="1" parent="1" source="fault" target="run">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="940" y="647" />
+              <mxPoint x="940" y="327" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="n1" value="Camera loss does not end telemetry. Invalid sensor data remains invalid. FC labels do not drive lifecycle or control." style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="770" width="1490" height="60" />
+        </mxCell>
+        <mxCell id="n2" value="Restart=no. Exit 78 marks an uncertain SPI transfer; another SPI session needs coordinated RP2350/link reset." style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="350" y="580" width="250" height="135" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="Sensors and telemetry" id="sensors-and-telemetry">
+    <mxGraphModel dx="1580" dy="950" grid="1" gridSize="10" guides="1" page="1" pageScale="1" pageWidth="1580" pageHeight="950" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="Sensors and telemetry" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=16;fontColor=#222222;fontSize=26;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="35" width="1500" height="45" />
+        </mxCell>
+        <mxCell id="subtitle" value="Local acquisition rate is independent of the bounded 10 Hz downlink publication rate" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=16;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="90" width="1500" height="45" />
+        </mxCell>
+        <mxCell id="footer" value="Software implementation • hardware validation pending • analog chain untested/off" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=16;fontColor=#222222;fontSize=14;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="880" width="1500" height="30" />
+        </mxCell>
+        <mxCell id="i2c" value="&lt;b&gt;I²C carrier sensors&lt;/b&gt;&lt;br&gt;BMI088 accel + gyro: 100 Hz each&lt;br&gt;BMP581 pressure + temperature: 25 Hz&lt;br&gt;INA226 voltage / current / power: 10 Hz" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#d4e4f4;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="200" width="360" height="180" />
+        </mxCell>
+        <mxCell id="read" value="&lt;b&gt;SensorWorker&lt;/b&gt;&lt;br&gt;sequence • host read timestamps&lt;br&gt;valid / status / values&lt;br&gt;Explicit I²C or simulation backend" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="490" y="200" width="300" height="180" />
+        </mxCell>
+        <mxCell id="log" value="&lt;b&gt;Full-rate local JSONL&lt;/b&gt;&lt;br&gt;Every acquired sample&lt;br&gt;Loss / write failures counted" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#d9ead3;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="900" y="200" width="300" height="180" />
+        </mxCell>
+        <mxCell id="uart" value="&lt;b&gt;FC → CM5 UART&lt;/b&gt;&lt;br&gt;RX-only • 115200 8N1&lt;br&gt;2 Hz heartbeat + event changes&lt;br&gt;3.3 V wiring still to confirm" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#d4e4f4;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="510" width="360" height="180" />
+        </mxCell>
+        <mxCell id="parse" value="&lt;b&gt;FlightUartParser&lt;/b&gt;&lt;br&gt;PV1 + seq + uptime + phase&lt;br&gt;event_seq + event + CRC16&lt;br&gt;≥3 s stale → UNKNOWN" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="490" y="510" width="300" height="180" />
+        </mxCell>
+        <mxCell id="batch" value="&lt;b&gt;PID 258 publication&lt;/b&gt;&lt;br&gt;Sensors: 100 ms column batches&lt;br&gt;≤2500 B / batch • sample times&lt;br&gt;UART / health: typed JSON" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="900" y="510" width="300" height="180" />
+        </mxCell>
+        <mxCell id="health" value="&lt;b&gt;Health&lt;/b&gt;&lt;br&gt;1 Hz system / components&lt;br&gt;Session clock + counters" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#d4e4f4;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="1290" y="510" width="240" height="180" />
+        </mxCell>
+        <mxCell id="s1" value="device reads" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="i2c" target="read">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="offset" x="0" y="-112.0" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="s2" value="sensor_sample" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="read" target="log">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="offset" x="0" y="-112.0" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="s3" value="bounded ASCII line" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="uart" target="parse">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="offset" x="0" y="-112.0" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="s4" value="labels / receive time" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="parse" target="batch">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="offset" x="0" y="-112.0" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="s5" value="samples" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="read" target="batch">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="640" y="430" />
+              <mxPoint x="1050" y="430" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="s6" value="status" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="health" target="batch">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="offset" x="0" y="-112.0" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="wire" value="PV1,seq,uptime_ms,phase,event_seq,event*CRC16\n • ≤96 bytes • CCITT-FALSE • labels only" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="710" width="1490" height="45" />
+        </mxCell>
+        <mxCell id="n1" value="Sensor timing: host read start/end, not a verified conversion instant. FC uptime is independent of CM5 CLOCK_BOOTTIME." style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="770" width="1490" height="60" />
+        </mxCell>
+        <mxCell id="n2" value="Missing values are null. No attitude fusion, control commands or ADXL375. Sensor wiring and rates require carrier hardware validation." style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="840" width="1490" height="35" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="RP2350 lifecycle" id="rp2350-lifecycle">
+    <mxGraphModel dx="1580" dy="950" grid="1" gridSize="10" guides="1" page="1" pageScale="1" pageWidth="1580" pageHeight="950" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="RP2350 lifecycle" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=16;fontColor=#222222;fontSize=26;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="35" width="1500" height="45" />
+        </mxCell>
+        <mxCell id="subtitle" value="Separate pvflight target; iqbench retains its duration-based USB commands" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=16;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="90" width="1500" height="45" />
+        </mxCell>
+        <mxCell id="footer" value="Software implementation • hardware validation pending • analog chain untested/off" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=16;fontColor=#222222;fontSize=14;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="880" width="1500" height="30" />
+        </mxCell>
+        <mxCell id="boot" value="&lt;b&gt;BOOT&lt;/b&gt;&lt;br&gt;128 MHz • READY low" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#d4e4f4;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="260" width="250" height="135" />
+        </mxCell>
+        <mxCell id="profile" value="&lt;b&gt;LOAD PROFILE&lt;/b&gt;&lt;br&gt;QPSK normal 2/3 • pilots&lt;br&gt;4 samples/symbol • L=12" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="350" y="260" width="250" height="135" />
+        </mxCell>
+        <mxCell id="prefill" value="&lt;b&gt;PREFILL&lt;/b&gt;&lt;br&gt;TS nulls → coded symbols&lt;br&gt;Fill shaper / DMA ring" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="660" y="260" width="250" height="135" />
+        </mxCell>
+        <mxCell id="start" value="&lt;b&gt;DIGITAL START&lt;/b&gt;&lt;br&gt;Start PIO / DMA&lt;br&gt;Then arm external SPI" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="970" y="260" width="250" height="135" />
+        </mxCell>
+        <mxCell id="run" value="&lt;b&gt;RUNNING&lt;/b&gt;&lt;br&gt;Indefinite digital output&lt;br&gt;Null packets when TS absent" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#d9ead3;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="1280" y="260" width="250" height="135" />
+        </mxCell>
+        <mxCell id="ready" value="&lt;b&gt;READY HIGH&lt;/b&gt;&lt;br&gt;Free receive slot armed&lt;br&gt;Lower while queue is full" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#d4e4f4;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="1280" y="600" width="250" height="135" />
+        </mxCell>
+        <mxCell id="stop" value="&lt;b&gt;STOPPING&lt;/b&gt;&lt;br&gt;READY low first&lt;br&gt;Stop output • drain encoder" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="970" y="600" width="250" height="135" />
+        </mxCell>
+        <mxCell id="idle" value="&lt;b&gt;BENCH IDLE&lt;/b&gt;&lt;br&gt;Final stream counters&lt;br&gt;USB start / bench commands" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#d4e4f4;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="660" y="600" width="250" height="135" />
+        </mxCell>
+        <mxCell id="r1" value="autonomous" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="boot" target="profile">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="offset" x="0" y="-89.5" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r2" value="configure" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="profile" target="prefill">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="offset" x="0" y="-89.5" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r3" value="rings filled" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="prefill" target="start">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="offset" x="0" y="-89.5" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r4" value="receive armed" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="start" target="run">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="offset" x="0" y="-89.5" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r5" value="buffer availability" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="run" target="ready">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="r6" value="USB stop" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="run" target="stop">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="1405" y="470" />
+              <mxPoint x="1095" y="470" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r7" value="finalize" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="stop" target="idle">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="offset" x="0" y="-89.5" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="n1" value="During TX: bounded stop/status service, no host wait. Status replies ≤1 Hz. No USB connection is needed to start." style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="600" width="560" height="135" />
+        </mxCell>
+        <mxCell id="n2" value="READY is not RF readiness or a per-message ACK. AFE/LO/PA remain unconfigured. Autonomous continuity is hardware-unverified." style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="800" width="1490" height="60" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="Startup and shutdown" id="startup-and-shutdown">
+    <mxGraphModel dx="1580" dy="950" grid="1" gridSize="10" guides="1" page="1" pageScale="1" pageWidth="1580" pageHeight="950" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="Startup and shutdown" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=16;fontColor=#222222;fontSize=26;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="35" width="1500" height="45" />
+        </mxCell>
+        <mxCell id="subtitle" value="Digital-only order; coordinate SPI session boundaries between CM5 and RP2350" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=16;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="90" width="1500" height="45" />
+        </mxCell>
+        <mxCell id="footer" value="Software implementation • hardware validation pending • analog chain untested/off" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=16;fontColor=#222222;fontSize=14;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="880" width="1500" height="30" />
+        </mxCell>
+        <mxCell id="rp" value="&lt;b&gt;RP2350 startup&lt;/b&gt;&lt;br&gt;READY low → load profile&lt;br&gt;Null prefill → digital start&lt;br&gt;Arm receive → READY as slots permit" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#d4e4f4;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="210" width="400" height="190" />
+        </mxCell>
+        <mxCell id="cm" value="&lt;b&gt;CM5 startup&lt;/b&gt;&lt;br&gt;systemd → lock → session&lt;br&gt;Independent cameras / sensors / UART&lt;br&gt;Start logs + MPEG-TS mux" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="590" y="210" width="400" height="190" />
+        </mxCell>
+        <mxCell id="send" value="&lt;b&gt;SPI transfer&lt;/b&gt;&lt;br&gt;Wait for READY&lt;br&gt;One 1332-byte message / CS&lt;br&gt;20 MHz • ≥10 µs CS gap" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#d9ead3;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="1130" y="210" width="400" height="190" />
+        </mxCell>
+        <mxCell id="t1" value="Independent boot" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="450" y="255" width="130" height="55" />
+        </mxCell>
+        <mxCell id="t2" value="TS available" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="cm" target="send">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="offset" x="0" y="-117.0" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="term" value="&lt;b&gt;CM5 stop request&lt;/b&gt;&lt;br&gt;SIGTERM / SIGINT&lt;br&gt;Stop camera / sensor / UART producers" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="590" width="400" height="165" />
+        </mxCell>
+        <mxCell id="drain" value="&lt;b&gt;CM5 finalize&lt;/b&gt;&lt;br&gt;Bounded transport drain&lt;br&gt;Close segments / logs&lt;br&gt;Write final counters" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="590" y="590" width="400" height="165" />
+        </mxCell>
+        <mxCell id="rstop" value="&lt;b&gt;RP2350 digital stop&lt;/b&gt;&lt;br&gt;Explicit bench USB stop&lt;br&gt;READY low → output stop&lt;br&gt;Drain encoder → final counters" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#d4e4f4;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="1130" y="590" width="400" height="165" />
+        </mxCell>
+        <mxCell id="t3" value="producer stop" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="term" target="drain">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="offset" x="0" y="-104.5" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="t4" value="separate stop request" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#222222;strokeWidth=1.5;fontFamily=Arial;fontSize=14;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;dashed=1;" edge="1" parent="1" source="drain" target="rstop">
+          <mxGeometry as="geometry" relative="1">
+            <mxPoint as="offset" x="0" y="-104.5" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="n1" value="If CM5 stops sending, RP2350 continues null output. CM5 shutdown does not itself stop the transmitter." style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="455" width="1490" height="70" />
+        </mxCell>
+        <mxCell id="n2" value="No automatic CM5 restart. An uncertain SPI ioctl cannot prove RP2350 acceptance; coordinate reset before a new SPI session." style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=8;fillColor=#f5f5f5;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="40" y="800" width="1490" height="60" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

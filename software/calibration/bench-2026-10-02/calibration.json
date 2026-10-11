@@ -1,0 +1,355 @@
+{
+  "schema_version": 1,
+  "model": "mei",
+  "scope": "physical_A_roll_180_bench_preview",
+  "rig_alignment_status": "nominal_operator_geometry",
+  "qualified": false,
+  "rig_axes": "+Z forward through A, +X right, +Y down",
+  "intrinsic_coordinate_convention": "unflipped_full_sensor_pixel_centres",
+  "nominal_geometry": {
+    "source": "operator supplied approximate mounting geometry",
+    "source_date": "2026-09-25",
+    "opposed_angle_deg": 180,
+    "baseline_m": 0.1524,
+    "baseline_status": "nominal_approximate",
+    "translation_used_in_projection": false,
+    "common_roll_assumption": "Camera A physically rolled approximately 180 degrees about its optical axis; identified by comparison of unwarped before/after frames. Relative mounting angles remain nominal.",
+    "physical_roll_A_deg": 180
+  },
+  "validation": {
+    "status": "supplementary_lens_validation_nominal_rig_unqualified",
+    "targets": {
+      "rms_px": 1,
+      "p95_px": 2
+    },
+    "cameras": {
+      "A": {
+        "fit_rms_px": 0.137100975184711,
+        "fit_views": 32,
+        "held_out_views": 5,
+        "training": {
+          "point_count": 9248,
+          "rms_px": 0.137100975184711,
+          "p95_px": 0.2619203396922398,
+          "max_px": 0.7794546640508385
+        },
+        "status": "held_out_evaluated",
+        "held_out": {
+          "point_count": 1445,
+          "rms_px": 0.1246644949512442,
+          "p95_px": 0.25052606008315764,
+          "max_px": 0.4955453891646622
+        },
+        "regions": {
+          "upper_sensor_edge": {
+            "point_count": 1445,
+            "rms_px": 0.1246644949512442,
+            "p95_px": 0.25052606008315764,
+            "max_px": 0.4955453891646622
+          }
+        },
+        "thresholds_met": true,
+        "seam_thresholds_met": null,
+        "seam_coverage_measured": false,
+        "domain_note": "max_theta_deg is the largest observed held-out board ray, not proof of complete angular coverage.",
+        "fitting_method": "scipy least_squares with analytic OpenCV omnidir projection Jacobian and production board-pose initialization"
+      },
+      "B": {
+        "fit_rms_px": 0.18194828103594937,
+        "fit_views": 49,
+        "held_out_views": 6,
+        "training": {
+          "point_count": 14161,
+          "rms_px": 0.18194828103594937,
+          "p95_px": 0.3483151767264985,
+          "max_px": 0.8787076086895894
+        },
+        "status": "held_out_evaluated",
+        "held_out": {
+          "point_count": 1734,
+          "rms_px": 0.1276692032563783,
+          "p95_px": 0.23438957925179385,
+          "max_px": 0.4456908371082403
+        },
+        "regions": {
+          "upper_sensor_edge": {
+            "point_count": 1734,
+            "rms_px": 0.1276692032563783,
+            "p95_px": 0.23438957925179385,
+            "max_px": 0.4456908371082403
+          },
+          "central": {
+            "point_count": 186,
+            "rms_px": 0.08654240734274293,
+            "p95_px": 0.1443235604067575,
+            "max_px": 0.1972316854741838
+          },
+          "mid": {
+            "point_count": 763,
+            "rms_px": 0.1303363010035807,
+            "p95_px": 0.23940716320016475,
+            "max_px": 0.3982914009698088
+          },
+          "edge": {
+            "point_count": 785,
+            "rms_px": 0.1331090192655828,
+            "p95_px": 0.23792507853610514,
+            "max_px": 0.4456908371082403
+          }
+        },
+        "thresholds_met": true,
+        "seam_thresholds_met": null,
+        "seam_coverage_measured": false,
+        "domain_note": "max_theta_deg is the largest observed held-out board ray, not proof of complete angular coverage."
+      }
+    }
+  },
+  "cameras": {
+    "A": {
+      "K": [
+        [
+          927.499773220393,
+          0.0,
+          1074.630712117969
+        ],
+        [
+          0.0,
+          927.5471028379797,
+          725.7675446193961
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "D": [
+        -0.2813361285467576,
+        0.05041830946389973,
+        -3.010083940573499e-06,
+        0.00010832862322256336
+      ],
+      "xi": 0.8457560916251945,
+      "image_size": [
+        2064,
+        1552
+      ],
+      "crop": [
+        0,
+        0,
+        2064,
+        1552
+      ],
+      "output_size": [
+        2064,
+        1552
+      ],
+      "flip_x": false,
+      "flip_y": true,
+      "R_camera_from_rig": [
+        [
+          -1,
+          0,
+          0
+        ],
+        [
+          0,
+          -1,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "valid_radius_px": null,
+      "max_theta_deg": null,
+      "provenance": {
+        "device_id": "/base/axi/pcie@1000120000/rp1/i2c@88000/imx900@1a",
+        "lens_id": null,
+        "focus_position": null,
+        "focus_reference_sha256": null,
+        "crop_source": "dataset.physical_cameras.requested_sensor_crop"
+      }
+    },
+    "B": {
+      "K": [
+        [
+          943.5422176399328,
+          0.0,
+          1061.24819268848
+        ],
+        [
+          0.0,
+          943.0732285165218,
+          733.557969855707
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "D": [
+        -0.27704420732789753,
+        0.0459882972346077,
+        -9.054344080912369e-05,
+        0.00029054189403761657
+      ],
+      "xi": 0.8777527940237609,
+      "image_size": [
+        2064,
+        1552
+      ],
+      "crop": [
+        0,
+        0,
+        2064,
+        1552
+      ],
+      "output_size": [
+        2064,
+        1552
+      ],
+      "flip_x": false,
+      "flip_y": true,
+      "R_camera_from_rig": [
+        [
+          -1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          -1
+        ]
+      ],
+      "valid_radius_px": null,
+      "max_theta_deg": null,
+      "provenance": {
+        "device_id": "/base/axi/pcie@1000120000/rp1/i2c@70000/imx900@1a",
+        "lens_id": null,
+        "focus_position": null,
+        "focus_reference_sha256": null,
+        "crop_source": "dataset.physical_cameras.requested_sensor_crop"
+      }
+    }
+  },
+  "provenance": {
+    "snapshot_source": {
+      "local_archive": "build/camera-fov-review/colour-B-restore/calibration.json",
+      "sha256": "3193b24a5c48a8ce2f67d1b4b01bb9bec0c6eb5a180b3374b70cbfb29b46200f"
+    },
+    "lens_refit": {
+      "local_archive": "build/camera-fov-review/refit-002",
+      "B_source_archive": "build/camera-fov-review/refit-001"
+    },
+    "physical_roll": {
+      "camera": "A",
+      "degrees": 180,
+      "confirmed_by": "operator and before/after source images"
+    },
+    "B_colour_trim": {
+      "path": "colour-measurements.json",
+      "source": "three ceiling regions in the current bench lighting"
+    }
+  },
+  "limitations": [
+    "Opposed alignment and common roll are operator assumptions, not a precision rig solve.",
+    "The nominal baseline is recorded only; infinity projection does not correct near-field parallax.",
+    "Lens validation states remain those of the supplied fits; training errors are not held-out validation.",
+    "Missing angular bounds mean edge and seam coverage remain unvalidated.",
+    "Lens identity and focus stability are unverified; assume neither changed between old and new collections.",
+    "Camera alignment remains nominal; checkerboard local IDs do not establish common rig correspondences.",
+    "The largest held-out inferred theta is validation support, not a global physical aperture; no new angular/radius mask is applied.",
+    "A uses a diagnostic joint least-squares refinement including all32 fixed training views; no view was selected using held-out residuals.",
+    "Camera A remount is nominal 180 degrees; small mechanical alignment differences are not calibrated."
+  ],
+  "display_colour": {
+    "schema_version": 1,
+    "method": "display_rgb_gain",
+    "reference_camera": null,
+    "reference_target": "measured_neutral_surfaces",
+    "devices": {
+      "A": "/base/axi/pcie@1000120000/rp1/i2c@88000/imx900@1a",
+      "B": "/base/axi/pcie@1000120000/rp1/i2c@70000/imx900@1a"
+    },
+    "common_headroom_scale": 0.8815789473684211,
+    "camera_strengths": {
+      "A": 1,
+      "B": 1
+    },
+    "source_geometry": {
+      "A": {
+        "image_size": [
+          2064,
+          1552
+        ],
+        "crop": [
+          0,
+          0,
+          2064,
+          1552
+        ],
+        "output_size": [
+          2064,
+          1552
+        ],
+        "flip_x": false,
+        "flip_y": true
+      },
+      "B": {
+        "image_size": [
+          2064,
+          1552
+        ],
+        "crop": [
+          0,
+          0,
+          2064,
+          1552
+        ],
+        "output_size": [
+          2064,
+          1552
+        ],
+        "flip_x": false,
+        "flip_y": true
+      }
+    },
+    "gains": {
+      "A": [
+        0.9724633749321758,
+        0.8815789473684211,
+        0.9247936016511868
+      ],
+      "B": [
+        1.0,
+        0.8557692307692307,
+        0.8855721393034826
+      ]
+    },
+    "default_enabled": true,
+    "qualified": false,
+    "status": "B_ceiling_balance_preview_unqualified",
+    "derivation": {
+      "method": "B-only robust median of three selected white-ceiling regions, normalized to at most unity gain; A unchanged",
+      "source_capture": "build/camera-fov-review/colour-B-restore/B-after.png",
+      "source_capture_sha256": "4a359b402dfc202b58f0fc20563f9c70c5e00218c98fa077db98c46d02c7b86d",
+      "base_profile": "build/camera-fov-review/refit-002/calibration-A-rolled-180-preview.json",
+      "base_profile_sha256": "d16e8712288a1a60f498e01e56066134998c7c1e756966cc0716bb3ccd3512e4"
+    },
+    "limitations": [
+      "Lighting-specific display RGB trim, not a chart-based absolute calibration.",
+      "Ceiling and tabletop are under different lighting; one global gain will not neutralize every surface.",
+      "Only B viewer gains changed; encoded video, sensor controls, lens calibration and mounting rotation are unchanged."
+    ]
+  }
+}

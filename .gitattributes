@@ -1,0 +1,2 @@
+# Preserve the manufacturer sources and licenses byte for byte.
+software/flight/vendor/** -whitespace

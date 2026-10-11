@@ -1,0 +1,17 @@
+[Unit]
+Description=PigeonVision flight acquisition
+After=local-fs.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/pv-capture --config /etc/pigeonvision/flight.json
+Restart=no
+# Every SPI session restart requires coordinated transmitter reset.
+KillSignal=SIGTERM
+TimeoutStopSec=15
+KillMode=control-group
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
