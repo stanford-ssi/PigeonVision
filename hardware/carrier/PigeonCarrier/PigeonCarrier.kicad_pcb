@@ -32761,7 +32761,7 @@
 		(property "Reference" "REF**"
 			(at 0 -27 0)
 			(layer "F.Fab")
-			(uuid "fc6e69c5-e970-4463-86a5-22973ee8ba12")
+			(uuid "0c5ce98d-f379-42fa-85cd-febd2e71a9b3")
 			(effects
 				(font
 					(size 1 1)
@@ -32772,7 +32772,7 @@
 		(property "Value" "ANTSDR E200 - planning"
 			(at 0 27 0)
 			(layer "F.Fab")
-			(uuid "0234f8ce-2369-4c61-bf63-15ee8d588c50")
+			(uuid "48215292-2212-42c1-99e9-558430ce8ee2")
 			(effects
 				(font
 					(size 1 1)
@@ -32784,7 +32784,7 @@
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "0afb0aed-c640-4186-9398-e310f3e7eb8d")
+			(uuid "3197c23a-4a07-4e2b-9b19-3dc94c840444")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -32795,7 +32795,7 @@
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "61b2a826-72ec-468d-933a-1126e9dbab9d")
+			(uuid "1285e5fa-3321-465a-9c16-4c120468410c")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -34478,6 +34478,7 @@
 		)
 		(embedded_fonts no)
 		(model "${KIPRJMOD}/../../libraries/3dmodels/MicroPhase_ANTSDR_E200_DrawingDerived_Planning.step"
+			(hide yes)
 			(offset
 				(xyz 0 0 10)
 			)
