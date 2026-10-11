@@ -6,11 +6,11 @@ Video downlink for Stanford SSI's IREC rocket. Two fisheye cameras record the fl
 
 Try the [flight demo](https://stanford-ssi.github.io/PigeonVision/) to see the camera views and stitched panorama.
 
-**Cur Plan:** two IMX900 cameras at 30 fps, one CM5 and a custom RP2350B transmitter over PV-SPI. E200 remains the fallback. A ground SDR and Linux PC receive and stitch the video. Target: 10,000 ft AGL, 6-inch airframe, 0.5 W average PA output.
+**Cur Plan:** two IMX900 cameras at 30 fps, one CM5 and an RP2350 + AFE7071 transmitter over SPI. Keep Ethernet for an E200 fallback. A ground E200 and Linux PC receive and stitch the video. Target: 10,000 ft AGL, 6-inch airframe, 0.5 W average PA output. Camera-to-Pico SPI is tested; RF is not yet tested.
 
 - [Hardware](hardware/README.md): system diagram, carrier and RF frontend.
 - [Software](software/README.md): flight and ground tasks.
 - [Link budget](calculations/link-budget.xlsx): RF and video bitrate calculations.
 - [Simulator](docs/README.md): camera views, flight playback and local setup.
 
-**Next:** test autonomous startup and sensor telemetry, then RF. Continue carrier design in parallel.
+**Next:** finish the carrier interfaces, autonomous flight software and transmitter RF prototype.

@@ -1,0 +1,4982 @@
+{
+  "checked_utc": "2026-10-02T09:21:33.723495+00:00",
+  "snapshot_note": "Public JLC catalog quantity is an unreserved point-in-time snapshot; DigiKey order codes verified against exact manufacturer product pages.",
+  "parts": {
+    "SN74AXC4T245PWR": {
+      "manufacturer": "Texas Instruments",
+      "mpn": "SN74AXC4T245PWR",
+      "digikey": "296-53472-1-ND",
+      "jlc": "C2867798",
+      "symbol": "PigeonVision:SN74AXC4T245PWR",
+      "footprint": "PigeonVision:TI_PW0016A_TSSOP-16_4.4x5mm_P0.65mm",
+      "refs": [
+        "U701",
+        "U702"
+      ],
+      "jlc_snapshot": {
+        "lcsc": "C2867798",
+        "name": "TI SN74AXC4T245PWR",
+        "model": "SN74AXC4T245PWR",
+        "brand": "Texas Instruments",
+        "package": "TSSOP-16",
+        "category": "Translators, Level Shifters",
+        "stock": 3900,
+        "type": "Extended",
+        "price": 0.3117,
+        "description": "-40\u2103~+125\u2103 2 2 380Mbps 650mV~3.6V 650mV~3.6V Power-Off Protection Tri-State TSSOP-16 Translators, Level Shifters ROHS",
+        "url": "https://www.lcsc.com/product-detail/translators-level-shifters_texas-instruments-sn74axc4t245pwr_C2867798.html",
+        "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2303010500_Texas-Instruments-SN74AXC4T245PWR_C2867798.pdf"
+      },
+      "datasheet": "https://www.ti.com/lit/ds/symlink/sn74axc4t245.pdf",
+      "symbol_pins": {
+        "1": {
+          "name": "VCCA",
+          "type": "power_in"
+        },
+        "16": {
+          "name": "VCCB",
+          "type": "power_in"
+        },
+        "4": {
+          "name": "1A1",
+          "type": "bidirectional"
+        },
+        "5": {
+          "name": "1A2",
+          "type": "bidirectional"
+        },
+        "6": {
+          "name": "2A1",
+          "type": "bidirectional"
+        },
+        "7": {
+          "name": "2A2",
+          "type": "bidirectional"
+        },
+        "2": {
+          "name": "1DIR",
+          "type": "input"
+        },
+        "3": {
+          "name": "2DIR",
+          "type": "input"
+        },
+        "15": {
+          "name": "~{1OE}",
+          "type": "input"
+        },
+        "14": {
+          "name": "~{2OE}",
+          "type": "input"
+        },
+        "13": {
+          "name": "1B1",
+          "type": "bidirectional"
+        },
+        "12": {
+          "name": "1B2",
+          "type": "bidirectional"
+        },
+        "11": {
+          "name": "2B1",
+          "type": "bidirectional"
+        },
+        "10": {
+          "name": "2B2",
+          "type": "bidirectional"
+        },
+        "8": {
+          "name": "GND",
+          "type": "power_in"
+        },
+        "9": {
+          "name": "GND",
+          "type": "power_in"
+        }
+      },
+      "pad_map": [
+        {
+          "number": "1",
+          "at_mm": [
+            -2.9,
+            -2.275
+          ],
+          "size_mm": [
+            1.5,
+            0.45
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            -2.9,
+            -1.625
+          ],
+          "size_mm": [
+            1.5,
+            0.45
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "3",
+          "at_mm": [
+            -2.9,
+            -0.9750000000000001
+          ],
+          "size_mm": [
+            1.5,
+            0.45
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "4",
+          "at_mm": [
+            -2.9,
+            -0.325
+          ],
+          "size_mm": [
+            1.5,
+            0.45
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "5",
+          "at_mm": [
+            -2.9,
+            0.325
+          ],
+          "size_mm": [
+            1.5,
+            0.45
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "6",
+          "at_mm": [
+            -2.9,
+            0.9750000000000001
+          ],
+          "size_mm": [
+            1.5,
+            0.45
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "7",
+          "at_mm": [
+            -2.9,
+            1.625
+          ],
+          "size_mm": [
+            1.5,
+            0.45
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "8",
+          "at_mm": [
+            -2.9,
+            2.275
+          ],
+          "size_mm": [
+            1.5,
+            0.45
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "16",
+          "at_mm": [
+            2.9,
+            -2.275
+          ],
+          "size_mm": [
+            1.5,
+            0.45
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "15",
+          "at_mm": [
+            2.9,
+            -1.625
+          ],
+          "size_mm": [
+            1.5,
+            0.45
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "14",
+          "at_mm": [
+            2.9,
+            -0.9750000000000001
+          ],
+          "size_mm": [
+            1.5,
+            0.45
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "13",
+          "at_mm": [
+            2.9,
+            -0.325
+          ],
+          "size_mm": [
+            1.5,
+            0.45
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "12",
+          "at_mm": [
+            2.9,
+            0.325
+          ],
+          "size_mm": [
+            1.5,
+            0.45
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "11",
+          "at_mm": [
+            2.9,
+            0.9750000000000001
+          ],
+          "size_mm": [
+            1.5,
+            0.45
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "10",
+          "at_mm": [
+            2.9,
+            1.625
+          ],
+          "size_mm": [
+            1.5,
+            0.45
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "9",
+          "at_mm": [
+            2.9,
+            2.275
+          ],
+          "size_mm": [
+            1.5,
+            0.45
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "footprint_sha256": "0b8860ff4948f86dd8cf210d7b7af97f66f2e693151c429a0f15c7405d90163c",
+      "local_model": "${KIPRJMOD}/../../libraries/3dmodels/TI_PW0016A_TSSOP16_KiCad.step",
+      "model_sha256": "6ad5e98224d02a427d9a6b929a28dbc158b9925fba5adec12db05079f1016948",
+      "model_type": "KiCad representative package STEP, copied locally",
+      "source_footprint": "TI exact package land drawing",
+      "saved_instances": [
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "U701",
+          "dnp": false
+        },
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "U702",
+          "dnp": false
+        }
+      ],
+      "footprint_file": "hardware/libraries/PigeonVision.pretty/TI_PW0016A_TSSOP-16_4.4x5mm_P0.65mm.kicad_mod",
+      "models": [
+        {
+          "reference": "${KIPRJMOD}/../../libraries/3dmodels/TI_PW0016A_TSSOP16_KiCad.step",
+          "file": "hardware/libraries/3dmodels/TI_PW0016A_TSSOP16_KiCad.step",
+          "sha256": "6ad5e98224d02a427d9a6b929a28dbc158b9925fba5adec12db05079f1016948",
+          "offset": [
+            "0",
+            "0",
+            "0"
+          ],
+          "scale": [
+            "1",
+            "1",
+            "1"
+          ],
+          "rotation": [
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "pins": {
+        "1": {
+          "name": "VCCA",
+          "type": "power_in"
+        },
+        "16": {
+          "name": "VCCB",
+          "type": "power_in"
+        },
+        "4": {
+          "name": "1A1",
+          "type": "bidirectional"
+        },
+        "5": {
+          "name": "1A2",
+          "type": "bidirectional"
+        },
+        "6": {
+          "name": "2A1",
+          "type": "bidirectional"
+        },
+        "7": {
+          "name": "2A2",
+          "type": "bidirectional"
+        },
+        "2": {
+          "name": "1DIR",
+          "type": "input"
+        },
+        "3": {
+          "name": "2DIR",
+          "type": "input"
+        },
+        "15": {
+          "name": "~{1OE}",
+          "type": "input"
+        },
+        "14": {
+          "name": "~{2OE}",
+          "type": "input"
+        },
+        "13": {
+          "name": "1B1",
+          "type": "bidirectional"
+        },
+        "12": {
+          "name": "1B2",
+          "type": "bidirectional"
+        },
+        "11": {
+          "name": "2B1",
+          "type": "bidirectional"
+        },
+        "10": {
+          "name": "2B2",
+          "type": "bidirectional"
+        },
+        "8": {
+          "name": "GND",
+          "type": "power_in"
+        },
+        "9": {
+          "name": "GND",
+          "type": "power_in"
+        }
+      },
+      "pads": [
+        {
+          "number": "1",
+          "at_mm": [
+            -2.9,
+            -2.275
+          ],
+          "size_mm": [
+            1.5,
+            0.45
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            -2.9,
+            -1.625
+          ],
+          "size_mm": [
+            1.5,
+            0.45
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "3",
+          "at_mm": [
+            -2.9,
+            -0.9750000000000001
+          ],
+          "size_mm": [
+            1.5,
+            0.45
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "4",
+          "at_mm": [
+            -2.9,
+            -0.325
+          ],
+          "size_mm": [
+            1.5,
+            0.45
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "5",
+          "at_mm": [
+            -2.9,
+            0.325
+          ],
+          "size_mm": [
+            1.5,
+            0.45
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "6",
+          "at_mm": [
+            -2.9,
+            0.9750000000000001
+          ],
+          "size_mm": [
+            1.5,
+            0.45
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "7",
+          "at_mm": [
+            -2.9,
+            1.625
+          ],
+          "size_mm": [
+            1.5,
+            0.45
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "8",
+          "at_mm": [
+            -2.9,
+            2.275
+          ],
+          "size_mm": [
+            1.5,
+            0.45
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "16",
+          "at_mm": [
+            2.9,
+            -2.275
+          ],
+          "size_mm": [
+            1.5,
+            0.45
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "15",
+          "at_mm": [
+            2.9,
+            -1.625
+          ],
+          "size_mm": [
+            1.5,
+            0.45
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "14",
+          "at_mm": [
+            2.9,
+            -0.9750000000000001
+          ],
+          "size_mm": [
+            1.5,
+            0.45
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "13",
+          "at_mm": [
+            2.9,
+            -0.325
+          ],
+          "size_mm": [
+            1.5,
+            0.45
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "12",
+          "at_mm": [
+            2.9,
+            0.325
+          ],
+          "size_mm": [
+            1.5,
+            0.45
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "11",
+          "at_mm": [
+            2.9,
+            0.9750000000000001
+          ],
+          "size_mm": [
+            1.5,
+            0.45
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "10",
+          "at_mm": [
+            2.9,
+            1.625
+          ],
+          "size_mm": [
+            1.5,
+            0.45
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "9",
+          "at_mm": [
+            2.9,
+            2.275
+          ],
+          "size_mm": [
+            1.5,
+            0.45
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "model": "${KIPRJMOD}/../../libraries/3dmodels/TI_PW0016A_TSSOP16_KiCad.step"
+    },
+    "RC0402FR-0733RL": {
+      "manufacturer": "YAGEO",
+      "mpn": "RC0402FR-0733RL",
+      "digikey": "311-33.0LRCT-ND",
+      "jlc": "C138002",
+      "symbol": "Device:R",
+      "footprint": "PigeonVision:KiCad_Resistor_SMD_R_0402_1005Metric",
+      "refs": [
+        "R701",
+        "R702",
+        "R703",
+        "R704",
+        "R705",
+        "R831",
+        "R832"
+      ],
+      "jlc_snapshot": {
+        "lcsc": "C138002",
+        "name": "YAGEO RC0402FR-0733RL",
+        "model": "RC0402FR-0733RL",
+        "brand": "YAGEO",
+        "package": "0402",
+        "category": "Chip Resistor - Surface Mount",
+        "stock": 7780349,
+        "type": "Extended",
+        "price": 0.0036,
+        "description": "-55\u2103~+155\u2103 33\u03a9 50V 62.5mW Thick Film Resistor \u00b11% \u00b1100ppm/\u2103 0402 Chip Resistor - Surface Mount ROHS",
+        "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_yageo-rc0402fr-0733rl_C138002.html",
+        "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0402FR-0733RL_C138002.pdf"
+      },
+      "saved_instances": [
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "R701",
+          "dnp": false
+        },
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "R702",
+          "dnp": false
+        },
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "R703",
+          "dnp": false
+        },
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "R704",
+          "dnp": false
+        },
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "R705",
+          "dnp": false
+        },
+        {
+          "sheet": "yapogee.kicad_sch",
+          "reference": "R831",
+          "dnp": false
+        },
+        {
+          "sheet": "yapogee.kicad_sch",
+          "reference": "R832",
+          "dnp": false
+        }
+      ],
+      "symbol_pins": {
+        "1": {
+          "name": "",
+          "type": "passive"
+        },
+        "2": {
+          "name": "",
+          "type": "passive"
+        }
+      },
+      "datasheet": "",
+      "footprint_file": "hardware/libraries/PigeonVision.pretty/KiCad_Resistor_SMD_R_0402_1005Metric.kicad_mod",
+      "footprint_sha256": "cf8cbd679205e8dfa783214e74f6b542be0e96acdf1bbdee9e953d874fb86316",
+      "pad_map": [
+        {
+          "number": "1",
+          "at_mm": [
+            -0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "models": [
+        {
+          "reference": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step",
+          "file": "hardware/libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step",
+          "sha256": "91507e5af4251cb4ef38e04889c9b98da29904432bd83786bba13ae9b605eacb",
+          "offset": [
+            "0",
+            "0",
+            "0"
+          ],
+          "scale": [
+            "1",
+            "1",
+            "1"
+          ],
+          "rotation": [
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "local_model": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step",
+      "model_sha256": "91507e5af4251cb4ef38e04889c9b98da29904432bd83786bba13ae9b605eacb",
+      "pins": {
+        "1": {
+          "name": "",
+          "type": "passive"
+        },
+        "2": {
+          "name": "",
+          "type": "passive"
+        }
+      },
+      "pads": [
+        {
+          "number": "1",
+          "at_mm": [
+            -0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "model": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step"
+    },
+    "SN74LVC1G07DBVR": {
+      "manufacturer": "Texas Instruments",
+      "mpn": "SN74LVC1G07DBVR",
+      "digikey": "296-8485-1-ND",
+      "jlc": "C7829",
+      "symbol": "PigeonVision:SN74LVC1G07DBVR",
+      "footprint": "PigeonVision:TI_DBV0005A_SOT23-5_SN74LVC1G07",
+      "refs": [
+        "U703"
+      ],
+      "jlc_snapshot": {
+        "lcsc": "C7829",
+        "name": "TI SN74LVC1G07DBVR",
+        "model": "SN74LVC1G07DBVR",
+        "brand": "Texas Instruments",
+        "package": "SOT-23-5",
+        "category": "Buffers, Drivers, Receivers, Transceivers",
+        "stock": 72111,
+        "type": "Extended",
+        "price": 0.0969,
+        "description": "-40\u2103~+125\u2103 1 1 1.65V~5.5V 10uA 32mA 4.2ns@3.3V,50pF 74LVC Open-drain Power-off isolation\u3001Level shifting Unidirectional SOT-23-5 Buffers, Drivers, Receivers, Transceivers ROHS",
+        "url": "https://www.lcsc.com/product-detail/buffers-drivers-receivers-transceivers_texas-instruments-sn74lvc1g07dbvr_C7829.html",
+        "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1809251740_Texas-Instruments-SN74LVC1G07DBVR_C7829.pdf"
+      },
+      "datasheet": "https://www.ti.com/lit/ds/symlink/sn74lvc1g07.pdf",
+      "symbol_pins": {
+        "5": {
+          "name": "VCC",
+          "type": "power_in"
+        },
+        "2": {
+          "name": "A",
+          "type": "input"
+        },
+        "4": {
+          "name": "Y_OD",
+          "type": "open_collector"
+        },
+        "1": {
+          "name": "NC",
+          "type": "no_connect"
+        },
+        "3": {
+          "name": "GND",
+          "type": "power_in"
+        }
+      },
+      "pad_map": [
+        {
+          "number": "1",
+          "at_mm": [
+            -1.3,
+            -0.95
+          ],
+          "size_mm": [
+            1.1,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            -1.3,
+            0.0
+          ],
+          "size_mm": [
+            1.1,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "3",
+          "at_mm": [
+            -1.3,
+            0.95
+          ],
+          "size_mm": [
+            1.1,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "4",
+          "at_mm": [
+            1.3,
+            0.95
+          ],
+          "size_mm": [
+            1.1,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "5",
+          "at_mm": [
+            1.3,
+            -0.95
+          ],
+          "size_mm": [
+            1.1,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "footprint_sha256": "a71c4e97e9a44c86190416715c82fa4e1504094f801791c62b6af729fd58d385",
+      "local_model": "${KIPRJMOD}/../../libraries/3dmodels/TI_DBV0005A_SOT23-5_SN74LVC1G07.step",
+      "model_sha256": "720a6eab0024069bbee68e7cb4c3ff1149468a34611225cdc852662c5d0ec2b7",
+      "model_type": "KiCad representative package STEP, copied locally",
+      "source_footprint": "TI exact package land drawing",
+      "saved_instances": [
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "U703",
+          "dnp": false
+        }
+      ],
+      "footprint_file": "hardware/libraries/PigeonVision.pretty/TI_DBV0005A_SOT23-5_SN74LVC1G07.kicad_mod",
+      "models": [
+        {
+          "reference": "${KIPRJMOD}/../../libraries/3dmodels/TI_DBV0005A_SOT23-5_SN74LVC1G07.step",
+          "file": "hardware/libraries/3dmodels/TI_DBV0005A_SOT23-5_SN74LVC1G07.step",
+          "sha256": "720a6eab0024069bbee68e7cb4c3ff1149468a34611225cdc852662c5d0ec2b7",
+          "offset": [
+            "0",
+            "0",
+            "0"
+          ],
+          "scale": [
+            "1",
+            "1",
+            "1"
+          ],
+          "rotation": [
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "pins": {
+        "5": {
+          "name": "VCC",
+          "type": "power_in"
+        },
+        "2": {
+          "name": "A",
+          "type": "input"
+        },
+        "4": {
+          "name": "Y_OD",
+          "type": "open_collector"
+        },
+        "1": {
+          "name": "NC",
+          "type": "no_connect"
+        },
+        "3": {
+          "name": "GND",
+          "type": "power_in"
+        }
+      },
+      "pads": [
+        {
+          "number": "1",
+          "at_mm": [
+            -1.3,
+            -0.95
+          ],
+          "size_mm": [
+            1.1,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            -1.3,
+            0.0
+          ],
+          "size_mm": [
+            1.1,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "3",
+          "at_mm": [
+            -1.3,
+            0.95
+          ],
+          "size_mm": [
+            1.1,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "4",
+          "at_mm": [
+            1.3,
+            0.95
+          ],
+          "size_mm": [
+            1.1,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "5",
+          "at_mm": [
+            1.3,
+            -0.95
+          ],
+          "size_mm": [
+            1.1,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "model": "${KIPRJMOD}/../../libraries/3dmodels/TI_DBV0005A_SOT23-5_SN74LVC1G07.step"
+    },
+    "RC0402FR-0710KL": {
+      "manufacturer": "YAGEO",
+      "mpn": "RC0402FR-0710KL",
+      "digikey": "311-10.0KLRCT-ND",
+      "jlc": "C60490",
+      "symbol": "Device:R",
+      "footprint": "PigeonVision:KiCad_Resistor_SMD_R_0402_1005Metric",
+      "refs": [
+        "R706",
+        "R707",
+        "R710",
+        "R711",
+        "R714",
+        "R835",
+        "R836",
+        "R837",
+        "R838"
+      ],
+      "jlc_snapshot": {
+        "lcsc": "C60490",
+        "name": "YAGEO RC0402FR-0710KL",
+        "model": "RC0402FR-0710KL",
+        "brand": "YAGEO",
+        "package": "0402",
+        "category": "Chip Resistor - Surface Mount",
+        "stock": 8030639,
+        "type": "Extended",
+        "price": 0.0023,
+        "description": "-55\u2103~+155\u2103 10k\u03a9 50V 62.5mW Thick Film Resistor \u00b11% \u00b1100ppm/\u2103 0402 Chip Resistor - Surface Mount ROHS",
+        "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_yageo-rc0402fr-0710kl_C60490.html",
+        "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0402FR-0710KL_C60490.pdf"
+      },
+      "saved_instances": [
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "R706",
+          "dnp": false
+        },
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "R707",
+          "dnp": false
+        },
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "R710",
+          "dnp": false
+        },
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "R711",
+          "dnp": false
+        },
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "R714",
+          "dnp": false
+        },
+        {
+          "sheet": "yapogee.kicad_sch",
+          "reference": "R835",
+          "dnp": false
+        },
+        {
+          "sheet": "yapogee.kicad_sch",
+          "reference": "R836",
+          "dnp": false
+        },
+        {
+          "sheet": "yapogee.kicad_sch",
+          "reference": "R837",
+          "dnp": false
+        },
+        {
+          "sheet": "yapogee.kicad_sch",
+          "reference": "R838",
+          "dnp": false
+        }
+      ],
+      "symbol_pins": {
+        "1": {
+          "name": "",
+          "type": "passive"
+        },
+        "2": {
+          "name": "",
+          "type": "passive"
+        }
+      },
+      "datasheet": "",
+      "footprint_file": "hardware/libraries/PigeonVision.pretty/KiCad_Resistor_SMD_R_0402_1005Metric.kicad_mod",
+      "footprint_sha256": "cf8cbd679205e8dfa783214e74f6b542be0e96acdf1bbdee9e953d874fb86316",
+      "pad_map": [
+        {
+          "number": "1",
+          "at_mm": [
+            -0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "models": [
+        {
+          "reference": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step",
+          "file": "hardware/libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step",
+          "sha256": "91507e5af4251cb4ef38e04889c9b98da29904432bd83786bba13ae9b605eacb",
+          "offset": [
+            "0",
+            "0",
+            "0"
+          ],
+          "scale": [
+            "1",
+            "1",
+            "1"
+          ],
+          "rotation": [
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "local_model": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step",
+      "model_sha256": "91507e5af4251cb4ef38e04889c9b98da29904432bd83786bba13ae9b605eacb",
+      "pins": {
+        "1": {
+          "name": "",
+          "type": "passive"
+        },
+        "2": {
+          "name": "",
+          "type": "passive"
+        }
+      },
+      "pads": [
+        {
+          "number": "1",
+          "at_mm": [
+            -0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "model": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step"
+    },
+    "SM12B-GHS-TB(LF)(SN)": {
+      "manufacturer": "JST",
+      "mpn": "SM12B-GHS-TB(LF)(SN)",
+      "digikey": "455-1574-1-ND",
+      "jlc": "C265421",
+      "symbol": "PigeonVision:JST_GH_SM12B_GHS_TB",
+      "footprint": "PigeonVision:JST_GH_SM12B-GHS-TB_1x12-1MP_P1.25mm_Horizontal",
+      "refs": [
+        "J701"
+      ],
+      "jlc_snapshot": {
+        "lcsc": "C265421",
+        "name": "JST SM12B-GHS-TB(LF)(SN)",
+        "model": "SM12B-GHS-TB(LF)(SN)",
+        "brand": "JST",
+        "package": "SMD,P=1.25mm,Surface Mount\uff0cRight Angle",
+        "category": "Wire To Board Connector",
+        "stock": 13840,
+        "type": "Extended",
+        "price": 0.4682,
+        "description": "-25\u2103~+85\u2103 1 1.25mm 12 12P 18.25mm 1A 1x12P 4.13mm 4.25mm 50V Auxiliary Solder Pin GH PA9T Phosphor bronze Surface Mount, Right Angle Tin UL94V-0 White SMD,P=1.25mm,\u5367\u8d34 Wire To Board Connector ROHS",
+        "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_jst-sm12b-ghs-tb-lf-sn_C265421.html",
+        "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1811061307_JST-SM12B-GHS-TB-LF-SN_C265421.pdf"
+      },
+      "datasheet": "https://www.jst-mfg.com/product/pdf/eng/eGH.pdf",
+      "symbol_pins": {
+        "1": {
+          "name": "Pin_1",
+          "type": "passive"
+        },
+        "2": {
+          "name": "Pin_2",
+          "type": "passive"
+        },
+        "3": {
+          "name": "Pin_3",
+          "type": "passive"
+        },
+        "4": {
+          "name": "Pin_4",
+          "type": "passive"
+        },
+        "5": {
+          "name": "Pin_5",
+          "type": "passive"
+        },
+        "6": {
+          "name": "Pin_6",
+          "type": "passive"
+        },
+        "7": {
+          "name": "Pin_7",
+          "type": "passive"
+        },
+        "8": {
+          "name": "Pin_8",
+          "type": "passive"
+        },
+        "9": {
+          "name": "Pin_9",
+          "type": "passive"
+        },
+        "10": {
+          "name": "Pin_10",
+          "type": "passive"
+        },
+        "11": {
+          "name": "Pin_11",
+          "type": "passive"
+        },
+        "12": {
+          "name": "Pin_12",
+          "type": "passive"
+        }
+      },
+      "pad_map": [
+        {
+          "number": "1",
+          "at_mm": [
+            -6.875,
+            -1.85
+          ],
+          "size_mm": [
+            0.6,
+            1.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            -5.625,
+            -1.85
+          ],
+          "size_mm": [
+            0.6,
+            1.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "3",
+          "at_mm": [
+            -4.375,
+            -1.85
+          ],
+          "size_mm": [
+            0.6,
+            1.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "4",
+          "at_mm": [
+            -3.125,
+            -1.85
+          ],
+          "size_mm": [
+            0.6,
+            1.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "5",
+          "at_mm": [
+            -1.875,
+            -1.85
+          ],
+          "size_mm": [
+            0.6,
+            1.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "6",
+          "at_mm": [
+            -0.625,
+            -1.85
+          ],
+          "size_mm": [
+            0.6,
+            1.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "7",
+          "at_mm": [
+            0.625,
+            -1.85
+          ],
+          "size_mm": [
+            0.6,
+            1.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "8",
+          "at_mm": [
+            1.875,
+            -1.85
+          ],
+          "size_mm": [
+            0.6,
+            1.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "9",
+          "at_mm": [
+            3.125,
+            -1.85
+          ],
+          "size_mm": [
+            0.6,
+            1.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "10",
+          "at_mm": [
+            4.375,
+            -1.85
+          ],
+          "size_mm": [
+            0.6,
+            1.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "11",
+          "at_mm": [
+            5.625,
+            -1.85
+          ],
+          "size_mm": [
+            0.6,
+            1.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "12",
+          "at_mm": [
+            6.875,
+            -1.85
+          ],
+          "size_mm": [
+            0.6,
+            1.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "MP",
+          "at_mm": [
+            -8.725,
+            1.35
+          ],
+          "size_mm": [
+            1.0,
+            2.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "MP",
+          "at_mm": [
+            8.725,
+            1.35
+          ],
+          "size_mm": [
+            1.0,
+            2.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "footprint_sha256": "9fb630335d07b1185135b9c11e2a4e174b864bf724f74104a2dbeb2e67e591e1",
+      "local_model": "${KIPRJMOD}/../../libraries/3dmodels/JST_GH_SM12B-GHS-TB_1x12-1MP_P1.25mm_Horizontal.step",
+      "model_sha256": "eee6cb730bd6985c1159fe3f989a5523c8106e54ad34a9041835964afad33b4d",
+      "model_type": "KiCad representative package STEP, copied locally",
+      "source_footprint": "KiCad stock connector",
+      "saved_instances": [
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "J701",
+          "dnp": false
+        }
+      ],
+      "footprint_file": "hardware/libraries/PigeonVision.pretty/JST_GH_SM12B-GHS-TB_1x12-1MP_P1.25mm_Horizontal.kicad_mod",
+      "models": [
+        {
+          "reference": "${KIPRJMOD}/../../libraries/3dmodels/JST_GH_SM12B-GHS-TB_1x12-1MP_P1.25mm_Horizontal.step",
+          "file": "hardware/libraries/3dmodels/JST_GH_SM12B-GHS-TB_1x12-1MP_P1.25mm_Horizontal.step",
+          "sha256": "eee6cb730bd6985c1159fe3f989a5523c8106e54ad34a9041835964afad33b4d",
+          "offset": [
+            "0",
+            "0",
+            "0"
+          ],
+          "scale": [
+            "1",
+            "1",
+            "1"
+          ],
+          "rotation": [
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "pins": {
+        "1": {
+          "name": "Pin_1",
+          "type": "passive"
+        },
+        "2": {
+          "name": "Pin_2",
+          "type": "passive"
+        },
+        "3": {
+          "name": "Pin_3",
+          "type": "passive"
+        },
+        "4": {
+          "name": "Pin_4",
+          "type": "passive"
+        },
+        "5": {
+          "name": "Pin_5",
+          "type": "passive"
+        },
+        "6": {
+          "name": "Pin_6",
+          "type": "passive"
+        },
+        "7": {
+          "name": "Pin_7",
+          "type": "passive"
+        },
+        "8": {
+          "name": "Pin_8",
+          "type": "passive"
+        },
+        "9": {
+          "name": "Pin_9",
+          "type": "passive"
+        },
+        "10": {
+          "name": "Pin_10",
+          "type": "passive"
+        },
+        "11": {
+          "name": "Pin_11",
+          "type": "passive"
+        },
+        "12": {
+          "name": "Pin_12",
+          "type": "passive"
+        }
+      },
+      "pads": [
+        {
+          "number": "1",
+          "at_mm": [
+            -6.875,
+            -1.85
+          ],
+          "size_mm": [
+            0.6,
+            1.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            -5.625,
+            -1.85
+          ],
+          "size_mm": [
+            0.6,
+            1.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "3",
+          "at_mm": [
+            -4.375,
+            -1.85
+          ],
+          "size_mm": [
+            0.6,
+            1.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "4",
+          "at_mm": [
+            -3.125,
+            -1.85
+          ],
+          "size_mm": [
+            0.6,
+            1.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "5",
+          "at_mm": [
+            -1.875,
+            -1.85
+          ],
+          "size_mm": [
+            0.6,
+            1.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "6",
+          "at_mm": [
+            -0.625,
+            -1.85
+          ],
+          "size_mm": [
+            0.6,
+            1.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "7",
+          "at_mm": [
+            0.625,
+            -1.85
+          ],
+          "size_mm": [
+            0.6,
+            1.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "8",
+          "at_mm": [
+            1.875,
+            -1.85
+          ],
+          "size_mm": [
+            0.6,
+            1.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "9",
+          "at_mm": [
+            3.125,
+            -1.85
+          ],
+          "size_mm": [
+            0.6,
+            1.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "10",
+          "at_mm": [
+            4.375,
+            -1.85
+          ],
+          "size_mm": [
+            0.6,
+            1.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "11",
+          "at_mm": [
+            5.625,
+            -1.85
+          ],
+          "size_mm": [
+            0.6,
+            1.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "12",
+          "at_mm": [
+            6.875,
+            -1.85
+          ],
+          "size_mm": [
+            0.6,
+            1.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "MP",
+          "at_mm": [
+            -8.725,
+            1.35
+          ],
+          "size_mm": [
+            1.0,
+            2.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "MP",
+          "at_mm": [
+            8.725,
+            1.35
+          ],
+          "size_mm": [
+            1.0,
+            2.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "model": "${KIPRJMOD}/../../libraries/3dmodels/JST_GH_SM12B-GHS-TB_1x12-1MP_P1.25mm_Horizontal.step",
+      "nominal_height_above_PCB_mm": 4.35,
+      "mechanical_height_note": "JST GH side-entry drawing p3 gives4.25mm body plus0.10mm standoff=4.35mm nominal above PCB. Representative STEP top4.245mm underestimates this; use4.35mm plus manufacturer/assembly tolerances and mating clearance."
+    },
+    "RC0402FR-0747KL": {
+      "manufacturer": "YAGEO",
+      "mpn": "RC0402FR-0747KL",
+      "digikey": "311-47.0KLRCT-ND",
+      "jlc": "C93943",
+      "symbol": "Device:R",
+      "footprint": "PigeonVision:KiCad_Resistor_SMD_R_0402_1005Metric",
+      "refs": [
+        "R708",
+        "R709",
+        "R712",
+        "R713",
+        "R715",
+        "R716",
+        "R717",
+        "R718"
+      ],
+      "jlc_snapshot": {
+        "lcsc": "C93943",
+        "name": "YAGEO RC0402FR-0747KL",
+        "model": "RC0402FR-0747KL",
+        "brand": "YAGEO",
+        "package": "0402",
+        "category": "Chip Resistor - Surface Mount",
+        "stock": 5495539,
+        "type": "Extended",
+        "price": 0.0032,
+        "description": "-55\u2103~+155\u2103 47k\u03a9 50V 62.5mW Thick Film Resistor \u00b11% \u00b1100ppm/\u2103 0402 Chip Resistor - Surface Mount ROHS",
+        "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_yageo-rc0402fr-0747kl_C93943.html",
+        "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0402FR-0747KL_C93943.pdf"
+      },
+      "saved_instances": [
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "R708",
+          "dnp": false
+        },
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "R709",
+          "dnp": false
+        },
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "R712",
+          "dnp": false
+        },
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "R713",
+          "dnp": false
+        },
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "R715",
+          "dnp": false
+        },
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "R716",
+          "dnp": false
+        },
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "R717",
+          "dnp": false
+        },
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "R718",
+          "dnp": false
+        }
+      ],
+      "symbol_pins": {
+        "1": {
+          "name": "",
+          "type": "passive"
+        },
+        "2": {
+          "name": "",
+          "type": "passive"
+        }
+      },
+      "datasheet": "",
+      "footprint_file": "hardware/libraries/PigeonVision.pretty/KiCad_Resistor_SMD_R_0402_1005Metric.kicad_mod",
+      "footprint_sha256": "cf8cbd679205e8dfa783214e74f6b542be0e96acdf1bbdee9e953d874fb86316",
+      "pad_map": [
+        {
+          "number": "1",
+          "at_mm": [
+            -0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "models": [
+        {
+          "reference": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step",
+          "file": "hardware/libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step",
+          "sha256": "91507e5af4251cb4ef38e04889c9b98da29904432bd83786bba13ae9b605eacb",
+          "offset": [
+            "0",
+            "0",
+            "0"
+          ],
+          "scale": [
+            "1",
+            "1",
+            "1"
+          ],
+          "rotation": [
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "local_model": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step",
+      "model_sha256": "91507e5af4251cb4ef38e04889c9b98da29904432bd83786bba13ae9b605eacb",
+      "pins": {
+        "1": {
+          "name": "",
+          "type": "passive"
+        },
+        "2": {
+          "name": "",
+          "type": "passive"
+        }
+      },
+      "pads": [
+        {
+          "number": "1",
+          "at_mm": [
+            -0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "model": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step"
+    },
+    "RC0402FR-0710RL": {
+      "manufacturer": "YAGEO",
+      "mpn": "RC0402FR-0710RL",
+      "digikey": "311-10.0LRCT-ND",
+      "jlc": "C138066",
+      "symbol": "Device:R",
+      "footprint": "PigeonVision:KiCad_Resistor_SMD_R_0402_1005Metric",
+      "refs": [
+        "R719",
+        "R833"
+      ],
+      "jlc_snapshot": {
+        "lcsc": "C138066",
+        "name": "YAGEO RC0402FR-0710RL",
+        "model": "RC0402FR-0710RL",
+        "brand": "YAGEO",
+        "package": "0402",
+        "category": "Chip Resistor - Surface Mount",
+        "stock": 1341667,
+        "type": "Extended",
+        "price": 0.0034,
+        "description": "-55\u2103~+155\u2103 10\u03a9 50V 62.5mW Thick Film Resistor \u00b11% \u00b1200ppm/\u2103 0402 Chip Resistor - Surface Mount ROHS",
+        "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_yageo-rc0402fr-0710rl_C138066.html",
+        "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0402FR-0710RL_C138066.pdf"
+      },
+      "saved_instances": [
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "R719",
+          "dnp": false
+        },
+        {
+          "sheet": "yapogee.kicad_sch",
+          "reference": "R833",
+          "dnp": false
+        }
+      ],
+      "symbol_pins": {
+        "1": {
+          "name": "",
+          "type": "passive"
+        },
+        "2": {
+          "name": "",
+          "type": "passive"
+        }
+      },
+      "datasheet": "",
+      "footprint_file": "hardware/libraries/PigeonVision.pretty/KiCad_Resistor_SMD_R_0402_1005Metric.kicad_mod",
+      "footprint_sha256": "cf8cbd679205e8dfa783214e74f6b542be0e96acdf1bbdee9e953d874fb86316",
+      "pad_map": [
+        {
+          "number": "1",
+          "at_mm": [
+            -0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "models": [
+        {
+          "reference": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step",
+          "file": "hardware/libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step",
+          "sha256": "91507e5af4251cb4ef38e04889c9b98da29904432bd83786bba13ae9b605eacb",
+          "offset": [
+            "0",
+            "0",
+            "0"
+          ],
+          "scale": [
+            "1",
+            "1",
+            "1"
+          ],
+          "rotation": [
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "local_model": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step",
+      "model_sha256": "91507e5af4251cb4ef38e04889c9b98da29904432bd83786bba13ae9b605eacb",
+      "pins": {
+        "1": {
+          "name": "",
+          "type": "passive"
+        },
+        "2": {
+          "name": "",
+          "type": "passive"
+        }
+      },
+      "pads": [
+        {
+          "number": "1",
+          "at_mm": [
+            -0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "model": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step"
+    },
+    "RC0402FR-071KL": {
+      "manufacturer": "YAGEO",
+      "mpn": "RC0402FR-071KL",
+      "digikey": "311-1.00KLRCT-ND",
+      "jlc": "C106235",
+      "symbol": "Device:R",
+      "footprint": "PigeonVision:KiCad_Resistor_SMD_R_0402_1005Metric",
+      "refs": [
+        "R720",
+        "R834"
+      ],
+      "jlc_snapshot": {
+        "lcsc": "C106235",
+        "name": "YAGEO RC0402FR-071KL",
+        "model": "RC0402FR-071KL",
+        "brand": "YAGEO",
+        "package": "0402",
+        "category": "Chip Resistor - Surface Mount",
+        "stock": 2606314,
+        "type": "Extended",
+        "price": 0.0038,
+        "description": "-55\u2103~+155\u2103 1k\u03a9 50V 62.5mW Thick Film Resistor \u00b11% \u00b1100ppm/\u2103 0402 Chip Resistor - Surface Mount ROHS",
+        "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_yageo-rc0402fr-071kl_C106235.html",
+        "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0402FR-071KL_C106235.pdf"
+      },
+      "saved_instances": [
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "R720",
+          "dnp": false
+        },
+        {
+          "sheet": "yapogee.kicad_sch",
+          "reference": "R834",
+          "dnp": false
+        }
+      ],
+      "symbol_pins": {
+        "1": {
+          "name": "",
+          "type": "passive"
+        },
+        "2": {
+          "name": "",
+          "type": "passive"
+        }
+      },
+      "datasheet": "",
+      "footprint_file": "hardware/libraries/PigeonVision.pretty/KiCad_Resistor_SMD_R_0402_1005Metric.kicad_mod",
+      "footprint_sha256": "cf8cbd679205e8dfa783214e74f6b542be0e96acdf1bbdee9e953d874fb86316",
+      "pad_map": [
+        {
+          "number": "1",
+          "at_mm": [
+            -0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "models": [
+        {
+          "reference": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step",
+          "file": "hardware/libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step",
+          "sha256": "91507e5af4251cb4ef38e04889c9b98da29904432bd83786bba13ae9b605eacb",
+          "offset": [
+            "0",
+            "0",
+            "0"
+          ],
+          "scale": [
+            "1",
+            "1",
+            "1"
+          ],
+          "rotation": [
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "local_model": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step",
+      "model_sha256": "91507e5af4251cb4ef38e04889c9b98da29904432bd83786bba13ae9b605eacb",
+      "pins": {
+        "1": {
+          "name": "",
+          "type": "passive"
+        },
+        "2": {
+          "name": "",
+          "type": "passive"
+        }
+      },
+      "pads": [
+        {
+          "number": "1",
+          "at_mm": [
+            -0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "model": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step"
+    },
+    "CL05A105KA5NQNC": {
+      "manufacturer": "Samsung Electro-Mechanics",
+      "mpn": "CL05A105KA5NQNC",
+      "digikey": "1276-1445-1-ND",
+      "jlc": "C52923",
+      "symbol": "Device:C",
+      "footprint": "PigeonVision:KiCad_Capacitor_SMD_C_0402_1005Metric",
+      "refs": [
+        "C706",
+        "C815"
+      ],
+      "jlc_snapshot": {
+        "lcsc": "C52923",
+        "name": "Samsung Electro-Mechanics CL05A105KA5NQNC",
+        "model": "CL05A105KA5NQNC",
+        "brand": "Samsung Electro-Mechanics",
+        "package": "0402",
+        "category": "Multilayer Ceramic Capacitors MLCC - SMD/SMT",
+        "stock": 5641081,
+        "type": "Basic",
+        "price": 0.0099,
+        "description": "1uF 25V X5R \u00b110% 0402 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
+        "url": "https://www.lcsc.com/product-detail/multilayer-ceramic-capacitors-mlcc-smd-smt_samsung-electro-mechanics-cl05a105ka5nqnc_C52923.html",
+        "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Samsung-Electro-Mechanics-CL05A105KA5NQNC_C52923.pdf"
+      },
+      "saved_instances": [
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "C706",
+          "dnp": false
+        },
+        {
+          "sheet": "yapogee.kicad_sch",
+          "reference": "C815",
+          "dnp": false
+        }
+      ],
+      "symbol_pins": {
+        "1": {
+          "name": "",
+          "type": "passive"
+        },
+        "2": {
+          "name": "",
+          "type": "passive"
+        }
+      },
+      "datasheet": "",
+      "footprint_file": "hardware/libraries/PigeonVision.pretty/KiCad_Capacitor_SMD_C_0402_1005Metric.kicad_mod",
+      "footprint_sha256": "0d09126772250c149dbdcec23630d1915a75ce58a01bbf75b9123d8b395ced74",
+      "pad_map": [
+        {
+          "number": "1",
+          "at_mm": [
+            -0.48,
+            0.0
+          ],
+          "size_mm": [
+            0.56,
+            0.62
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            0.48,
+            0.0
+          ],
+          "size_mm": [
+            0.56,
+            0.62
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "models": [
+        {
+          "reference": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Capacitor_SMD_C_0402_1005Metric.step",
+          "file": "hardware/libraries/3dmodels/KiCad_Capacitor_SMD_C_0402_1005Metric.step",
+          "sha256": "03e44c4b2b727b8d4b6b1fd598cbd12dd5e614f1dfeefa96a92a07e3a3b312a2",
+          "offset": [
+            "0",
+            "0",
+            "0"
+          ],
+          "scale": [
+            "1",
+            "1",
+            "1"
+          ],
+          "rotation": [
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "local_model": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Capacitor_SMD_C_0402_1005Metric.step",
+      "model_sha256": "03e44c4b2b727b8d4b6b1fd598cbd12dd5e614f1dfeefa96a92a07e3a3b312a2",
+      "pins": {
+        "1": {
+          "name": "",
+          "type": "passive"
+        },
+        "2": {
+          "name": "",
+          "type": "passive"
+        }
+      },
+      "pads": [
+        {
+          "number": "1",
+          "at_mm": [
+            -0.48,
+            0.0
+          ],
+          "size_mm": [
+            0.56,
+            0.62
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            0.48,
+            0.0
+          ],
+          "size_mm": [
+            0.56,
+            0.62
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "model": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Capacitor_SMD_C_0402_1005Metric.step"
+    },
+    "CL05B104KO5NNNC": {
+      "manufacturer": "Samsung Electro-Mechanics",
+      "mpn": "CL05B104KO5NNNC",
+      "digikey": "1276-1001-1-ND",
+      "jlc": "C1525",
+      "symbol": "Device:C",
+      "footprint": "PigeonVision:KiCad_Capacitor_SMD_C_0402_1005Metric",
+      "refs": [
+        "C701",
+        "C702",
+        "C703",
+        "C704",
+        "C705",
+        "C811",
+        "C812",
+        "C813",
+        "C814"
+      ],
+      "jlc_snapshot": {
+        "lcsc": "C1525",
+        "name": "Samsung Electro-Mechanics CL05B104KO5NNNC",
+        "model": "CL05B104KO5NNNC",
+        "brand": "Samsung Electro-Mechanics",
+        "package": "0402",
+        "category": "Multilayer Ceramic Capacitors MLCC - SMD/SMT",
+        "stock": 21680464,
+        "type": "Basic",
+        "price": 0.0045,
+        "description": "100nF 16V X7R \u00b110% 0402 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
+        "url": "https://www.lcsc.com/product-detail/multilayer-ceramic-capacitors-mlcc-smd-smt_samsung-electro-mechanics-cl05b104ko5nnnc_C1525.html",
+        "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Samsung-Electro-Mechanics-CL05B104KO5NNNC_C1525.pdf"
+      },
+      "saved_instances": [
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "C701",
+          "dnp": false
+        },
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "C702",
+          "dnp": false
+        },
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "C703",
+          "dnp": false
+        },
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "C704",
+          "dnp": false
+        },
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "C705",
+          "dnp": false
+        },
+        {
+          "sheet": "yapogee.kicad_sch",
+          "reference": "C811",
+          "dnp": false
+        },
+        {
+          "sheet": "yapogee.kicad_sch",
+          "reference": "C812",
+          "dnp": false
+        },
+        {
+          "sheet": "yapogee.kicad_sch",
+          "reference": "C813",
+          "dnp": false
+        },
+        {
+          "sheet": "yapogee.kicad_sch",
+          "reference": "C814",
+          "dnp": false
+        }
+      ],
+      "symbol_pins": {
+        "1": {
+          "name": "",
+          "type": "passive"
+        },
+        "2": {
+          "name": "",
+          "type": "passive"
+        }
+      },
+      "datasheet": "",
+      "footprint_file": "hardware/libraries/PigeonVision.pretty/KiCad_Capacitor_SMD_C_0402_1005Metric.kicad_mod",
+      "footprint_sha256": "0d09126772250c149dbdcec23630d1915a75ce58a01bbf75b9123d8b395ced74",
+      "pad_map": [
+        {
+          "number": "1",
+          "at_mm": [
+            -0.48,
+            0.0
+          ],
+          "size_mm": [
+            0.56,
+            0.62
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            0.48,
+            0.0
+          ],
+          "size_mm": [
+            0.56,
+            0.62
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "models": [
+        {
+          "reference": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Capacitor_SMD_C_0402_1005Metric.step",
+          "file": "hardware/libraries/3dmodels/KiCad_Capacitor_SMD_C_0402_1005Metric.step",
+          "sha256": "03e44c4b2b727b8d4b6b1fd598cbd12dd5e614f1dfeefa96a92a07e3a3b312a2",
+          "offset": [
+            "0",
+            "0",
+            "0"
+          ],
+          "scale": [
+            "1",
+            "1",
+            "1"
+          ],
+          "rotation": [
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "local_model": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Capacitor_SMD_C_0402_1005Metric.step",
+      "model_sha256": "03e44c4b2b727b8d4b6b1fd598cbd12dd5e614f1dfeefa96a92a07e3a3b312a2",
+      "pins": {
+        "1": {
+          "name": "",
+          "type": "passive"
+        },
+        "2": {
+          "name": "",
+          "type": "passive"
+        }
+      },
+      "pads": [
+        {
+          "number": "1",
+          "at_mm": [
+            -0.48,
+            0.0
+          ],
+          "size_mm": [
+            0.56,
+            0.62
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            0.48,
+            0.0
+          ],
+          "size_mm": [
+            0.56,
+            0.62
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "model": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Capacitor_SMD_C_0402_1005Metric.step"
+    },
+    "0430450218": {
+      "manufacturer": "Molex",
+      "mpn": "0430450218",
+      "digikey": "WM1801CT-ND",
+      "jlc": "C476811",
+      "symbol": "PigeonVision:Molex_0430450218",
+      "footprint": "PigeonVision:Molex_Micro-Fit_3.0_43045-0218_2x01-1MP_P3.00mm_Vertical",
+      "refs": [
+        "J702",
+        "J703"
+      ],
+      "jlc_snapshot": {
+        "lcsc": "C476811",
+        "name": "MOLEX 430450218",
+        "model": "430450218",
+        "brand": "MOLEX",
+        "package": "SMD,P=3mm",
+        "category": "Wire To Board Connector",
+        "stock": 1445,
+        "type": "Extended",
+        "price": 1.0551,
+        "description": "-40\u2103~+105\u2103 1 11.2mm 2 2P 2x1P 3mm 3mm 6.65mm 600V 8.5A 9.91mm Auxiliary Solder Pin Black Brass Micro-Fit(MX 3.0) Surface Mount,Vertical Tin UL94V-0 SMD,P=3mm Wire To Board Connector ROHS",
+        "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_molex-430450218_C476811.html",
+        "datasheet": ""
+      },
+      "datasheet": "https://www.molex.com/content/dam/molex/molex-dot-com/products/automated/en-us/salesdrawingpdf/430/43045/430450218_sd.pdf",
+      "symbol_pins": {
+        "1": {
+          "name": "Pin_1",
+          "type": "passive"
+        },
+        "2": {
+          "name": "Pin_2",
+          "type": "passive"
+        }
+      },
+      "pad_map": [
+        {
+          "number": "1",
+          "at_mm": [
+            0.0,
+            -4.7
+          ],
+          "size_mm": [
+            1.27,
+            2.54
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            0.0,
+            4.7
+          ],
+          "size_mm": [
+            1.27,
+            2.54
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "MP",
+          "at_mm": [
+            -3.885,
+            0.0
+          ],
+          "size_mm": [
+            3.43,
+            1.65
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "MP",
+          "at_mm": [
+            3.885,
+            0.0
+          ],
+          "size_mm": [
+            3.43,
+            1.65
+          ],
+          "type": "smd",
+          "shape": "rect"
+        }
+      ],
+      "footprint_sha256": "5dc9ce92372a31d37184aa6a14ed981b4a2a06145efd07a2beb4f4df8be431a6",
+      "local_model": "${KIPRJMOD}/../../libraries/3dmodels/Molex_Micro-Fit_3.0_43045-0218_2x01-1MP_P3.00mm_Vertical.step",
+      "model_sha256": "77838f6b82c484d8c3a390b8150d5819f0658282dc230e00a3f866c95ec674af",
+      "model_type": "Drawing-derived simplified envelope; not exact mating CAD",
+      "source_footprint": "KiCad stock connector",
+      "catalog_identity_note": "Molex8-/10-digit manufacturer numeric aliases430450218/0430450218 refer to the same exact drawing/part, not a substitution.",
+      "saved_instances": [
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "J702",
+          "dnp": false
+        },
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "J703",
+          "dnp": false
+        }
+      ],
+      "footprint_file": "hardware/libraries/PigeonVision.pretty/Molex_Micro-Fit_3.0_43045-0218_2x01-1MP_P3.00mm_Vertical.kicad_mod",
+      "models": [
+        {
+          "reference": "${KIPRJMOD}/../../libraries/3dmodels/Molex_Micro-Fit_3.0_43045-0218_2x01-1MP_P3.00mm_Vertical.step",
+          "file": "hardware/libraries/3dmodels/Molex_Micro-Fit_3.0_43045-0218_2x01-1MP_P3.00mm_Vertical.step",
+          "sha256": "77838f6b82c484d8c3a390b8150d5819f0658282dc230e00a3f866c95ec674af",
+          "offset": [
+            "0",
+            "0",
+            "0"
+          ],
+          "scale": [
+            "1",
+            "1",
+            "1"
+          ],
+          "rotation": [
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "pins": {
+        "1": {
+          "name": "Pin_1",
+          "type": "passive"
+        },
+        "2": {
+          "name": "Pin_2",
+          "type": "passive"
+        }
+      },
+      "pads": [
+        {
+          "number": "1",
+          "at_mm": [
+            0.0,
+            -4.7
+          ],
+          "size_mm": [
+            1.27,
+            2.54
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            0.0,
+            4.7
+          ],
+          "size_mm": [
+            1.27,
+            2.54
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "MP",
+          "at_mm": [
+            -3.885,
+            0.0
+          ],
+          "size_mm": [
+            3.43,
+            1.65
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "MP",
+          "at_mm": [
+            3.885,
+            0.0
+          ],
+          "size_mm": [
+            3.43,
+            1.65
+          ],
+          "type": "smd",
+          "shape": "rect"
+        }
+      ],
+      "model": "${KIPRJMOD}/../../libraries/3dmodels/Molex_Micro-Fit_3.0_43045-0218_2x01-1MP_P3.00mm_Vertical.step"
+    },
+    "0451003.MRL": {
+      "manufacturer": "Littelfuse",
+      "mpn": "0451003.MRL",
+      "digikey": "F2583CT-ND",
+      "jlc": "C13982",
+      "symbol": "PigeonVision:0451003.MRL",
+      "footprint": "PigeonVision:Littelfuse_451_6.1x2.69mm",
+      "refs": [
+        "F701"
+      ],
+      "jlc_snapshot": {
+        "lcsc": "C13982",
+        "name": "Littelfuse 0451003.MRL",
+        "model": "0451003.MRL",
+        "brand": "Littelfuse",
+        "package": "2410",
+        "category": "Disposable fuses",
+        "stock": 41878,
+        "type": "Extended",
+        "price": 0.2553,
+        "description": "-55\u2103~+125\u2103 0.459 125V 125V 2.5mm 3A 50A 6.1mm Surface Mount Fuse 2410 Disposable fuses ROHS",
+        "url": "https://www.lcsc.com/product-detail/disposable-fuses_littelfuse-0451003-mrl_C13982.html",
+        "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1809282212_Littelfuse-0451003-MRL_C13982.pdf"
+      },
+      "datasheet": "https://www.littelfuse.com/assetdocs/fuse-451-and-453-datasheet?assetguid=533cd5cc-956c-4243-867f-6ab5a62f6ba1",
+      "symbol_pins": {
+        "1": {
+          "name": "",
+          "type": "passive"
+        },
+        "2": {
+          "name": "",
+          "type": "passive"
+        }
+      },
+      "pad_map": [
+        {
+          "number": "1",
+          "at_mm": [
+            -2.4525,
+            0.0
+          ],
+          "size_mm": [
+            1.955,
+            3.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            2.4525,
+            0.0
+          ],
+          "size_mm": [
+            1.955,
+            3.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "footprint_sha256": "d55379ac1a560d44a49f2e9d0ca5e990fd316dd401b76553e28c3c70fc96b791",
+      "local_model": "${KIPRJMOD}/../../libraries/3dmodels/Littelfuse_451_max_envelope.step",
+      "model_sha256": "5d0f50e82768f7560f610c2a29b9aa32dffa65b2867ea124c13569e5e338feba",
+      "model_type": "Drawing-derived maximum package envelope, not manufacturer STEP",
+      "source_footprint": "Littelfuse451 manufacturer land drawing",
+      "saved_instances": [
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "F701",
+          "dnp": false
+        }
+      ],
+      "footprint_file": "hardware/libraries/PigeonVision.pretty/Littelfuse_451_6.1x2.69mm.kicad_mod",
+      "models": [
+        {
+          "reference": "${KIPRJMOD}/../../libraries/3dmodels/Littelfuse_451_max_envelope.step",
+          "file": "hardware/libraries/3dmodels/Littelfuse_451_max_envelope.step",
+          "sha256": "5d0f50e82768f7560f610c2a29b9aa32dffa65b2867ea124c13569e5e338feba",
+          "offset": [
+            "0",
+            "0",
+            "0"
+          ],
+          "scale": [
+            "1",
+            "1",
+            "1"
+          ],
+          "rotation": [
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "pins": {
+        "1": {
+          "name": "",
+          "type": "passive"
+        },
+        "2": {
+          "name": "",
+          "type": "passive"
+        }
+      },
+      "pads": [
+        {
+          "number": "1",
+          "at_mm": [
+            -2.4525,
+            0.0
+          ],
+          "size_mm": [
+            1.955,
+            3.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            2.4525,
+            0.0
+          ],
+          "size_mm": [
+            1.955,
+            3.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "model": "${KIPRJMOD}/../../libraries/3dmodels/Littelfuse_451_max_envelope.step"
+    },
+    "LM74700QDBVRQ1": {
+      "manufacturer": "Texas Instruments",
+      "mpn": "LM74700QDBVRQ1",
+      "digikey": "296-LM74700QDBVRQ1CT-ND",
+      "jlc": "C2941042",
+      "symbol": "PigeonVision:LM74700QDBVRQ1",
+      "footprint": "PigeonVision:TI_LM74700_DBV0006A",
+      "refs": [
+        "U704",
+        "U705"
+      ],
+      "jlc_snapshot": {
+        "lcsc": "C2941042",
+        "name": "TI LM74700QDBVRQ1",
+        "model": "LM74700QDBVRQ1",
+        "brand": "Texas Instruments",
+        "package": "SOT-23-6",
+        "category": "ORing Controllers",
+        "stock": 1448,
+        "type": "Extended",
+        "price": 1.7801,
+        "description": "-40\u2103~+150\u2103 11mA 15V 2.37A 20mV 3.2V~65V 65V 80uA External FET Reverse current blocking\u3001Reverse polarity protection\u3001With enable SOT-23-6 ORing Controllers ROHS",
+        "url": "https://www.lcsc.com/product-detail/power-distribution-switches_texas-instruments-lm74700qdbvrq1_C2941042.html",
+        "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2302220108_Texas-Instruments-LM74700QDBVRQ1_C2941042.pdf"
+      },
+      "datasheet": "https://www.ti.com/lit/ds/symlink/lm74700-q1.pdf",
+      "symbol_pins": {
+        "1": {
+          "name": "VCAP",
+          "type": "passive"
+        },
+        "2": {
+          "name": "GND",
+          "type": "power_in"
+        },
+        "3": {
+          "name": "EN",
+          "type": "input"
+        },
+        "4": {
+          "name": "CATHODE",
+          "type": "input"
+        },
+        "5": {
+          "name": "GATE",
+          "type": "output"
+        },
+        "6": {
+          "name": "ANODE",
+          "type": "power_in"
+        }
+      },
+      "pad_map": [
+        {
+          "number": "1",
+          "at_mm": [
+            -1.1375,
+            -0.95
+          ],
+          "size_mm": [
+            1.325,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            -1.1375,
+            0.0
+          ],
+          "size_mm": [
+            1.325,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "3",
+          "at_mm": [
+            -1.1375,
+            0.95
+          ],
+          "size_mm": [
+            1.325,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "4",
+          "at_mm": [
+            1.1375,
+            0.95
+          ],
+          "size_mm": [
+            1.325,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "5",
+          "at_mm": [
+            1.1375,
+            0.0
+          ],
+          "size_mm": [
+            1.325,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "6",
+          "at_mm": [
+            1.1375,
+            -0.95
+          ],
+          "size_mm": [
+            1.325,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "footprint_sha256": "24b2910711079c433585cee6a51fd06eb4918d3c8d90a4e4d616df6a67f14b78",
+      "local_model": "${KIPRJMOD}/../../libraries/3dmodels/LM74700_DBV0006A_max_envelope.step",
+      "model_sha256": "58793f6bf7cd55e71ab004569bdc809b8f3e934e43c2baf66395178341f26d9f",
+      "model_type": "Drawing-derived maximum package envelope, not manufacturer STEP",
+      "source_footprint": "TI exact package land drawing",
+      "saved_instances": [
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "U704",
+          "dnp": false
+        },
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "U705",
+          "dnp": false
+        }
+      ],
+      "footprint_file": "hardware/libraries/PigeonVision.pretty/TI_LM74700_DBV0006A.kicad_mod",
+      "models": [
+        {
+          "reference": "${KIPRJMOD}/../../libraries/3dmodels/LM74700_DBV0006A_max_envelope.step",
+          "file": "hardware/libraries/3dmodels/LM74700_DBV0006A_max_envelope.step",
+          "sha256": "58793f6bf7cd55e71ab004569bdc809b8f3e934e43c2baf66395178341f26d9f",
+          "offset": [
+            "0",
+            "0",
+            "0"
+          ],
+          "scale": [
+            "1",
+            "1",
+            "1"
+          ],
+          "rotation": [
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "pins": {
+        "1": {
+          "name": "VCAP",
+          "type": "passive"
+        },
+        "2": {
+          "name": "GND",
+          "type": "power_in"
+        },
+        "3": {
+          "name": "EN",
+          "type": "input"
+        },
+        "4": {
+          "name": "CATHODE",
+          "type": "input"
+        },
+        "5": {
+          "name": "GATE",
+          "type": "output"
+        },
+        "6": {
+          "name": "ANODE",
+          "type": "power_in"
+        }
+      },
+      "pads": [
+        {
+          "number": "1",
+          "at_mm": [
+            -1.1375,
+            -0.95
+          ],
+          "size_mm": [
+            1.325,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            -1.1375,
+            0.0
+          ],
+          "size_mm": [
+            1.325,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "3",
+          "at_mm": [
+            -1.1375,
+            0.95
+          ],
+          "size_mm": [
+            1.325,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "4",
+          "at_mm": [
+            1.1375,
+            0.95
+          ],
+          "size_mm": [
+            1.325,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "5",
+          "at_mm": [
+            1.1375,
+            0.0
+          ],
+          "size_mm": [
+            1.325,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "6",
+          "at_mm": [
+            1.1375,
+            -0.95
+          ],
+          "size_mm": [
+            1.325,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "model": "${KIPRJMOD}/../../libraries/3dmodels/LM74700_DBV0006A_max_envelope.step"
+    },
+    "CSD18540Q5B": {
+      "manufacturer": "Texas Instruments",
+      "mpn": "CSD18540Q5B",
+      "digikey": "296-41076-1-ND",
+      "jlc": "C86513",
+      "symbol": "PigeonVision:CSD18540Q5B",
+      "footprint": "PigeonVision:TI_CSD18540Q5B_Q5B",
+      "refs": [
+        "Q701",
+        "Q702"
+      ],
+      "jlc_snapshot": {
+        "lcsc": "C86513",
+        "name": "TI CSD18540Q5B",
+        "model": "CSD18540Q5B",
+        "brand": "Texas Instruments",
+        "package": "VSON-8(5x6)",
+        "category": "MOSFETs",
+        "stock": 91,
+        "type": "Extended",
+        "price": 2.2906,
+        "description": "-55\u2103~+175\u2103 1 N-channel 1.9V 2.6m\u03a9 205A 20pF 3.8W 4.23nF 41nC@10V 60V 808pF N-Channel VSON-8(5x6) MOSFETs ROHS",
+        "url": "https://www.lcsc.com/product-detail/mosfets_texas-instruments-csd18540q5b_C86513.html",
+        "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1810151518_Texas-Instruments-CSD18540Q5B_C86513.pdf"
+      },
+      "datasheet": "https://www.ti.com/lit/ds/symlink/csd18540q5b.pdf",
+      "symbol_pins": {
+        "1": {
+          "name": "S",
+          "type": "passive"
+        },
+        "2": {
+          "name": "S",
+          "type": "passive"
+        },
+        "3": {
+          "name": "S",
+          "type": "passive"
+        },
+        "4": {
+          "name": "G",
+          "type": "input"
+        },
+        "5": {
+          "name": "D_5-8",
+          "type": "passive"
+        }
+      },
+      "pad_map": [
+        {
+          "number": "5",
+          "at_mm": [
+            0.0,
+            0.0
+          ],
+          "size_mm": [
+            1.0,
+            1.0
+          ],
+          "type": "smd",
+          "shape": "custom",
+          "custom_copper_polygon_vertices_mm": [
+            [
+              -3.456,
+              -2.26
+            ],
+            [
+              0.984,
+              -2.26
+            ],
+            [
+              0.984,
+              2.26
+            ],
+            [
+              -3.456,
+              2.26
+            ],
+            [
+              -3.456,
+              1.55
+            ],
+            [
+              -2.866,
+              1.55
+            ],
+            [
+              -2.866,
+              0.99
+            ],
+            [
+              -3.456,
+              0.99
+            ],
+            [
+              -3.456,
+              0.28
+            ],
+            [
+              -2.866,
+              0.28
+            ],
+            [
+              -2.866,
+              -0.28
+            ],
+            [
+              -3.456,
+              -0.28
+            ],
+            [
+              -3.456,
+              -0.99
+            ],
+            [
+              -2.866,
+              -0.99
+            ],
+            [
+              -2.866,
+              -1.55
+            ],
+            [
+              -3.456,
+              -1.55
+            ]
+          ],
+          "size_mm_note": "Custom pad anchor only; actual copper outline is the listed polygon."
+        },
+        {
+          "number": "1",
+          "at_mm": [
+            2.77,
+            1.905
+          ],
+          "size_mm": [
+            1.372,
+            0.71
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            2.77,
+            0.635
+          ],
+          "size_mm": [
+            1.372,
+            0.71
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "3",
+          "at_mm": [
+            2.77,
+            -0.635
+          ],
+          "size_mm": [
+            1.372,
+            0.71
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "4",
+          "at_mm": [
+            2.77,
+            -1.905
+          ],
+          "size_mm": [
+            1.372,
+            0.71
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            -1.594,
+            -1.569
+          ],
+          "size_mm": [
+            1.294,
+            0.746
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            -1.594,
+            -0.523
+          ],
+          "size_mm": [
+            1.294,
+            0.746
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            -1.594,
+            0.523
+          ],
+          "size_mm": [
+            1.294,
+            0.746
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            -1.594,
+            1.569
+          ],
+          "size_mm": [
+            1.294,
+            0.746
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            0.05,
+            -1.569
+          ],
+          "size_mm": [
+            1.294,
+            0.746
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            0.05,
+            -0.523
+          ],
+          "size_mm": [
+            1.294,
+            0.746
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            0.05,
+            0.523
+          ],
+          "size_mm": [
+            1.294,
+            0.746
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            0.05,
+            1.569
+          ],
+          "size_mm": [
+            1.294,
+            0.746
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            -2.91,
+            -1.905
+          ],
+          "size_mm": [
+            0.766,
+            0.508
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            -2.91,
+            -0.635
+          ],
+          "size_mm": [
+            0.766,
+            0.508
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            -2.91,
+            0.635
+          ],
+          "size_mm": [
+            0.766,
+            0.508
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            -2.91,
+            1.905
+          ],
+          "size_mm": [
+            0.766,
+            0.508
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            2.757,
+            -1.905
+          ],
+          "size_mm": [
+            1.072,
+            0.562
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            2.757,
+            -0.635
+          ],
+          "size_mm": [
+            1.072,
+            0.562
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            2.757,
+            0.635
+          ],
+          "size_mm": [
+            1.072,
+            0.562
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            2.757,
+            1.905
+          ],
+          "size_mm": [
+            1.072,
+            0.562
+          ],
+          "type": "smd",
+          "shape": "rect"
+        }
+      ],
+      "footprint_sha256": "421b476bec0176f178c31da1c7d510ee711eea2364fdce28c163f1f8006b7c43",
+      "local_model": "${KIPRJMOD}/../../libraries/3dmodels/TI_CSD18540Q5B_max_envelope.step",
+      "model_sha256": "bb64208e76197c96f5b066720751a07b0e8418a814d052ea31e6f3be12748965",
+      "model_type": "Drawing-derived maximum package envelope, not manufacturer STEP",
+      "source_footprint": "TI exact package land drawing",
+      "digikey_availability": "Exact catalog/order code verified, but currently0 in stock/backorder. JLC exactTI stock91 at snapshot; no reservation.",
+      "saved_instances": [
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "Q701",
+          "dnp": false
+        },
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "Q702",
+          "dnp": false
+        }
+      ],
+      "footprint_file": "hardware/libraries/PigeonVision.pretty/TI_CSD18540Q5B_Q5B.kicad_mod",
+      "models": [
+        {
+          "reference": "${KIPRJMOD}/../../libraries/3dmodels/TI_CSD18540Q5B_max_envelope.step",
+          "file": "hardware/libraries/3dmodels/TI_CSD18540Q5B_max_envelope.step",
+          "sha256": "bb64208e76197c96f5b066720751a07b0e8418a814d052ea31e6f3be12748965",
+          "offset": [
+            "0",
+            "0",
+            "0"
+          ],
+          "scale": [
+            "1",
+            "1",
+            "1"
+          ],
+          "rotation": [
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "pins": {
+        "1": {
+          "name": "S",
+          "type": "passive"
+        },
+        "2": {
+          "name": "S",
+          "type": "passive"
+        },
+        "3": {
+          "name": "S",
+          "type": "passive"
+        },
+        "4": {
+          "name": "G",
+          "type": "input"
+        },
+        "5": {
+          "name": "D_5-8",
+          "type": "passive"
+        }
+      },
+      "pads": [
+        {
+          "number": "5",
+          "at_mm": [
+            0.0,
+            0.0
+          ],
+          "size_mm": [
+            1.0,
+            1.0
+          ],
+          "type": "smd",
+          "shape": "custom",
+          "custom_copper_polygon_vertices_mm": [
+            [
+              -3.456,
+              -2.26
+            ],
+            [
+              0.984,
+              -2.26
+            ],
+            [
+              0.984,
+              2.26
+            ],
+            [
+              -3.456,
+              2.26
+            ],
+            [
+              -3.456,
+              1.55
+            ],
+            [
+              -2.866,
+              1.55
+            ],
+            [
+              -2.866,
+              0.99
+            ],
+            [
+              -3.456,
+              0.99
+            ],
+            [
+              -3.456,
+              0.28
+            ],
+            [
+              -2.866,
+              0.28
+            ],
+            [
+              -2.866,
+              -0.28
+            ],
+            [
+              -3.456,
+              -0.28
+            ],
+            [
+              -3.456,
+              -0.99
+            ],
+            [
+              -2.866,
+              -0.99
+            ],
+            [
+              -2.866,
+              -1.55
+            ],
+            [
+              -3.456,
+              -1.55
+            ]
+          ],
+          "size_mm_note": "Custom pad anchor only; actual copper outline is the listed polygon."
+        },
+        {
+          "number": "1",
+          "at_mm": [
+            2.77,
+            1.905
+          ],
+          "size_mm": [
+            1.372,
+            0.71
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            2.77,
+            0.635
+          ],
+          "size_mm": [
+            1.372,
+            0.71
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "3",
+          "at_mm": [
+            2.77,
+            -0.635
+          ],
+          "size_mm": [
+            1.372,
+            0.71
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "4",
+          "at_mm": [
+            2.77,
+            -1.905
+          ],
+          "size_mm": [
+            1.372,
+            0.71
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            -1.594,
+            -1.569
+          ],
+          "size_mm": [
+            1.294,
+            0.746
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            -1.594,
+            -0.523
+          ],
+          "size_mm": [
+            1.294,
+            0.746
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            -1.594,
+            0.523
+          ],
+          "size_mm": [
+            1.294,
+            0.746
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            -1.594,
+            1.569
+          ],
+          "size_mm": [
+            1.294,
+            0.746
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            0.05,
+            -1.569
+          ],
+          "size_mm": [
+            1.294,
+            0.746
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            0.05,
+            -0.523
+          ],
+          "size_mm": [
+            1.294,
+            0.746
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            0.05,
+            0.523
+          ],
+          "size_mm": [
+            1.294,
+            0.746
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            0.05,
+            1.569
+          ],
+          "size_mm": [
+            1.294,
+            0.746
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            -2.91,
+            -1.905
+          ],
+          "size_mm": [
+            0.766,
+            0.508
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            -2.91,
+            -0.635
+          ],
+          "size_mm": [
+            0.766,
+            0.508
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            -2.91,
+            0.635
+          ],
+          "size_mm": [
+            0.766,
+            0.508
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            -2.91,
+            1.905
+          ],
+          "size_mm": [
+            0.766,
+            0.508
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            2.757,
+            -1.905
+          ],
+          "size_mm": [
+            1.072,
+            0.562
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            2.757,
+            -0.635
+          ],
+          "size_mm": [
+            1.072,
+            0.562
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            2.757,
+            0.635
+          ],
+          "size_mm": [
+            1.072,
+            0.562
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            2.757,
+            1.905
+          ],
+          "size_mm": [
+            1.072,
+            0.562
+          ],
+          "type": "smd",
+          "shape": "rect"
+        }
+      ],
+      "model": "${KIPRJMOD}/../../libraries/3dmodels/TI_CSD18540Q5B_max_envelope.step",
+      "footprint_independent_review": "hardware/carrier/review/csd18540q5b-footprint.md",
+      "mechanical_correction": "Fab6\u00d75 mm; courtyard7.42\u00d75.60 mm; manufacturer-dimensioned paste pattern registered at6.586 mm. Copper land/pin map preserved."
+    },
+    "GRM31C5C1H104JA01L": {
+      "manufacturer": "Murata Electronics",
+      "mpn": "GRM31C5C1H104JA01L",
+      "digikey": "490-6505-1-ND",
+      "jlc": "C97946",
+      "symbol": "Device:C",
+      "footprint": "PigeonVision:KiCad_Capacitor_SMD_C_1206_3216Metric",
+      "refs": [
+        "C707",
+        "C708",
+        "C709",
+        "C710",
+        "C711",
+        "C712",
+        "C713",
+        "C714",
+        "C715",
+        "C716"
+      ],
+      "jlc_snapshot": {
+        "lcsc": "C97946",
+        "name": "muRata GRM31C5C1H104JA01L",
+        "model": "GRM31C5C1H104JA01L",
+        "brand": "Murata Electronics",
+        "package": "1206",
+        "category": "Multilayer Ceramic Capacitors MLCC - SMD/SMT",
+        "stock": 88307,
+        "type": "Extended",
+        "price": 0.1849,
+        "description": "100nF 50V C0G \u00b15% 1206 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
+        "url": "https://www.lcsc.com/product-detail/multilayer-ceramic-capacitors-mlcc-smd-smt_murata-electronics-grm31c5c1h104ja01l_C97946.html",
+        "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1810201313_Murata-Electronics-GRM31C5C1H104JA01L_C97946.pdf"
+      },
+      "datasheet": "",
+      "operating_minimum_capacitance_per_part_nF": 94.715,
+      "minimum_C_assumptions": "100nF \u00d7(1-0.05)\u00d7(1-30e-6/K\u00d7100K); C0G,50V, no ClassII DC-bias derating relied upon.",
+      "saved_instances": [
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "C707",
+          "dnp": false
+        },
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "C708",
+          "dnp": false
+        },
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "C709",
+          "dnp": false
+        },
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "C710",
+          "dnp": false
+        },
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "C711",
+          "dnp": false
+        },
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "C712",
+          "dnp": false
+        },
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "C713",
+          "dnp": false
+        },
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "C714",
+          "dnp": false
+        },
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "C715",
+          "dnp": false
+        },
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "C716",
+          "dnp": false
+        }
+      ],
+      "symbol_pins": {
+        "1": {
+          "name": "",
+          "type": "passive"
+        },
+        "2": {
+          "name": "",
+          "type": "passive"
+        }
+      },
+      "footprint_file": "hardware/libraries/PigeonVision.pretty/KiCad_Capacitor_SMD_C_1206_3216Metric.kicad_mod",
+      "footprint_sha256": "264171dac0b9548111778c976dd1bb85f953c7684e10f046c606189cd8759b3e",
+      "pad_map": [
+        {
+          "number": "1",
+          "at_mm": [
+            -1.475,
+            0.0
+          ],
+          "size_mm": [
+            1.15,
+            1.8
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            1.475,
+            0.0
+          ],
+          "size_mm": [
+            1.15,
+            1.8
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "models": [
+        {
+          "reference": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Capacitor_SMD_C_1206_3216Metric.step",
+          "file": "hardware/libraries/3dmodels/KiCad_Capacitor_SMD_C_1206_3216Metric.step",
+          "sha256": "11e948c72c90e2b6322436b72745f40ff4e8ba0da64fb2a0df943dfa61e89c1a",
+          "offset": [
+            "0",
+            "0",
+            "0"
+          ],
+          "scale": [
+            "1",
+            "1",
+            "1"
+          ],
+          "rotation": [
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "local_model": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Capacitor_SMD_C_1206_3216Metric.step",
+      "model_sha256": "11e948c72c90e2b6322436b72745f40ff4e8ba0da64fb2a0df943dfa61e89c1a",
+      "pins": {
+        "1": {
+          "name": "",
+          "type": "passive"
+        },
+        "2": {
+          "name": "",
+          "type": "passive"
+        }
+      },
+      "pads": [
+        {
+          "number": "1",
+          "at_mm": [
+            -1.475,
+            0.0
+          ],
+          "size_mm": [
+            1.15,
+            1.8
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            1.475,
+            0.0
+          ],
+          "size_mm": [
+            1.15,
+            1.8
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "model": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Capacitor_SMD_C_1206_3216Metric.step"
+    },
+    "045102.5MRL": {
+      "manufacturer": "Littelfuse",
+      "mpn": "045102.5MRL",
+      "digikey": "F2582CT-ND",
+      "jlc": "C178979",
+      "symbol": "PigeonVision:045102.5MRL",
+      "footprint": "PigeonVision:Littelfuse_451_6.1x2.69mm",
+      "refs": [
+        "F702"
+      ],
+      "jlc_snapshot": {
+        "lcsc": "C178979",
+        "name": "Littelfuse 045102.5MRL",
+        "model": "045102.5MRL",
+        "brand": "Littelfuse",
+        "package": "2410",
+        "category": "Disposable fuses",
+        "stock": 4305,
+        "type": "Extended",
+        "price": 0.2413,
+        "description": "-55\u2103~+125\u2103 1.029 125V 125V 2.5A 50A Surface Mount Fuse 2410 Disposable fuses ROHS",
+        "url": "https://www.lcsc.com/product-detail/disposable-fuses_littelfuse-045102-5mrl_C178979.html",
+        "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Littelfuse-045102-5MRL_C178979.pdf"
+      },
+      "datasheet": "https://www.littelfuse.com/assetdocs/fuse-451-and-453-datasheet?assetguid=533cd5cc-956c-4243-867f-6ab5a62f6ba1",
+      "symbol_pins": {
+        "1": {
+          "name": "",
+          "type": "passive"
+        },
+        "2": {
+          "name": "",
+          "type": "passive"
+        }
+      },
+      "pad_map": [
+        {
+          "number": "1",
+          "at_mm": [
+            -2.4525,
+            0.0
+          ],
+          "size_mm": [
+            1.955,
+            3.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            2.4525,
+            0.0
+          ],
+          "size_mm": [
+            1.955,
+            3.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "footprint_sha256": "d55379ac1a560d44a49f2e9d0ca5e990fd316dd401b76553e28c3c70fc96b791",
+      "local_model": "${KIPRJMOD}/../../libraries/3dmodels/Littelfuse_451_max_envelope.step",
+      "model_sha256": "5d0f50e82768f7560f610c2a29b9aa32dffa65b2867ea124c13569e5e338feba",
+      "model_type": "Drawing-derived maximum package envelope, not manufacturer STEP",
+      "source_footprint": "Littelfuse451 manufacturer land drawing",
+      "saved_instances": [
+        {
+          "sheet": "Transmitter_Interface.kicad_sch",
+          "reference": "F702",
+          "dnp": false
+        }
+      ],
+      "footprint_file": "hardware/libraries/PigeonVision.pretty/Littelfuse_451_6.1x2.69mm.kicad_mod",
+      "models": [
+        {
+          "reference": "${KIPRJMOD}/../../libraries/3dmodels/Littelfuse_451_max_envelope.step",
+          "file": "hardware/libraries/3dmodels/Littelfuse_451_max_envelope.step",
+          "sha256": "5d0f50e82768f7560f610c2a29b9aa32dffa65b2867ea124c13569e5e338feba",
+          "offset": [
+            "0",
+            "0",
+            "0"
+          ],
+          "scale": [
+            "1",
+            "1",
+            "1"
+          ],
+          "rotation": [
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "pins": {
+        "1": {
+          "name": "",
+          "type": "passive"
+        },
+        "2": {
+          "name": "",
+          "type": "passive"
+        }
+      },
+      "pads": [
+        {
+          "number": "1",
+          "at_mm": [
+            -2.4525,
+            0.0
+          ],
+          "size_mm": [
+            1.955,
+            3.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            2.4525,
+            0.0
+          ],
+          "size_mm": [
+            1.955,
+            3.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "model": "${KIPRJMOD}/../../libraries/3dmodels/Littelfuse_451_max_envelope.step"
+    },
+    "SN74AXC1T45DCKR": {
+      "manufacturer": "Texas Instruments",
+      "mpn": "SN74AXC1T45DCKR",
+      "digikey": "296-48341-1-ND",
+      "jlc": "C2677392",
+      "symbol": "PigeonVision:SN74AXC1T45DCKR",
+      "footprint": "PigeonVision:TI_DCK0006A_SC70-6_P0.65mm",
+      "refs": [
+        "U811",
+        "U812"
+      ],
+      "jlc_snapshot": {
+        "lcsc": "C2677392",
+        "name": "TI SN74AXC1T45DCKR",
+        "model": "SN74AXC1T45DCKR",
+        "brand": "Texas Instruments",
+        "package": "SC-70-6",
+        "category": "Translators, Level Shifters",
+        "stock": 912,
+        "type": "Extended",
+        "price": 0.5772,
+        "description": "-40\u2103~+125\u2103 1 1 500Mbps 650mV~3.6V 650mV~3.6V Bidirectional Level translator Power-off protection\u3001Output enable high-impedance Tri-State SC-70-6 Translators, Level Shifters ROHS",
+        "url": "https://www.lcsc.com/product-detail/translators-level-shifters_texas-instruments-sn74axc1t45dckr_C2677392.html",
+        "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2302281101_Texas-Instruments-SN74AXC1T45DCKR_C2677392.pdf"
+      },
+      "datasheet": "https://www.ti.com/lit/ds/symlink/sn74axc1t45.pdf",
+      "symbol_pins": {
+        "1": {
+          "name": "VCCA",
+          "type": "power_in"
+        },
+        "6": {
+          "name": "VCCB",
+          "type": "power_in"
+        },
+        "3": {
+          "name": "A",
+          "type": "bidirectional"
+        },
+        "4": {
+          "name": "B",
+          "type": "bidirectional"
+        },
+        "5": {
+          "name": "DIR",
+          "type": "input"
+        },
+        "2": {
+          "name": "GND",
+          "type": "power_in"
+        }
+      },
+      "pad_map": [
+        {
+          "number": "1",
+          "at_mm": [
+            -1.1,
+            -0.65
+          ],
+          "size_mm": [
+            0.9,
+            0.4
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            -1.1,
+            0.0
+          ],
+          "size_mm": [
+            0.9,
+            0.4
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "3",
+          "at_mm": [
+            -1.1,
+            0.65
+          ],
+          "size_mm": [
+            0.9,
+            0.4
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "4",
+          "at_mm": [
+            1.1,
+            0.65
+          ],
+          "size_mm": [
+            0.9,
+            0.4
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "5",
+          "at_mm": [
+            1.1,
+            0.0
+          ],
+          "size_mm": [
+            0.9,
+            0.4
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "6",
+          "at_mm": [
+            1.1,
+            -0.65
+          ],
+          "size_mm": [
+            0.9,
+            0.4
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "footprint_sha256": "4ff63af81bfebbf952b8816c8cf7bbe42e7cadb178f040d3c2a72fbfcacf3ffd",
+      "local_model": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_SOT-363_SC-70-6.step",
+      "model_sha256": "045cc95e18ee7a13d1623c3ce6604fc833049bdb4f952f68c26e3c5767d122e4",
+      "model_type": "KiCad representative package STEP, copied locally",
+      "source_footprint": "TI exact package land drawing",
+      "saved_instances": [
+        {
+          "sheet": "yapogee.kicad_sch",
+          "reference": "U811",
+          "dnp": false
+        },
+        {
+          "sheet": "yapogee.kicad_sch",
+          "reference": "U812",
+          "dnp": false
+        }
+      ],
+      "footprint_file": "hardware/libraries/PigeonVision.pretty/TI_DCK0006A_SC70-6_P0.65mm.kicad_mod",
+      "models": [
+        {
+          "reference": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_SOT-363_SC-70-6.step",
+          "file": "hardware/libraries/3dmodels/KiCad_SOT-363_SC-70-6.step",
+          "sha256": "045cc95e18ee7a13d1623c3ce6604fc833049bdb4f952f68c26e3c5767d122e4",
+          "offset": [
+            "0",
+            "0",
+            "0"
+          ],
+          "scale": [
+            "1",
+            "1",
+            "1"
+          ],
+          "rotation": [
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "pins": {
+        "1": {
+          "name": "VCCA",
+          "type": "power_in"
+        },
+        "6": {
+          "name": "VCCB",
+          "type": "power_in"
+        },
+        "3": {
+          "name": "A",
+          "type": "bidirectional"
+        },
+        "4": {
+          "name": "B",
+          "type": "bidirectional"
+        },
+        "5": {
+          "name": "DIR",
+          "type": "input"
+        },
+        "2": {
+          "name": "GND",
+          "type": "power_in"
+        }
+      },
+      "pads": [
+        {
+          "number": "1",
+          "at_mm": [
+            -1.1,
+            -0.65
+          ],
+          "size_mm": [
+            0.9,
+            0.4
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            -1.1,
+            0.0
+          ],
+          "size_mm": [
+            0.9,
+            0.4
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "3",
+          "at_mm": [
+            -1.1,
+            0.65
+          ],
+          "size_mm": [
+            0.9,
+            0.4
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "4",
+          "at_mm": [
+            1.1,
+            0.65
+          ],
+          "size_mm": [
+            0.9,
+            0.4
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "5",
+          "at_mm": [
+            1.1,
+            0.0
+          ],
+          "size_mm": [
+            0.9,
+            0.4
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "6",
+          "at_mm": [
+            1.1,
+            -0.65
+          ],
+          "size_mm": [
+            0.9,
+            0.4
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "model": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_SOT-363_SC-70-6.step"
+    },
+    "SM04B-GHS-TB(LF)(SN)": {
+      "manufacturer": "JST",
+      "mpn": "SM04B-GHS-TB(LF)(SN)",
+      "digikey": "455-1566-1-ND",
+      "jlc": "C189895",
+      "symbol": "PigeonVision:JST_GH_SM04B_GHS_TB",
+      "footprint": "PigeonVision:JST_GH_SM04B-GHS-TB_1x04-1MP_P1.25mm_Horizontal",
+      "refs": [
+        "J811"
+      ],
+      "jlc_snapshot": {
+        "lcsc": "C189895",
+        "name": "JST SM04B-GHS-TB(LF)(SN)",
+        "model": "SM04B-GHS-TB(LF)(SN)",
+        "brand": "JST",
+        "package": "SMD,P=1.25mm,Surface Mount\uff0cRight Angle",
+        "category": "Wire To Board Connector",
+        "stock": 54777,
+        "type": "Extended",
+        "price": 0.3034,
+        "description": "-25\u2103~+85\u2103 1 1.25mm 1A 1x4P 4 4.13mm 4.25mm 4P 50V 8.25mm Auxiliary Solder Pin GH PA9T Phosphor bronze Surface Mount, Right Angle Tin UL94V-0 White SMD,P=1.25mm,\u5367\u8d34 Wire To Board Connector ROHS",
+        "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_jst-sm04b-ghs-tb-lf-sn_C189895.html",
+        "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_JST-SM04B-GHS-TB-LF-SN_C189895.pdf"
+      },
+      "datasheet": "https://www.jst-mfg.com/product/pdf/eng/eGH.pdf",
+      "symbol_pins": {
+        "1": {
+          "name": "Pin_1",
+          "type": "passive"
+        },
+        "2": {
+          "name": "Pin_2",
+          "type": "passive"
+        },
+        "3": {
+          "name": "Pin_3",
+          "type": "passive"
+        },
+        "4": {
+          "name": "Pin_4",
+          "type": "passive"
+        }
+      },
+      "pad_map": [
+        {
+          "number": "1",
+          "at_mm": [
+            -1.875,
+            -1.85
+          ],
+          "size_mm": [
+            0.6,
+            1.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            -0.625,
+            -1.85
+          ],
+          "size_mm": [
+            0.6,
+            1.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "3",
+          "at_mm": [
+            0.625,
+            -1.85
+          ],
+          "size_mm": [
+            0.6,
+            1.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "4",
+          "at_mm": [
+            1.875,
+            -1.85
+          ],
+          "size_mm": [
+            0.6,
+            1.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "MP",
+          "at_mm": [
+            -3.725,
+            1.35
+          ],
+          "size_mm": [
+            1.0,
+            2.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "MP",
+          "at_mm": [
+            3.725,
+            1.35
+          ],
+          "size_mm": [
+            1.0,
+            2.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "footprint_sha256": "03a7bc6bc86c1fd5f237b1e40784ac804432011c7e2cd4da5518a0f8ec23243d",
+      "local_model": "${KIPRJMOD}/../../libraries/3dmodels/JST_GH_SM04B-GHS-TB_1x04-1MP_P1.25mm_Horizontal.step",
+      "model_sha256": "aacba39c0ebf407941d81e202e5fc85121532adadfd38f26725330dea8815ac7",
+      "model_type": "KiCad representative package STEP, copied locally",
+      "source_footprint": "KiCad stock connector",
+      "saved_instances": [
+        {
+          "sheet": "yapogee.kicad_sch",
+          "reference": "J811",
+          "dnp": false
+        }
+      ],
+      "footprint_file": "hardware/libraries/PigeonVision.pretty/JST_GH_SM04B-GHS-TB_1x04-1MP_P1.25mm_Horizontal.kicad_mod",
+      "models": [
+        {
+          "reference": "${KIPRJMOD}/../../libraries/3dmodels/JST_GH_SM04B-GHS-TB_1x04-1MP_P1.25mm_Horizontal.step",
+          "file": "hardware/libraries/3dmodels/JST_GH_SM04B-GHS-TB_1x04-1MP_P1.25mm_Horizontal.step",
+          "sha256": "aacba39c0ebf407941d81e202e5fc85121532adadfd38f26725330dea8815ac7",
+          "offset": [
+            "0",
+            "0",
+            "0"
+          ],
+          "scale": [
+            "1",
+            "1",
+            "1"
+          ],
+          "rotation": [
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "pins": {
+        "1": {
+          "name": "Pin_1",
+          "type": "passive"
+        },
+        "2": {
+          "name": "Pin_2",
+          "type": "passive"
+        },
+        "3": {
+          "name": "Pin_3",
+          "type": "passive"
+        },
+        "4": {
+          "name": "Pin_4",
+          "type": "passive"
+        }
+      },
+      "pads": [
+        {
+          "number": "1",
+          "at_mm": [
+            -1.875,
+            -1.85
+          ],
+          "size_mm": [
+            0.6,
+            1.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            -0.625,
+            -1.85
+          ],
+          "size_mm": [
+            0.6,
+            1.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "3",
+          "at_mm": [
+            0.625,
+            -1.85
+          ],
+          "size_mm": [
+            0.6,
+            1.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "4",
+          "at_mm": [
+            1.875,
+            -1.85
+          ],
+          "size_mm": [
+            0.6,
+            1.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "MP",
+          "at_mm": [
+            -3.725,
+            1.35
+          ],
+          "size_mm": [
+            1.0,
+            2.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "MP",
+          "at_mm": [
+            3.725,
+            1.35
+          ],
+          "size_mm": [
+            1.0,
+            2.7
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "model": "${KIPRJMOD}/../../libraries/3dmodels/JST_GH_SM04B-GHS-TB_1x04-1MP_P1.25mm_Horizontal.step",
+      "nominal_height_above_PCB_mm": 4.35,
+      "mechanical_height_note": "JST GH side-entry drawing p3 gives4.25mm body plus0.10mm standoff=4.35mm nominal above PCB. Representative STEP top4.245mm underestimates this; use4.35mm plus manufacturer/assembly tolerances and mating clearance."
+    }
+  },
+  "mating_parts": [
+    {
+      "mpn": "GHR-12V-S",
+      "digikey": "455-1602-ND",
+      "use": "TX GH12 cable housing"
+    },
+    {
+      "mpn": "GHR-04V-S",
+      "digikey": "455-1594-ND",
+      "use": "UART GH4 cable housing"
+    },
+    {
+      "mpn": "MINI-SSHL-002T-P0.2",
+      "digikey": "455-1607-1-ND",
+      "use": "GH female contacts,26\u201330AWG"
+    },
+    {
+      "mpn": "0430250200",
+      "digikey": "WM1783-ND",
+      "use": "Micro-Fit dual-row2-pin cable housing"
+    },
+    {
+      "mpn": "0430300001",
+      "digikey": "WM1837CT-ND",
+      "use": "Micro-Fit female tin crimp contact,20\u201324AWG"
+    }
+  ],
+  "model_dimension_proof": {
+    "Molex_Micro-Fit_3.0_43045-0218_2x01-1MP_P3.00mm_Vertical": {
+      "type": "drawing-derived simplified envelope; not manufacturer STEP",
+      "source": "https://www.molex.com/content/dam/molex/molex-dot-com/products/automated/en-us/salesdrawingpdf/430/43045/430450218_sd.pdf",
+      "notes": "DrawingG5 nominalbody6.65x7.37 and top9.91mm; simplified solid envelope, filled mating cavity, latch/mould details omitted; not exact mating CAD. Solder-tail envelope uses verifiedland positions; assembly heightvariation must be included separately.",
+      "bounds_mm": [
+        -5.6000001,
+        -5.970000100000001,
+        -1e-07,
+        5.6000001,
+        5.970000100000001,
+        9.9100001
+      ]
+    },
+    "JST_GH_SM12B-GHS-TB_1x12-1MP_P1.25mm_Horizontal": {
+      "type": "KiCad stock STEP copied locally; representative package geometry",
+      "bounds_mm": [
+        -9.1250001,
+        -2.4750001,
+        -0.005000100000000005,
+        9.1250001,
+        2.4754001,
+        4.245000100000001
+      ]
+    },
+    "JST_GH_SM04B-GHS-TB_1x04-1MP_P1.25mm_Horizontal": {
+      "type": "KiCad stock STEP copied locally; representative package geometry",
+      "bounds_mm": [
+        -4.1250001,
+        -2.4750001,
+        -0.005000100000000005,
+        4.1250001,
+        2.4754001,
+        4.245000100000001
+      ]
+    },
+    "TI_DBV0005A_SOT23-5_SN74LVC1G07": {
+      "type": "KiCad stock STEP copied locally; representative package geometry",
+      "bounds_mm": [
+        -1.4000001,
+        -1.4500001000000002,
+        -1e-07,
+        1.4000001,
+        1.4500001000000002,
+        1.5500001
+      ]
+    },
+    "KiCad_SOT-363_SC-70-6": {
+      "type": "KiCad stock STEP copied locally; representative package geometry",
+      "bounds_mm": [
+        -1.0500001,
+        -1.0000001,
+        -1e-07,
+        1.0500001,
+        1.0000001,
+        1.1000001000000001
+      ]
+    },
+    "TI_PW0016A_TSSOP16_KiCad": {
+      "type": "KiCad stock STEP copied locally; representative package geometry",
+      "bounds_mm": [
+        -3.2000001,
+        -2.5000001,
+        -1.0000000016653345e-07,
+        3.2000001,
+        2.5000001,
+        1.1000001000000001
+      ]
+    },
+    "LM74700_DBV0006A_max_envelope": {
+      "type": "drawing-derived maximum mechanical envelope; not exact manufacturer CAD",
+      "source": "https://www.ti.com/lit/ds/symlink/lm74700-q1.pdf",
+      "bounds_mm": [
+        -1.5000001,
+        -1.5250001,
+        -1e-07,
+        1.5000001,
+        1.5250001,
+        1.4500001
+      ],
+      "expected_maximum_dimensions_mm": [
+        3,
+        3.05,
+        1.45
+      ]
+    },
+    "TI_CSD18540Q5B_max_envelope": {
+      "type": "drawing-derived maximum mechanical envelope; not exact manufacturer CAD",
+      "source": "https://www.ti.com/lit/ds/symlink/csd18540q5b.pdf",
+      "bounds_mm": [
+        -3.0500000999999997,
+        -2.5500000999999997,
+        -1e-07,
+        3.0500000999999997,
+        2.5500000999999997,
+        1.0500001
+      ],
+      "expected_maximum_dimensions_mm": [
+        6.1,
+        5.1,
+        1.05
+      ]
+    },
+    "Littelfuse_451_max_envelope": {
+      "type": "drawing-derived maximum mechanical envelope; not exact manufacturer CAD",
+      "source": "https://www.littelfuse.com/assetdocs/fuse-451-and-453-datasheet?assetguid=533cd5cc-956c-4243-867f-6ab5a62f6ba1",
+      "bounds_mm": [
+        -3.1500000999999997,
+        -1.4700001,
+        -1e-07,
+        3.1500000999999997,
+        1.4700001,
+        2.9400001
+      ],
+      "expected_maximum_dimensions_mm": [
+        6.3,
+        2.94,
+        2.94
+      ]
+    }
+  },
+  "mechanical_limitations": [
+    "Generic LVC1G07 model is1.55mm high; TI DBV5 maximum1.45mm, so this reserves extra height rather than claiming exact geometry.",
+    "Micro-Fit model is nominal-envelope only; verify mating clearance and latch orientation from Molex drawing/physical connector before PCB release.",
+    "TI and JST KiCad package models are representative geometry, not supplier-certified CAD.",
+    "No PCB placement, routing or assembly file has been authored.",
+    "JST GH side-entry drawing p3 gives4.25mm body plus0.10mm standoff=4.35mm nominal above PCB. Representative STEP top4.245mm underestimates this; use4.35mm plus manufacturer/assembly tolerances and mating clearance."
+  ],
+  "metadata_source": "Actual saved schematic fields and assigned local footprints/models. Canonical DigiKey Part # takes precedence over legacy DigiKey Part Number."
+}

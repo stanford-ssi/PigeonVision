@@ -1,29 +1,36 @@
 # RF frontend
 
-**Cur Plan:** 5 V RF board between the E200 and antenna. Target 0.5 W clean average DVB-S2 output at the PA, initially at 1.28 GHz. A 1 dB filter loss leaves about 0.40 W before antenna-cable loss. Frequency TBD.
+**Current plan:** AFE7071 transmitter or E200 → source-specific attenuation / optional driver → GRF5613 → filter → antenna. Target 0.5 W average DVB-S2 output at the PA, initially at 1.28 GHz. RF performance and loaded power consumption remain unmeasured.
 
 ![RF frontend block diagram](block-diagram.svg)
 
-[Edit in draw.io](block-diagram.drawio)
+[Edit diagram](block-diagram.drawio) · [Link budget](../../calculations/link-budget.xlsx)
 
-| Stage | Part / value |
+| Stage | Part / starting value |
 | --- | --- |
-| Input attenuation | Fixed 50-ohm pad, initially 20 dB. Final value from measured gain and waveform peaks. |
-| Driver | GRF2011. Reference gain 15.2 dB at 900 MHz, 5 V / 90 mA. Verify at 1.28 GHz. |
-| Interstage pad | 3 dB initial. |
-| Final PA | GRF5115, 1200-1400 MHz reference tune. At 1300 MHz: 18.6 dB gain and 33.4 dBm P1dB, typical at 5 V. |
-| Output filter | LFCN-1500+ low-pass after the final matching and DC block. Add band-pass filtering only if measured spurs require it. |
+| Input pad | 50 Ω; size from the selected source's measured output and waveform peaks |
+| Driver | GRF2011 optional; evaluate direct E200 drive first |
+| Interstage pad | Value after gain / peak-level calculation |
+| PA | GRF5613 selected; use the EVB184 1240–1420 MHz reference tune for 1.28 GHz |
+| Output filter | LFCN-1500+ candidate; verify attenuation at required frequencies |
 
-Gain estimate: `15.2 − 3 + 18.6 = 30.8 dB` before the input pad and other losses. A 20 dB input pad with +10 dBm drive gives about 0.12 W before filtering. Adjust after measurement to reach 0.5 W.
+The preferred mechanical concept is a PA daughterboard soldered to a carrier GND contact area, with thermal vias through both boards and a TIM-coupled heatsink below the carrier. Preserve ground copper beneath the PA. Mounting geometry, contact area and heat rejection remain unverified. Two low-profile heatsink planning footprints and envelope models are available in the [project library](../libraries/README.md), targeting 12.7 mm total underside clearance.
 
-Set usable output from modulation quality, spectrum and receiver performance. P1dB alone does not establish clean DVB-S2 power; filtering cannot repair clipping.
+The optional breakout interface is a planned four-circuit Molex **0430450418** Micro-Fit 3.0 connector. The same power/control signals are needed for the soldered module; its lands have not been defined. No PA connector or control wiring has been added to the carrier schematic yet.
 
-SMA input/output; carrier power, enable and temperature connection. Include default-off enable, separate bias feeds and current test points. Provide heatsink mounting. Driver bypass is an assembly option.
+| Connector pin | Signal | Carrier connection |
+| --- | --- | --- |
+| 1 | 5V_RF | Switched RF buck output |
+| 2 | GND | Power return |
+| 3 | PA_EN | CM5 GPIO22, J1.46; 3.3 V active-high enable request |
+| 4 | GND | Control return; common with pin 2 |
 
-Power filtering: the carrier supplies regulated RF 5 V with its required buck output capacitors. Put the final supply filter, local bulk capacitance and each amplifier's reference bias/bypass network on this RF board. Select series impedance for DC current and voltage drop; check filter damping and PA load transients. Supply filtering is separate from the RF output filter.
+CM5 GPIO17, J1.50 controls the RF buck separately through **5V_RF_EN**. Keep the **1.5 A / 7.5 W** PA planning allowance until modulated-load measurements are available. The TPS62933 IC is rated for 3 A; this does not establish the assembled rail's continuous thermal capacity. EVB184 reports approximately 309 mA quiescent current at 5 V, which is not the loaded maximum.
 
-Start the schematic and PCB from the manufacturers' band-specific reference circuits, with replaceable input/interstage resistor pads and accessible RF test connections. Check matching, bias, stackup and thermal construction before fabrication. Bench testing sets the final pad values and usable DVB-S2 output power; it is not a prerequisite for starting the design.
+The PA board provides local RF chokes, decoupling, matching, bias resistors, shutdown logic and a thermal path from the exposed pad. Its PA_EN input should have a 10 kΩ pull-down and keep the PA off when the carrier is unpowered or the cable is disconnected. GRF5613 **VSHDN is high to disable**, so local circuitry must handle this polarity and the VEN1 / VEN2 bias sequencing; do not connect those bias pins directly to the GPIO. Mute the transmitter before changing PA bias or rail power. Use the EVB184 layout and matching as the starting point; this remains an RF layout and thermal design, even with a simple carrier interface.
 
-A pad is a matched resistor attenuator. The input pad reduces drive; the interstage pad reduces drive and reflections between amplifiers. The shown 20 dB and 3 dB values are starting options. Use the E200's transmit attenuation for routine power adjustment; keep a fixed pad sized for the maximum permitted drive. A separate digital step attenuator is optional if SDR control is insufficient. Its setting, like the SDR setting, does not measure output watts. Verify output power, modulation quality, spectrum and temperature during bring-up.
+The existing RF divider remains **R14 = 51 kΩ, R21 = 1.5 kΩ, R22 = 10 kΩ**, giving 5.000 V nominal. At an assumed 125°C resistor temperature, ±1% initial tolerance, opposite ±100 ppm/°C drift, 0.816 V maximum feedback reference and 0.15 µA maximum feedback input current give a **5.283 V static upper corner**, above the GRF5613's **5.25 V** supply ceiling. Changing R21 to 0 Ω is a **4.880 V nominal candidate**, with a 5.155 V upper corner under the same assumptions. That change is not applied. These calculations exclude ripple, startup and load-release transients; PA supply compliance and RF performance at the lower voltage need measurement. See the RF regulator calculation in [Design Master](../../calculations/design-master.xlsx).
 
-References: [GRF2011](https://www.guerrilla-rf.com/products/detail/sku/GRF2011), [GRF5115 tune](https://www.guerrilla-rf.com/includes/prodFiles/5115/GRF5115%201200-1400%20MHz.pdf), [GRF5115 datasheet](https://www.guerrilla-rf.com/includes/prodFiles/5115/GRF5115DS.pdf), [LFCN-1500+](https://www.minicircuits.com/pdfs/LFCN-1500%2B.pdf).
+SMA input/output. Size attenuation from measured gain and waveform peaks. A 1 dB filter loss leaves about 0.4 W. Check modulation quality, spectrum and temperature; filtering cannot fix clipping.
+
+[GRF5613 datasheet](https://www.guerrilla-rf.com/includes/prodFiles/5613/GRF5613DS.pdf) · [GRF5613 EVB184 tune](https://www.guerrilla-rf.com/includes/prodFiles/5613/GRF5613%20EVB184%201240-1420%20MHz.pdf) · [GRF2011](https://www.guerrilla-rf.com/products/detail/sku/GRF2011) · [LFCN-1500+](https://www.minicircuits.com/pdfs/LFCN-1500%2B.pdf) · [Molex 0430450418](https://www.digikey.com/en/products/detail/molex/0430450418/2467320)

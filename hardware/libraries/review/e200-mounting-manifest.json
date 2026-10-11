@@ -1,0 +1,737 @@
+{
+  "type": "Drawing-derived mounting footprint and simplified planning model; not manufacturer STEP",
+  "source_url": "https://github.com/MicroPhase/antsdr_doc_en/blob/ea2cd8d9a0c83157a3ecfbc60ee6bee2f3e73d8f/mechanical/E200_Mechanical.dxf",
+  "source_commit": "ea2cd8d9a0c83157a3ecfbc60ee6bee2f3e73d8f",
+  "source_sha256": "0be2aa2cbf8167257d46da50219f0951fc4716ca5deb64f6cc7467be5d5e2277",
+  "coordinate_system": {
+    "origin": "Nominal E200 bare PCB centre",
+    "model": "x=dxf_x-40; y=dxf_y-25; z=0 at E200 PCB underside",
+    "footprint": "x=dxf_x-40; y=25-dxf_y",
+    "model_offset_z_mm": 10
+  },
+  "verified_from_dxf": {
+    "nominal_pcb_size_mm": [
+      80,
+      50
+    ],
+    "mounting_centres_dxf_xy_mm": [
+      [
+        23.700994,
+        2.500122
+      ],
+      [
+        23.700994,
+        47.49927
+      ],
+      [
+        76.700888,
+        2.500122
+      ],
+      [
+        76.700888,
+        47.49927
+      ]
+    ],
+    "mounting_centres_footprint_xy_mm": [
+      [
+        -16.299006,
+        22.499878
+      ],
+      [
+        -16.299006,
+        -22.499270000000003
+      ],
+      [
+        36.700888000000006,
+        22.499878
+      ],
+      [
+        36.700888000000006,
+        -22.499270000000003
+      ]
+    ],
+    "nominal_mounting_pitch_mm": [
+      53,
+      45
+    ],
+    "mounting_pattern_offset_from_pcb_centre_mm": [
+      10.200941,
+      0
+    ],
+    "mount_land_outer_diameter_mm": 5,
+    "units": "DXF INSUNITS=0; mm interpretation independently checked using the 2.54-mm JTAG pitch",
+    "pcb_outline": "DXF rounded corners and MMCX notch, arc chord error <=0.002mm"
+  },
+  "provisional": {
+    "carrier_npth_drill_mm": 2.7,
+    "intended_fastener": "M2.5 planning only; actual E200 bore is not specified in source",
+    "model_pcb_thickness_mm": 1.6,
+    "standoff_gap_mm": 10,
+    "rj45_height_above_e200_pcb_mm": 16,
+    "other_component_heights": "Representative estimates; connector exact mating details, pins, bottom microSD assembly and cable envelopes omitted",
+    "fastener_outline_mm": 7,
+    "fastener_courtyard_diameter_mm": 7.5
+  },
+  "limitations": [
+    "Check the actual E200 revision, drill fit and heights before fabrication",
+    "Height assumptions are for reservation, not proven maximum mechanical envelopes",
+    "The existing carrier PCB and schematic are not modified",
+    "Dwgs.User shows module/connector envelope, excluding plug bodies and cable bends; F.CrtYd reserves only local fastener space",
+    "Check clearance of carrier components under the module in 3D; the courtyard does not enforce height clearance",
+    "Hardware is not selected; mounting is mechanical with no assigned electrical net",
+    "All holes are unnumbered NPTH to avoid schematic net warnings"
+  ],
+  "step_bounds_mm": [
+    -42.2,
+    -25.0,
+    0.0,
+    53.462094,
+    24.999392,
+    17.6
+  ],
+  "solids": [
+    {
+      "name": "PCB_1p6mm_ASSUMED",
+      "bounds_mm": [
+        -40.0,
+        -25.0,
+        0.0,
+        39.999840000000006,
+        24.999392,
+        1.6
+      ]
+    },
+    {
+      "name": "Mount_land_1_DXF_5mm_OD_DRILL_PROVISIONAL",
+      "bounds_mm": [
+        -18.799006,
+        -24.999878,
+        1.6,
+        -13.799005999999997,
+        -19.999878,
+        1.6400000000000001
+      ]
+    },
+    {
+      "name": "Mount_land_2_DXF_5mm_OD_DRILL_PROVISIONAL",
+      "bounds_mm": [
+        -18.799006,
+        19.999270000000003,
+        1.6,
+        -13.799005999999999,
+        24.999270000000003,
+        1.6400000000000001
+      ]
+    },
+    {
+      "name": "Mount_land_3_DXF_5mm_OD_DRILL_PROVISIONAL",
+      "bounds_mm": [
+        34.200888000000006,
+        -24.999878,
+        1.6,
+        39.200888000000006,
+        -19.999878,
+        1.6400000000000001
+      ]
+    },
+    {
+      "name": "Mount_land_4_DXF_5mm_OD_DRILL_PROVISIONAL",
+      "bounds_mm": [
+        34.200888000000006,
+        19.999270000000003,
+        1.6,
+        39.200888000000006,
+        24.999270000000003,
+        1.6400000000000001
+      ]
+    },
+    {
+      "name": "J21_RJ45_BODY_XY_FROM_DXF_HEIGHT16mm_ESTIMATE",
+      "bounds_mm": [
+        -42.150237,
+        -1.3784069999999993,
+        1.6,
+        -20.700166999999997,
+        14.971913,
+        17.6
+      ]
+    },
+    {
+      "name": "RJ45_port_insert_REPRESENTATIVE",
+      "bounds_mm": [
+        -33.2,
+        0.1999999999999993,
+        4.2,
+        -32.95,
+        13.399999999999999,
+        14.2
+      ]
+    },
+    {
+      "name": "RJ45_contact_1_REPRESENTATIVE",
+      "bounds_mm": [
+        -40.8,
+        0.8000000000000007,
+        12.7,
+        -33.599999999999994,
+        1.1500000000000008,
+        13.049999999999999
+      ]
+    },
+    {
+      "name": "RJ45_contact_2_REPRESENTATIVE",
+      "bounds_mm": [
+        -40.8,
+        2.400000000000002,
+        12.7,
+        -33.599999999999994,
+        2.750000000000002,
+        13.049999999999999
+      ]
+    },
+    {
+      "name": "RJ45_contact_3_REPRESENTATIVE",
+      "bounds_mm": [
+        -40.8,
+        4.0,
+        12.7,
+        -33.599999999999994,
+        4.35,
+        13.049999999999999
+      ]
+    },
+    {
+      "name": "RJ45_contact_4_REPRESENTATIVE",
+      "bounds_mm": [
+        -40.8,
+        5.600000000000001,
+        12.7,
+        -33.599999999999994,
+        5.950000000000001,
+        13.049999999999999
+      ]
+    },
+    {
+      "name": "RJ45_contact_5_REPRESENTATIVE",
+      "bounds_mm": [
+        -40.8,
+        7.200000000000003,
+        12.7,
+        -33.599999999999994,
+        7.5500000000000025,
+        13.049999999999999
+      ]
+    },
+    {
+      "name": "RJ45_contact_6_REPRESENTATIVE",
+      "bounds_mm": [
+        -40.8,
+        8.799999999999997,
+        12.7,
+        -33.599999999999994,
+        9.149999999999997,
+        13.049999999999999
+      ]
+    },
+    {
+      "name": "RJ45_contact_7_REPRESENTATIVE",
+      "bounds_mm": [
+        -40.8,
+        10.400000000000006,
+        12.7,
+        -33.599999999999994,
+        10.750000000000005,
+        13.049999999999999
+      ]
+    },
+    {
+      "name": "RJ45_contact_8_REPRESENTATIVE",
+      "bounds_mm": [
+        -40.8,
+        12.0,
+        12.7,
+        -33.599999999999994,
+        12.35,
+        13.049999999999999
+      ]
+    },
+    {
+      "name": "RJ45_green_LED_REPRESENTATIVE",
+      "bounds_mm": [
+        -42.2,
+        -0.8999999999999986,
+        14.4,
+        -42.080000000000005,
+        0.6000000000000014,
+        16.0
+      ]
+    },
+    {
+      "name": "RJ45_yellow_LED_REPRESENTATIVE",
+      "bounds_mm": [
+        -42.2,
+        12.899999999999999,
+        14.4,
+        -42.080000000000005,
+        14.399999999999999,
+        16.0
+      ]
+    },
+    {
+      "name": "J3_RX1_SMA_support_REPRESENTATIVE",
+      "bounds_mm": [
+        35.3,
+        -12.469263999999999,
+        1.6,
+        40.4,
+        -6.069263999999999,
+        8.0
+      ]
+    },
+    {
+      "name": "J3_RX1_SMA_barrel_HEIGHT_ESTIMATE",
+      "bounds_mm": [
+        40.36,
+        -12.444264,
+        1.625,
+        53.462094,
+        -6.094264,
+        7.975
+      ]
+    },
+    {
+      "name": "J3_RX1_thread_marker_0_REPRESENTATIVE",
+      "bounds_mm": [
+        47.0,
+        -12.549263999999999,
+        1.52,
+        47.22,
+        -5.989264,
+        8.08
+      ]
+    },
+    {
+      "name": "J3_RX1_thread_marker_1_REPRESENTATIVE",
+      "bounds_mm": [
+        47.620000000000005,
+        -12.549263999999999,
+        1.52,
+        47.84,
+        -5.989264,
+        8.08
+      ]
+    },
+    {
+      "name": "J3_RX1_thread_marker_2_REPRESENTATIVE",
+      "bounds_mm": [
+        48.239999999999995,
+        -12.549263999999999,
+        1.52,
+        48.459999999999994,
+        -5.989264,
+        8.08
+      ]
+    },
+    {
+      "name": "J3_RX1_thread_marker_3_REPRESENTATIVE",
+      "bounds_mm": [
+        48.86,
+        -12.549263999999999,
+        1.52,
+        49.08,
+        -5.989264,
+        8.08
+      ]
+    },
+    {
+      "name": "J3_RX1_thread_marker_4_REPRESENTATIVE",
+      "bounds_mm": [
+        49.480000000000004,
+        -12.549263999999999,
+        1.52,
+        49.7,
+        -5.989264,
+        8.08
+      ]
+    },
+    {
+      "name": "J3_RX1_thread_marker_5_REPRESENTATIVE",
+      "bounds_mm": [
+        50.099999999999994,
+        -12.549263999999999,
+        1.52,
+        50.31999999999999,
+        -5.989264,
+        8.08
+      ]
+    },
+    {
+      "name": "J3_RX1_thread_marker_6_REPRESENTATIVE",
+      "bounds_mm": [
+        50.72,
+        -12.549263999999999,
+        1.52,
+        50.94,
+        -5.989264,
+        8.08
+      ]
+    },
+    {
+      "name": "J3_RX1_thread_marker_7_REPRESENTATIVE",
+      "bounds_mm": [
+        51.34,
+        -12.549263999999999,
+        1.52,
+        51.56,
+        -5.989264,
+        8.08
+      ]
+    },
+    {
+      "name": "J3_RX1_thread_marker_8_REPRESENTATIVE",
+      "bounds_mm": [
+        51.959999999999994,
+        -12.549263999999999,
+        1.52,
+        52.17999999999999,
+        -5.989264,
+        8.08
+      ]
+    },
+    {
+      "name": "J3_RX1_RF_dielectric_REPRESENTATIVE",
+      "bounds_mm": [
+        51.900000000000006,
+        -11.369264,
+        2.6999999999999997,
+        52.60000000000001,
+        -7.169264,
+        6.9
+      ]
+    },
+    {
+      "name": "J3_RX1_RF_contact_REPRESENTATIVE",
+      "bounds_mm": [
+        52.0,
+        -9.819264,
+        4.25,
+        52.8,
+        -8.719263999999999,
+        5.35
+      ]
+    },
+    {
+      "name": "J4_TX1_SMA_support_REPRESENTATIVE",
+      "bounds_mm": [
+        35.3,
+        5.361535999999997,
+        1.6,
+        40.4,
+        11.761535999999998,
+        8.0
+      ]
+    },
+    {
+      "name": "J4_TX1_SMA_barrel_HEIGHT_ESTIMATE",
+      "bounds_mm": [
+        40.36,
+        5.386535999999997,
+        1.625,
+        53.462094,
+        11.736535999999997,
+        7.975
+      ]
+    },
+    {
+      "name": "J4_TX1_thread_marker_0_REPRESENTATIVE",
+      "bounds_mm": [
+        47.0,
+        5.281535999999997,
+        1.52,
+        47.22,
+        11.841535999999996,
+        8.08
+      ]
+    },
+    {
+      "name": "J4_TX1_thread_marker_1_REPRESENTATIVE",
+      "bounds_mm": [
+        47.620000000000005,
+        5.281535999999997,
+        1.52,
+        47.84,
+        11.841535999999996,
+        8.08
+      ]
+    },
+    {
+      "name": "J4_TX1_thread_marker_2_REPRESENTATIVE",
+      "bounds_mm": [
+        48.239999999999995,
+        5.281535999999997,
+        1.52,
+        48.459999999999994,
+        11.841535999999996,
+        8.08
+      ]
+    },
+    {
+      "name": "J4_TX1_thread_marker_3_REPRESENTATIVE",
+      "bounds_mm": [
+        48.86,
+        5.281535999999997,
+        1.52,
+        49.08,
+        11.841535999999996,
+        8.08
+      ]
+    },
+    {
+      "name": "J4_TX1_thread_marker_4_REPRESENTATIVE",
+      "bounds_mm": [
+        49.480000000000004,
+        5.281535999999997,
+        1.52,
+        49.7,
+        11.841535999999996,
+        8.08
+      ]
+    },
+    {
+      "name": "J4_TX1_thread_marker_5_REPRESENTATIVE",
+      "bounds_mm": [
+        50.099999999999994,
+        5.281535999999997,
+        1.52,
+        50.31999999999999,
+        11.841535999999996,
+        8.08
+      ]
+    },
+    {
+      "name": "J4_TX1_thread_marker_6_REPRESENTATIVE",
+      "bounds_mm": [
+        50.72,
+        5.281535999999997,
+        1.52,
+        50.94,
+        11.841535999999996,
+        8.08
+      ]
+    },
+    {
+      "name": "J4_TX1_thread_marker_7_REPRESENTATIVE",
+      "bounds_mm": [
+        51.34,
+        5.281535999999997,
+        1.52,
+        51.56,
+        11.841535999999996,
+        8.08
+      ]
+    },
+    {
+      "name": "J4_TX1_thread_marker_8_REPRESENTATIVE",
+      "bounds_mm": [
+        51.959999999999994,
+        5.281535999999997,
+        1.52,
+        52.17999999999999,
+        11.841535999999996,
+        8.08
+      ]
+    },
+    {
+      "name": "J4_TX1_RF_dielectric_REPRESENTATIVE",
+      "bounds_mm": [
+        51.900000000000006,
+        6.461535999999997,
+        2.6999999999999997,
+        52.60000000000001,
+        10.661535999999996,
+        6.9
+      ]
+    },
+    {
+      "name": "J4_TX1_RF_contact_REPRESENTATIVE",
+      "bounds_mm": [
+        52.0,
+        8.011535999999996,
+        4.25,
+        52.8,
+        9.111535999999997,
+        5.35
+      ]
+    },
+    {
+      "name": "J18_MMCX_body_XY_FROM_DXF_HEIGHT_ESTIMATE",
+      "bounds_mm": [
+        -41.636,
+        17.545,
+        1.6,
+        -33.56100000000001,
+        23.895000000000003,
+        7.949999999999999
+      ]
+    },
+    {
+      "name": "MMCX_port_REPRESENTATIVE",
+      "bounds_mm": [
+        -41.64,
+        18.919999999999998,
+        2.9750000000000005,
+        -38.64,
+        22.52,
+        6.575
+      ]
+    },
+    {
+      "name": "J2_USB_C_HEIGHT_ESTIMATE",
+      "bounds_mm": [
+        -40.52,
+        -18.62,
+        1.6,
+        -32.82,
+        -9.57,
+        5.0
+      ]
+    },
+    {
+      "name": "USB_C_tongue_REPRESENTATIVE",
+      "bounds_mm": [
+        -40.25,
+        -17.9,
+        3.05,
+        -35.25,
+        -10.299999999999999,
+        3.55
+      ]
+    },
+    {
+      "name": "U1_ZYNQ_OUTLINE_WITH_ESTIMATED_HEIGHT",
+      "bounds_mm": [
+        -11.236999999999998,
+        -10.287,
+        1.6,
+        5.913,
+        6.862999999999998,
+        3.6
+      ]
+    },
+    {
+      "name": "U11_AD936x_OUTLINE_WITH_ESTIMATED_HEIGHT",
+      "bounds_mm": [
+        12.456000000000003,
+        -6.786999999999999,
+        1.6,
+        22.606,
+        3.3630000000000013,
+        3.1
+      ]
+    },
+    {
+      "name": "U4_DDR_OUTLINE_WITH_ESTIMATED_HEIGHT",
+      "bounds_mm": [
+        -9.102,
+        -19.681,
+        1.6,
+        5.048,
+        -11.531,
+        3.1
+      ]
+    },
+    {
+      "name": "U12_ETH_PHY_OUTLINE_WITH_ESTIMATED_HEIGHT",
+      "bounds_mm": [
+        -16.95,
+        8.200000000000003,
+        1.6,
+        -11.45,
+        13.700000000000003,
+        2.8
+      ]
+    },
+    {
+      "name": "L1_OUTLINE_WITH_ESTIMATED_HEIGHT",
+      "bounds_mm": [
+        -11.657,
+        17.674999999999997,
+        1.6,
+        -8.907,
+        21.224999999999998,
+        3.6
+      ]
+    },
+    {
+      "name": "L10_OUTLINE_WITH_ESTIMATED_HEIGHT",
+      "bounds_mm": [
+        -8.373999999999999,
+        15.789000000000001,
+        1.6,
+        -4.823999999999999,
+        18.539,
+        3.6
+      ]
+    },
+    {
+      "name": "L4_OUTLINE_WITH_ESTIMATED_HEIGHT",
+      "bounds_mm": [
+        -22.471,
+        -17.565,
+        1.6,
+        -18.921,
+        -14.815000000000001,
+        3.6
+      ]
+    },
+    {
+      "name": "L3_OUTLINE_WITH_ESTIMATED_HEIGHT",
+      "bounds_mm": [
+        -14.088999999999999,
+        -17.057000000000002,
+        1.6,
+        -10.538999999999998,
+        -14.307000000000002,
+        3.6
+      ]
+    },
+    {
+      "name": "L2_OUTLINE_WITH_ESTIMATED_HEIGHT",
+      "bounds_mm": [
+        -22.496,
+        -8.853000000000002,
+        1.6,
+        -18.945999999999998,
+        -6.1030000000000015,
+        3.6
+      ]
+    },
+    {
+      "name": "J5_TX2_UFL_REPRESENTATIVE",
+      "bounds_mm": [
+        10.339,
+        -23.763,
+        1.6,
+        13.039,
+        -21.063,
+        3.4000000000000004
+      ]
+    },
+    {
+      "name": "J6_RX2_UFL_REPRESENTATIVE",
+      "bounds_mm": [
+        28.872999999999998,
+        -23.89,
+        1.6,
+        31.573,
+        -21.189999999999998,
+        3.4000000000000004
+      ]
+    }
+  ],
+  "sha256": {
+    "MicroPhase_ANTSDR_E200_Mounting_80x50mm_Planning.kicad_mod": "d0aa1b895ecdc8822c240604fa6e3fa41cc6df36ed784191f21e4210d0a0230f",
+    "MicroPhase_ANTSDR_E200_DrawingDerived_Planning.step": "9100f17a993dc30a63baa2ed07dc0943123af927d0ef0715f859a8bd720d9b5a"
+  },
+  "license": "GPL-3.0; derived from MicroPhase/antsdr_doc_en; full upstream LICENSE accompanies assets"
+}

@@ -1,0 +1,1188 @@
+{
+  "checked_utc": "2026-10-02T09:21:33.723495+00:00",
+  "units": "mm",
+  "assembly_snapshot": "../../../build/carrier-completion/sensor-evidence/jlc-stock.json",
+  "parts": {
+    "BMI088": {
+      "lcsc": "C194919",
+      "symbol": "PigeonVision:BMI088",
+      "pins": {
+        "1": {
+          "name": "INT2",
+          "electrical_type": "bidirectional"
+        },
+        "2": {
+          "name": "GNDA",
+          "electrical_type": "passive"
+        },
+        "3": {
+          "name": "VDD",
+          "electrical_type": "power_in"
+        },
+        "4": {
+          "name": "GNDA",
+          "electrical_type": "power_in"
+        },
+        "5": {
+          "name": "~{CSB2}",
+          "electrical_type": "input"
+        },
+        "6": {
+          "name": "GNDIO",
+          "electrical_type": "power_in"
+        },
+        "7": {
+          "name": "PS",
+          "electrical_type": "input"
+        },
+        "8": {
+          "name": "SCK/SCL",
+          "electrical_type": "input"
+        },
+        "9": {
+          "name": "SDI/SDA",
+          "electrical_type": "bidirectional"
+        },
+        "10": {
+          "name": "SDO2",
+          "electrical_type": "input"
+        },
+        "11": {
+          "name": "VDDIO",
+          "electrical_type": "power_in"
+        },
+        "12": {
+          "name": "INT3",
+          "electrical_type": "bidirectional"
+        },
+        "13": {
+          "name": "INT4",
+          "electrical_type": "bidirectional"
+        },
+        "14": {
+          "name": "~{CSB1}",
+          "electrical_type": "input"
+        },
+        "15": {
+          "name": "SDO1",
+          "electrical_type": "input"
+        },
+        "16": {
+          "name": "INT1",
+          "electrical_type": "bidirectional"
+        }
+      },
+      "footprint": "PigeonVision:Bosch_LGA-16_4.5x3mm_P0.5mm_LayoutBorder7x1y_ClockwisePinNumbering",
+      "pads": [
+        {
+          "number": "1",
+          "position": [
+            -1.5,
+            -1.2625
+          ],
+          "size": [
+            0.25,
+            0.675
+          ]
+        },
+        {
+          "number": "2",
+          "position": [
+            -1.0,
+            -1.2625
+          ],
+          "size": [
+            0.25,
+            0.675
+          ]
+        },
+        {
+          "number": "3",
+          "position": [
+            -0.5,
+            -1.2625
+          ],
+          "size": [
+            0.25,
+            0.675
+          ]
+        },
+        {
+          "number": "4",
+          "position": [
+            0.0,
+            -1.2625
+          ],
+          "size": [
+            0.25,
+            0.675
+          ]
+        },
+        {
+          "number": "5",
+          "position": [
+            0.5,
+            -1.2625
+          ],
+          "size": [
+            0.25,
+            0.675
+          ]
+        },
+        {
+          "number": "6",
+          "position": [
+            1.0,
+            -1.2625
+          ],
+          "size": [
+            0.25,
+            0.675
+          ]
+        },
+        {
+          "number": "7",
+          "position": [
+            1.5,
+            -1.2625
+          ],
+          "size": [
+            0.25,
+            0.675
+          ]
+        },
+        {
+          "number": "8",
+          "position": [
+            2.0125,
+            0.0
+          ],
+          "size": [
+            0.675,
+            0.25
+          ]
+        },
+        {
+          "number": "9",
+          "position": [
+            1.5,
+            1.2625
+          ],
+          "size": [
+            0.25,
+            0.675
+          ]
+        },
+        {
+          "number": "10",
+          "position": [
+            1.0,
+            1.2625
+          ],
+          "size": [
+            0.25,
+            0.675
+          ]
+        },
+        {
+          "number": "11",
+          "position": [
+            0.5,
+            1.2625
+          ],
+          "size": [
+            0.25,
+            0.675
+          ]
+        },
+        {
+          "number": "12",
+          "position": [
+            0.0,
+            1.2625
+          ],
+          "size": [
+            0.25,
+            0.675
+          ]
+        },
+        {
+          "number": "13",
+          "position": [
+            -0.5,
+            1.2625
+          ],
+          "size": [
+            0.25,
+            0.675
+          ]
+        },
+        {
+          "number": "14",
+          "position": [
+            -1.0,
+            1.2625
+          ],
+          "size": [
+            0.25,
+            0.675
+          ]
+        },
+        {
+          "number": "15",
+          "position": [
+            -1.5,
+            1.2625
+          ],
+          "size": [
+            0.25,
+            0.675
+          ]
+        },
+        {
+          "number": "16",
+          "position": [
+            -2.0125,
+            0.0
+          ],
+          "size": [
+            0.675,
+            0.25
+          ]
+        }
+      ],
+      "model_reference": "${KIPRJMOD}/../../libraries/3dmodels/Bosch_LGA-16_4.5x3mm_P0.5mm_LayoutBorder7x1y_ClockwisePinNumbering.step",
+      "model_local_file": "hardware/libraries/3dmodels/Bosch_LGA-16_4.5x3mm_P0.5mm_LayoutBorder7x1y_ClockwisePinNumbering.step",
+      "model_sha256": "dc46c314367f4c73b0b11e3d6c0a66760f47f68d2defdbf2fb7b890dc2e8ac91",
+      "model_envelope": [
+        4.5,
+        3,
+        0.95
+      ],
+      "model_provenance": "KiCad installed community model; manufacturer outline verified",
+      "model_download_url": "https://gitlab.com/kicad/libraries/kicad-packages3D/-/raw/master/Package_LGA.3dshapes/Bosch_LGA-16_4.5x3mm_P0.5mm_LayoutBorder7x1y_ClockwisePinNumbering.step",
+      "model_download_verification": "Installed local KiCad model verified; upstream URL supplied",
+      "transform": {
+        "reference": "${KIPRJMOD}/../../libraries/3dmodels/Bosch_LGA-16_4.5x3mm_P0.5mm_LayoutBorder7x1y_ClockwisePinNumbering.step",
+        "file": "hardware/libraries/3dmodels/Bosch_LGA-16_4.5x3mm_P0.5mm_LayoutBorder7x1y_ClockwisePinNumbering.step",
+        "sha256": "dc46c314367f4c73b0b11e3d6c0a66760f47f68d2defdbf2fb7b890dc2e8ac91",
+        "offset": [
+          "0",
+          "0",
+          "0"
+        ],
+        "scale": [
+          "1",
+          "1",
+          "1"
+        ],
+        "rotation": [
+          "0",
+          "0",
+          "0"
+        ]
+      },
+      "digikey": "828-1082-1-ND",
+      "digikey_stock_note": "DigiKey catalog shows0 as of check; JLC snapshot has stock; no substitute authorized.",
+      "mpn": "BMI088",
+      "manufacturer": "Bosch Sensortec",
+      "refs": [
+        "U101"
+      ],
+      "saved_instances": [
+        {
+          "sheet": "Sensors.kicad_sch",
+          "reference": "U101",
+          "dnp": false
+        }
+      ],
+      "footprint_file": "hardware/libraries/PigeonVision.pretty/Bosch_LGA-16_4.5x3mm_P0.5mm_LayoutBorder7x1y_ClockwisePinNumbering.kicad_mod",
+      "footprint_sha256": "416e7960cad7a4305ad1bf63a284a52aaa49f8bdaedab38b9784baad2587b915",
+      "models": [
+        {
+          "reference": "${KIPRJMOD}/../../libraries/3dmodels/Bosch_LGA-16_4.5x3mm_P0.5mm_LayoutBorder7x1y_ClockwisePinNumbering.step",
+          "file": "hardware/libraries/3dmodels/Bosch_LGA-16_4.5x3mm_P0.5mm_LayoutBorder7x1y_ClockwisePinNumbering.step",
+          "sha256": "dc46c314367f4c73b0b11e3d6c0a66760f47f68d2defdbf2fb7b890dc2e8ac91",
+          "offset": [
+            "0",
+            "0",
+            "0"
+          ],
+          "scale": [
+            "1",
+            "1",
+            "1"
+          ],
+          "rotation": [
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ]
+    },
+    "BMP581": {
+      "lcsc": "C5362283",
+      "symbol": "PigeonVision:BMP581",
+      "pins": {
+        "1": {
+          "name": "VDDIO",
+          "electrical_type": "power_in"
+        },
+        "2": {
+          "name": "SCK/SCL",
+          "electrical_type": "input"
+        },
+        "3": {
+          "name": "VSS",
+          "electrical_type": "power_in"
+        },
+        "4": {
+          "name": "SDI/SDA",
+          "electrical_type": "bidirectional"
+        },
+        "5": {
+          "name": "SDO/ADDR",
+          "electrical_type": "input"
+        },
+        "6": {
+          "name": "CSB",
+          "electrical_type": "input"
+        },
+        "7": {
+          "name": "INT",
+          "electrical_type": "output"
+        },
+        "8": {
+          "name": "VSS",
+          "electrical_type": "passive"
+        },
+        "9": {
+          "name": "VSS",
+          "electrical_type": "passive"
+        },
+        "10": {
+          "name": "VDD",
+          "electrical_type": "power_in"
+        }
+      },
+      "footprint": "PigeonVision:Bosch_BMP581_LGA-10_2x2mm_P0.5mm",
+      "pads": [
+        {
+          "number": "1",
+          "position": [
+            -0.7625,
+            -0.25
+          ],
+          "size": [
+            0.325,
+            0.3
+          ]
+        },
+        {
+          "number": "2",
+          "position": [
+            -0.7625,
+            0.25
+          ],
+          "size": [
+            0.325,
+            0.3
+          ]
+        },
+        {
+          "number": "3",
+          "position": [
+            -0.5,
+            0.7625
+          ],
+          "size": [
+            0.3,
+            0.325
+          ]
+        },
+        {
+          "number": "4",
+          "position": [
+            0.0,
+            0.7625
+          ],
+          "size": [
+            0.3,
+            0.325
+          ]
+        },
+        {
+          "number": "5",
+          "position": [
+            0.5,
+            0.7625
+          ],
+          "size": [
+            0.3,
+            0.325
+          ]
+        },
+        {
+          "number": "6",
+          "position": [
+            0.7625,
+            0.25
+          ],
+          "size": [
+            0.325,
+            0.3
+          ]
+        },
+        {
+          "number": "7",
+          "position": [
+            0.7625,
+            -0.25
+          ],
+          "size": [
+            0.325,
+            0.3
+          ]
+        },
+        {
+          "number": "8",
+          "position": [
+            0.5,
+            -0.7625
+          ],
+          "size": [
+            0.3,
+            0.325
+          ]
+        },
+        {
+          "number": "9",
+          "position": [
+            0.0,
+            -0.7625
+          ],
+          "size": [
+            0.3,
+            0.325
+          ]
+        },
+        {
+          "number": "10",
+          "position": [
+            -0.5,
+            -0.7625
+          ],
+          "size": [
+            0.3,
+            0.325
+          ]
+        }
+      ],
+      "model_reference": "${KIPRJMOD}/../../libraries/3dmodels/BMP581.step",
+      "model_local_file": "hardware/libraries/3dmodels/BMP581.step",
+      "model_sha256": "864bddaa79cc974d6355c5785213ac6a849141e42ff8b92f6c523d98c2b5e8b8",
+      "model_envelope": [
+        2,
+        2,
+        0.8
+      ],
+      "model_provenance": "Existing Aerolotl local STEP; SolidWorks2021 header; not manufacturer provenance",
+      "model_download_url": "https://modules.easyeda.com/qAxj6KHrDKw4blvCG8QJPs7Y/a347614901084ef7a90befee635d2ebc",
+      "model_download_verification": "EasyEDA API supplied UUID; STEP download returned no data, local equality not verified",
+      "transform": {
+        "reference": "${KIPRJMOD}/../../libraries/3dmodels/BMP581.step",
+        "file": "hardware/libraries/3dmodels/BMP581.step",
+        "sha256": "864bddaa79cc974d6355c5785213ac6a849141e42ff8b92f6c523d98c2b5e8b8",
+        "offset": [
+          "0",
+          "0",
+          "0"
+        ],
+        "scale": [
+          "1",
+          "1",
+          "1"
+        ],
+        "rotation": [
+          "0",
+          "0",
+          "0"
+        ]
+      },
+      "digikey": "828-BMP581CT-ND",
+      "mpn": "BMP581",
+      "manufacturer": "Bosch Sensortec",
+      "refs": [
+        "U102"
+      ],
+      "saved_instances": [
+        {
+          "sheet": "Sensors.kicad_sch",
+          "reference": "U102",
+          "dnp": false
+        }
+      ],
+      "footprint_file": "hardware/libraries/PigeonVision.pretty/Bosch_BMP581_LGA-10_2x2mm_P0.5mm.kicad_mod",
+      "footprint_sha256": "4a14381f3a9568514dd41314f9d5f1c96adef3e416ea968cefd8a3f32f62ac89",
+      "models": [
+        {
+          "reference": "${KIPRJMOD}/../../libraries/3dmodels/BMP581.step",
+          "file": "hardware/libraries/3dmodels/BMP581.step",
+          "sha256": "864bddaa79cc974d6355c5785213ac6a849141e42ff8b92f6c523d98c2b5e8b8",
+          "offset": [
+            "0",
+            "0",
+            "0"
+          ],
+          "scale": [
+            "1",
+            "1",
+            "1"
+          ],
+          "rotation": [
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ]
+    },
+    "INA226AIDGSR": {
+      "lcsc": "C49851",
+      "symbol": "PigeonVision:INA226AIDGSR",
+      "pins": {
+        "1": {
+          "name": "A1",
+          "electrical_type": "input"
+        },
+        "2": {
+          "name": "A0",
+          "electrical_type": "input"
+        },
+        "3": {
+          "name": "~{Alert}",
+          "electrical_type": "open_collector"
+        },
+        "4": {
+          "name": "SDA",
+          "electrical_type": "bidirectional"
+        },
+        "5": {
+          "name": "SCL",
+          "electrical_type": "input"
+        },
+        "6": {
+          "name": "VS",
+          "electrical_type": "power_in"
+        },
+        "7": {
+          "name": "GND",
+          "electrical_type": "power_in"
+        },
+        "8": {
+          "name": "Vbus",
+          "electrical_type": "input"
+        },
+        "9": {
+          "name": "Vin-",
+          "electrical_type": "input"
+        },
+        "10": {
+          "name": "Vin+",
+          "electrical_type": "input"
+        }
+      },
+      "footprint": "PigeonVision:TI_DGS0010A_VSSOP-10_3x3mm_P0.5mm",
+      "pads": [
+        {
+          "number": "1",
+          "position": [
+            -2.2,
+            -1.0
+          ],
+          "size": [
+            1.45,
+            0.3
+          ]
+        },
+        {
+          "number": "2",
+          "position": [
+            -2.2,
+            -0.5
+          ],
+          "size": [
+            1.45,
+            0.3
+          ]
+        },
+        {
+          "number": "3",
+          "position": [
+            -2.2,
+            0.0
+          ],
+          "size": [
+            1.45,
+            0.3
+          ]
+        },
+        {
+          "number": "4",
+          "position": [
+            -2.2,
+            0.5
+          ],
+          "size": [
+            1.45,
+            0.3
+          ]
+        },
+        {
+          "number": "5",
+          "position": [
+            -2.2,
+            1.0
+          ],
+          "size": [
+            1.45,
+            0.3
+          ]
+        },
+        {
+          "number": "6",
+          "position": [
+            2.2,
+            1.0
+          ],
+          "size": [
+            1.45,
+            0.3
+          ]
+        },
+        {
+          "number": "7",
+          "position": [
+            2.2,
+            0.5
+          ],
+          "size": [
+            1.45,
+            0.3
+          ]
+        },
+        {
+          "number": "8",
+          "position": [
+            2.2,
+            0.0
+          ],
+          "size": [
+            1.45,
+            0.3
+          ]
+        },
+        {
+          "number": "9",
+          "position": [
+            2.2,
+            -0.5
+          ],
+          "size": [
+            1.45,
+            0.3
+          ]
+        },
+        {
+          "number": "10",
+          "position": [
+            2.2,
+            -1.0
+          ],
+          "size": [
+            1.45,
+            0.3
+          ]
+        }
+      ],
+      "model_reference": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Package_SO_MSOP-10_3x3mm_P0.5mm.step",
+      "model_local_file": "hardware/libraries/3dmodels/KiCad_Package_SO_MSOP-10_3x3mm_P0.5mm.step",
+      "model_sha256": "b8f88eac3ce221c2ccb0b5048f9ad49c2ef4af148f8ae50c4e232e357683f547",
+      "model_envelope": [
+        4.9,
+        3,
+        1.1
+      ],
+      "model_provenance": "Existing stock KiCad MSOP-10 model matches DGS0010A envelope",
+      "model_download_url": "https://gitlab.com/kicad/libraries/kicad-packages3D/-/raw/master/Package_SO.3dshapes/MSOP-10_3x3mm_P0.5mm.step",
+      "model_download_verification": "Installed local KiCad model verified; upstream URL supplied",
+      "transform": {
+        "reference": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Package_SO_MSOP-10_3x3mm_P0.5mm.step",
+        "file": "hardware/libraries/3dmodels/KiCad_Package_SO_MSOP-10_3x3mm_P0.5mm.step",
+        "sha256": "b8f88eac3ce221c2ccb0b5048f9ad49c2ef4af148f8ae50c4e232e357683f547",
+        "offset": [
+          "0",
+          "0",
+          "0"
+        ],
+        "scale": [
+          "1",
+          "1",
+          "1"
+        ],
+        "rotation": [
+          "0",
+          "0",
+          "0"
+        ]
+      },
+      "digikey": "296-29034-1-ND",
+      "mpn": "INA226AIDGSR",
+      "manufacturer": "Texas Instruments",
+      "refs": [
+        "U3"
+      ],
+      "saved_instances": [
+        {
+          "sheet": "Regulators.kicad_sch",
+          "reference": "U3",
+          "dnp": false
+        }
+      ],
+      "footprint_file": "hardware/libraries/PigeonVision.pretty/TI_DGS0010A_VSSOP-10_3x3mm_P0.5mm.kicad_mod",
+      "footprint_sha256": "0c594acab07e24b5eeb694507a8c85ddb4d65f0779cd7d2c6c5083bd2ea170b1",
+      "models": [
+        {
+          "reference": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Package_SO_MSOP-10_3x3mm_P0.5mm.step",
+          "file": "hardware/libraries/3dmodels/KiCad_Package_SO_MSOP-10_3x3mm_P0.5mm.step",
+          "sha256": "b8f88eac3ce221c2ccb0b5048f9ad49c2ef4af148f8ae50c4e232e357683f547",
+          "offset": [
+            "0",
+            "0",
+            "0"
+          ],
+          "scale": [
+            "1",
+            "1",
+            "1"
+          ],
+          "rotation": [
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ]
+    }
+  },
+  "manufacturer_datasheets": {
+    "bmi088": {
+      "file": "build/carrier-completion/sensor-evidence/bmi088.pdf",
+      "sha256": "53ab734dba49ac202fa6182fc2b545df6c6d7459c9fec6e851a1209e6bac417e"
+    },
+    "bmp581": {
+      "file": "build/carrier-completion/sensor-evidence/bmp581.pdf",
+      "sha256": "ddcf4202c4fdf2ab6ad86f22b67ba4d2471d76b9ce510397cacfe398400ab439"
+    },
+    "ina226": {
+      "file": "build/carrier-completion/sensor-evidence/ina226.pdf",
+      "sha256": "c9b67f886d4a5241a5e070723f7b61867409eeb27eed768b9cdd9cb17e03ca2d"
+    }
+  },
+  "new_passives": {
+    "CL05B104KO5NNNC": {
+      "digikey": "1276-1001-1-ND",
+      "jlc": "C1525",
+      "manufacturer": "Samsung Electro-Mechanics",
+      "mpn": "CL05B104KO5NNNC",
+      "symbol": "Device:C",
+      "footprint": "PigeonVision:KiCad_Capacitor_SMD_C_0402_1005Metric",
+      "refs": [
+        "C101",
+        "C102",
+        "C103",
+        "C104"
+      ],
+      "saved_instances": [
+        {
+          "sheet": "Sensors.kicad_sch",
+          "reference": "C101",
+          "dnp": false
+        },
+        {
+          "sheet": "Sensors.kicad_sch",
+          "reference": "C102",
+          "dnp": false
+        },
+        {
+          "sheet": "Sensors.kicad_sch",
+          "reference": "C103",
+          "dnp": false
+        },
+        {
+          "sheet": "Sensors.kicad_sch",
+          "reference": "C104",
+          "dnp": false
+        }
+      ],
+      "symbol_pins": {
+        "1": {
+          "name": "",
+          "type": "passive"
+        },
+        "2": {
+          "name": "",
+          "type": "passive"
+        }
+      },
+      "datasheet": "",
+      "footprint_file": "hardware/libraries/PigeonVision.pretty/KiCad_Capacitor_SMD_C_0402_1005Metric.kicad_mod",
+      "footprint_sha256": "0d09126772250c149dbdcec23630d1915a75ce58a01bbf75b9123d8b395ced74",
+      "pad_map": [
+        {
+          "number": "1",
+          "at_mm": [
+            -0.48,
+            0.0
+          ],
+          "size_mm": [
+            0.56,
+            0.62
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            0.48,
+            0.0
+          ],
+          "size_mm": [
+            0.56,
+            0.62
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "models": [
+        {
+          "reference": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Capacitor_SMD_C_0402_1005Metric.step",
+          "file": "hardware/libraries/3dmodels/KiCad_Capacitor_SMD_C_0402_1005Metric.step",
+          "sha256": "03e44c4b2b727b8d4b6b1fd598cbd12dd5e614f1dfeefa96a92a07e3a3b312a2",
+          "offset": [
+            "0",
+            "0",
+            "0"
+          ],
+          "scale": [
+            "1",
+            "1",
+            "1"
+          ],
+          "rotation": [
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "local_model": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Capacitor_SMD_C_0402_1005Metric.step",
+      "model_sha256": "03e44c4b2b727b8d4b6b1fd598cbd12dd5e614f1dfeefa96a92a07e3a3b312a2"
+    },
+    "RC0402FR-070RL": {
+      "manufacturer": "YAGEO",
+      "mpn": "RC0402FR-070RL",
+      "digikey": "311-0.0LRCT-ND",
+      "jlc": "C106231",
+      "symbol": "Device:R",
+      "footprint": "PigeonVision:KiCad_Resistor_SMD_R_0402_1005Metric",
+      "refs": [
+        "R105"
+      ],
+      "saved_instances": [
+        {
+          "sheet": "Sensors.kicad_sch",
+          "reference": "R105",
+          "dnp": false
+        }
+      ],
+      "symbol_pins": {
+        "1": {
+          "name": "",
+          "type": "passive"
+        },
+        "2": {
+          "name": "",
+          "type": "passive"
+        }
+      },
+      "datasheet": "https://www.yageogroup.com/component-documentation/download/specsheet/RC0402FR-070RL",
+      "footprint_file": "hardware/libraries/PigeonVision.pretty/KiCad_Resistor_SMD_R_0402_1005Metric.kicad_mod",
+      "footprint_sha256": "cf8cbd679205e8dfa783214e74f6b542be0e96acdf1bbdee9e953d874fb86316",
+      "pad_map": [
+        {
+          "number": "1",
+          "at_mm": [
+            -0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "models": [
+        {
+          "reference": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step",
+          "file": "hardware/libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step",
+          "sha256": "91507e5af4251cb4ef38e04889c9b98da29904432bd83786bba13ae9b605eacb",
+          "offset": [
+            "0",
+            "0",
+            "0"
+          ],
+          "scale": [
+            "1",
+            "1",
+            "1"
+          ],
+          "rotation": [
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "local_model": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step",
+      "model_sha256": "91507e5af4251cb4ef38e04889c9b98da29904432bd83786bba13ae9b605eacb",
+      "stock": 325550,
+      "jlc_snapshot": {
+        "lcsc": "C106231",
+        "name": "YAGEO RC0402FR-070RL",
+        "model": "RC0402FR-070RL",
+        "brand": "YAGEO",
+        "package": "0402",
+        "category": "Chip Resistor - Surface Mount",
+        "stock": 325550,
+        "type": "Extended",
+        "price": 0.0037,
+        "description": "-55\u2103~+155\u2103 0\u03a9 50V 62.5mW Thick Film Resistor \u00b11% 0402 Chip Resistor - Surface Mount ROHS",
+        "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_yageo-rc0402fr-070rl_C106231.html",
+        "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0402FR-070RL_C106231.pdf"
+      },
+      "snapshot_source": "build/carrier-completion/root-extra-catalog.json"
+    },
+    "RC0402FR-0710RL": {
+      "digikey": "311-10.0LRCT-ND",
+      "jlc": "C138066",
+      "stock": 1354877,
+      "manufacturer": "YAGEO",
+      "mpn": "RC0402FR-0710RL",
+      "symbol": "Device:R",
+      "footprint": "PigeonVision:KiCad_Resistor_SMD_R_0402_1005Metric",
+      "refs": [
+        "R103",
+        "R104",
+        "R5",
+        "R7"
+      ],
+      "saved_instances": [
+        {
+          "sheet": "Sensors.kicad_sch",
+          "reference": "R103",
+          "dnp": false
+        },
+        {
+          "sheet": "Sensors.kicad_sch",
+          "reference": "R104",
+          "dnp": false
+        },
+        {
+          "sheet": "Regulators.kicad_sch",
+          "reference": "R7",
+          "dnp": false
+        },
+        {
+          "sheet": "Regulators.kicad_sch",
+          "reference": "R5",
+          "dnp": false
+        }
+      ],
+      "symbol_pins": {
+        "1": {
+          "name": "",
+          "type": "passive"
+        },
+        "2": {
+          "name": "",
+          "type": "passive"
+        }
+      },
+      "datasheet": "https://www.yageogroup.com/component-documentation/download/specsheet/RC0402FR-0710RL",
+      "footprint_file": "hardware/libraries/PigeonVision.pretty/KiCad_Resistor_SMD_R_0402_1005Metric.kicad_mod",
+      "footprint_sha256": "cf8cbd679205e8dfa783214e74f6b542be0e96acdf1bbdee9e953d874fb86316",
+      "pad_map": [
+        {
+          "number": "1",
+          "at_mm": [
+            -0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "models": [
+        {
+          "reference": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step",
+          "file": "hardware/libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step",
+          "sha256": "91507e5af4251cb4ef38e04889c9b98da29904432bd83786bba13ae9b605eacb",
+          "offset": [
+            "0",
+            "0",
+            "0"
+          ],
+          "scale": [
+            "1",
+            "1",
+            "1"
+          ],
+          "rotation": [
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "local_model": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step",
+      "model_sha256": "91507e5af4251cb4ef38e04889c9b98da29904432bd83786bba13ae9b605eacb"
+    },
+    "RC0402FR-072K2L": {
+      "digikey": "311-2.20KLRCT-ND",
+      "jlc": "C114762",
+      "stock": 1212097,
+      "manufacturer": "YAGEO",
+      "mpn": "RC0402FR-072K2L",
+      "symbol": "Device:R",
+      "footprint": "PigeonVision:KiCad_Resistor_SMD_R_0402_1005Metric",
+      "refs": [
+        "R101",
+        "R102"
+      ],
+      "saved_instances": [
+        {
+          "sheet": "Sensors.kicad_sch",
+          "reference": "R101",
+          "dnp": true
+        },
+        {
+          "sheet": "Sensors.kicad_sch",
+          "reference": "R102",
+          "dnp": true
+        }
+      ],
+      "symbol_pins": {
+        "1": {
+          "name": "",
+          "type": "passive"
+        },
+        "2": {
+          "name": "",
+          "type": "passive"
+        }
+      },
+      "datasheet": "",
+      "footprint_file": "hardware/libraries/PigeonVision.pretty/KiCad_Resistor_SMD_R_0402_1005Metric.kicad_mod",
+      "footprint_sha256": "cf8cbd679205e8dfa783214e74f6b542be0e96acdf1bbdee9e953d874fb86316",
+      "pad_map": [
+        {
+          "number": "1",
+          "at_mm": [
+            -0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "models": [
+        {
+          "reference": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step",
+          "file": "hardware/libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step",
+          "sha256": "91507e5af4251cb4ef38e04889c9b98da29904432bd83786bba13ae9b605eacb",
+          "offset": [
+            "0",
+            "0",
+            "0"
+          ],
+          "scale": [
+            "1",
+            "1",
+            "1"
+          ],
+          "rotation": [
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "local_model": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step",
+      "model_sha256": "91507e5af4251cb4ef38e04889c9b98da29904432bd83786bba13ae9b605eacb"
+    }
+  },
+  "metadata_source": "Actual saved schematic instance fields; canonical DigiKey Part # takes precedence over legacy DigiKey Part Number."
+}

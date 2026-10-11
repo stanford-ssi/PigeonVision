@@ -1,0 +1,62 @@
+{
+  "selected_part": {
+    "manufacturer": "Same Sky (formerly CUI Devices)",
+    "MPN": "PJ-102AH",
+    "symbol": "PigeonVision:PJ-102AH",
+    "footprint": "PigeonVision:SameSky_PJ-102AH_Horizontal",
+    "DigiKey": {
+      "code": "CP-102AH-ND",
+      "url": "https://www.digikey.com/en/products/detail/same-sky-formerly-cui-devices/PJ-102AH/408448"
+    },
+    "LCSC": {
+      "code": "C3096093",
+      "url": "https://www.lcsc.com/product-detail/C3096093.html"
+    },
+    "datasheet": "https://www.sameskydevices.com/product/resource/pj-102ah.pdf",
+    "current_rating_A": 5,
+    "voltage_rating_Vdc": 24,
+    "assembly": "PTH, hand/selective solder. LCSC listing is not a JLC assembly reservation."
+  },
+  "pins": {
+    "1": "Center",
+    "2": "Sleeve",
+    "3": "Sleeve_Shunt"
+  },
+  "terminal_behavior": "Sleeve shunt3 connects to sleeve2 with no plug and opens on insertion. For this carrier pin1 positive input, pin2 GND, pin3 NC.",
+  "connection_plan": "Bench input upstream of common protection/pull-pin circuit; battery or adapter one at a time. No active schematic or PCB placement was done for this jack.",
+  "adapter": {
+    "brand": "ALITOVE",
+    "ASIN": "B07MXXXBV8",
+    "url": "https://www.amazon.com/dp/B07MXXXBV8",
+    "brand_page": "https://alitove.com/products/alitove-12v-10a-power-supply",
+    "published_output": "12V constant voltage, 10A maximum /120W",
+    "published_plug": "5.5 x2.5mm universal tip, vendor claims5.5 x2.1mm compatibility; center positive",
+    "AC_cord": "Included per listing and brand page",
+    "planning_minimum": "12V5A",
+    "jack_current_limit_A": 5,
+    "prototype_check": "Physical plug fit/retention and supply behavior remain unmeasured."
+  },
+  "footprint_file": "hardware/libraries/PigeonVision.pretty/SameSky_PJ-102AH_Horizontal.kicad_mod",
+  "model_file": "hardware/libraries/3dmodels/SameSky_PJ-102AH_OFFICIAL.step",
+  "footprint_sha256": "96e5ce2e298f50cb4f09bdfcea5c7e63ab168949668bba085429b80343da3219",
+  "model_sha256": "ef5da8cd14aefcc2ea9adaed148353565cf08d5cc760eaecc1eff98e042a655c",
+  "model_provenance": "Official manufacturer geometry, rigidly rotated/translated only; original source preserved in build.",
+  "model_transform": {
+    "x": "-raw_x - 13.70",
+    "y": "raw_z",
+    "z": "raw_y + 6.50",
+    "rotation_determinant": 1,
+    "kicad_note": "Model Y is opposite footprint screen Y."
+  },
+  "model_source_page": "https://www.sameskydevices.com/product/resource/3dmodel/pj-102ah",
+  "model_source_download": "https://3dcadfiles.3dexchange.net/step_ap214/205/7827071/Same_Sky_PJ-102AH.zip",
+  "verification": {
+    "original_library_symbols_unchanged": 47,
+    "symbol_export": "KiCad10 parsed active symbol library and exported PJ-102AH SVG.",
+    "geometry_evidence": "Pad locations and slots compared with current manufacturer PCB drawing; independent STEP terminal cuts and bottom3D rendering confirm alignment.",
+    "drawings_and_preview": "build/barrel-jack-2026-10-02",
+    "independent_audit": "build/barrel-jack-2026-10-02/independent-pj102ah-final-audit.json",
+    "full_drc": "Standalone fixture DRC process aborted; no completed DRC result claimed.",
+    "manufactured_fit": "Not tested."
+  }
+}

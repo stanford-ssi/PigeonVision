@@ -6,7 +6,7 @@
 	(tags "Texas SOT TO_SOT_SMD")
 	(property "Reference" "REF**"
 		(at 0 -2.4 0)
-		(layer "F.SilkS")
+		(layer "F.SilkS") (hide yes)
 		(effects
 			(font
 				(size 1 1)
@@ -286,5 +286,15 @@
 		(roundrect_rratio 0.25)
 	)
 	(embedded_fonts no)
-
+	(model "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Package_TO_SOT_SMD_SOT-23-8.step"
+		(offset
+			(xyz 0 0 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 0 0)
+		)
+	)
 )

@@ -1,0 +1,166 @@
+(footprint "MountingHole_3-8in_Rod_NPTH_10.32mm"
+	(version 20260206)
+	(generator "pcbnew")
+	(generator_version "10.0")
+	(layer "F.Cu")
+	(descr "Mounting hole for 3/8\"-16 threaded rod (McMaster 90034A031): NPTH 10.32 mm (0.406\" normal fit), 22 mm keep-out for SAE 3/8\" washer (0.812\" OD) both sides")
+	(tags "mounting hole 3/8 threaded rod NPTH")
+	(property "Reference" "H**"
+		(at 0 0 0)
+		(layer "F.SilkS")
+		(hide yes)
+		(uuid "1fc04ab3-f8dc-46e9-961e-d777a42bbcbd")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Value" "MountingHole_3-8in_Rod_NPTH_10.32mm"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "3c4ba97f-0362-4921-89c9-a5f6ad6254e9")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "8dc2b83d-b352-4829-a75e-9add168949d1")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "83f345ab-8c57-4480-b814-78a81b781be4")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(attr board_only exclude_from_pos_files exclude_from_bom)
+	(duplicate_pad_numbers_are_jumpers no)
+	(fp_circle
+		(center 0 0)
+		(end 5.76 0)
+		(stroke
+			(width 0.15)
+			(type default)
+		)
+		(fill no)
+		(layer "F.SilkS")
+		(uuid "005f7af3-9c5b-4786-b1b7-91b411b3e914")
+	)
+	(fp_circle
+		(center 0 0)
+		(end 11 0)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(fill no)
+		(layer "B.CrtYd")
+		(uuid "1060010a-ac00-47df-8379-2be21d17b330")
+	)
+	(fp_circle
+		(center 0 0)
+		(end 11 0)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "4dcab000-25a2-4b35-9792-415036ac5645")
+	)
+	(fp_circle
+		(center 0 0)
+		(end 10.3124 0)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(fill no)
+		(layer "B.Fab")
+		(uuid "3f81a1d5-8780-44dd-b245-cf07f37c0c28")
+	)
+	(fp_circle
+		(center 0 0)
+		(end 10.3124 0)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(fill no)
+		(layer "F.Fab")
+		(uuid "0c456403-0bf5-4944-b8ac-70407ff15c2d")
+	)
+	(pad "" np_thru_hole circle
+		(at 0 0)
+		(size 10.32 10.32)
+		(drill 10.32)
+		(layers "*.Cu" "*.Mask")
+		(uuid "567889ca-86ab-40ab-b4bd-6316de6cd2ac")
+	)
+	(zone
+		(layers "F.Cu" "B.Cu" "In1.Cu" "In2.Cu" "In3.Cu" "In4.Cu" "In5.Cu" "In6.Cu"
+			"In7.Cu" "In8.Cu" "In9.Cu" "In10.Cu" "In11.Cu" "In12.Cu" "In13.Cu" "In14.Cu"
+			"In15.Cu" "In16.Cu" "In17.Cu" "In18.Cu" "In19.Cu" "In20.Cu" "In21.Cu"
+			"In22.Cu" "In23.Cu" "In24.Cu" "In25.Cu" "In26.Cu" "In27.Cu" "In28.Cu"
+			"In29.Cu" "In30.Cu"
+		)
+		(uuid "88ae99fd-e3fa-45d6-92bd-d28e924108c3")
+		(hatch edge 0.5)
+		(connect_pads
+			(clearance 0)
+		)
+		(min_thickness 0.25)
+		(keepout
+			(tracks not_allowed)
+			(vias not_allowed)
+			(pads not_allowed)
+			(copperpour not_allowed)
+			(footprints allowed)
+		)
+		(placement
+			(enabled no)
+			(sheetname "")
+		)
+		(fill
+			(thermal_gap 0.5)
+			(thermal_bridge_width 0.5)
+			(island_removal_mode 0)
+		)
+		(polygon
+			(pts
+				(xy 11 0) (xy 10.958141 0.958713) (xy 10.832885 1.910129) (xy 10.625184 2.847009) (xy 10.336618 3.762221)
+				(xy 9.969385 4.6488) (xy 9.526279 5.499999) (xy 9.010672 6.30934) (xy 8.426488 7.070663) (xy 7.778174 7.778174)
+				(xy 7.070663 8.426488) (xy 6.30934 9.010672) (xy 5.5 9.526279) (xy 4.6488 9.969385) (xy 3.762221 10.336618)
+				(xy 2.847009 10.625184) (xy 1.910129 10.832885) (xy 0.958713 10.958141) (xy 0 11) (xy -0.958713 10.958141)
+				(xy -1.910129 10.832885) (xy -2.847009 10.625184) (xy -3.762221 10.336618) (xy -4.6488 9.969385)
+				(xy -5.499999 9.526279) (xy -6.30934 9.010672) (xy -7.070663 8.426488) (xy -7.778174 7.778174) (xy -8.426488 7.070663)
+				(xy -9.010672 6.30934) (xy -9.526279 5.5) (xy -9.969385 4.6488) (xy -10.336618 3.762221) (xy -10.625184 2.847009)
+				(xy -10.832885 1.910129) (xy -10.958141 0.958713) (xy -11 0) (xy -10.958141 -0.958713) (xy -10.832885 -1.910129)
+				(xy -10.625184 -2.847009) (xy -10.336618 -3.762221) (xy -9.969385 -4.6488) (xy -9.526279 -5.5) (xy -9.010672 -6.30934)
+				(xy -8.426488 -7.070663) (xy -7.778174 -7.778174) (xy -7.070663 -8.426488) (xy -6.30934 -9.010672)
+				(xy -5.5 -9.526279) (xy -4.6488 -9.969385) (xy -3.762221 -10.336618) (xy -2.847009 -10.625184) (xy -1.910129 -10.832885)
+				(xy -0.958713 -10.958141) (xy 0 -11) (xy 0.958713 -10.958141) (xy 1.910129 -10.832885) (xy 2.847009 -10.625184)
+				(xy 3.762221 -10.336618) (xy 4.6488 -9.969385) (xy 5.499999 -9.526279) (xy 6.30934 -9.010672) (xy 7.070663 -8.426488)
+				(xy 7.778174 -7.778174) (xy 8.426488 -7.070663) (xy 9.010672 -6.30934) (xy 9.526279 -5.499999) (xy 9.969385 -4.6488)
+				(xy 10.336618 -3.762221) (xy 10.625184 -2.847009) (xy 10.832885 -1.910129) (xy 10.958141 -0.958713)
+			)
+		)
+	)
+	(embedded_fonts no)
+)

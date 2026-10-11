@@ -1,15 +1,14 @@
 # Hardware
 
+One CM5 captures two fisheye cameras. SPI feeds an RP2350 + AFE7071 transmitter; Ethernet supports an E200 fallback. The ground E200 and Linux PC receive, decode and stitch.
+
 ![System block diagram](system.svg)
 
-[Edit in draw.io](system.drawio)
+[Edit diagram](system.drawio)
 
-| Assembly | Job |
-| --- | --- |
-| [Carrier](carrier/README.md) | CM5, power, cameras, sensors and service connections. |
-| [RF frontend](rf-frontend/README.md) | Attenuation, driver, PA and output filter. |
-| Camera adapters, two copies | FRAMOS PixelMate-to-MC50 boards and cables; purchased parts preferred. |
-| Flight E200 | DVB-S2 transmitter, mounted above the carrier and connected by Ethernet and SMA coax. |
-| Ground E200 | RF receiver connected to the Linux PC over Ethernet. |
+- [Carrier](carrier/README.md): compute, cameras, power and sensors.
+- [Transmitter](https://github.com/Rivercraft911/RP2350_IQ_Benchmark/tree/main/hardware/devboard): RP2350, DAC/modulator, clocks and LO. Hardware draft.
+- [RF frontend](rf-frontend/README.md): driver, PA and output filter.
+- [Project library](libraries/README.md): KiCad parts and CM5 placement.
 
-**Cur Plan:** KiCad carrier and RF boards, purchased CM5, radios and camera adapters.
+Use one flight transmitter at a time, connected by SMA coax to the separate PA/filter board. Swap cables/configuration for the E200 fallback. The diagrams show the planned interfaces, not a completed schematic.

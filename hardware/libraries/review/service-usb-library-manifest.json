@@ -1,0 +1,2646 @@
+{
+  "checked_utc": "2026-10-02T09:21:33.723495+00:00",
+  "parts": {
+    "USB4105-GF-A": {
+      "symbol": "PigeonVision:USB4105_GF_A",
+      "manufacturer": "GCT",
+      "mpn": "USB4105-GF-A",
+      "digikey": "2073-USB4105-GF-ACT-ND",
+      "jlc": "C3020560",
+      "jlc_snapshot": {
+        "lcsc": "C3020560",
+        "name": "Global Connector Technology USB4105-GF-A",
+        "model": "USB4105-GF-A",
+        "brand": "Global Connector Technology",
+        "package": "SMD",
+        "category": "USB Connectors",
+        "stock": 752,
+        "type": "Extended",
+        "price": 1.2973,
+        "description": "-40\u2103~+85\u2103 1 12P 48V 5A Black Female Surface Mount, Right Angle Type-C USB 2.0 SMD USB Connectors ROHS",
+        "url": "https://www.lcsc.com/product-detail/usb-connectors_global-connector-technology-usb4105-gf-a_C3020560.html",
+        "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_Global-Connector-Technology-USB4105-GF-A_C3020560.pdf"
+      },
+      "footprint": "PigeonVision:USB_C_Receptacle_GCT_USB4105_GF_A_16P",
+      "datasheet": "https://gct.co/files/drawings/usb4105.pdf",
+      "pins": {
+        "A1": {
+          "name": "GND",
+          "type": "passive"
+        },
+        "A4": {
+          "name": "VBUS",
+          "type": "passive"
+        },
+        "A5": {
+          "name": "CC1",
+          "type": "bidirectional"
+        },
+        "A6": {
+          "name": "D+",
+          "type": "bidirectional"
+        },
+        "A7": {
+          "name": "D-",
+          "type": "bidirectional"
+        },
+        "A8": {
+          "name": "SBU1",
+          "type": "bidirectional"
+        },
+        "A9": {
+          "name": "VBUS",
+          "type": "passive"
+        },
+        "A12": {
+          "name": "GND",
+          "type": "passive"
+        },
+        "B1": {
+          "name": "GND",
+          "type": "passive"
+        },
+        "B4": {
+          "name": "VBUS",
+          "type": "passive"
+        },
+        "B5": {
+          "name": "CC2",
+          "type": "bidirectional"
+        },
+        "B6": {
+          "name": "D+",
+          "type": "bidirectional"
+        },
+        "B7": {
+          "name": "D-",
+          "type": "bidirectional"
+        },
+        "B8": {
+          "name": "SBU2",
+          "type": "bidirectional"
+        },
+        "B9": {
+          "name": "VBUS",
+          "type": "passive"
+        },
+        "B12": {
+          "name": "GND",
+          "type": "passive"
+        },
+        "SH": {
+          "name": "SHIELD",
+          "type": "passive"
+        }
+      },
+      "pads": [
+        {
+          "number": "",
+          "at_mm": [
+            -2.89,
+            -2.605
+          ],
+          "size_mm": [
+            0.65,
+            0.65
+          ],
+          "type": "np_thru_hole",
+          "shape": "circle",
+          "drill": [
+            "0.65"
+          ]
+        },
+        {
+          "number": "",
+          "at_mm": [
+            2.89,
+            -2.605
+          ],
+          "size_mm": [
+            0.65,
+            0.65
+          ],
+          "type": "np_thru_hole",
+          "shape": "circle",
+          "drill": [
+            "0.65"
+          ]
+        },
+        {
+          "number": "A1",
+          "at_mm": [
+            -3.2,
+            -3.68
+          ],
+          "size_mm": [
+            0.6,
+            1.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "A4",
+          "at_mm": [
+            -2.4,
+            -3.68
+          ],
+          "size_mm": [
+            0.6,
+            1.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "A5",
+          "at_mm": [
+            -1.25,
+            -3.68
+          ],
+          "size_mm": [
+            0.3,
+            1.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "A6",
+          "at_mm": [
+            -0.25,
+            -3.68
+          ],
+          "size_mm": [
+            0.3,
+            1.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "A7",
+          "at_mm": [
+            0.25,
+            -3.68
+          ],
+          "size_mm": [
+            0.3,
+            1.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "A8",
+          "at_mm": [
+            1.25,
+            -3.68
+          ],
+          "size_mm": [
+            0.3,
+            1.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "A9",
+          "at_mm": [
+            2.4,
+            -3.68
+          ],
+          "size_mm": [
+            0.6,
+            1.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "A12",
+          "at_mm": [
+            3.2,
+            -3.68
+          ],
+          "size_mm": [
+            0.6,
+            1.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "B1",
+          "at_mm": [
+            3.2,
+            -3.68
+          ],
+          "size_mm": [
+            0.6,
+            1.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "B4",
+          "at_mm": [
+            2.4,
+            -3.68
+          ],
+          "size_mm": [
+            0.6,
+            1.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "B5",
+          "at_mm": [
+            1.75,
+            -3.68
+          ],
+          "size_mm": [
+            0.3,
+            1.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "B6",
+          "at_mm": [
+            0.75,
+            -3.68
+          ],
+          "size_mm": [
+            0.3,
+            1.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "B7",
+          "at_mm": [
+            -0.75,
+            -3.68
+          ],
+          "size_mm": [
+            0.3,
+            1.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "B8",
+          "at_mm": [
+            -1.75,
+            -3.68
+          ],
+          "size_mm": [
+            0.3,
+            1.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "B9",
+          "at_mm": [
+            -2.4,
+            -3.68
+          ],
+          "size_mm": [
+            0.6,
+            1.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "B12",
+          "at_mm": [
+            -3.2,
+            -3.68
+          ],
+          "size_mm": [
+            0.6,
+            1.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "SH",
+          "at_mm": [
+            -4.32,
+            -3.105
+          ],
+          "size_mm": [
+            1.0,
+            2.1
+          ],
+          "type": "thru_hole",
+          "shape": "oval",
+          "drill": [
+            "oval",
+            "0.6",
+            "1.7"
+          ]
+        },
+        {
+          "number": "SH",
+          "at_mm": [
+            -4.32,
+            1.075
+          ],
+          "size_mm": [
+            1.0,
+            1.8
+          ],
+          "type": "thru_hole",
+          "shape": "oval",
+          "drill": [
+            "oval",
+            "0.6",
+            "1.4"
+          ]
+        },
+        {
+          "number": "SH",
+          "at_mm": [
+            4.32,
+            -3.105
+          ],
+          "size_mm": [
+            1.0,
+            2.1
+          ],
+          "type": "thru_hole",
+          "shape": "oval",
+          "drill": [
+            "oval",
+            "0.6",
+            "1.7"
+          ]
+        },
+        {
+          "number": "SH",
+          "at_mm": [
+            4.32,
+            1.075
+          ],
+          "size_mm": [
+            1.0,
+            1.8
+          ],
+          "type": "thru_hole",
+          "shape": "oval",
+          "drill": [
+            "oval",
+            "0.6",
+            "1.4"
+          ]
+        }
+      ],
+      "model": "${KIPRJMOD}/../../libraries/3dmodels/USB_C_Receptacle_GCT_USB4105_GF_A_16P.step",
+      "refs": [
+        "J201"
+      ],
+      "saved_instances": [
+        {
+          "sheet": "Service_USB.kicad_sch",
+          "reference": "J201",
+          "dnp": false
+        }
+      ],
+      "symbol_pins": {
+        "A1": {
+          "name": "GND",
+          "type": "passive"
+        },
+        "A4": {
+          "name": "VBUS",
+          "type": "passive"
+        },
+        "A5": {
+          "name": "CC1",
+          "type": "bidirectional"
+        },
+        "A6": {
+          "name": "D+",
+          "type": "bidirectional"
+        },
+        "A7": {
+          "name": "D-",
+          "type": "bidirectional"
+        },
+        "A8": {
+          "name": "SBU1",
+          "type": "bidirectional"
+        },
+        "A9": {
+          "name": "VBUS",
+          "type": "passive"
+        },
+        "A12": {
+          "name": "GND",
+          "type": "passive"
+        },
+        "B1": {
+          "name": "GND",
+          "type": "passive"
+        },
+        "B4": {
+          "name": "VBUS",
+          "type": "passive"
+        },
+        "B5": {
+          "name": "CC2",
+          "type": "bidirectional"
+        },
+        "B6": {
+          "name": "D+",
+          "type": "bidirectional"
+        },
+        "B7": {
+          "name": "D-",
+          "type": "bidirectional"
+        },
+        "B8": {
+          "name": "SBU2",
+          "type": "bidirectional"
+        },
+        "B9": {
+          "name": "VBUS",
+          "type": "passive"
+        },
+        "B12": {
+          "name": "GND",
+          "type": "passive"
+        },
+        "SH": {
+          "name": "SHIELD",
+          "type": "passive"
+        }
+      },
+      "footprint_file": "hardware/libraries/PigeonVision.pretty/USB_C_Receptacle_GCT_USB4105_GF_A_16P.kicad_mod",
+      "footprint_sha256": "b72f66c58903ca2f53f84e2a3f75523a515d34e2c220e55ad853ff7638da532c",
+      "pad_map": [
+        {
+          "number": "",
+          "at_mm": [
+            -2.89,
+            -2.605
+          ],
+          "size_mm": [
+            0.65,
+            0.65
+          ],
+          "type": "np_thru_hole",
+          "shape": "circle",
+          "drill": [
+            "0.65"
+          ]
+        },
+        {
+          "number": "",
+          "at_mm": [
+            2.89,
+            -2.605
+          ],
+          "size_mm": [
+            0.65,
+            0.65
+          ],
+          "type": "np_thru_hole",
+          "shape": "circle",
+          "drill": [
+            "0.65"
+          ]
+        },
+        {
+          "number": "A1",
+          "at_mm": [
+            -3.2,
+            -3.68
+          ],
+          "size_mm": [
+            0.6,
+            1.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "A4",
+          "at_mm": [
+            -2.4,
+            -3.68
+          ],
+          "size_mm": [
+            0.6,
+            1.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "A5",
+          "at_mm": [
+            -1.25,
+            -3.68
+          ],
+          "size_mm": [
+            0.3,
+            1.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "A6",
+          "at_mm": [
+            -0.25,
+            -3.68
+          ],
+          "size_mm": [
+            0.3,
+            1.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "A7",
+          "at_mm": [
+            0.25,
+            -3.68
+          ],
+          "size_mm": [
+            0.3,
+            1.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "A8",
+          "at_mm": [
+            1.25,
+            -3.68
+          ],
+          "size_mm": [
+            0.3,
+            1.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "A9",
+          "at_mm": [
+            2.4,
+            -3.68
+          ],
+          "size_mm": [
+            0.6,
+            1.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "A12",
+          "at_mm": [
+            3.2,
+            -3.68
+          ],
+          "size_mm": [
+            0.6,
+            1.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "B1",
+          "at_mm": [
+            3.2,
+            -3.68
+          ],
+          "size_mm": [
+            0.6,
+            1.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "B4",
+          "at_mm": [
+            2.4,
+            -3.68
+          ],
+          "size_mm": [
+            0.6,
+            1.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "B5",
+          "at_mm": [
+            1.75,
+            -3.68
+          ],
+          "size_mm": [
+            0.3,
+            1.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "B6",
+          "at_mm": [
+            0.75,
+            -3.68
+          ],
+          "size_mm": [
+            0.3,
+            1.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "B7",
+          "at_mm": [
+            -0.75,
+            -3.68
+          ],
+          "size_mm": [
+            0.3,
+            1.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "B8",
+          "at_mm": [
+            -1.75,
+            -3.68
+          ],
+          "size_mm": [
+            0.3,
+            1.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "B9",
+          "at_mm": [
+            -2.4,
+            -3.68
+          ],
+          "size_mm": [
+            0.6,
+            1.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "B12",
+          "at_mm": [
+            -3.2,
+            -3.68
+          ],
+          "size_mm": [
+            0.6,
+            1.15
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "SH",
+          "at_mm": [
+            -4.32,
+            -3.105
+          ],
+          "size_mm": [
+            1.0,
+            2.1
+          ],
+          "type": "thru_hole",
+          "shape": "oval",
+          "drill": [
+            "oval",
+            "0.6",
+            "1.7"
+          ]
+        },
+        {
+          "number": "SH",
+          "at_mm": [
+            -4.32,
+            1.075
+          ],
+          "size_mm": [
+            1.0,
+            1.8
+          ],
+          "type": "thru_hole",
+          "shape": "oval",
+          "drill": [
+            "oval",
+            "0.6",
+            "1.4"
+          ]
+        },
+        {
+          "number": "SH",
+          "at_mm": [
+            4.32,
+            -3.105
+          ],
+          "size_mm": [
+            1.0,
+            2.1
+          ],
+          "type": "thru_hole",
+          "shape": "oval",
+          "drill": [
+            "oval",
+            "0.6",
+            "1.7"
+          ]
+        },
+        {
+          "number": "SH",
+          "at_mm": [
+            4.32,
+            1.075
+          ],
+          "size_mm": [
+            1.0,
+            1.8
+          ],
+          "type": "thru_hole",
+          "shape": "oval",
+          "drill": [
+            "oval",
+            "0.6",
+            "1.4"
+          ]
+        }
+      ],
+      "models": [
+        {
+          "reference": "${KIPRJMOD}/../../libraries/3dmodels/USB_C_Receptacle_GCT_USB4105_GF_A_16P.step",
+          "file": "hardware/libraries/3dmodels/USB_C_Receptacle_GCT_USB4105_GF_A_16P.step",
+          "sha256": "6338ce740fa231c2d3dcc6384e0576994a47240a312a21413cb85d76990a69a0",
+          "offset": [
+            "0",
+            "0",
+            "0"
+          ],
+          "scale": [
+            "1",
+            "1",
+            "1"
+          ],
+          "rotation": [
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "local_model": "${KIPRJMOD}/../../libraries/3dmodels/USB_C_Receptacle_GCT_USB4105_GF_A_16P.step",
+      "model_sha256": "6338ce740fa231c2d3dcc6384e0576994a47240a312a21413cb85d76990a69a0"
+    },
+    "USBLC6-2SC6": {
+      "symbol": "PigeonVision:USBLC6-2SC6",
+      "manufacturer": "STMicroelectronics",
+      "mpn": "USBLC6-2SC6",
+      "digikey": "497-5235-1-ND",
+      "jlc": "C7519",
+      "jlc_snapshot": {
+        "lcsc": "C7519",
+        "name": "ST USBLC6-2SC6",
+        "model": "USBLC6-2SC6",
+        "brand": "STMicroelectronics",
+        "package": "SOT-23-6L",
+        "category": "ESD and Surge Protection (TVS/ESD)",
+        "stock": 36224,
+        "type": "Extended",
+        "price": 0.1767,
+        "description": "-40\u2103~+125\u2103 150nA 17V 2 3.5pF 5.25V 5A 6V ESD IEC 61000-4-2 Unidirectional SOT-23-6L ESD and Surge Protection (TVS/ESD) ROHS",
+        "url": "https://www.lcsc.com/product-detail/esd-and-surge-protection-tvs-esd_stmicroelectronics-usblc6-2sc6_C7519.html",
+        "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2410121836_STMicroelectronics-USBLC6-2SC6_C7519.pdf"
+      },
+      "footprint": "PigeonVision:ST_SOT23-6L_USBLC6_P0.95mm",
+      "datasheet": "https://www.st.com/resource/en/datasheet/usblc6-2.pdf",
+      "pins": {
+        "1": {
+          "name": "I/O1",
+          "type": "passive"
+        },
+        "2": {
+          "name": "GND",
+          "type": "passive"
+        },
+        "3": {
+          "name": "I/O2",
+          "type": "passive"
+        },
+        "4": {
+          "name": "I/O2",
+          "type": "passive"
+        },
+        "5": {
+          "name": "VBUS",
+          "type": "passive"
+        },
+        "6": {
+          "name": "I/O1",
+          "type": "passive"
+        }
+      },
+      "pads": [
+        {
+          "number": "1",
+          "at_mm": [
+            -1.15,
+            -0.95
+          ],
+          "size_mm": [
+            1.2,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            -1.15,
+            0.0
+          ],
+          "size_mm": [
+            1.2,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "3",
+          "at_mm": [
+            -1.15,
+            0.95
+          ],
+          "size_mm": [
+            1.2,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "6",
+          "at_mm": [
+            1.15,
+            -0.95
+          ],
+          "size_mm": [
+            1.2,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "5",
+          "at_mm": [
+            1.15,
+            0.0
+          ],
+          "size_mm": [
+            1.2,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "4",
+          "at_mm": [
+            1.15,
+            0.95
+          ],
+          "size_mm": [
+            1.2,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "model": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Package_TO_SOT_SMD_SOT-23-6.step",
+      "refs": [
+        "U201"
+      ],
+      "saved_instances": [
+        {
+          "sheet": "Service_USB.kicad_sch",
+          "reference": "U201",
+          "dnp": false
+        }
+      ],
+      "symbol_pins": {
+        "1": {
+          "name": "I/O1",
+          "type": "passive"
+        },
+        "2": {
+          "name": "GND",
+          "type": "passive"
+        },
+        "3": {
+          "name": "I/O2",
+          "type": "passive"
+        },
+        "4": {
+          "name": "I/O2",
+          "type": "passive"
+        },
+        "5": {
+          "name": "VBUS",
+          "type": "passive"
+        },
+        "6": {
+          "name": "I/O1",
+          "type": "passive"
+        }
+      },
+      "footprint_file": "hardware/libraries/PigeonVision.pretty/ST_SOT23-6L_USBLC6_P0.95mm.kicad_mod",
+      "footprint_sha256": "6ec62761dbaf7d605e5146f9a3acf69f489f9f5af261420c844fe6d11a6ef9e2",
+      "pad_map": [
+        {
+          "number": "1",
+          "at_mm": [
+            -1.15,
+            -0.95
+          ],
+          "size_mm": [
+            1.2,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            -1.15,
+            0.0
+          ],
+          "size_mm": [
+            1.2,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "3",
+          "at_mm": [
+            -1.15,
+            0.95
+          ],
+          "size_mm": [
+            1.2,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "6",
+          "at_mm": [
+            1.15,
+            -0.95
+          ],
+          "size_mm": [
+            1.2,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "5",
+          "at_mm": [
+            1.15,
+            0.0
+          ],
+          "size_mm": [
+            1.2,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "4",
+          "at_mm": [
+            1.15,
+            0.95
+          ],
+          "size_mm": [
+            1.2,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "models": [
+        {
+          "reference": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Package_TO_SOT_SMD_SOT-23-6.step",
+          "file": "hardware/libraries/3dmodels/KiCad_Package_TO_SOT_SMD_SOT-23-6.step",
+          "sha256": "c9fe686b4d1b56927a41fa84a9bc1efb61d8a45a123a3db43bcaa05c2891d635",
+          "offset": [
+            "0",
+            "0",
+            "0"
+          ],
+          "scale": [
+            "1",
+            "1",
+            "1"
+          ],
+          "rotation": [
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "local_model": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Package_TO_SOT_SMD_SOT-23-6.step",
+      "model_sha256": "c9fe686b4d1b56927a41fa84a9bc1efb61d8a45a123a3db43bcaa05c2891d635"
+    },
+    "TS3USB221DRCR": {
+      "symbol": "PigeonVision:TS3USB221DRCR",
+      "manufacturer": "Texas Instruments",
+      "mpn": "TS3USB221DRCR",
+      "digikey": "296-21360-1-ND",
+      "jlc": "C324071",
+      "jlc_snapshot": {
+        "lcsc": "C324071",
+        "name": "TI TS3USB221DRCR",
+        "model": "TS3USB221DRCR",
+        "brand": "Texas Instruments",
+        "package": "VSON-10-EP(3x3)",
+        "category": "Analog Switches, Multiplexers",
+        "stock": 1069,
+        "type": "Extended",
+        "price": 0.8877,
+        "description": "-40\u2103~+85\u2103 1 1.1GHz 10ns 17ns 2.3V~3.6V 250ps 2:1 6pF 6\u03a9 VSON-10-EP(3x3) Analog Switches, Multiplexers ROHS",
+        "url": "https://www.lcsc.com/product-detail/analog-switches-multiplexers_texas-instruments-ts3usb221drcr_C324071.html",
+        "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1811061825_Texas-Instruments-TS3USB221DRCR_C324071.pdf"
+      },
+      "footprint": "PigeonVision:TI_DRC0010J_VSON-10_3x3mm_P0.5mm",
+      "datasheet": "https://www.ti.com/lit/ds/symlink/ts3usb221.pdf",
+      "pins": {
+        "1": {
+          "name": "1D+",
+          "type": "bidirectional"
+        },
+        "2": {
+          "name": "1D-",
+          "type": "bidirectional"
+        },
+        "3": {
+          "name": "2D+",
+          "type": "bidirectional"
+        },
+        "4": {
+          "name": "2D-",
+          "type": "bidirectional"
+        },
+        "5": {
+          "name": "GND",
+          "type": "power_in"
+        },
+        "6": {
+          "name": "~{OE}",
+          "type": "input"
+        },
+        "7": {
+          "name": "D-",
+          "type": "bidirectional"
+        },
+        "8": {
+          "name": "D+",
+          "type": "bidirectional"
+        },
+        "9": {
+          "name": "S",
+          "type": "input"
+        },
+        "10": {
+          "name": "VCC",
+          "type": "power_in"
+        },
+        "11": {
+          "name": "EP",
+          "type": "passive"
+        }
+      },
+      "pads": [
+        {
+          "number": "1",
+          "at_mm": [
+            -1.4,
+            -1.0
+          ],
+          "size_mm": [
+            0.6,
+            0.24
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            -1.4,
+            -0.5
+          ],
+          "size_mm": [
+            0.6,
+            0.24
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "3",
+          "at_mm": [
+            -1.4,
+            0.0
+          ],
+          "size_mm": [
+            0.6,
+            0.24
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "4",
+          "at_mm": [
+            -1.4,
+            0.5
+          ],
+          "size_mm": [
+            0.6,
+            0.24
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "5",
+          "at_mm": [
+            -1.4,
+            1.0
+          ],
+          "size_mm": [
+            0.6,
+            0.24
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "6",
+          "at_mm": [
+            1.4,
+            1.0
+          ],
+          "size_mm": [
+            0.6,
+            0.24
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "7",
+          "at_mm": [
+            1.4,
+            0.5
+          ],
+          "size_mm": [
+            0.6,
+            0.24
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "8",
+          "at_mm": [
+            1.4,
+            0.0
+          ],
+          "size_mm": [
+            0.6,
+            0.24
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "9",
+          "at_mm": [
+            1.4,
+            -0.5
+          ],
+          "size_mm": [
+            0.6,
+            0.24
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "10",
+          "at_mm": [
+            1.4,
+            -1.0
+          ],
+          "size_mm": [
+            0.6,
+            0.24
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "11",
+          "at_mm": [
+            0.0,
+            0.0
+          ],
+          "size_mm": [
+            1.65,
+            2.4
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "11",
+          "at_mm": [
+            -0.575,
+            -1.45
+          ],
+          "size_mm": [
+            0.25,
+            0.5
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "11",
+          "at_mm": [
+            -0.575,
+            1.45
+          ],
+          "size_mm": [
+            0.25,
+            0.5
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "11",
+          "at_mm": [
+            0.575,
+            -1.45
+          ],
+          "size_mm": [
+            0.25,
+            0.5
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "11",
+          "at_mm": [
+            0.575,
+            1.45
+          ],
+          "size_mm": [
+            0.25,
+            0.5
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            0.0,
+            -0.6
+          ],
+          "size_mm": [
+            1.5,
+            1.0
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            0.0,
+            0.6
+          ],
+          "size_mm": [
+            1.5,
+            1.0
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "model": "${KIPRJMOD}/../../libraries/3dmodels/TI_DRC0010J_VSON-10_3x3mm_P0.5mm.step",
+      "refs": [
+        "U202"
+      ],
+      "saved_instances": [
+        {
+          "sheet": "Service_USB.kicad_sch",
+          "reference": "U202",
+          "dnp": false
+        }
+      ],
+      "symbol_pins": {
+        "1": {
+          "name": "1D+",
+          "type": "bidirectional"
+        },
+        "2": {
+          "name": "1D-",
+          "type": "bidirectional"
+        },
+        "3": {
+          "name": "2D+",
+          "type": "bidirectional"
+        },
+        "4": {
+          "name": "2D-",
+          "type": "bidirectional"
+        },
+        "5": {
+          "name": "GND",
+          "type": "power_in"
+        },
+        "6": {
+          "name": "~{OE}",
+          "type": "input"
+        },
+        "7": {
+          "name": "D-",
+          "type": "bidirectional"
+        },
+        "8": {
+          "name": "D+",
+          "type": "bidirectional"
+        },
+        "9": {
+          "name": "S",
+          "type": "input"
+        },
+        "10": {
+          "name": "VCC",
+          "type": "power_in"
+        },
+        "11": {
+          "name": "EP",
+          "type": "passive"
+        }
+      },
+      "footprint_file": "hardware/libraries/PigeonVision.pretty/TI_DRC0010J_VSON-10_3x3mm_P0.5mm.kicad_mod",
+      "footprint_sha256": "5747174c5209b7afcb45c82c284bd4f3f3d31cd0809bdeac792edf8b5363ebe3",
+      "pad_map": [
+        {
+          "number": "1",
+          "at_mm": [
+            -1.4,
+            -1.0
+          ],
+          "size_mm": [
+            0.6,
+            0.24
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            -1.4,
+            -0.5
+          ],
+          "size_mm": [
+            0.6,
+            0.24
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "3",
+          "at_mm": [
+            -1.4,
+            0.0
+          ],
+          "size_mm": [
+            0.6,
+            0.24
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "4",
+          "at_mm": [
+            -1.4,
+            0.5
+          ],
+          "size_mm": [
+            0.6,
+            0.24
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "5",
+          "at_mm": [
+            -1.4,
+            1.0
+          ],
+          "size_mm": [
+            0.6,
+            0.24
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "6",
+          "at_mm": [
+            1.4,
+            1.0
+          ],
+          "size_mm": [
+            0.6,
+            0.24
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "7",
+          "at_mm": [
+            1.4,
+            0.5
+          ],
+          "size_mm": [
+            0.6,
+            0.24
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "8",
+          "at_mm": [
+            1.4,
+            0.0
+          ],
+          "size_mm": [
+            0.6,
+            0.24
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "9",
+          "at_mm": [
+            1.4,
+            -0.5
+          ],
+          "size_mm": [
+            0.6,
+            0.24
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "10",
+          "at_mm": [
+            1.4,
+            -1.0
+          ],
+          "size_mm": [
+            0.6,
+            0.24
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "11",
+          "at_mm": [
+            0.0,
+            0.0
+          ],
+          "size_mm": [
+            1.65,
+            2.4
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "11",
+          "at_mm": [
+            -0.575,
+            -1.45
+          ],
+          "size_mm": [
+            0.25,
+            0.5
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "11",
+          "at_mm": [
+            -0.575,
+            1.45
+          ],
+          "size_mm": [
+            0.25,
+            0.5
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "11",
+          "at_mm": [
+            0.575,
+            -1.45
+          ],
+          "size_mm": [
+            0.25,
+            0.5
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "11",
+          "at_mm": [
+            0.575,
+            1.45
+          ],
+          "size_mm": [
+            0.25,
+            0.5
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            0.0,
+            -0.6
+          ],
+          "size_mm": [
+            1.5,
+            1.0
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "",
+          "at_mm": [
+            0.0,
+            0.6
+          ],
+          "size_mm": [
+            1.5,
+            1.0
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "models": [
+        {
+          "reference": "${KIPRJMOD}/../../libraries/3dmodels/TI_DRC0010J_VSON-10_3x3mm_P0.5mm.step",
+          "file": "hardware/libraries/3dmodels/TI_DRC0010J_VSON-10_3x3mm_P0.5mm.step",
+          "sha256": "2f62d1352c48ba42f25a1a16ccbffcb3067001887014fe45359ef7de935ec0ce",
+          "offset": [
+            "0",
+            "0",
+            "0"
+          ],
+          "scale": [
+            "1",
+            "1",
+            "1"
+          ],
+          "rotation": [
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "local_model": "${KIPRJMOD}/../../libraries/3dmodels/TI_DRC0010J_VSON-10_3x3mm_P0.5mm.step",
+      "model_sha256": "2f62d1352c48ba42f25a1a16ccbffcb3067001887014fe45359ef7de935ec0ce"
+    },
+    "2N7002KT1G": {
+      "symbol": "PigeonVision:2N7002KT1G",
+      "manufacturer": "onsemi",
+      "mpn": "2N7002KT1G",
+      "digikey": "2N7002KT1GOSCT-ND",
+      "jlc": "C116584",
+      "jlc_snapshot": {
+        "lcsc": "C116584",
+        "name": "onsemi 2N7002KT1G",
+        "model": "2N7002KT1G",
+        "brand": "onsemi",
+        "package": "SOT-23",
+        "category": "MOSFETs",
+        "stock": 153486,
+        "type": "Extended",
+        "price": 0.0379,
+        "description": "-55\u2103~+150\u2103 1 N-channel 2.3V 2.5\u03a9@4.5V 380mA 420mW 45pF 60V 700pC@4.5V N-Channel SOT-23 MOSFETs ROHS",
+        "url": "https://www.lcsc.com/product-detail/mosfets_onsemi-2n7002kt1g_C116584.html",
+        "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1811041153_onsemi-2N7002KT1G_C116584.pdf"
+      },
+      "footprint": "PigeonVision:Onsemi_SOT23_2N7002KT1G",
+      "datasheet": "https://www.onsemi.com/download/data-sheet/pdf/2n7002k-d.pdf",
+      "pins": {
+        "1": {
+          "name": "G",
+          "type": "input"
+        },
+        "2": {
+          "name": "S",
+          "type": "passive"
+        },
+        "3": {
+          "name": "D",
+          "type": "passive"
+        }
+      },
+      "pads": [
+        {
+          "number": "1",
+          "at_mm": [
+            -0.9375,
+            -0.95
+          ],
+          "size_mm": [
+            1.475,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            -0.9375,
+            0.95
+          ],
+          "size_mm": [
+            1.475,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "3",
+          "at_mm": [
+            0.9375,
+            0.0
+          ],
+          "size_mm": [
+            1.475,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "model": "${KIPRJMOD}/../../libraries/3dmodels/Onsemi_SOT23_2N7002KT1G.step",
+      "refs": [
+        "Q201"
+      ],
+      "saved_instances": [
+        {
+          "sheet": "Service_USB.kicad_sch",
+          "reference": "Q201",
+          "dnp": false
+        }
+      ],
+      "symbol_pins": {
+        "1": {
+          "name": "G",
+          "type": "input"
+        },
+        "2": {
+          "name": "S",
+          "type": "passive"
+        },
+        "3": {
+          "name": "D",
+          "type": "passive"
+        }
+      },
+      "footprint_file": "hardware/libraries/PigeonVision.pretty/Onsemi_SOT23_2N7002KT1G.kicad_mod",
+      "footprint_sha256": "7a617a5b965ae0c9241393149eb636f806fa05b9ef96b814682f83d16e7ddfb5",
+      "pad_map": [
+        {
+          "number": "1",
+          "at_mm": [
+            -0.9375,
+            -0.95
+          ],
+          "size_mm": [
+            1.475,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            -0.9375,
+            0.95
+          ],
+          "size_mm": [
+            1.475,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "3",
+          "at_mm": [
+            0.9375,
+            0.0
+          ],
+          "size_mm": [
+            1.475,
+            0.6
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "models": [
+        {
+          "reference": "${KIPRJMOD}/../../libraries/3dmodels/Onsemi_SOT23_2N7002KT1G.step",
+          "file": "hardware/libraries/3dmodels/Onsemi_SOT23_2N7002KT1G.step",
+          "sha256": "dd5d1711204e1d8d26cd11490923bd84340820baa69538c385a4300ec2539bc0",
+          "offset": [
+            "0",
+            "0",
+            "0"
+          ],
+          "scale": [
+            "1",
+            "1",
+            "1"
+          ],
+          "rotation": [
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "local_model": "${KIPRJMOD}/../../libraries/3dmodels/Onsemi_SOT23_2N7002KT1G.step",
+      "model_sha256": "dd5d1711204e1d8d26cd11490923bd84340820baa69538c385a4300ec2539bc0"
+    },
+    "TSM-102-01-L-SV-P-TR": {
+      "symbol": "PigeonVision:Samtec_TSM-102-01-L-SV-P-TR",
+      "manufacturer": "Samtec",
+      "mpn": "TSM-102-01-L-SV-P-TR",
+      "digikey": "612-TSM-102-01-L-SV-P-TRCT-ND",
+      "jlc": "C5266181",
+      "jlc_snapshot": {
+        "lcsc": "C5266181",
+        "name": "Samtec TSM-102-01-L-SV-P-TR",
+        "model": "TSM-102-01-L-SV-P-TR",
+        "brand": "Samtec",
+        "package": "SMD,P=2.54mm(Staggered pins)",
+        "category": "Pin Headers",
+        "stock": 352,
+        "type": "Extended",
+        "price": 1.2908,
+        "description": "-55\u2103~+125\u2103 1 1x2P 2.54mm 2.54mm 2P 5.84mm Black Gold Phosphor bronze Pin Header Surface Mount,Vertical SMD,P=2.54mm(\u4ea4\u9519\u811a) Pin Headers ROHS",
+        "url": "https://www.lcsc.com/product-detail/pin-headers_samtec-tsm-102-01-l-sv-p-tr_C5266181.html",
+        "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2411041616_Samtec-TSM-102-01-L-SV-P-TR_C5266181.pdf"
+      },
+      "footprint": "PigeonVision:Samtec_TSM-102-01_SV_1x02_P2.54mm_SMD",
+      "datasheet": "https://suddendocs.samtec.com/prints/tsm-1xx-xx-xxx-sv-xx-xxx-x-xx-mkt.pdf",
+      "pins": {
+        "1": {
+          "name": "Pin_1",
+          "type": "passive"
+        },
+        "2": {
+          "name": "Pin_2",
+          "type": "passive"
+        }
+      },
+      "pads": [
+        {
+          "number": "1",
+          "at_mm": [
+            1.27,
+            1.46
+          ],
+          "size_mm": [
+            1.27,
+            3.43
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            -1.27,
+            -1.46
+          ],
+          "size_mm": [
+            1.27,
+            3.43
+          ],
+          "type": "smd",
+          "shape": "rect"
+        }
+      ],
+      "model": "${KIPRJMOD}/../../libraries/3dmodels/Samtec_TSM-102-01_SV_1x02_P2.54mm_SMD.step",
+      "refs": [
+        "J202"
+      ],
+      "saved_instances": [
+        {
+          "sheet": "Service_USB.kicad_sch",
+          "reference": "J202",
+          "dnp": false
+        }
+      ],
+      "symbol_pins": {
+        "1": {
+          "name": "Pin_1",
+          "type": "passive"
+        },
+        "2": {
+          "name": "Pin_2",
+          "type": "passive"
+        }
+      },
+      "footprint_file": "hardware/libraries/PigeonVision.pretty/Samtec_TSM-102-01_SV_1x02_P2.54mm_SMD.kicad_mod",
+      "footprint_sha256": "285912459eb5ecbbf334196e42422e1745d1d7f6e612dda80614289ec9c52219",
+      "pad_map": [
+        {
+          "number": "1",
+          "at_mm": [
+            1.27,
+            1.46
+          ],
+          "size_mm": [
+            1.27,
+            3.43
+          ],
+          "type": "smd",
+          "shape": "rect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            -1.27,
+            -1.46
+          ],
+          "size_mm": [
+            1.27,
+            3.43
+          ],
+          "type": "smd",
+          "shape": "rect"
+        }
+      ],
+      "models": [
+        {
+          "reference": "${KIPRJMOD}/../../libraries/3dmodels/Samtec_TSM-102-01_SV_1x02_P2.54mm_SMD.step",
+          "file": "hardware/libraries/3dmodels/Samtec_TSM-102-01_SV_1x02_P2.54mm_SMD.step",
+          "sha256": "75b1f213e36a8ce7ff2941522e4393fbad3c3dc3c744fe9aa9a057576524731f",
+          "offset": [
+            "0",
+            "0",
+            "0"
+          ],
+          "scale": [
+            "1",
+            "1",
+            "1"
+          ],
+          "rotation": [
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "local_model": "${KIPRJMOD}/../../libraries/3dmodels/Samtec_TSM-102-01_SV_1x02_P2.54mm_SMD.step",
+      "model_sha256": "75b1f213e36a8ce7ff2941522e4393fbad3c3dc3c744fe9aa9a057576524731f"
+    },
+    "RC0402FR-075K1L": {
+      "manufacturer": "YAGEO",
+      "mpn": "RC0402FR-075K1L",
+      "digikey": "311-5.10KLRCT-ND",
+      "jlc": "C105872",
+      "jlc_snapshot": {
+        "lcsc": "C105872",
+        "name": "YAGEO RC0402FR-075K1L",
+        "model": "RC0402FR-075K1L",
+        "brand": "YAGEO",
+        "package": "0402",
+        "category": "Chip Resistor - Surface Mount",
+        "stock": 2316817,
+        "type": "Extended",
+        "price": 0.0025,
+        "description": "-55\u2103~+155\u2103 5.1k\u03a9 50V 62.5mW Thick Film Resistor \u00b11% \u00b1100ppm/\u2103 0402 Chip Resistor - Surface Mount ROHS",
+        "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_yageo-rc0402fr-075k1l_C105872.html",
+        "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0402FR-075K1L_C105872.pdf"
+      },
+      "package": "0402",
+      "tolerance": "1%",
+      "symbol": "Device:R",
+      "footprint": "PigeonVision:KiCad_Resistor_SMD_R_0402_1005Metric",
+      "refs": [
+        "R201",
+        "R202"
+      ],
+      "saved_instances": [
+        {
+          "sheet": "Service_USB.kicad_sch",
+          "reference": "R201",
+          "dnp": false
+        },
+        {
+          "sheet": "Service_USB.kicad_sch",
+          "reference": "R202",
+          "dnp": false
+        }
+      ],
+      "symbol_pins": {
+        "1": {
+          "name": "",
+          "type": "passive"
+        },
+        "2": {
+          "name": "",
+          "type": "passive"
+        }
+      },
+      "datasheet": "",
+      "footprint_file": "hardware/libraries/PigeonVision.pretty/KiCad_Resistor_SMD_R_0402_1005Metric.kicad_mod",
+      "footprint_sha256": "cf8cbd679205e8dfa783214e74f6b542be0e96acdf1bbdee9e953d874fb86316",
+      "pad_map": [
+        {
+          "number": "1",
+          "at_mm": [
+            -0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "models": [
+        {
+          "reference": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step",
+          "file": "hardware/libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step",
+          "sha256": "91507e5af4251cb4ef38e04889c9b98da29904432bd83786bba13ae9b605eacb",
+          "offset": [
+            "0",
+            "0",
+            "0"
+          ],
+          "scale": [
+            "1",
+            "1",
+            "1"
+          ],
+          "rotation": [
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "local_model": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step",
+      "model_sha256": "91507e5af4251cb4ef38e04889c9b98da29904432bd83786bba13ae9b605eacb",
+      "pins": {
+        "1": {
+          "name": "",
+          "type": "passive"
+        },
+        "2": {
+          "name": "",
+          "type": "passive"
+        }
+      },
+      "pads": [
+        {
+          "number": "1",
+          "at_mm": [
+            -0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "model": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step"
+    },
+    "RC0402FR-0710KL": {
+      "manufacturer": "YAGEO",
+      "mpn": "RC0402FR-0710KL",
+      "digikey": "311-10.0KLRCT-ND",
+      "jlc": "C60490",
+      "jlc_snapshot": {
+        "lcsc": "C60490",
+        "name": "YAGEO RC0402FR-0710KL",
+        "model": "RC0402FR-0710KL",
+        "brand": "YAGEO",
+        "package": "0402",
+        "category": "Chip Resistor - Surface Mount",
+        "stock": 8030639,
+        "type": "Extended",
+        "price": 0.0023,
+        "description": "-55\u2103~+155\u2103 10k\u03a9 50V 62.5mW Thick Film Resistor \u00b11% \u00b1100ppm/\u2103 0402 Chip Resistor - Surface Mount ROHS",
+        "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_yageo-rc0402fr-0710kl_C60490.html",
+        "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0402FR-0710KL_C60490.pdf"
+      },
+      "package": "0402",
+      "tolerance": "1%",
+      "symbol": "Device:R",
+      "footprint": "PigeonVision:KiCad_Resistor_SMD_R_0402_1005Metric",
+      "refs": [
+        "R203",
+        "R204"
+      ],
+      "saved_instances": [
+        {
+          "sheet": "Service_USB.kicad_sch",
+          "reference": "R203",
+          "dnp": false
+        },
+        {
+          "sheet": "Service_USB.kicad_sch",
+          "reference": "R204",
+          "dnp": false
+        }
+      ],
+      "symbol_pins": {
+        "1": {
+          "name": "",
+          "type": "passive"
+        },
+        "2": {
+          "name": "",
+          "type": "passive"
+        }
+      },
+      "datasheet": "",
+      "footprint_file": "hardware/libraries/PigeonVision.pretty/KiCad_Resistor_SMD_R_0402_1005Metric.kicad_mod",
+      "footprint_sha256": "cf8cbd679205e8dfa783214e74f6b542be0e96acdf1bbdee9e953d874fb86316",
+      "pad_map": [
+        {
+          "number": "1",
+          "at_mm": [
+            -0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "models": [
+        {
+          "reference": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step",
+          "file": "hardware/libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step",
+          "sha256": "91507e5af4251cb4ef38e04889c9b98da29904432bd83786bba13ae9b605eacb",
+          "offset": [
+            "0",
+            "0",
+            "0"
+          ],
+          "scale": [
+            "1",
+            "1",
+            "1"
+          ],
+          "rotation": [
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "local_model": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step",
+      "model_sha256": "91507e5af4251cb4ef38e04889c9b98da29904432bd83786bba13ae9b605eacb",
+      "pins": {
+        "1": {
+          "name": "",
+          "type": "passive"
+        },
+        "2": {
+          "name": "",
+          "type": "passive"
+        }
+      },
+      "pads": [
+        {
+          "number": "1",
+          "at_mm": [
+            -0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "model": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step"
+    },
+    "RC0402FR-071ML": {
+      "manufacturer": "YAGEO",
+      "mpn": "RC0402FR-071ML",
+      "digikey": "311-1.00MLRCT-ND",
+      "jlc": "C138033",
+      "jlc_snapshot": {
+        "lcsc": "C138033",
+        "name": "YAGEO RC0402FR-071ML",
+        "model": "RC0402FR-071ML",
+        "brand": "YAGEO",
+        "package": "0402",
+        "category": "Chip Resistor - Surface Mount",
+        "stock": 1971837,
+        "type": "Extended",
+        "price": 0.0031,
+        "description": "-55\u2103~+155\u2103 1M\u03a9 50V 62.5mW Thick Film Resistor \u00b11% \u00b1100ppm/\u2103 0402 Chip Resistor - Surface Mount ROHS",
+        "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_yageo-rc0402fr-071ml_C138033.html",
+        "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0402FR-071ML_C138033.pdf"
+      },
+      "package": "0402",
+      "tolerance": "1%",
+      "symbol": "Device:R",
+      "footprint": "PigeonVision:KiCad_Resistor_SMD_R_0402_1005Metric",
+      "refs": [
+        "R205"
+      ],
+      "saved_instances": [
+        {
+          "sheet": "Service_USB.kicad_sch",
+          "reference": "R205",
+          "dnp": false
+        }
+      ],
+      "symbol_pins": {
+        "1": {
+          "name": "",
+          "type": "passive"
+        },
+        "2": {
+          "name": "",
+          "type": "passive"
+        }
+      },
+      "datasheet": "",
+      "footprint_file": "hardware/libraries/PigeonVision.pretty/KiCad_Resistor_SMD_R_0402_1005Metric.kicad_mod",
+      "footprint_sha256": "cf8cbd679205e8dfa783214e74f6b542be0e96acdf1bbdee9e953d874fb86316",
+      "pad_map": [
+        {
+          "number": "1",
+          "at_mm": [
+            -0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "models": [
+        {
+          "reference": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step",
+          "file": "hardware/libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step",
+          "sha256": "91507e5af4251cb4ef38e04889c9b98da29904432bd83786bba13ae9b605eacb",
+          "offset": [
+            "0",
+            "0",
+            "0"
+          ],
+          "scale": [
+            "1",
+            "1",
+            "1"
+          ],
+          "rotation": [
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "local_model": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step",
+      "model_sha256": "91507e5af4251cb4ef38e04889c9b98da29904432bd83786bba13ae9b605eacb",
+      "pins": {
+        "1": {
+          "name": "",
+          "type": "passive"
+        },
+        "2": {
+          "name": "",
+          "type": "passive"
+        }
+      },
+      "pads": [
+        {
+          "number": "1",
+          "at_mm": [
+            -0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            0.51,
+            0.0
+          ],
+          "size_mm": [
+            0.54,
+            0.64
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "model": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Resistor_SMD_R_0402_1005Metric.step"
+    },
+    "CL05B104KO5NNNC": {
+      "manufacturer": "Samsung Electro-Mechanics",
+      "digikey": "1276-1001-1-ND",
+      "jlc": "C1525",
+      "package": "0402",
+      "value": "100nF",
+      "rating": "16V X7R 10%",
+      "jlc_snapshot": {
+        "lcsc": "C1525",
+        "name": "Samsung Electro-Mechanics CL05B104KO5NNNC",
+        "model": "CL05B104KO5NNNC",
+        "brand": "Samsung Electro-Mechanics",
+        "package": "0402",
+        "category": "Multilayer Ceramic Capacitors MLCC - SMD/SMT",
+        "stock": 21680464,
+        "type": "Basic",
+        "price": 0.0045,
+        "description": "100nF 16V X7R \u00b110% 0402 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
+        "url": "https://www.lcsc.com/product-detail/multilayer-ceramic-capacitors-mlcc-smd-smt_samsung-electro-mechanics-cl05b104ko5nnnc_C1525.html",
+        "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Samsung-Electro-Mechanics-CL05B104KO5NNNC_C1525.pdf"
+      },
+      "mpn": "CL05B104KO5NNNC",
+      "symbol": "Device:C",
+      "footprint": "PigeonVision:KiCad_Capacitor_SMD_C_0402_1005Metric",
+      "refs": [
+        "C201",
+        "C202"
+      ],
+      "saved_instances": [
+        {
+          "sheet": "Service_USB.kicad_sch",
+          "reference": "C201",
+          "dnp": false
+        },
+        {
+          "sheet": "Service_USB.kicad_sch",
+          "reference": "C202",
+          "dnp": false
+        }
+      ],
+      "symbol_pins": {
+        "1": {
+          "name": "",
+          "type": "passive"
+        },
+        "2": {
+          "name": "",
+          "type": "passive"
+        }
+      },
+      "datasheet": "",
+      "footprint_file": "hardware/libraries/PigeonVision.pretty/KiCad_Capacitor_SMD_C_0402_1005Metric.kicad_mod",
+      "footprint_sha256": "0d09126772250c149dbdcec23630d1915a75ce58a01bbf75b9123d8b395ced74",
+      "pad_map": [
+        {
+          "number": "1",
+          "at_mm": [
+            -0.48,
+            0.0
+          ],
+          "size_mm": [
+            0.56,
+            0.62
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            0.48,
+            0.0
+          ],
+          "size_mm": [
+            0.56,
+            0.62
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "models": [
+        {
+          "reference": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Capacitor_SMD_C_0402_1005Metric.step",
+          "file": "hardware/libraries/3dmodels/KiCad_Capacitor_SMD_C_0402_1005Metric.step",
+          "sha256": "03e44c4b2b727b8d4b6b1fd598cbd12dd5e614f1dfeefa96a92a07e3a3b312a2",
+          "offset": [
+            "0",
+            "0",
+            "0"
+          ],
+          "scale": [
+            "1",
+            "1",
+            "1"
+          ],
+          "rotation": [
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "local_model": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Capacitor_SMD_C_0402_1005Metric.step",
+      "model_sha256": "03e44c4b2b727b8d4b6b1fd598cbd12dd5e614f1dfeefa96a92a07e3a3b312a2",
+      "pins": {
+        "1": {
+          "name": "",
+          "type": "passive"
+        },
+        "2": {
+          "name": "",
+          "type": "passive"
+        }
+      },
+      "pads": [
+        {
+          "number": "1",
+          "at_mm": [
+            -0.48,
+            0.0
+          ],
+          "size_mm": [
+            0.56,
+            0.62
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        },
+        {
+          "number": "2",
+          "at_mm": [
+            0.48,
+            0.0
+          ],
+          "size_mm": [
+            0.56,
+            0.62
+          ],
+          "type": "smd",
+          "shape": "roundrect"
+        }
+      ],
+      "model": "${KIPRJMOD}/../../libraries/3dmodels/KiCad_Capacitor_SMD_C_0402_1005Metric.step"
+    }
+  },
+  "models": {
+    "TI_DRC0010J_VSON-10_3x3mm_P0.5mm": {
+      "type": "drawing-derived simplified envelope; not manufacturer STEP",
+      "source": "https://www.ti.com/lit/ds/symlink/ts3usb221.pdf",
+      "notes": "3.0 mm nominal body; 1.0 mm maximum height; simplified contacts, no resin bevels or supplier geometry claim.",
+      "bounds_mm": [
+        -1.5000001,
+        -1.5000001,
+        -1e-07,
+        1.5000001,
+        1.5000001,
+        1.0000001
+      ]
+    },
+    "Samtec_TSM-102-01_SV_1x02_P2.54mm_SMD": {
+      "type": "drawing-derived simplified envelope; not manufacturer STEP",
+      "source": "https://suddendocs.samtec.com/prints/tsm-1xx-xx-xxx-sv-xx-xxx-x-xx-mkt.pdf",
+      "notes": "Nominal base2.54x5.08, base top2.51, post5.84; total8.35. PNP pickup pad removed after assembly; model omits pad, lead bend radii and mould reliefs.",
+      "bounds_mm": [
+        -2.5400001,
+        -2.6400001,
+        -1e-07,
+        2.5400001,
+        2.6400001,
+        8.350000099999999
+      ]
+    },
+    "USB_C_Receptacle_GCT_USB4105_GF_A_16P": {
+      "type": "KiCad stock STEP, copied locally",
+      "bounds_mm": [
+        -4.470000195818455,
+        -3.6750001000000005,
+        -0.9500001,
+        4.470000195818455,
+        4.105000100000001,
+        3.3100001000000003
+      ]
+    },
+    "Onsemi_SOT23_2N7002KT1G": {
+      "type": "KiCad stock STEP, copied locally",
+      "bounds_mm": [
+        -1.2500001,
+        -1.5000001000000003,
+        -1e-07,
+        1.2500001,
+        1.5000001000000003,
+        1.2000001
+      ]
+    }
+  },
+  "manufacturer_drawing_revision": {
+    "usb4105": "B4 18/12/23",
+    "ts3usb221": "SCDS220M revised November2024 DRC0010J drawing4218878/B",
+    "header_land": "SamtecRevD22Feb2017",
+    "header_print": "SamtecRevCG"
+  },
+  "assembly_note": "Catalog snapshots are not reserved inventory. USB connector has through-hole shell stakes; in-house selective/hand stake solder may be needed after SMT reflow.",
+  "recovery_accessory": {
+    "mpn": "SNT-100-BK-G",
+    "manufacturer": "Samtec",
+    "digikey": "SAM8858-ND",
+    "source": "https://www.samtec.com/products/snt-100-bk-g",
+    "datasheet": "https://suddendocs.samtec.com/prints/snt-100-xx-x-x-mkt.pdf",
+    "note": "2.54mm shunt for0.64mm square post; off-board accessory; install before USB recovery, remove for normalboot."
+  },
+  "metadata_source": "Actual saved schematic fields and assigned local footprints/models. Canonical DigiKey Part # takes precedence over legacy DigiKey Part Number."
+}
