@@ -18,6 +18,7 @@ from .presentation import GroundPresentation, message_size
 from .transport import H264Normalizer, METADATA_PID, VIDEO_PIDS, pts_microseconds, read_metadata, unpack_message
 from .ts_input import TsInput
 from .recording import TransportRecorder
+from .radio_health import RadioMonitor
 
 LOG = logging.getLogger(__name__)
 STATIC = Path(__file__).parent / "static"
@@ -50,6 +51,7 @@ class Receiver:
                         "timestamp_discontinuities": 0,
                         "transport_discontinuities": {"A": 0, "B": 0, "metadata": 0, "other": 0}}
         self.state = "waiting"
+        self.radio_monitor = None
         if record_transport is not None and (self.replay or urlparse(source).scheme != "udp"):
             raise ValueError("--record-transport requires a live UDP source")
         self.recorder = TransportRecorder(record_transport, on_error=self._recording_error) if record_transport is not None else None
@@ -68,6 +70,7 @@ class Receiver:
                 "transport_recording": self.recorder.status() if self.recorder else None,
                 "first_unit_delay_s": None if self.first_unit_at is None else self.first_unit_at - self.source_opened_at,
                 "metrics": self.metrics, "synchronization": "Exposure synchronization is unverified",
+                **({"radio_health": self.radio_monitor.status()} if self.radio_monitor else {}),
                 **extra}
 
     def start(self) -> None:
@@ -373,12 +376,15 @@ class ViewerConnection:
 
 
 def create_app(source: str, *, calibration: str | None = None,
-               replay: bool | None = None, record_transport: str | None = None) -> web.Application:
+               replay: bool | None = None, record_transport: str | None = None,
+               radio_monitor_url: str | None = None) -> web.Application:
     app = web.Application(client_max_size=16384)
     if calibration is not None:
         with open(calibration, encoding="utf-8") as handle:
             app[CALIBRATION] = validate_calibration(json.load(handle))
+    monitor = RadioMonitor(radio_monitor_url) if radio_monitor_url else None
     app[RECEIVER] = Receiver(source, replay, record_transport=record_transport)
+    app[RECEIVER].radio_monitor = monitor
     app[CLIENTS] = set()
 
     async def index(request):
@@ -546,7 +552,16 @@ def create_app(source: str, *, calibration: str | None = None,
     async def lifecycle(application):
         application[RECEIVER].start()
         task = asyncio.create_task(pump())
+        monitor = application[RECEIVER].radio_monitor
+        monitor_task = asyncio.create_task(monitor.run(
+            lambda: broadcast(application[RECEIVER].status()))) if monitor else None
         yield
+        if monitor_task:
+            monitor_task.cancel()
+            try:
+                await monitor_task
+            except asyncio.CancelledError:
+                pass
         await asyncio.to_thread(application[RECEIVER].stop)
         task.cancel()
         try:
@@ -570,8 +585,10 @@ def create_app(source: str, *, calibration: str | None = None,
 
 def run(source: str, *, host: str = "127.0.0.1", port: int = 8768,
         calibration: str | None = None, open_browser: bool = True,
-        replay: bool | None = None, record_transport: str | None = None) -> None:
-    app = create_app(source, calibration=calibration, replay=replay, record_transport=record_transport)
+        replay: bool | None = None, record_transport: str | None = None,
+        radio_monitor_url: str | None = None) -> None:
+    app = create_app(source, calibration=calibration, replay=replay, record_transport=record_transport,
+                     radio_monitor_url=radio_monitor_url)
     if open_browser:
         async def launch(application):
             asyncio.get_running_loop().call_later(.5, webbrowser.open, f"http://{host}:{port}/")

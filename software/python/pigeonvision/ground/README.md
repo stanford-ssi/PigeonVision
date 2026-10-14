@@ -21,72 +21,77 @@ Open `http://127.0.0.1:8768/` in desktop Chrome. Python API:
 
 ## Radio input
 
-The primary field computer is the M4 Pro MacBook: radio decoding, viewing,
-recording and broadcast. Keep Linux compatible without requiring a desktop or
-RTX 3070. GNU Radio runs separately in its own environment; radio reception and
-full-rate decoding remain untested. Upscaling and frame interpolation are
-optional later work, subject to measured laptop headroom.
+The M4 Pro MacBook runs radio decoding and the viewer in separate environments.
 
 ```text
-Ground antenna → E200 RX1 → wired Gigabit Ethernet → ground computer
-  gr-dvbs2rx → TSDuck → UDP :5000 → PigeonVision viewer / recording
+Antenna → E200 RX1 → Ethernet → DVB-S2 decoder → TSDuck → UDP :5000 → viewer
 ```
 
-Use the E200's Pluto/IIO firmware. USB-C provides serial maintenance; Ethernet
-carries I/Q. Its documented default address is `192.168.1.10`; a direct-connected
-computer can use an otherwise unused `192.168.1.100/24` Ethernet interface. A
-MacBook needs a USB-C/Thunderbolt Gigabit Ethernet adapter.
+Defaults are in [radio/profile.py](../radio/profile.py): 12 MS/s receive, 8 Msymbol/s,
+QPSK 2/3, normal frames, pilots, roll-off 0.20. The 9 Mb/s TS target is unchanged.
+The waveform occupies about 9.6 MHz; receiver I/Q consumes 384 Mb/s before Ethernet
+overhead. USB-C is serial maintenance; Ethernet carries I/Q.
 
-| Setting | Baseline |
-| --- | --- |
-| Waveform | DVB-S2 CCM, single stream, QPSK 2/3 |
-| Frames | Normal, pilots on, Gold code 0 |
-| Symbol rate / roll-off | 8 Msymbol/s / 0.20 |
-| Nominal occupied bandwidth | 9.6 MHz |
-| E200 receive sampling | 16 Mcomplex samples/s |
-| Transport | 9 Mb/s TS; A/B video PIDs 256/257, JSON PID 258 |
+Install the native receiver from the checked-in dependency lock:
 
-I/Q alone uses `16e6 × 2 × 16 = 512 Mb/s` before network overhead. The nominal
-9.6 MHz waveform fits the AD9363 model's 20 MHz analog bandwidth. Sustained IIO
-transfer and CPU decoding still need measurement; neither proves RF link margin.
+```sh
+bash software/tools/setup_e200_native.sh
+export PATH="$PWD/output/e200-native/env/bin:$PATH"
+bash software/tools/e200_receive.sh 1280000000
+```
 
-The launcher targets [gr-dvbs2rx](https://github.com/igorauad/gr-dvbs2rx/tree/130c31576cfeebb1a5842b24ccaf4a561b6a9990)
-at `130c31576cfeebb1a5842b24ccaf4a561b6a9990`, GNU Radio 3.10 with
-`gnuradio.iio.fmcomms2_source_fc32`, compatible libiio/libad9361, and
-[TSDuck](https://tsduck.io/). The receiver also imports PyQt5 and GNU Radio UHD.
-Keep its Python installation separate from the viewer's virtual environment.
-Use [conda-forge GNU Radio](https://github.com/conda-forge/gnuradio-feedstock/blob/main/recipe/meta.yaml)
-as the common dependency route: its IIO packages cover Linux and native Apple
-Silicon. Stock Homebrew GNU Radio omits IIO. Apply
-[`gr-dvbs2rx-arm64.patch`](../../../platform/gr-dvbs2rx-arm64.patch) to the pinned
-receiver source before building; it removes a 32-bit-only compiler flag on
-Apple's `arm64` target while retaining NEON. Patch application was checked;
-the complete environments and receiver builds remain unverified.
+Use the actual test frequency. The factory E200 address is `192.168.1.10`;
+configure the host Ethernet subnet or set `E200_URI` to its reachable address.
+`RX_GAIN_DB`, `RX_SAMPLE_RATE`, `RX_BUFFER_SAMPLES` and `TS_DEST` override receive
+settings. `E200_PYTHON` selects the native interpreter; `--dry-run` opens no radio.
 
-From the repository root, start the viewer, then receive in a second terminal:
+Start the viewer from its own environment, with a new recording path:
 
 ```sh
 pv view udp://127.0.0.1:5000 --record-transport output/radio-001/transport.ts \
   --calibration software/calibration/bench-2026-10-02/calibration.json
-RX_FREQ_HZ=REPLACE_WITH_BENCH_FREQUENCY_IN_HZ
-bash software/tools/e200_receive.sh "$RX_FREQ_HZ"
 ```
 
-Use a new recording path each run. `E200_URI`, `RX_GAIN_DB` and `TS_DEST` override
-the launcher defaults; append `--dry-run` to inspect commands. Gain starts at
-0 dB for bench setup and must be adjusted to the received signal. TSDuck forwards
-seven original TS packets per UDP datagram without transcoding or removing
-telemetry. Initial preload and input batches are seven packets to avoid the
-default multi-megabyte startup buffer. Receiver diagnostics stay on stderr.
+The launcher applies the identified Pluto driver's TX shutdown guard before RX
+configuration and supervises both child processes. A peer failure stops the
+pipeline. Capture uses a dedicated reader and bounded queue; detected overflow
+or a full queue is an error. TSDuck forwards original TS packets without transcoding.
+Other radio clients or a reboot can invalidate the shutdown state.
 
-Next: decode a bounded RP2350 reference waveform offline, then measure real-time
-decoding on the MacBook. When the E200 arrives, check sustained 16 MS/s IIO
-capture before adding decoding, viewing and recording. RF lock/SNR/FEC status
-still needs integration into the viewer; the current HUD only knows TS health.
+[Bench results](../../../bench-notes/README.md#e200-receiver) distinguish live noise capture from
+synthetic packet recovery. Known-signal RF reception remains unverified.
 
-References: [E200 setup](https://antsdr-docs.microphase.cn/en/latest/device_and_usage_manual/ANTSDR_E_Series_Module/ANTSDR_E200_Reference_Manual/AntsdrE200_Unpacking_examination.html),
-[receiver installation](https://igorauad.github.io/gr-dvbs2rx/docs/installation.html),
-[receiver interfaces](https://igorauad.github.io/gr-dvbs2rx/docs/usage.html).
+File-only checks, each with a new output directory:
+
+```sh
+python software/tools/e200_reference_check.py --reference-root /path/to/RP2350_IQ_Benchmark \
+  --seconds 3 --output-dir output/reference-001
+python software/tools/e200_reference_check.py --reference-root /path/to/RP2350_IQ_Benchmark \
+  --source-mode prefetch --seconds 3 --output-dir output/prefetch-001
+```
+
+`python software/tools/e200_capture_check.py --seconds 10 --output output/capture-001.json` checks raw
+transport at the same default rate/buffer sizes. It discards I/Q and cannot prove
+sample continuity; it does not run the decoder or duplicate its filter setup.
+
+## Optional radio diagnostics
+
+`pv view udp://127.0.0.1:5000 --radio-monitor-url http://127.0.0.1:9004/`
+adds receiver lock, post-decoder SNR in dB and cumulative FEC frame/error counts
+and FER to `/health` and the receiver diagnostics drawer. Add
+`--record-transport output/session/transport.ts` to record the received TS.
+The monitor is separate from the TS input and flight telemetry.
+
+The decoder must separately enable its native `--mon-server --mon-port 9004`;
+the launcher does not enable it. Upstream binds this unauthenticated HTTP server
+to all interfaces; restrict access on the receiving computer before enabling it.
+The adapter waits one second between polls, with a 0.75 s request timeout.
+`current` means a valid
+monitor reply arrived within three seconds, not that RF samples or video advance.
+Failed polls or older samples mask lock, SNR and FER; historical cumulative frame
+counts remain visible. An unlocked reply also hides retained SNR/FER estimates.
+Sample age measures local monitor receipt and is not video latency. This optional
+monitor is not saved in the TS recording and should describe the live receiver.
 
 ## Operator and audience
 

@@ -1,2 +1,4 @@
 # Preserve the manufacturer sources and licenses byte for byte.
 software/flight/vendor/** -whitespace
+# Unified diffs preserve blank context lines as a single space.
+software/platform/*.patch whitespace=-blank-at-eol,-blank-at-eof

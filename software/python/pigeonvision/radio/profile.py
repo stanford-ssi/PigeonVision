@@ -1,0 +1,16 @@
+"""Operating profile shared by the E200 receiver and its checks."""
+
+URI = "ip:192.168.1.10"
+TS_DEST = "127.0.0.1:5000"
+SAMPLE_RATE = 12_000_000
+BUFFER_SAMPLES = 262_144
+KERNEL_BUFFERS = 16
+QUEUE_BLOCKS = 8
+SYMBOL_RATE = 8_000_000
+ROLLOFF = 0.20
+MODCOD = "QPSK2/3"
+FRAME_SIZE = "normal"
+PILOTS = "on"
+GOLD_CODE = 0
+MULTISTREAM = "off"
+TS_BITRATE = 9_000_000

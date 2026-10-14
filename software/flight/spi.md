@@ -57,7 +57,7 @@ autonomous digital output, then READY. The existing `iqbench`/`pvtx` bench path
 remains available. USB `status` and `stop` work during flight output; a new CM5
 SPI session still requires a coordinated transmitter restart.
 
-The [supervisor comparison](../bench-notes/flight-startup.json) uses real cameras
+The [supervisor comparison](../bench-notes/README.md#flight-startup) uses real cameras
 and simulated carrier/FC data over UDP, not SPI. The final 120-second run delivered
 30 fps per camera, all 7,201 encoded frames and all 28,206 sensor samples. No
 transport drops, continuity errors or late video packets occurred; minimum
