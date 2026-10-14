@@ -189,7 +189,10 @@ without calibration; panorama, perspective and coverage views require a Mei
 bundle. Missing cameras never become simulator imagery.
 
 On a live reconnect, cached images are marked held and cached telemetry stays
-expired. New arrivals restore live status; paused replay is unchanged.
+expired. Queued continuation retains its receiver age through delivery and
+decoding, so catching up cannot refresh a stopped source. New arrivals restore
+live status; paused replay is unchanged. This age excludes upstream RF and
+network delay and is not an end-to-end latency measurement.
 
 In raw views, use the 1–8× slider or wheel to zoom and drag to pan. At 1× the full
 transmitted rectangle fits. `Reset view` resets that camera's zoom/centre but
@@ -356,8 +359,17 @@ Browser checks use Chrome/Playwright. `test_ground_browser.cjs` and
 `test_ground_shader.cjs` need a local test viewer. The focus, layout, colour-app
 and telemetry browser tests route local assets with mocked WebSockets.
 `test_ground_recovery_browser.cjs` checks decoder failures;
-`test_ground_bootstrap_browser.cjs` checks cached/live reconnect boundaries.
-Both use mocked transport and real browser video frames.
+`test_ground_bootstrap_browser.cjs` checks cached/live reconnect boundaries,
+including a source stopping during slow catch-up. Both share a local fixture
+with mocked transport/decoder and real browser video frames. CI runs these on
+pull requests and main. From `software/`:
+
+```sh
+npm ci
+npx playwright install chromium
+PV_TEST_BROWSER=chromium npm run test:browser
+```
+
 `test_ground_focus.cjs`, `test_ground_errors.cjs`, `test_ground_mission.cjs` and
 `test_ground_navigation.cjs` run offline in Node. Fixtures are synthetic;
 these checks do not qualify real optics or hardware.

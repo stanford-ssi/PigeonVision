@@ -6,15 +6,16 @@ import queue
 import socket
 import threading
 import time
+from types import SimpleNamespace
 
 import av
 from aiohttp import ClientSession, WSMsgType, web
 import numpy as np
 import pytest
 
-from pigeonvision.ground.server import CLIENTS, RECEIVER, Receiver, create_app
+from pigeonvision.ground.server import CLIENTS, PRESENTATION, RECEIVER, Receiver, create_app, delivery_message
 from pigeonvision.ground.transport import (
-    H264Normalizer, START_CODE, annexb_nals, pts_microseconds, unpack_message,
+    AccessUnit, H264Normalizer, START_CODE, annexb_nals, pts_microseconds, unpack_message,
 )
 from pigeonvision.ground.ts_input import ContinuityAudit
 
@@ -610,3 +611,96 @@ def test_ongoing_replay_follows_bootstrap_snapshot_without_missing_or_reordered_
         finally:
             await runner.cleanup()
     asyncio.run(scenario())
+
+
+def test_live_continuation_preserves_receiver_age_through_slow_bootstrap(monkeypatch):
+    clock = [100.0]
+    # Keep asyncio's real clock independent of the receiver clock under test.
+    monkeypatch.setattr("pigeonvision.ground.server.time", SimpleNamespace(monotonic=lambda: clock[0]))
+
+    async def scenario():
+        app = create_app("udp://127.0.0.1:5000")
+        receiver = app[RECEIVER]
+        monkeypatch.setattr(receiver, "start", lambda: None)
+        cache = app[PRESENTATION].cache
+        cache.accept({"type": "metadata", "record": {"type": "session", "session_id": "one"}})
+        cache.accept(AccessUnit("A", 0, True, "avc1.42001f", b"cached").encode())
+        runner = web.AppRunner(app)
+        await runner.setup()
+        site = web.TCPSite(runner, "127.0.0.1", 0)
+        await site.start()
+        url = f"http://127.0.0.1:{site._server.sockets[0].getsockname()[1]}/ws"
+
+        async def receive(ws):
+            message = await ws.receive(timeout=3)
+            assert message.type in (WSMsgType.TEXT, WSMsgType.BINARY), message
+            if message.type == WSMsgType.BINARY:
+                return unpack_message(message.data)[0]
+            return json.loads(message.data)
+
+        def source_pair(pts):
+            receiver._put({"type": "metadata", "record": {"type": "health", "session_id": "one", "pts_us": pts}})
+            receiver._put(AccessUnit("A", pts, False, "avc1.42001f", b"continuation").encode())
+
+        try:
+            async with ClientSession() as client, client.ws_connect(url) as ws:
+                while True:
+                    held = await receive(ws)
+                    if held["type"] == "bootstrap_checkpoint":
+                        break
+                source_pair(1000)
+                for _ in range(100):
+                    if len(cache.video["A"]) == 2:
+                        break
+                    await asyncio.sleep(.01)
+                assert len(cache.video["A"]) == 2
+                # The source stops while the joining viewer still decodes its
+                # snapshot. A send must not replace the original receipt time.
+                clock[0] = 104.1
+                await ws.send_json({"type": "bootstrap_ack", "id": held["id"], "sequence": held["sequence"]})
+                continuation = []
+                while True:
+                    value = await receive(ws)
+                    if value["type"] in {"metadata", "frame"}:
+                        continuation.append(value)
+                    elif value["type"] == "bootstrap_checkpoint":
+                        await ws.send_json({"type": "bootstrap_ack", "id": value["id"], "sequence": value["sequence"]})
+                    elif value["type"] == "bootstrap_end":
+                        break
+                assert {value["type"] for value in continuation} == {"metadata", "frame"}
+                assert all(value["received_age_ms"] == pytest.approx(4100) for value in continuation)
+                # A genuinely new arrival retains a new receipt origin.
+                clock[0] = 105.0
+                source_pair(2000)
+                for _ in range(2):
+                    value = await receive(ws)
+                    assert value["type"] in {"metadata", "frame"}
+                    assert value["received_age_ms"] == 0
+        finally:
+            await runner.cleanup()
+
+    asyncio.run(scenario())
+
+
+def test_receiver_queue_wait_is_included_without_changing_plain_messages(monkeypatch):
+    clock = [100.0]
+    monkeypatch.setattr("pigeonvision.ground.server.time", SimpleNamespace(monotonic=lambda: clock[0]))
+    receiver = Receiver("udp://127.0.0.1:5000")
+    metadata = {"type": "metadata", "record": {"type": "health", "pts_us": 1000}}
+    assert receiver._put(metadata)
+    clock[0] = 104.0
+    message, received_at = receiver.messages.get_received(block=False)
+    assert message is metadata and received_at == 100.0
+    wire = delivery_message(message, received_at)
+    assert wire["received_age_ms"] == 4000
+    assert wire["record"] is metadata["record"]
+    assert "received_age_ms" not in metadata, "Sending must not mutate cached or queued records"
+    receiver.messages.task_done()
+    # Plain consumers, get_nowait and Queue task accounting keep their normal
+    # behavior; timestamps are only exposed by the timed consumer.
+    unit = AccessUnit("A", 1000, True, "avc1.42001f", b"unchanged payload").encode()
+    assert receiver._put(unit)
+    assert receiver.messages.get_nowait() == unit
+    receiver.messages.task_done()
+    assert receiver.messages.unfinished_tasks == 0
+    receiver.messages.join()

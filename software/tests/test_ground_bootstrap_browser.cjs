@@ -1,66 +1,15 @@
-// Late joins show cached pixels without making a stopped live source current.
-const { chromium } = require("playwright");
+// Bootstrap freshness with local assets and mocked transport.
 const assert = require("node:assert/strict");
-const fs = require("node:fs");
-const path = require("node:path");
-const assets = path.resolve(__dirname, "../python/pigeonvision/ground/static");
+const { openGroundFixture } = require("./browser/ground_fixture.cjs");
 
 (async () => {
-  const browser = await chromium.launch({ channel: "chrome", headless: true, args: ["--enable-gpu"] });
+  const fixture = await openGroundFixture({ clock: true });
+  const { browser, page, errors, emit, snapshot } = fixture;
   try {
-    const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
-    const errors = [];
-    page.on("pageerror", error => errors.push(error.message));
-    await page.route("http://127.0.0.1:8773/**", route => {
-      const resource = new URL(route.request().url()).pathname;
-      const file = resource === "/" ? "index.html" : resource.replace(/^\/static\//, "");
-      if (file === "favicon.ico") return route.fulfill({ status: 204 });
-      if (file.includes("..") || !fs.existsSync(path.join(assets, file))) return route.abort();
-      const contentType = file.endsWith(".js") ? "application/javascript" : file.endsWith(".css") ? "text/css" : file.endsWith(".ttf") ? "font/ttf" : file.endsWith(".png") ? "image/png" : "text/html";
-      return route.fulfill({ body: fs.readFileSync(path.join(assets, file)), contentType });
-    });
-    await page.addInitScript(() => {
-      window.testSent = [];
-      window.VideoDecoder = class {
-        static async isConfigSupported(config) { return { supported: true, config }; }
-        constructor({ output }) { this.output = output; this.state = "unconfigured"; this.decodeQueueSize = 0; }
-        configure() { this.state = "configured"; }
-        close() { this.state = "closed"; }
-        decode(chunk) {
-          const source = new OffscreenCanvas(64, 64), context = source.getContext("2d");
-          context.fillStyle = "rgb(80,120,160)";
-          context.fillRect(0, 0, 64, 64);
-          const frame = new VideoFrame(source, { timestamp: chunk.timestamp });
-          queueMicrotask(() => { if (this.state === "closed") frame.close(); else this.output(frame); });
-        }
-      };
-      window.WebSocket = class {
-        static OPEN = 1;
-        constructor() {
-          this.readyState = 1;
-          window.testSocket = this;
-          queueMicrotask(() => { this.onopen?.(); this.onmessage?.({ data: JSON.stringify({ type: "control_owner", can_control: true }) }); });
-        }
-        send(value) { window.testSent.push(JSON.parse(value)); }
-        close() { this.readyState = 3; this.onclose?.(); }
-      };
-    });
-    await page.goto("http://127.0.0.1:8773/");
-    await page.waitForFunction(() => window.pigeonGround?.snapshot().connected);
+    const { frame } = fixture;
     await page.locator("#controls-toggle").click();
     await page.locator("#operator-controls").waitFor({ state: "visible" });
     await page.locator("#advanced-controls > summary").click();
-    const emit = value => page.evaluate(value => window.testSocket.onmessage({ data: JSON.stringify(value) }), value);
-    const snapshot = () => page.evaluate(() => window.pigeonGround.snapshot());
-    const frame = (name, pts, keyframe = false) => page.evaluate(({ name, pts, keyframe }) => {
-      const header = new TextEncoder().encode(JSON.stringify({ type: "frame", camera_id: name,
-        timestamp_us: pts, keyframe, codec: "avc1.42001f" }));
-      const bytes = new Uint8Array(4 + header.length + 1);
-      new DataView(bytes.buffer).setUint32(0, header.length);
-      bytes.set(header, 4);
-      bytes[bytes.length - 1] = 1;
-      window.testSocket.onmessage({ data: bytes.buffer });
-    }, { name, pts, keyframe });
     const camera = name => ({ image_size: [64, 64], crop: [0, 0, 64, 64], output_size: [64, 64],
       K: [[32, 0, 31.5], [0, 32, 31.5], [0, 0, 1]], D: [0, 0, 0, 0], xi: 1,
       flip_x: false, flip_y: true, max_theta_deg: null,
@@ -110,17 +59,74 @@ const assets = path.resolve(__dirname, "../python/pigeonvision/ground/static");
     assert.equal((await snapshot()).pair.cached, false, "Genuine arrivals before bootstrap_end retain live currency");
     await emit({ type: "bootstrap_end", id: 1 });
 
-    await emit(status(true, 2));
-    await emit({ type: "bootstrap_start", id: 2, metadata: metadata("replay") });
+    // The source stops after queuing continuation, while three individually
+    // bounded decode checkpoints take longer than telemetry's freshness window.
+    await emit(status(false, 2));
+    await emit({ type: "bootstrap_start", id: 2, metadata: metadata("slow") });
+    const queuedAt = await page.evaluate(() => performance.now());
+    for (let sequence = 1; sequence <= 3; sequence++) {
+      await page.evaluate(() => { window.testHoldDecodeOutputs = true; });
+      await frame("A", sequence * 1000, sequence === 1);
+      await frame("B", sequence * 1000, sequence === 1);
+      await emit({ type: "bootstrap_checkpoint", id: 2, sequence });
+      await page.waitForFunction(() => window.testHeldDecodeOutputs.length === 2);
+      await page.clock.runFor(1200);
+      assert.equal(await page.evaluate(sequence => window.testSent.some(value =>
+        value.type === "bootstrap_ack" && value.id === 2 && value.sequence === sequence), sequence), false);
+      await page.evaluate(() => {
+        window.testHoldDecodeOutputs = false;
+        for (const output of window.testHeldDecodeOutputs.splice(0)) output();
+      });
+      await page.clock.runFor(20);
+      await page.waitForFunction(sequence => window.testSent.some(value =>
+        value.type === "bootstrap_ack" && value.id === 2 && value.sequence === sequence), sequence);
+    }
+    await emit({ type: "bootstrap_snapshot_end", id: 2 });
+    const age = await page.evaluate(start => performance.now() - start, queuedAt);
+    assert.ok(age > 3500);
+    await emit({ ...health("slow", 4000), received_age_ms: age });
+    await emit({ ...pressure("slow", 4000), received_age_ms: age });
+    for (const name of ["A", "B"]) await frame(name, 4000, false, { received_age_ms: age });
+    await emit({ type: "bootstrap_checkpoint", id: 2, sequence: 4 });
+    await page.waitForFunction(() => window.testSent.some(value =>
+      value.type === "bootstrap_ack" && value.id === 2 && value.sequence === 4));
+    await emit({ type: "bootstrap_end", id: 2 });
+    await page.clock.runFor(250);
+    assert.ok((await snapshot()).presentation.frame.frameAgeMs > 3500, "Draining continuation cannot refresh old video");
+    assert.equal((await snapshot()).station.mission.pressureFresh, false);
+    assert.equal((await snapshot()).station.mission.phase, "UNKNOWN");
+    assert.match(await page.locator("#overlay").textContent(), /stale/i);
+    assert.match(await page.locator("#flight-telemetry").textContent(), /stale/);
+
+    await emit(health("slow", 5000));
+    await emit(pressure("slow", 5000));
+    for (const name of ["A", "B"]) await frame(name, 5000);
+    await page.waitForFunction(() => window.pigeonGround.snapshot().station.mission.pressureFresh);
+    assert.ok((await snapshot()).presentation.frame.frameAgeMs < 1000);
+    assert.equal((await snapshot()).station.mission.phase, "PAD");
+
+    // Decoder work also consumes freshness time, even after bootstrap ends.
+    await page.evaluate(() => { window.testHoldDecodeOutputs = true; });
+    for (const name of ["A", "B"]) await frame(name, 6000);
+    await page.waitForFunction(() => window.testHeldDecodeOutputs.length === 2);
+    await page.clock.runFor(1500);
+    await page.evaluate(() => {
+      window.testHoldDecodeOutputs = false;
+      for (const output of window.testHeldDecodeOutputs.splice(0)) output();
+    });
+    assert.ok((await snapshot()).presentation.frame.frameAgeMs >= 1500, "Decoder output must keep original arrival time");
+
+    await emit(status(true, 3));
+    await emit({ type: "bootstrap_start", id: 3, metadata: metadata("replay") });
     await frame("A", 0, true);
     await frame("B", 0, true);
-    await emit({ type: "bootstrap_checkpoint", id: 2, sequence: 1 });
-    await page.waitForFunction(() => window.testSent.some(value => value.type === "bootstrap_ack" && value.id === 2));
+    await emit({ type: "bootstrap_checkpoint", id: 3, sequence: 1 });
+    await page.waitForFunction(() => window.testSent.some(value => value.type === "bootstrap_ack" && value.id === 3));
     await page.waitForFunction(() => window.pigeonGround.snapshot().station.mission.pressureFresh);
     assert.equal((await snapshot()).presentation.frame.pts, 0);
     assert.equal((await snapshot()).pair.cached, false);
     assert.equal((await snapshot()).station.mission.phase, "PAD");
     assert.deepEqual(errors, []);
-    console.log(JSON.stringify({ checked: ["stopped live snapshot is held", "cached telemetry is stale", "raw and mixed paired currency", "live bootstrap continuation", "paused replay preserved"] }));
+    console.log(JSON.stringify({ checked: ["stopped live snapshot is held", "cached telemetry is stale", "raw and mixed paired currency", "live bootstrap continuation", "source stops during slow bootstrap", "decoder delay preserves age", "paused replay preserved"] }));
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });
