@@ -24,6 +24,33 @@ LOG = logging.getLogger(__name__)
 STATIC = Path(__file__).parent / "static"
 
 
+class ReceivedQueue(queue.Queue):
+    """Retain enqueue time while ordinary consumers still receive plain messages."""
+    def _put(self, message):
+        super()._put((message, time.monotonic()))
+
+    def get(self, *args, **kwargs):
+        return super().get(*args, **kwargs)[0]
+
+    def get_received(self, *args, **kwargs):
+        return super().get(*args, **kwargs)
+
+
+def delivery_message(message, received_at):
+    """Local receiver age at send; this is not capture or network latency."""
+    if received_at is None:
+        return message
+    age_ms = max(0, (time.monotonic() - received_at) * 1000)
+    if isinstance(message, bytes):
+        header, payload = unpack_message(message)
+        header["received_age_ms"] = age_ms
+        encoded = json.dumps(header, separators=(",", ":")).encode()
+        return len(encoded).to_bytes(4, "big") + encoded + payload
+    if message.get("type") == "metadata":
+        return {**message, "received_age_ms": age_ms}
+    return message
+
+
 class Receiver:
     """A single demux thread. Queue limits also apply when a browser is slow."""
 
@@ -33,7 +60,7 @@ class Receiver:
         self.replay = urlparse(source).scheme not in {"udp", "tcp", "srt"} if replay is None else replay
         if self.replay and not Path(source).is_file():
             raise ValueError(f"Transport file does not exist: {source}")
-        self.messages: queue.Queue = queue.Queue(maxsize=queue_size)
+        self.messages = ReceivedQueue(maxsize=queue_size)
         self.stop_event = threading.Event()
         self.condition = threading.Condition()
         self.playing = not self.replay
@@ -340,7 +367,7 @@ class ViewerConnection:
         self.ack = None
         self.task = None
 
-    def enqueue(self, message):
+    def enqueue(self, message, received_at=None):
         if self.overflowed:
             return False
         size = message_size(message)
@@ -349,19 +376,19 @@ class ViewerConnection:
             self.pending_bytes = 0
             self.overflowed = True
             return False
-        self.pending.append((message, size))
+        self.pending.append((message, size, received_at))
         self.pending_bytes += size
         self.wake.set()
         return True
 
-    def pop(self):
-        message, size = self.pending.popleft()
+    def pop(self, *, timed=False):
+        message, size, received_at = self.pending.popleft()
         self.pending_bytes -= size
         if not self.pending:
             self.wake.clear()
-        return message
+        return (message, received_at) if timed else message
 
-    def batch(self):
+    def batch(self, *, timed=False):
         """At most eight messages and four decode submissions per camera."""
         counts, result = {"A": 0, "B": 0}, []
         while self.pending and len(result) < 8:
@@ -371,7 +398,7 @@ class ViewerConnection:
                 if counts[name] == 4:
                     break
                 counts[name] += 1
-            result.append(self.pop())
+            result.append(self.pop(timed=timed))
         return result
 
 
@@ -397,21 +424,23 @@ def create_app(source: str, *, calibration: str | None = None,
     app[PRESENTATION] = GroundPresentation()
     bootstrap_counter = 0
 
-    def enqueue(connection, message):
-        if not connection.enqueue(message) and not connection.ws.closed:
+    def enqueue(connection, message, received_at=None):
+        if not connection.enqueue(message, received_at) and not connection.ws.closed:
             # Preserve other viewers and the receiver's wait-for-IDR recovery.
             # Only the viewer whose complete compressed chain cannot fit closes.
             asyncio.create_task(connection.ws.close(code=1013, message=b"Viewer too slow; reconnect for keyframes"))
 
-    def broadcast(message):
+    def broadcast(message, received_at=None):
         for connection in tuple(connections.values()):
-            enqueue(connection, message)
+            enqueue(connection, message, received_at)
 
     def notify_ownership():
         for ws, connection in tuple(connections.items()):
             enqueue(connection, {"type": "control_owner", "can_control": app[PRESENTATION].can_control(ws)})
 
-    async def send(ws, message):
+    async def send(ws, message, received_at=None):
+        if not app[RECEIVER].replay:
+            message = delivery_message(message, received_at)
         task = ws.send_bytes(message) if isinstance(message, bytes) else ws.send_json(message)
         await asyncio.wait_for(task, timeout=.5)
 
@@ -442,18 +471,22 @@ def create_app(source: str, *, calibration: str | None = None,
                     await send(connection.ws, message)
                 sequence += 1
                 await checkpoint(connection, sequence)
+            # The browser has decoded all cached output. Continuation retains
+            # its actual receiver age even when catch-up outlasts the source.
+            await send(connection.ws, {"type": "bootstrap_snapshot_end", "id": connection.bootstrap_id})
             # The pump continued while the snapshot decoded. Drain that strictly
             # ordered continuation with the same limits before normal streaming.
             while connection.pending:
-                for message in connection.batch():
-                    await send(connection.ws, message)
+                for message, received_at in connection.batch(timed=True):
+                    await send(connection.ws, message, received_at)
                 sequence += 1
                 await checkpoint(connection, sequence)
             await send(connection.ws, {"type": "bootstrap_end", "id": connection.bootstrap_id})
             while True:
                 await connection.wake.wait()
                 while connection.pending:
-                    await send(connection.ws, connection.pop())
+                    message, received_at = connection.pop(timed=True)
+                    await send(connection.ws, message, received_at)
         except (ConnectionError, asyncio.TimeoutError, RuntimeError):
             await connection.ws.close(code=1013, message=b"Viewer too slow; reconnect for keyframes")
 
@@ -534,12 +567,12 @@ def create_app(source: str, *, calibration: str | None = None,
     async def pump():
         while True:
             try:
-                message = await asyncio.to_thread(app[RECEIVER].messages.get, True, .25)
+                message, received_at = await asyncio.to_thread(app[RECEIVER].messages.get_received, True, .25)
             except queue.Empty:
                 continue
             reference_change = app[PRESENTATION].accept(message)
             if app[PRESENTATION].should_relay(message):
-                broadcast(message)
+                broadcast(message, received_at)
             if reference_change is not None:
                 broadcast(reference_change)
 

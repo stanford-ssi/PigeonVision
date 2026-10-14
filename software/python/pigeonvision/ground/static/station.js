@@ -179,10 +179,10 @@ export class Station {
     this.mission.setReference(value);
     this.missionDirty = true;
   }
-  metadata(record, now) {
-    this.mission.accept(record, now);
+  metadata(record, now, receivedAt = now) {
+    this.mission.accept(record, receivedAt);
     const previousSession = this.attitudes.sessionId;
-    this.attitudes.accept(record, now);
+    this.attitudes.accept(record, receivedAt);
     if (previousSession !== null && previousSession !== this.attitudes.sessionId) {
       this.horizonFallback = null;
       this.renderer.viewTransform = null;

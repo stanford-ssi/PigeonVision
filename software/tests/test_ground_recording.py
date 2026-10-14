@@ -63,6 +63,23 @@ def test_udp_tap_is_byte_exact_across_short_reads_and_reconnects(tmp_path, monke
     assert evidence["sha256"] == hashlib.sha256(expected).hexdigest()
 
 
+def test_empty_udp_datagrams_do_not_end_transport_and_are_counted_once(tmp_path, monkeypatch):
+    datagrams = [b"", b"", b"transport", b"", b"continues"]
+    monkeypatch.setattr("pigeonvision.ground.ts_input.socket.socket", lambda *args: FakeSocket(datagrams))
+    recorder = TransportRecorder(tmp_path / "received.ts")
+    try:
+        with TsInput("udp://127.0.0.1:5000", threading.Event(), recorder) as source:
+            assert source.read(4) == b"tran"
+            assert source.read(65535) == b"sport"
+            assert source.read(65535) == b"continues"
+            with pytest.raises(TimeoutError, match="No UDP transport"):
+                source.read(65535)
+    finally:
+        recorder.close()
+    assert recorder.path.read_bytes() == b"transportcontinues"
+    assert recorder.status()["received_datagrams"] == len(datagrams)
+
+
 @pytest.mark.parametrize("existing", ["transport", "evidence"])
 def test_recording_never_overwrites_existing_artifacts(tmp_path, existing):
     target = tmp_path / "received.ts"

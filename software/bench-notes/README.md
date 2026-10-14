@@ -42,11 +42,22 @@ roll-off 0.20. This carries the existing 9 Mb/s transport target.
 | Three-second file | 20,565 / 20,624 exact TS packets |
 | Paced sample stream | 20,108 / 20,624 exact packets; every input sample delivered; zero FEC errors |
 | Two-minute RX noise | 12.000 MS/s; no reported source error or observed overflow |
+| Synthetic video through modem → UDP → viewer | A/B video and telemetry decoded; all 2,749,124 recovered TS bytes recorded unchanged |
 
 Missing packets were confined to the test boundaries. Synchronization and
 16-frame decoding batches leave edge data unfinished when the waveform stops.
 The fixture also includes one incompletely encoded final input packet. No gaps
 occurred inside the recovered packet sequence.
+
+The video fixture recovered 14,623 / 15,106 packets with zero FEC errors. Losing
+the initial A keyframe delayed A until its next keyframe: 38 A frames and 67 B
+frames decoded. This verifies the software handoff, not complete clip recovery
+or a physical radio link.
+
+The same path preserved complete BMI088 accel/gyro batches, BMP581, INA226 and
+flight-controller status/events. All test values, units, timestamps and error
+flags matched at the viewer WebSocket. Real sensor timing and attitude
+stabilization remain unverified.
 
 TX stayed disabled. Launcher-only shutdown stopped both processes in 0.13 s.
 Known-signal RF reception and continuous sample integrity remain unverified;

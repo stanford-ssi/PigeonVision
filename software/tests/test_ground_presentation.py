@@ -348,3 +348,20 @@ def test_retired_session_cannot_resurrect_cache_or_clear_current_pad_reference()
     ground.accept({"type": "status", "generation": 3, "replay": True})
     ground.accept(metadata("session", "one"))
     assert ground.cache.session_id == "one" and ground.should_relay(metadata("session", "one"))
+
+
+def test_reordered_records_cannot_switch_viewer_before_session_is_confirmed():
+    ground = GroundPresentation()
+    ground.accept(metadata("session"))
+    for kind in ("sensors", "health", "frame", "flight_event"):
+        early = metadata(kind, "two")
+        assert ground.cache.accept(early) is False
+        assert not ground.should_relay(early)
+    assert ground.cache.session_id == "one"
+    assert ground.should_relay(metadata("health"))
+    # Legacy records without a session ID remain associated with the declared
+    # session. A real replacement declaration enables the new session's data.
+    assert ground.should_relay({"type": "metadata", "record": {"type": "health"}})
+    ground.accept(metadata("session", "two"))
+    assert ground.should_relay(metadata("health", "two"))
+    assert not ground.should_relay(metadata("health", "one"))

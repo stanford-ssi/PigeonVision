@@ -22,6 +22,7 @@ const state = {
   connected: false,
   replay: false,
   playing: false,
+  liveSnapshot: false,
   status: null,
   calibration: null,
   colourCalibrationKey: null,
@@ -52,6 +53,8 @@ const camera = () => ({
   presentedAt: null,
   presentedTimestamp: null,
   presentationCurrent: false,
+  cached: false,
+  frameReceipts: new Map(),
   heldForMetadata: false,
   colourHeldFrames: 0,
   size: null,
@@ -60,6 +63,8 @@ const camera = () => ({
 });
 const cameras = { A: camera(), B: camera() };
 const frameColourVerification = new WeakMap();
+const cachedFrames = new WeakSet();
+const frameReceipts = new WeakMap();
 let pairLimit = Number($("max-skew").value);
 let renderer, station,
   socket,
@@ -90,6 +95,8 @@ function resetCamera(name) {
   c.lastArrival = 0;
   c.lastTimestamp = null;
   c.presentationCurrent = false;
+  c.cached = false;
+  c.frameReceipts.clear();
   c.heldForMetadata = false;
   c.size = null;
   c.submitted = c.outputs = 0;
@@ -256,19 +263,19 @@ function pairFrames() {
         fb = b.shift();
       renderer.upload("A", fa, true, frameColourVerification.get(fa));
       renderer.upload("B", fb, true, frameColourVerification.get(fb));
+      const cached = cachedFrames.has(fa) || cachedFrames.has(fb);
       state.pair = {
         a: fa.timestamp,
         b: fb.timestamp,
         skew: delta,
-        at: performance.now(),
+        at: cached ? null : Math.min(frameReceipts.get(fa), frameReceipts.get(fb)),
+        cached,
       };
       state.presentedPair = state.pair;
       state.pairs++;
       fa.close();
       fb.close();
-      station.updateViewFrame({ pts: Math.min(state.pair.a, state.pair.b),
-        now: state.pair.at, replay: state.replay, frameAgeMs: 0,
-        paired: state.pair.a === state.pair.b });
+      station.updateViewFrame(displayedFrame());
       renderer.draw();
     } else {
       const name = delta < 0 ? "A" : "B";
@@ -289,9 +296,13 @@ function decoded(name, frame, epoch) {
     frame.close();
     return;
   }
+  clearError(`decoder:${name}`);
+  const receipt = c.frameReceipts.get(frame.timestamp);
+  c.frameReceipts.delete(frame.timestamp);
+  const cached = receipt?.cached === true;
   c.decoded++;
   c.outputs++;
-  c.lastArrival = performance.now();
+  c.lastArrival = cached ? 0 : receipt?.at ?? performance.now();
   c.lastTimestamp = frame.timestamp;
   c.size = [frame.displayWidth, frame.displayHeight];
   validateGeometry();
@@ -314,10 +325,13 @@ function decoded(name, frame, epoch) {
     return;
   }
   frameColourVerification.set(frame, verification);
+  frameReceipts.set(frame, c.lastArrival);
+  if (cached) cachedFrames.add(frame);
   renderer.upload(name, frame, false, verification);
   c.presentedTimestamp = frame.timestamp;
-  c.presentedAt = c.lastArrival;
-  c.presentationCurrent = true;
+  c.presentedAt = cached ? null : c.lastArrival;
+  c.presentationCurrent = !cached;
+  c.cached = cached;
   updateColourControls();
   c.pending.push(frame);
   c.pending.sort((x, y) => x.timestamp - y.timestamp);
@@ -325,7 +339,19 @@ function decoded(name, frame, epoch) {
   renderer.draw();
 }
 
-async function accessUnit(buffer, epoch) {
+function decoderFailed(name, error, epoch) {
+  if (epoch !== cameras[name].epoch) return;
+  fail(`Camera ${name} decoder: ${error.message}`, `decoder:${name}`, true);
+  resetCamera(name);
+  state.pair = null;
+}
+
+function receivedTime(value, eventAt) {
+  const age = value.received_age_ms ?? 0;
+  return state.replay ? eventAt : Number.isFinite(age) && age >= 0 ? eventAt - age : -Infinity;
+}
+
+async function accessUnit(buffer, epoch, eventAt) {
   if (epoch !== connectionEpoch) return;
   const bytes = new Uint8Array(buffer);
   if (bytes.length < 4) throw Error("Truncated frame message");
@@ -343,7 +369,7 @@ async function accessUnit(buffer, epoch) {
     !Number.isSafeInteger(header.timestamp_us)
   )
     throw Error("Invalid camera frame header");
-  if (c.decoder?.decodeQueueSize > 8) {
+  if (c.decoder?.decodeQueueSize > 8 || c.frameReceipts.size > 8) {
     resetCamera(name);
     state.pair = null;
   }
@@ -360,11 +386,7 @@ async function accessUnit(buffer, epoch) {
       );
     c.decoder = new VideoDecoder({
       output: (f) => decoded(name, f, current),
-      error: (e) => {
-        fail(`Camera ${name} decoder: ${e.message}`, `decoder:${name}`);
-        resetCamera(name);
-        state.pair = null;
-      },
+      error: (e) => decoderFailed(name, e, current),
     });
     c.decoder.configure(config);
     c.codec = header.codec;
@@ -372,17 +394,22 @@ async function accessUnit(buffer, epoch) {
   }
   if (c.waiting && !header.keyframe) return;
   c.waiting = false;
-  c.decoder.decode(
-    new EncodedVideoChunk({
-      type: header.keyframe ? "key" : "delta",
-      timestamp: header.timestamp_us,
-      data: bytes.subarray(4 + length),
-    }),
-  );
-  c.submitted++;
+  try {
+    c.frameReceipts.set(header.timestamp_us, { cached: state.liveSnapshot, at: receivedTime(header, eventAt) });
+    c.decoder.decode(
+      new EncodedVideoChunk({
+        type: header.keyframe ? "key" : "delta",
+        timestamp: header.timestamp_us,
+        data: bytes.subarray(4 + length),
+      }),
+    );
+    c.submitted++;
+  } catch (error) {
+    decoderFailed(name, error, c.epoch);
+  }
 }
 
-async function message(value, epoch = connectionEpoch) {
+async function message(value, epoch = connectionEpoch, eventAt = performance.now()) {
   if (value.type === "control_owner") {
     station.owner(value.can_control);
     return;
@@ -390,7 +417,12 @@ async function message(value, epoch = connectionEpoch) {
   if (value.type === "view") { station.receiveView(value.view, value.initial === true); return; }
   if (value.type === "reference") { station.reference(value.reference); return; }
   if (value.type === "bootstrap_start") {
-    for (const item of value.metadata || []) await message(item, epoch);
+    state.liveSnapshot = !state.replay;
+    for (const item of value.metadata || []) await message(item, epoch, eventAt);
+    return;
+  }
+  if (value.type === "bootstrap_snapshot_end" || value.type === "bootstrap_end") {
+    state.liveSnapshot = false;
     return;
   }
   if (value.type === "bootstrap_checkpoint") {
@@ -441,7 +473,11 @@ async function message(value, epoch = connectionEpoch) {
     fail(value.message, value.component || "viewer", value.recoverable === true);
   else if (value.type === "metadata") {
     const record = value.record;
-    if (telemetry.accept(record, performance.now()) === false) return;
+    const now = performance.now();
+    // Snapshot history has no trustworthy original receipt time. Preserve its
+    // context, but only newly received continuation can establish live currency.
+    const receivedAt = state.liveSnapshot ? -Infinity : receivedTime(value, eventAt);
+    if (telemetry.accept(record, receivedAt) === false) return;
     state.metadata[record.camera_id || record.type || "latest"] = record;
     if (record.type === "session") {
       const sessionId = record.session_id ?? null;
@@ -463,7 +499,7 @@ async function message(value, epoch = connectionEpoch) {
       ("sensor_crop" in record || "scaler_crop" in record)
     )
       state.frames[record.camera_id] = record;
-    station.metadata(record, performance.now());
+    station.metadata(record, now, receivedAt);
     validateGeometry();
     $("metadata").textContent = JSON.stringify(state.metadata, null, 2);
   }
@@ -484,6 +520,7 @@ function connect() {
   };
   socket.onmessage = (e) => {
     if (!accepting) return;
+    const eventAt = performance.now();
     if (++pending > 48) {
       accepting = false;
       fail("Browser receive queue full; reconnecting for fresh keyframes.", "connection", true);
@@ -493,8 +530,8 @@ function connect() {
     chain = chain
       .then(async () => {
         if (!accepting || epoch !== connectionEpoch) return;
-        if (typeof e.data === "string") await message(JSON.parse(e.data), epoch);
-        else await accessUnit(e.data, epoch);
+        if (typeof e.data === "string") await message(JSON.parse(e.data), epoch, eventAt);
+        else await accessUnit(e.data, epoch, eventAt);
       })
       .catch((e) => fail(e.message))
       .finally(() => pending--);
@@ -503,6 +540,7 @@ function connect() {
     if (epoch !== connectionEpoch) return;
     accepting = false;
     state.connected = false;
+    state.liveSnapshot = false;
     station.owner(false);
     telemetry.reset({ preserveSessionHistory: true });
     reset();
@@ -550,7 +588,7 @@ function displayedFrame(now = performance.now()) {
   // operator can see. Held pixels retain their age, but cannot advance telemetry
   // after a decoder/session reset or a withheld unknown frame.
   const pts = raw ? camera.presentationCurrent ? camera.presentedTimestamp : null
-    : state.pair ? Math.min(state.pair.a, state.pair.b) : null;
+    : state.pair && !state.pair.cached ? Math.min(state.pair.a, state.pair.b) : null;
   const at = raw ? camera.presentedAt : state.presentedPair?.at;
   return { pts, now, replay: state.replay, frameAgeMs: at == null ? null : now - at,
     paired: !!state.pair && state.pair.a === state.pair.b };
@@ -566,7 +604,8 @@ function diagnostics() {
   for (const name of ["A", "B"]) {
     const c = cameras[name],
       stale = !state.replay && now - c.lastArrival > 1000;
-    const status = c.heldForMetadata ? "Waiting for camera metadata · image held" : c.lastArrival
+    const status = c.heldForMetadata ? "Waiting for camera metadata · image held" : c.cached
+      ? "Cached video · image held" : c.lastArrival
       ? stale
         ? "Stale"
         : "Receiving"
@@ -589,6 +628,8 @@ function diagnostics() {
   else if (missing.length) overlay = missing.join(" · ");
   else if (panorama && !state.pair)
     overlay = "Waiting for a matched frame pair";
+  else if (panorama && state.pair.cached)
+    overlay = "Cached paired view · image held";
   else if (panorama && !state.replay && now - state.pair.at > 1000)
     overlay = "Paired view is stale — image held";
   else if (state.status?.state === "ended") overlay = "End of recording";

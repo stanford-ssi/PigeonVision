@@ -104,11 +104,15 @@ class TsInput(io.RawIOBase):
         if self.file:
             data = self.file.read(size)
         elif self.socket:
-            if not self.buffer:
+            while not self.buffer:
+                if self.stop_event.is_set():
+                    return b""
                 try:
                     datagram = self.socket.recv(65535)
                     if self.recorder is not None:
                         self.recorder.submit(datagram)
+                    # An empty UDP datagram is valid, not stream EOF. Record
+                    # its receipt once, then keep waiting for transport bytes.
                     self.buffer.extend(datagram)
                 except TimeoutError as exc:
                     raise TimeoutError("No UDP transport received for two seconds") from exc

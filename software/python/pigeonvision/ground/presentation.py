@@ -330,4 +330,11 @@ class GroundPresentation:
         session_id = record.get("session_id") if isinstance(record, dict) else None
         # A new viewer has not seen the retired session itself, so its browser
         # cannot independently know to reject a delayed old-session declaration.
-        return not isinstance(session_id, str) or session_id not in self.cache.retired_sessions
+        if isinstance(session_id, str) and session_id in self.cache.retired_sessions:
+            return False
+        # Match the cache's confirmed-session gate. A reordered sensor/health
+        # record must not make browsers retire the current session before its
+        # replacement session declaration has actually arrived.
+        if isinstance(record, dict) and record.get("type") != "session" and self.cache.confirmed_session_id:
+            return record.get("session_id", self.cache.confirmed_session_id) == self.cache.confirmed_session_id
+        return True
