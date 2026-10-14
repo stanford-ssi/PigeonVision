@@ -21,6 +21,11 @@ from .profile import BUFFER_SAMPLES, KERNEL_BUFFERS, QUEUE_BLOCKS, SAMPLE_RATE
 _LOG = logging.getLogger(__name__)
 _DMA_STATUS = 0x80000088  # ADC FPGA register access, cf_axi_adc_core.c
 _DMA_OVERFLOW = 4
+# MicroPhase/linux 9c04de11ae53 ad9361.c + ad9361_regs.h: the driver halves
+# integer-Hz requests and doubles clock readback. Its
+# fractional PLL rounding contributes <=80,008,000/(2*8,388,593*2) Hz at RF;
+# input/readback truncation adds <=1 and <2 Hz. Round that <5.385 Hz bound up.
+_RX_LO_READBACK_TOLERANCE_HZ = 6
 
 
 def convert_iq(raw: bytes | bytearray) -> np.ndarray:
@@ -178,12 +183,26 @@ def _require_tx_shutdown(phy) -> None:
         raise RuntimeError('Run RX shutdown guard and configure RX before this source')
 
 
+def _require_rx_frequency(phy, frequency: int | None) -> None:
+    if frequency is None:
+        return
+    try:
+        lo = phy.find_channel('altvoltage0', True)
+        actual = int(lo.attrs['frequency'].value)
+    except (KeyError, AttributeError, ValueError) as exc:
+        raise RuntimeError('Missing/invalid RX LO frequency readback') from exc
+    if abs(actual - frequency) > _RX_LO_READBACK_TOLERANCE_HZ:
+        raise RuntimeError(f'RX LO frequency readback {actual} Hz differs from requested '
+                           f'{frequency} Hz by more than {_RX_LO_READBACK_TOLERANCE_HZ} Hz')
+
+
 class _IIOReader:
     """Own native context/buffer. Producer alone creates and destroys the buffer."""
 
-    def __init__(self, iio, ctx, phy, adc, buffer_samples: int):
+    def __init__(self, iio, ctx, phy, adc, buffer_samples: int, frequency: int | None = None):
         self.iio, self.ctx, self.phy, self.adc = iio, ctx, phy, adc
         self.buffer_samples = buffer_samples
+        self.frequency = frequency
         self.buffer = None
         self.cancelled = threading.Event()
         self.poll_at = 0
@@ -194,6 +213,7 @@ class _IIOReader:
             return None
         if self.buffer is None:
             _require_tx_shutdown(self.phy)
+            _require_rx_frequency(self.phy, self.frequency)
             self.buffer = self.iio.Buffer(self.adc, self.buffer_samples, False)
             if self.cancelled.is_set():
                 self.buffer.cancel()
@@ -229,9 +249,11 @@ class _IIOReader:
 
 
 def open_iio(uri: str, sample_rate: int = SAMPLE_RATE,
-             buffer_samples: int = BUFFER_SAMPLES, queue_blocks: int = QUEUE_BLOCKS) -> PrefetchSource:
+             buffer_samples: int = BUFFER_SAMPLES, queue_blocks: int = QUEUE_BLOCKS,
+             frequency: int | None = None) -> PrefetchSource:
     """Open ADC control only; actual stream starts on first GNU work invocation."""
-    if not 1 <= queue_blocks <= 64 or buffer_samples <= 0 or sample_rate <= 0:
+    if (not 1 <= queue_blocks <= 64 or buffer_samples <= 0 or sample_rate <= 0
+            or (frequency is not None and frequency <= 0)):
         raise ValueError('Invalid buffer, queue or sample-rate setting')
     import iio
     if not hasattr(iio, '_buffer_refill'):
@@ -242,6 +264,9 @@ def open_iio(uri: str, sample_rate: int = SAMPLE_RATE,
     if phy is None:
         raise RuntimeError('Missing AD936x PHY')
     _require_tx_shutdown(phy)
+    # gr-iio's PHY setters log failed writes without raising. Refuse an old LO
+    # setting before any capture buffer can be created.
+    _require_rx_frequency(phy, frequency)
     adc = ctx.find_device('cf-ad9361-lpc')
     if adc is None:
         raise RuntimeError('Missing ADC')
@@ -261,5 +286,5 @@ def open_iio(uri: str, sample_rate: int = SAMPLE_RATE,
     if adc.sample_size != 4:
         raise RuntimeError('Expected one 4-byte I/Q pair')
     adc.set_kernel_buffers_count(KERNEL_BUFFERS)
-    reader = _IIOReader(iio, ctx, phy, adc, buffer_samples)
+    reader = _IIOReader(iio, ctx, phy, adc, buffer_samples, frequency)
     return PrefetchSource(reader, reader.cancel, reader.close, queue_blocks, sample_rate)

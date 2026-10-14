@@ -27,6 +27,11 @@ The M4 Pro MacBook runs radio decoding and the viewer in separate environments.
 Antenna → E200 RX1 → Ethernet → DVB-S2 decoder → TSDuck → UDP :5000 → viewer
 ```
 
+The E200 sends I/Q samples, not video. The Mac decodes DVB-S2 and forwards the
+recovered MPEG-TS unchanged. The existing viewer then decodes camera PIDs
+256/257 and telemetry PID 258, applies calibration and renders the panorama.
+Yapogee must send the matching DVB-S2 profile and the CM5's original TS.
+
 Defaults are in [radio/profile.py](../radio/profile.py): 12 MS/s receive, 8 Msymbol/s,
 QPSK 2/3, normal frames, pilots, roll-off 0.20. The 9 Mb/s TS target is unchanged.
 The waveform occupies about 9.6 MHz; receiver I/Q consumes 384 Mb/s before Ethernet
@@ -53,7 +58,8 @@ pv view udp://127.0.0.1:5000 --record-transport output/radio-001/transport.ts \
 ```
 
 The launcher applies the identified Pluto driver's TX shutdown guard before RX
-configuration and supervises both child processes. A peer failure stops the
+configuration and checks the RX frequency readback before streaming. It
+supervises both child processes. A peer failure stops the
 pipeline. Capture uses a dedicated reader and bounded queue; detected overflow
 or a full queue is an error. TSDuck forwards original TS packets without transcoding.
 Other radio clients or a reboot can invalidate the shutdown state.
@@ -73,6 +79,41 @@ python software/tools/e200_reference_check.py --reference-root /path/to/RP2350_I
 `python software/tools/e200_capture_check.py --seconds 10 --output output/capture-001.json` checks raw
 transport at the same default rate/buffer sizes. It discards I/Q and cannot prove
 sample continuity; it does not run the decoder or duplicate its filter setup.
+
+## Cable test with Yapogee
+
+Start with the driver output, before the external PA:
+
+```text
+Yapogee SMA → 30 dB pad → 20 dB pad → coax → E200 RX1
+```
+
+Use 50 Ω parts rated at 1.28 GHz. Mini-Circuits
+[VAT-30W2+](https://www.minicircuits.com/WebStore/dashboard.html?model=VAT-30W2%2B)
+and [VAT-20W2+](https://www.minicircuits.com/pdfs/VAT-20W2%2B.pdf)
+are 2 W SMA examples. Fifty dB is the starting attenuation, not a measured
+requirement. Ignoring cable loss:
+
+| Measured transmitter output | E200 input with 50 dB attenuation |
+| --- | --- |
+| +10 dBm (10 mW) | −40 dBm |
+| +20 dBm (100 mW) | −30 dBm |
+
+Measure average power and peaks before connecting the E200. The AD9363's
+[+2.5 dBm peak RF-input rating](https://www.analog.com/media/en/technical-documentation/data-sheets/ad9363.pdf)
+is an absolute maximum, not a test target. Start well below it; receiver gain
+does not protect the input. Verify the assembled SMA output is DC-blocked:
+the [GRF2013 RF_OUT/VDD pin](https://www.guerrilla-rf.com/includes/prodFiles/2013/GRF2013DS.pdf)
+also carries its supply. An RF attenuator does not block DC.
+
+Connect with the transmitter off, power the receiver, then start at low
+transmitter amplitude and `RX_GAIN_DB=0`. Raise receive gain as needed while
+checking I/Q clipping and decoder lock. Keep E200 TX disabled. Recalculate pad
+power ratings and attenuation before adding the external PA.
+
+Next checks: a continuous known TS over this cable, real dual-camera video with
+recording, then loss/reacquisition and frequency-offset tests. The file checks
+above do not establish RF reception, range or flight readiness.
 
 ## Optional radio diagnostics
 
@@ -146,6 +187,9 @@ history and the held frame without restarting, resuming or advancing established
 playback. Replay pauses when the final viewer disconnects. Raw A/B views work
 without calibration; panorama, perspective and coverage views require a Mei
 bundle. Missing cameras never become simulator imagery.
+
+On a live reconnect, cached images are marked held and cached telemetry stays
+expired. New arrivals restore live status; paused replay is unchanged.
 
 In raw views, use the 1–8× slider or wheel to zoom and drag to pan. At 1× the full
 transmitted rectangle fits. `Reset view` resets that camera's zoom/centre but
@@ -235,6 +279,30 @@ breaks acquisition gaps and invalid samples. `T+ (FC RX)` and event times use th
 CM5 receipt time of the flight-controller event, not physical ignition time.
 `LIVE`/`REPLAY` identify the source mode; simulated inputs retain `SIMULATED`.
 
+## IMU and stabilization
+
+BMI088 accelerometer and gyro samples travel in the same PID 258 JSON batches
+as the other telemetry. The CM5 currently requests 100 Hz per IMU sensor and
+sends batches every 100 ms. Received-TS recording retains every row present in
+recovered batches; the diagnostics panel shows each source's latest sample. Values are sensor-native
+`accel_m_s2` and `gyro_rad_s`, with sequence, validity and timing fields.
+
+**Plan:** estimate attitude on the ground computer, then rotate the panorama
+view at each displayed video's timestamp. Keep raw video and sensor recordings
+unchanged. The estimator must consume every IMU row, not the panel's latest
+value. Calibrate the fixed IMU-to-camera rotation and gyro bias first.
+
+Use gyro integration during motion; use accelerometer tilt corrections only
+when gravity is a valid reference. Boost acceleration and freefall invalidate
+that assumption. Yaw will drift without another heading reference. See
+[ADI's inclination note](https://www.analog.com/en/resources/app-notes/an-1057.html).
+
+Real stabilization is not implemented. Current gyro FIFO rows share a host-read
+interval; individual sample timing and camera alignment need verification
+before fusion. Test rotation, dropped batches and gyro saturation; gaps or
+invalid attitude must show stabilization unavailable. The existing horizon
+control accepts simulated scene orientation only.
+
 ## Broadcast and demo
 
 Use a fullscreen Chrome audience window and an OBS **Window Capture** of that
@@ -287,6 +355,9 @@ compare against OpenCV. Run them from `software/` with `uv run pytest -q`.
 Browser checks use Chrome/Playwright. `test_ground_browser.cjs` and
 `test_ground_shader.cjs` need a local test viewer. The focus, layout, colour-app
 and telemetry browser tests route local assets with mocked WebSockets.
+`test_ground_recovery_browser.cjs` checks decoder failures;
+`test_ground_bootstrap_browser.cjs` checks cached/live reconnect boundaries.
+Both use mocked transport and real browser video frames.
 `test_ground_focus.cjs`, `test_ground_errors.cjs`, `test_ground_mission.cjs` and
 `test_ground_navigation.cjs` run offline in Node. Fixtures are synthetic;
 these checks do not qualify real optics or hardware.

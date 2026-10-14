@@ -1,0 +1,12 @@
+--- a/apps/dvbs2-rx
++++ b/apps/dvbs2-rx
+@@ -677,7 +677,8 @@
+         self.iio_prefetch_source = open_iio(
+             self.plutosdr['address'] or iio.get_pluto_uri(),
+             sample_rate=int(self.samp_rate),
+-            buffer_samples=self.plutosdr['buffer_size'])
++            buffer_samples=self.plutosdr['buffer_size'],
++            frequency=int(self.freq))
+         return self.iio_prefetch_source
+ 
+     def connect_source(self):

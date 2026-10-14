@@ -17,7 +17,7 @@ CRC. CPU averaged 61.4%; maximum temperature was 56.75°C. Each camera had one
 66.7 ms interval after warm-up. Keep `pv spi` for patterns and file tests.
 See [SPI results and setup](flight/spi.md). RF remains untested.
 
-**Flight:** one CM5 records both cameras and sends MPEG-TS over native PV-SPI to an RP2350 + AFE7071 transmitter. Ethernet remains the E200 fallback. The ground E200 and MacBook decode and stitch. Autonomous startup and carrier sensors are next; RF remains untested.
+**Flight:** one CM5 records both cameras and sends MPEG-TS over native PV-SPI to an RP2350B + AFE7071 transmitter. Ethernet remains the E200 fallback. The ground E200 and MacBook decode and stitch. Startup and sensor code are implemented; physical carrier sensors and the complete RF path still need testing.
 
 ## Start here
 

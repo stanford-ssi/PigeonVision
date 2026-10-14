@@ -592,6 +592,8 @@ def test_ongoing_replay_follows_bootstrap_snapshot_without_missing_or_reordered_
                     generation = app[RECEIVER].generation
                     position = dict(app[RECEIVER].metrics["last_pts_us"])
                     await audience.send_json({"type": "bootstrap_ack", "id": held["id"], "sequence": held["sequence"]})
+                    await receive_until(audience, lambda value: value["type"] == "bootstrap_snapshot_end", units)
+                    assert len(units) == 10, "Cached/live boundary must precede the queued continuation"
                     await receive_until(audience, lambda value: value["type"] == "bootstrap_end", units)
                     assert app[RECEIVER].generation == generation
                     for name in ("A", "B"):

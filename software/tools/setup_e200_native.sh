@@ -33,14 +33,7 @@ if [[ $(git -C "$work/gr-dvbs2rx" rev-parse HEAD) != "$revision" ]]; then
     git -C "$work/gr-dvbs2rx" checkout --detach "$revision"
 fi
 git -C "$work/gr-dvbs2rx" submodule update --init --recursive
-for patch_name in gr-dvbs2rx-arm64.patch gr-dvbs2rx-iio-prefetch.patch; do
-    patch="$root/software/platform/$patch_name"
-    if git -C "$work/gr-dvbs2rx" apply --check "$patch"; then
-        git -C "$work/gr-dvbs2rx" apply "$patch"
-    else
-        git -C "$work/gr-dvbs2rx" apply --reverse --check "$patch"
-    fi
-done
+"$prefix/bin/python" "$root/software/tools/e200_apply_receiver_patches.py" "$work/gr-dvbs2rx"
 # CMake 4 needs the compatibility floor for the older cpu_features submodule.
 # Keep upstream DEBUG_LOGS=ON: OFF has a GR_LOG_DEBUG macro compilation error.
 "$mamba" run -p "$prefix" cmake -S "$work/gr-dvbs2rx" -B "$work/build" -G Ninja \

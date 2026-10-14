@@ -18,12 +18,22 @@ if __name__ != '__main__':
 try:
     import numpy as np
     from gnuradio import blocks, gr
-    from pigeonvision.radio.iio_source import PrefetchSource, convert_iq, open_iio
+    from pigeonvision.radio.iio_source import PrefetchSource, convert_iq, open_iio, _require_rx_frequency
 except ImportError as exc:
     raise unittest.SkipTest('Optional GNU Radio environment is unavailable') from exc
 
 
 class IIOPrefetchTest(unittest.TestCase):
+
+    def test_rx_lo_readback_allows_only_bounded_driver_rounding(self):
+        lo = SimpleNamespace(attrs={'frequency': SimpleNamespace(value='1280000000')})
+        phy = SimpleNamespace(find_channel=lambda name, output: lo)
+        for requested in (1280000000, 1280000001, 1280000006, 1279999994):
+            with self.subTest(requested=requested):
+                _require_rx_frequency(phy, requested)
+        for requested in (1280000007, 1279999993, 2400000000):
+            with self.subTest(requested=requested), self.assertRaisesRegex(RuntimeError, 'more than 6 Hz'):
+                _require_rx_frequency(phy, requested)
 
     def test_conversion(self):
         raw = np.array([0x0000, 0x07ff, 0x0800, 0x0fff, 0xf800, 0xffff], dtype='<u2').tobytes()
@@ -115,7 +125,8 @@ class IIOPrefetchTest(unittest.TestCase):
                               set_kernel_buffers_count=lambda count: calls.append(('kernel', count)),
                               reg_write=lambda reg, value: calls.append(('clear', reg, value)),
                               reg_read=lambda reg: 0)
-        phy = SimpleNamespace(find_channel=lambda name, output: SimpleNamespace(attrs=attrs(powerdown=1)),
+        lo = SimpleNamespace(attrs=attrs(frequency=2400000000))
+        phy = SimpleNamespace(find_channel=lambda name, output: lo if name == 'altvoltage0' else SimpleNamespace(attrs=attrs(powerdown=1)),
                               attrs=attrs(calib_mode='manual_tx_quad 26'),
                               debug_attrs={'adi,tx-lo-powerdown-managed-enable': SimpleNamespace(value='0')})
         ctx = SimpleNamespace(set_timeout=lambda count: None,
@@ -132,8 +143,19 @@ class IIOPrefetchTest(unittest.TestCase):
         sys.modules['iio'] = SimpleNamespace(Context=lambda uri: ctx, Buffer=Buffer,
                                             _buffer_refill=lambda pointer: 16)
         try:
-            source = open_iio('mock:')
+            source = open_iio('mock:', frequency=2400000000)
             assert calls == [('kernel', 16)]
+            for invalid in ('915000000', 'invalid', None):
+                with self.subTest(frequency_readback=invalid):
+                    lo.attrs = attrs(frequency=invalid) if invalid is not None else {}
+                    with self.assertRaisesRegex(RuntimeError, 'RX LO frequency readback'):
+                        open_iio('mock:', frequency=2400000000)
+                    assert calls == [('kernel', 16)]
+            lo.attrs = attrs(frequency=915000000)
+            with self.assertRaisesRegex(RuntimeError, 'RX LO frequency readback'):
+                source.reader()
+            assert calls == [('kernel', 16)]
+            lo.attrs = attrs(frequency=2400000000)
             assert source.reader() == bytes(16)
             assert ('buffer',) in calls
             assert source.current_status()['kernel_buffer_blocks_requested'] == 16

@@ -23,7 +23,7 @@
  
      def _get_fosphor_sink(self):
          from gnuradio import fosphor
-@@ -662,7 +671,13 @@
+@@ -662,7 +671,14 @@
          iio_pluto_source.set_bbdc(True)
          iio_pluto_source.set_filter_params('Auto', '', 0, 0)
  
@@ -33,12 +33,13 @@
 +        self.iio_prefetch_source = open_iio(
 +            self.plutosdr['address'] or iio.get_pluto_uri(),
 +            sample_rate=int(self.samp_rate),
-+            buffer_samples=self.plutosdr['buffer_size'])
++            buffer_samples=self.plutosdr['buffer_size'],
++            frequency=int(self.freq))
 +        return self.iio_prefetch_source
  
      def connect_source(self):
          """Connect the IQ sample source
-@@ -1026,6 +1041,8 @@
+@@ -1026,6 +1042,8 @@
  
          return {
              "lock": self.plsync.get_locked(),
@@ -47,7 +48,7 @@
              "snr": post_decoder_snr,
              "plsync": {
                  "coarse_freq_corr": self.plsync.get_coarse_freq_corr_state(),
-@@ -1606,7 +1623,8 @@
+@@ -1606,7 +1624,8 @@
          if (gui_mode):
              Qt.QApplication.quit()
          else:
@@ -57,7 +58,7 @@
  
      signal.signal(signal.SIGINT, sig_handler)
      signal.signal(signal.SIGTERM, sig_handler)
-@@ -1623,6 +1641,9 @@
+@@ -1623,6 +1642,9 @@
      else:
          tb.wait()
  

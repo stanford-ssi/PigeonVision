@@ -442,6 +442,9 @@ def create_app(source: str, *, calibration: str | None = None,
                     await send(connection.ws, message)
                 sequence += 1
                 await checkpoint(connection, sequence)
+            # The browser has decoded all cached output. Subsequent messages
+            # were received while it joined and retain normal live freshness.
+            await send(connection.ws, {"type": "bootstrap_snapshot_end", "id": connection.bootstrap_id})
             # The pump continued while the snapshot decoded. Drain that strictly
             # ordered continuation with the same limits before normal streaming.
             while connection.pending:
