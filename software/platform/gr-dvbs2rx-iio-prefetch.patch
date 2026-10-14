@@ -1,0 +1,69 @@
+--- a/apps/dvbs2-rx
++++ b/apps/dvbs2-rx
+@@ -125,6 +125,7 @@
+         ##################################################
+         # Objects
+         ##################################################
++        self.iio_prefetch_source = None
+         self.rtlsdr_source = None
+         self.usrp_source = None
+ 
+@@ -150,6 +151,14 @@
+             self.setup_gui()
+         sink_block = self.connect_sink()
+         self.connect_dvbs2rx(source_block, sink_block)
++
++    def stop(self):
++        # Cancel external I/O before waiting for a scheduler blocked in work().
++        try:
++            if self.iio_prefetch_source is not None:
++                self.iio_prefetch_source.stop()
++        finally:
++            gr.top_block.stop(self)
+ 
+     def _get_fosphor_sink(self):
+         from gnuradio import fosphor
+@@ -662,7 +671,13 @@
+         iio_pluto_source.set_bbdc(True)
+         iio_pluto_source.set_filter_params('Auto', '', 0, 0)
+ 
+-        return iio_pluto_source
++        # Keep the native block for PHY setters; only the prefetch block runs.
++        from pigeonvision.radio.iio_source import open_iio
++        self.iio_prefetch_source = open_iio(
++            self.plutosdr['address'] or iio.get_pluto_uri(),
++            sample_rate=int(self.samp_rate),
++            buffer_samples=self.plutosdr['buffer_size'])
++        return self.iio_prefetch_source
+ 
+     def connect_source(self):
+         """Connect the IQ sample source
+@@ -1026,6 +1041,8 @@
+ 
+         return {
+             "lock": self.plsync.get_locked(),
++            **({"iio": self.iio_prefetch_source.current_status()}
++               if self.iio_prefetch_source is not None else {}),
+             "snr": post_decoder_snr,
+             "plsync": {
+                 "coarse_freq_corr": self.plsync.get_coarse_freq_corr_state(),
+@@ -1606,7 +1623,8 @@
+         if (gui_mode):
+             Qt.QApplication.quit()
+         else:
+-            sys.exit(0)
++            source = tb.iio_prefetch_source
++            sys.exit(1 if source is not None and source.error else 0)
+ 
+     signal.signal(signal.SIGINT, sig_handler)
+     signal.signal(signal.SIGTERM, sig_handler)
+@@ -1623,6 +1641,9 @@
+     else:
+         tb.wait()
+ 
++    source = tb.iio_prefetch_source
++    if source is not None and source.error:
++        raise RuntimeError("IIO reception failed: " + source.error)
+     gr.log.info("Stopping DVB-S2 Rx")
+ 
+ 

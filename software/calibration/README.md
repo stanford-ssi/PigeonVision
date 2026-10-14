@@ -31,7 +31,7 @@ unfinished. Source images and fitting records stay in the local `build/` archive
 
 The bench has measured Mei lens fits and a nominal opposed-camera panorama;
 edge/seam accuracy and measured rig alignment remain incomplete. See the
-[bench evidence](../bench-notes/2026-09-25.md) for results. This guide covers
+[bench evidence](../bench-notes/README.md#cameras) for results. This guide covers
 collection, independent lens fitting and the initial preview; detailed paired
 alignment is in [rig-alignment.md](rig-alignment.md).
 

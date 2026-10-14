@@ -2,7 +2,7 @@
 
 `pv-capture` runs dual IMX900 capture, software x264, segmented recording and
 MPEG-TS over UDP or native PV-SPI on the CM5 using FRAMOS libcamera and the Pi ISP. Initial hardware
-runs are documented in the [bench notes](../bench-notes/2026-09-25.md);
+runs are documented in the [bench notes](../bench-notes/README.md#cameras);
 short-run success is not sustained qualification. There is no synthetic fallback.
 
 ## Build and configure
