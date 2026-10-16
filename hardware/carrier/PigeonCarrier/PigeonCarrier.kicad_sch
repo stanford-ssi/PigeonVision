@@ -890,7 +890,9 @@
 			)
 			(embedded_fonts no)
 		)
-	)
+
+	(symbol "PigeonVision:AMASS_XT60PB_M30_G_Y" (pin_names (offset 1.016) (hide yes)) (exclude_from_sim no) (in_bom yes) (on_board yes) (in_pos_files yes) (duplicate_pin_numbers_are_jumpers no) (property "Reference" "J" (at 0 2.54 0) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27)))) (property "Value" "XT60PB-M30.G.Y" (at 0 -5.08 0) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27)))) (property "Footprint" "PigeonVision:AMASS_XT60PB-M_1x02_P7.20mm_Vertical_2025" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (property "Datasheet" "https://www.china-amass.net/uploads/62.XT60PB-M-SPEC-2025V0.pdf" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (property "Description" "AMASS XT60PB-M30.G.Y vertical PCB male;1 negative/keyed side,2 positive/flat side;7.20mm pitch;2025V0 finished holes4.6+0.1/-0mm. Enabled detailed CalSTAR-based local planning STEP has7.2mm contact pitch and3mm tails; exact factory PCB tail geometry unverified. Not manufacturer CAD." (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (property "ki_keywords" "AMASS XT vertical power PCB male" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (property "ki_fp_filters" "AMASS_XT60PB-M_1x02_P7.20mm_Vertical_2025" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (symbol "AMASS_XT60PB_M30_G_Y_1_1" (rectangle (start -1.27 1.27) (end 1.27 -3.81) (stroke (width 0.254) (type default)) (fill (type background))) (rectangle (start -1.27 0.127) (end 0 -0.127) (stroke (width 0.1524) (type default)) (fill (type none))) (rectangle (start -1.27 -2.413) (end 0 -2.667) (stroke (width 0.1524) (type default)) (fill (type none))) (pin passive line (at -5.08 0 0) (length 3.81) (name "Pin_1" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27))))) (pin passive line (at -5.08 -2.54 0) (length 3.81) (name "Pin_2" (effects (font (size 1.27 1.27)))) (number "2" (effects (font (size 1.27 1.27)))))) (embedded_fonts no) (property "MPN" "XT60PB-M30.G.Y" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Manufacturer" "AMASS" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC Part #" "C19268037" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Sourcing note" "LCSC short MPN XT60PB-M.G.Y;manufacturer2025V0 full SKU XT60PB-M30.G.Y. JLC assembly inventory not verified." (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes))))
+)
 	(text "Barrel Jack"
 		(exclude_from_sim no)
 		(at 24.384 116.332 0)
@@ -3791,7 +3793,7 @@
 		)
 	)
 	(symbol
-		(lib_id "Connector:Conn_01x02_Pin")
+		(lib_id "PigeonVision:AMASS_XT60PB_M30_G_Y")
 		(at 22.86 85.09 0)
 		(unit 1)
 		(body_style 1)
@@ -3821,7 +3823,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_AMASS:AMASS_XT60PW-M_1x02_P7.20mm_Horizontal"
+		(property "Footprint" "PigeonVision:AMASS_XT60PB-M_1x02_P7.20mm_Vertical_2025"
 			(at 22.86 85.09 0)
 			(hide yes)
 			(show_name no)
@@ -3832,7 +3834,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://www.china-amass.net/uploads/62.XT60PB-M-SPEC-2025V0.pdf"
 			(at 22.86 85.09 0)
 			(hide yes)
 			(show_name no)
@@ -3843,7 +3845,7 @@
 				)
 			)
 		)
-		(property "Description" "Generic connector, single row, 01x02, script generated"
+		(property "Description" "AMASS XT60PB-M30.G.Y vertical PCB male;1 negative/keyed side,2 positive/flat side;7.20mm pitch;2025V0 finished holes4.6+0.1/-0mm. Enabled detailed CalSTAR-based local planning STEP has7.2mm contact pitch and3mm tails; exact factory PCB tail geometry unverified. Not manufacturer CAD."
 			(at 22.86 85.09 0)
 			(hide yes)
 			(show_name no)
@@ -3854,7 +3856,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C98732"
+		(property "LCSC" "C19268037"
 			(at 22.86 85.09 0)
 			(hide yes)
 			(show_name no)
@@ -3865,7 +3867,7 @@
 				)
 			)
 		)
-		(property "MPN" "XT60PW-M"
+		(property "MPN" "XT60PB-M30.G.Y"
 			(at 22.86 85.09 0)
 			(hide yes)
 			(show_name no)
@@ -3901,7 +3903,13 @@
 				)
 			)
 		)
-	)
+
+	(property "LCSC Part #" "C19268037" (at 22.86 85.09 0) (hide yes) (effects (font (size 1.27 1.27))))
+
+	(property "Sourcing note" "LCSC short MPN XT60PB-M.G.Y;manufacturer2025V0 full SKU XT60PB-M30.G.Y. JLC assembly inventory not verified." (at 22.86 85.09 0) (hide yes) (effects (font (size 1.27 1.27))))
+
+	(mirror y)
+)
 	(symbol
 		(lib_id "PCM_JLCPCB-Diodes:TVS-Bi,SMBJ18CA")
 		(at 41.91 92.71 0)

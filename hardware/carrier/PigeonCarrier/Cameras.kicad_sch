@@ -1401,7 +1401,9 @@
 			)
 			(embedded_fonts no)
 		)
-	)
+
+	(symbol "PigeonVision:CM5_Camera_FH12_22S_0_5SVA" (pin_names (offset 0.635)) (exclude_from_sim yes) (in_bom yes) (on_board yes) (in_pos_files yes) (duplicate_pin_numbers_are_jumpers no) (property "Reference" "J" (at 0 33.02 0) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27)))) (property "Value" "FH12-22S-0.5SVA(54)" (at 0 30.48 0) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27)))) (property "Footprint" "PigeonVision:Hirose_FH12-22S-0.5SVA_1x22_P0.50mm_Vertical" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (property "Datasheet" "https://www.hirose.com/en/product/p/CL0586-0813-6-54" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (property "Description" "CM5/FRAMOS P22 camera pinout on Hirose vertical 22-pin ZIF FFC;0.5mm contact pitch,1mm PCB pitch in each staggered row;0.3+/-0.05mm ribbon;0.5A/contact. Four hold-down lands unnumbered. Pin18 remains MCLK_RESERVED. Confirm pin1-to-pin1 cable continuity and contact face; model maximum nominal5.5mm above board." (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (property "Manufacturer" "Hirose" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (property "MPN" "FH12-22S-0.5SVA(54)" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (property "LCSC Part #" "C6250833" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (property "DigiKey Part #" "" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (property "ki_keywords" "CSI MIPI camera FRAMOS FFC CM5 vertical top-entry" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (symbol "CM5_Camera_FH12_22S_0_5SVA_0_1" (rectangle (start -12.7 29.21) (end 12.7 -29.21) (stroke (width 0.254) (type default)) (fill (type background)))) (symbol "CM5_Camera_FH12_22S_0_5SVA_1_1" (pin passive line (at -15.24 27.94 0) (length 2.54) (name "GND" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27))))) (pin passive line (at -15.24 25.4 0) (length 2.54) (name "CSI_D0_N" (effects (font (size 1.27 1.27)))) (number "2" (effects (font (size 1.27 1.27))))) (pin passive line (at -15.24 22.86 0) (length 2.54) (name "CSI_D0_P" (effects (font (size 1.27 1.27)))) (number "3" (effects (font (size 1.27 1.27))))) (pin passive line (at -15.24 20.32 0) (length 2.54) (name "GND" (effects (font (size 1.27 1.27)))) (number "4" (effects (font (size 1.27 1.27))))) (pin passive line (at -15.24 17.78 0) (length 2.54) (name "CSI_D1_N" (effects (font (size 1.27 1.27)))) (number "5" (effects (font (size 1.27 1.27))))) (pin passive line (at -15.24 15.24 0) (length 2.54) (name "CSI_D1_P" (effects (font (size 1.27 1.27)))) (number "6" (effects (font (size 1.27 1.27))))) (pin passive line (at -15.24 12.7 0) (length 2.54) (name "GND" (effects (font (size 1.27 1.27)))) (number "7" (effects (font (size 1.27 1.27))))) (pin passive line (at -15.24 10.16 0) (length 2.54) (name "CSI_CLK_N" (effects (font (size 1.27 1.27)))) (number "8" (effects (font (size 1.27 1.27))))) (pin passive line (at -15.24 7.62 0) (length 2.54) (name "CSI_CLK_P" (effects (font (size 1.27 1.27)))) (number "9" (effects (font (size 1.27 1.27))))) (pin passive line (at -15.24 5.08 0) (length 2.54) (name "GND" (effects (font (size 1.27 1.27)))) (number "10" (effects (font (size 1.27 1.27))))) (pin passive line (at -15.24 2.54 0) (length 2.54) (name "CSI_D2_N" (effects (font (size 1.27 1.27)))) (number "11" (effects (font (size 1.27 1.27))))) (pin passive line (at -15.24 0 0) (length 2.54) (name "CSI_D2_P" (effects (font (size 1.27 1.27)))) (number "12" (effects (font (size 1.27 1.27))))) (pin passive line (at -15.24 -2.54 0) (length 2.54) (name "GND" (effects (font (size 1.27 1.27)))) (number "13" (effects (font (size 1.27 1.27))))) (pin passive line (at -15.24 -5.08 0) (length 2.54) (name "CSI_D3_N" (effects (font (size 1.27 1.27)))) (number "14" (effects (font (size 1.27 1.27))))) (pin passive line (at -15.24 -7.62 0) (length 2.54) (name "CSI_D3_P" (effects (font (size 1.27 1.27)))) (number "15" (effects (font (size 1.27 1.27))))) (pin passive line (at -15.24 -10.16 0) (length 2.54) (name "GND" (effects (font (size 1.27 1.27)))) (number "16" (effects (font (size 1.27 1.27))))) (pin passive line (at -15.24 -12.7 0) (length 2.54) (name "RESET" (effects (font (size 1.27 1.27)))) (number "17" (effects (font (size 1.27 1.27))))) (pin passive line (at -15.24 -15.24 0) (length 2.54) (name "MCLK_RESERVED" (effects (font (size 1.27 1.27)))) (number "18" (effects (font (size 1.27 1.27))))) (pin passive line (at -15.24 -17.78 0) (length 2.54) (name "GND" (effects (font (size 1.27 1.27)))) (number "19" (effects (font (size 1.27 1.27))))) (pin passive line (at -15.24 -20.32 0) (length 2.54) (name "SCL" (effects (font (size 1.27 1.27)))) (number "20" (effects (font (size 1.27 1.27))))) (pin passive line (at -15.24 -22.86 0) (length 2.54) (name "SDA" (effects (font (size 1.27 1.27)))) (number "21" (effects (font (size 1.27 1.27))))) (pin passive line (at -15.24 -25.4 0) (length 2.54) (name "+3V3" (effects (font (size 1.27 1.27)))) (number "22" (effects (font (size 1.27 1.27)))))) (embedded_fonts no) (property "JLC Part #" "C6250833" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "ki_fp_filters" "Hirose_FH12-22S-0.5SVA_1x22_P0.50mm_Vertical" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "3D appearance" "White local presentation copy. Original Hirose STEP preserved; all geometry and topology bytes unchanged; display color is not the physical part color specification." (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes))))
+)
 	(text "CAM0 I2C: CM5 internal 1.8k pull-ups."
 		(exclude_from_sim no)
 		(at 50.038 125.476 0)
@@ -3290,7 +3292,7 @@
 		)
 	)
 	(symbol
-		(lib_id "PigeonVision:CM5_Camera_FH12_22S_0_5SH")
+		(lib_id "PigeonVision:CM5_Camera_FH12_22S_0_5SVA")
 		(at 91.44 71.12 0)
 		(unit 1)
 		(body_style 1)
@@ -3310,7 +3312,7 @@
 				)
 			)
 		)
-		(property "Value" "FH12-22S-0.5SH(55)"
+		(property "Value" "FH12-22S-0.5SVA(54)"
 			(at 91.44 40.64 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3320,7 +3322,7 @@
 				)
 			)
 		)
-		(property "Footprint" "PigeonVision:Hirose_FH12-22S-0.5SH_1x22-1MP_P0.50mm_Horizontal"
+		(property "Footprint" "PigeonVision:Hirose_FH12-22S-0.5SVA_1x22_P0.50mm_Vertical"
 			(at 91.44 71.12 0)
 			(hide yes)
 			(show_name no)
@@ -3331,7 +3333,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://www.hirose.com/en/product/p/CL0586-0532-7-55"
+		(property "Datasheet" "https://www.hirose.com/en/product/p/CL0586-0813-6-54"
 			(at 91.44 71.12 0)
 			(hide yes)
 			(show_name no)
@@ -3342,7 +3344,7 @@
 				)
 			)
 		)
-		(property "Description" "CM5IO 22-pin 0.5mm bottom-contact camera FFC: four CSI data lanes, clock, reset, I2C,3.3V. Pin18 secondary-control/MCLK reserved. 0.3+/-0.05mm FFC; MP pads mechanical."
+		(property "Description" "CM5/FRAMOS P22 camera pinout on Hirose vertical 22-pin ZIF FFC;0.5mm contact pitch,1mm PCB pitch in each staggered row;0.3+/-0.05mm ribbon;0.5A/contact. Four hold-down lands unnumbered. Pin18 remains MCLK_RESERVED. Confirm pin1-to-pin1 cable continuity and contact face; model maximum nominal5.5mm above board."
 			(at 91.44 71.12 0)
 			(hide yes)
 			(show_name no)
@@ -3353,7 +3355,7 @@
 				)
 			)
 		)
-		(property "Manufacturer" "Hirose Electric"
+		(property "Manufacturer" "Hirose"
 			(at 91.44 71.12 0)
 			(hide yes)
 			(show_name no)
@@ -3364,7 +3366,7 @@
 				)
 			)
 		)
-		(property "MPN" "FH12-22S-0.5SH(55)"
+		(property "MPN" "FH12-22S-0.5SVA(54)"
 			(at 91.44 71.12 0)
 			(hide yes)
 			(show_name no)
@@ -3375,7 +3377,7 @@
 				)
 			)
 		)
-		(property "LCSC Part #" "C597981"
+		(property "LCSC Part #" "C6250833"
 			(at 91.44 71.12 0)
 			(hide yes)
 			(show_name no)
@@ -3386,7 +3388,7 @@
 				)
 			)
 		)
-		(property "DigiKey Part #" "HFJ122CT-ND"
+		(property "DigiKey Part #" ""
 			(at 91.44 71.12 0)
 			(hide yes)
 			(show_name no)
@@ -3471,7 +3473,11 @@
 				)
 			)
 		)
-	)
+
+	(property "JLC Part #" "C6250833" (at 91.44 71.12 0) (hide yes) (effects (font (size 1.27 1.27))))
+
+	(property "3D appearance" "White local presentation copy. Original Hirose STEP preserved; all geometry and topology bytes unchanged; display color is not the physical part color specification." (at 91.44 71.12 0) (hide yes) (effects (font (size 1.27 1.27))))
+)
 	(symbol
 		(lib_id "PCM_SparkFun-PowerSymbol:GND")
 		(at 208.28 81.28 270)
@@ -4988,7 +4994,7 @@
 		)
 	)
 	(symbol
-		(lib_id "PigeonVision:CM5_Camera_FH12_22S_0_5SH")
+		(lib_id "PigeonVision:CM5_Camera_FH12_22S_0_5SVA")
 		(at 228.6 71.12 0)
 		(unit 1)
 		(body_style 1)
@@ -5008,7 +5014,7 @@
 				)
 			)
 		)
-		(property "Value" "FH12-22S-0.5SH(55)"
+		(property "Value" "FH12-22S-0.5SVA(54)"
 			(at 228.6 40.64 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5018,7 +5024,7 @@
 				)
 			)
 		)
-		(property "Footprint" "PigeonVision:Hirose_FH12-22S-0.5SH_1x22-1MP_P0.50mm_Horizontal"
+		(property "Footprint" "PigeonVision:Hirose_FH12-22S-0.5SVA_1x22_P0.50mm_Vertical"
 			(at 228.6 71.12 0)
 			(hide yes)
 			(show_name no)
@@ -5029,7 +5035,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://www.hirose.com/en/product/p/CL0586-0532-7-55"
+		(property "Datasheet" "https://www.hirose.com/en/product/p/CL0586-0813-6-54"
 			(at 228.6 71.12 0)
 			(hide yes)
 			(show_name no)
@@ -5040,7 +5046,7 @@
 				)
 			)
 		)
-		(property "Description" "CM5IO 22-pin 0.5mm bottom-contact camera FFC: four CSI data lanes, clock, reset, I2C,3.3V. Pin18 secondary-control/MCLK reserved. 0.3+/-0.05mm FFC; MP pads mechanical."
+		(property "Description" "CM5/FRAMOS P22 camera pinout on Hirose vertical 22-pin ZIF FFC;0.5mm contact pitch,1mm PCB pitch in each staggered row;0.3+/-0.05mm ribbon;0.5A/contact. Four hold-down lands unnumbered. Pin18 remains MCLK_RESERVED. Confirm pin1-to-pin1 cable continuity and contact face; model maximum nominal5.5mm above board."
 			(at 228.6 71.12 0)
 			(hide yes)
 			(show_name no)
@@ -5051,7 +5057,7 @@
 				)
 			)
 		)
-		(property "Manufacturer" "Hirose Electric"
+		(property "Manufacturer" "Hirose"
 			(at 228.6 71.12 0)
 			(hide yes)
 			(show_name no)
@@ -5062,7 +5068,7 @@
 				)
 			)
 		)
-		(property "MPN" "FH12-22S-0.5SH(55)"
+		(property "MPN" "FH12-22S-0.5SVA(54)"
 			(at 228.6 71.12 0)
 			(hide yes)
 			(show_name no)
@@ -5073,7 +5079,7 @@
 				)
 			)
 		)
-		(property "LCSC Part #" "C597981"
+		(property "LCSC Part #" "C6250833"
 			(at 228.6 71.12 0)
 			(hide yes)
 			(show_name no)
@@ -5084,7 +5090,7 @@
 				)
 			)
 		)
-		(property "DigiKey Part #" "HFJ122CT-ND"
+		(property "DigiKey Part #" ""
 			(at 228.6 71.12 0)
 			(hide yes)
 			(show_name no)
@@ -5169,7 +5175,11 @@
 				)
 			)
 		)
-	)
+
+	(property "JLC Part #" "C6250833" (at 228.6 71.12 0) (hide yes) (effects (font (size 1.27 1.27))))
+
+	(property "3D appearance" "White local presentation copy. Original Hirose STEP preserved; all geometry and topology bytes unchanged; display color is not the physical part color specification." (at 228.6 71.12 0) (hide yes) (effects (font (size 1.27 1.27))))
+)
 	(symbol
 		(lib_id "PCM_SparkFun-PowerSymbol:GND")
 		(at 208.28 50.8 270)

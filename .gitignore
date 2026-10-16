@@ -14,3 +14,9 @@ node_modules/
 *.kicad_pcb-bak
 *-backups/
 .history/
+
+# Connector CAD retained for local use; see vertical-connectors review.
+/hardware/libraries/3dmodels/Hirose_FH12-22S-0.5SVA_54_Manufacturer.stp
+/hardware/libraries/3dmodels/AMASS_XT60PB_M_EasyEDA_VisualOnly.step
+/hardware/libraries/3dmodels/AMASS_XT30UPB_M_EasyEDA_Detailed_Legacy_2mmTail.step
+/hardware/libraries/3dmodels/Hirose_FH12-22S-0.5SVA_54_WhiteAppearance.stp
