@@ -56,6 +56,7 @@ const camera = () => ({
   cached: false,
   frameReceipts: new Map(),
   heldForMetadata: false,
+  heldFrame: null,
   colourHeldFrames: 0,
   size: null,
   submitted: 0,
@@ -68,7 +69,9 @@ const frameReceipts = new WeakMap();
 let pairLimit = Number($("max-skew").value);
 let renderer, station,
   socket,
-  connectionEpoch = 0;
+  connectionEpoch = 0,
+  metadataHoldAt = null,
+  metadataRequested = false;
 function renderErrors() {
   state.error = errors.message;
   $("error").textContent = state.error || "";
@@ -91,6 +94,8 @@ function resetCamera(name) {
   c.waiting = true;
   for (const f of c.pending) f.close();
   c.pending = [];
+  c.heldFrame?.close();
+  c.heldFrame = null;
   c.resets++;
   c.lastArrival = 0;
   c.lastTimestamp = null;
@@ -107,8 +112,11 @@ function reset({ preserveGeometry = false } = {}) {
   if (!preserveGeometry) {
     state.frames = {};
     state.descriptions = {};
-    state.geometrySessionId = null;
+    // Keep the known session ID so late same-session metadata can verify new
+    // decoder output. A different session still retires that output below.
   }
+  metadataHoldAt = null;
+  metadataRequested = false;
   state.resetCount++;
   validateGeometry();
   station.updateViewFrame(displayedFrame());
@@ -173,6 +181,7 @@ function configureCalibration(bundle) {
     }
   }
   validateGeometry();
+  presentHeldFrames();
   updateFocusControls();
   renderer.draw();
 }
@@ -306,30 +315,58 @@ function decoded(name, frame, epoch) {
   c.lastTimestamp = frame.timestamp;
   c.size = [frame.displayWidth, frame.displayHeight];
   validateGeometry();
+  frameReceipts.set(frame, c.lastArrival);
+  if (cached) cachedFrames.add(frame);
   const verification = !state.geometry.errors.length && !state.geometry.unverified.length
     ? state.colourCalibrationKey : null;
   // Missing metadata must not replace a verified corrected image with a brief
-  // original-colour frame. Keep decoding its reference chain, but discard this
-  // output until fresh evidence verifies it. Explicit mismatches still expose
+  // original-colour frame. Keep decoding its reference chain and retain only
+  // its latest output for late metadata. Explicit mismatches still expose
   // new content without applying correction, as does a different calibration.
-  const hold = verification === null && !state.geometry.errors.length && renderer.colourRequested &&
-    [renderer.raw[name], renderer.pair[name]].some(t => t.colourVerification === state.colourCalibrationKey);
+  const hold = holdForMetadata(name, verification);
   c.heldForMetadata = hold;
+  c.heldFrame?.close();
+  c.heldFrame = null;
   if (hold) {
     c.colourHeldFrames = Math.min(Number.MAX_SAFE_INTEGER, c.colourHeldFrames + 1);
     c.presentationCurrent = false;
     state.pair = null;
-    frame.close();
+    c.heldFrame = frame;
     updateColourControls();
     station.updateViewFrame(displayedFrame());
     return;
   }
+  presentFrame(name, frame, verification);
+}
+
+function holdForMetadata(name, verification) {
+  return verification === null && !state.geometry.errors.length && renderer.colourRequested &&
+    [renderer.raw[name], renderer.pair[name]].some(t => t.colourVerification === state.colourCalibrationKey);
+}
+
+function presentHeldFrames() {
+  const verification = !state.geometry.errors.length && !state.geometry.unverified.length
+    ? state.colourCalibrationKey : null;
+  for (const name of ["A", "B"]) {
+    const c = cameras[name];
+    if (!c.heldFrame || holdForMetadata(name, verification)) continue;
+    const frame = c.heldFrame;
+    c.heldFrame = null;
+    c.heldForMetadata = false;
+    presentFrame(name, frame, verification);
+  }
+  if (!Object.values(cameras).some(c => c.heldForMetadata)) {
+    metadataHoldAt = null;
+    metadataRequested = false;
+  }
+}
+
+function presentFrame(name, frame, verification) {
+  const c = cameras[name], cached = cachedFrames.has(frame), receivedAt = frameReceipts.get(frame);
   frameColourVerification.set(frame, verification);
-  frameReceipts.set(frame, c.lastArrival);
-  if (cached) cachedFrames.add(frame);
   renderer.upload(name, frame, false, verification);
   c.presentedTimestamp = frame.timestamp;
-  c.presentedAt = cached ? null : c.lastArrival;
+  c.presentedAt = cached ? null : receivedAt;
   c.presentationCurrent = !cached;
   c.cached = cached;
   updateColourControls();
@@ -409,13 +446,17 @@ async function accessUnit(buffer, epoch, eventAt) {
   }
 }
 
-async function message(value, epoch = connectionEpoch, eventAt = performance.now()) {
+async function message(value, epoch = connectionEpoch, eventAt = performance.now(), cachedMetadata = false) {
   if (value.type === "control_owner") {
     station.owner(value.can_control);
     return;
   }
   if (value.type === "view") { station.receiveView(value.view, value.initial === true); return; }
   if (value.type === "reference") { station.reference(value.reference); return; }
+  if (value.type === "metadata_snapshot") {
+    for (const item of value.metadata || []) await message(item, epoch, eventAt, true);
+    return;
+  }
   if (value.type === "bootstrap_start") {
     state.liveSnapshot = !state.replay;
     for (const item of value.metadata || []) await message(item, epoch, eventAt);
@@ -476,7 +517,7 @@ async function message(value, epoch = connectionEpoch, eventAt = performance.now
     const now = performance.now();
     // Snapshot history has no trustworthy original receipt time. Preserve its
     // context, but only newly received continuation can establish live currency.
-    const receivedAt = state.liveSnapshot ? -Infinity : receivedTime(value, eventAt);
+    const receivedAt = state.liveSnapshot || cachedMetadata ? -Infinity : receivedTime(value, eventAt);
     if (telemetry.accept(record, receivedAt) === false) return;
     state.metadata[record.camera_id || record.type || "latest"] = record;
     if (record.type === "session") {
@@ -496,11 +537,12 @@ async function message(value, epoch = connectionEpoch, eventAt = performance.now
     }
     if (
       record.camera_id &&
-      ("sensor_crop" in record || "scaler_crop" in record)
+      (record.type === "frame" || "sensor_crop" in record || "scaler_crop" in record)
     )
       state.frames[record.camera_id] = record;
     station.metadata(record, now, receivedAt);
     validateGeometry();
+    presentHeldFrames();
     $("metadata").textContent = JSON.stringify(state.metadata, null, 2);
   }
 }
@@ -596,6 +638,16 @@ function displayedFrame(now = performance.now()) {
 
 function diagnostics() {
   const now = performance.now();
+  const metadataHeld = Object.values(cameras).some(c => c.heldForMetadata);
+  if (!metadataHeld) { metadataHoldAt = null; metadataRequested = false; }
+  else if (metadataHoldAt === null) metadataHoldAt = now;
+  else if (!metadataRequested && now - metadataHoldAt >= 1000 && !state.liveSnapshot &&
+           socket?.readyState === WebSocket.OPEN) {
+    // Repair viewer metadata loss from the receiver cache without resetting a
+    // healthy decoder or replaying video. One request per continuous hold.
+    metadataRequested = true;
+    socket.send(JSON.stringify({ type: "request_metadata" }));
+  }
   $("flight-telemetry").textContent = telemetry.lines(now).join("\n");
   $("connection").textContent = state.connected
     ? `${state.status?.state || "Connected"}${state.replay ? (state.playing ? " · playing" : " · paused") : ""}`

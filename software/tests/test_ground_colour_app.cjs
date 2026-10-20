@@ -41,10 +41,15 @@ const assets = path.resolve(__dirname, "../python/pigeonvision/ground/static");
         constructor(callback) { super(callback); window.testRedraw = callback; }
       };
       window.socketCount = 0;
+      window.testSent = [];
       window.WebSocket = class {
         static OPEN = 1;
         constructor() { this.readyState = 1; window.testSocket = this; window.socketCount++; queueMicrotask(() => { this.onopen?.(); this.onmessage?.({ data: JSON.stringify({ type: "control_owner", can_control: true }) }); }); }
-        send(message) { if (JSON.parse(message).type !== "view") throw Error("Only ground view publications are expected in this fixture"); }
+        send(message) {
+          const value = JSON.parse(message);
+          window.testSent.push(value);
+          if (!["view", "request_metadata"].includes(value.type)) throw Error("Unexpected ground publication in this fixture");
+        }
         close() { this.readyState = 3; this.onclose?.(); }
       };
     });
@@ -255,7 +260,8 @@ const assets = path.resolve(__dirname, "../python/pigeonvision/ground/static");
     const beforeRecovery = await snapshot();
     await frame("A", 2000000, [120, 160, 240]); await frame("B", 2000000, [120, 160, 240]);
     near(await pixel(), [90, 90, 90], "Reconnect must hold the corrected raw image while metadata is missing");
-    assert.equal(await page.evaluate(() => window.testDecodedFrame.format), null, "Withheld decoded frames must close");
+    assert.notEqual(await page.evaluate(() => window.testDecodedFrame.format), null,
+      "Only the latest withheld output is retained for late metadata");
     const heldRecovery = await snapshot();
     assert.equal(heldRecovery.pairs, beforeRecovery.pairs, "Unknown frames must not form a new pair");
     assert.equal(heldRecovery.colourHeldFrames.B, beforeRecovery.colourHeldFrames.B + 1,
@@ -269,9 +275,15 @@ const assets = path.resolve(__dirname, "../python/pigeonvision/ground/static");
     await view("perspective");
     near(await pixel(), [90, 90, 90], "Reconnect must also hold the corrected paired image");
     assert.equal((await snapshot()).presentation.pair.b, 1000000);
+    await page.evaluate(() => { window.testSupersededFrame = window.testDecodedFrame; });
+    await frame("B", 2000001, [120, 160, 240]);
+    assert.equal(await page.evaluate(() => window.testSupersededFrame.format), null,
+      "A newer withheld output must close its superseded frame");
     await geometry();
-    near(await pixel(), [90, 90, 90], "Later metadata must not present discarded unknown content");
-    assert.equal((await snapshot()).presentation.frame.pts, null, "Metadata alone cannot resume presentation");
+    near(await pixel(), [120, 120, 120], "Late metadata must present the latest output with verified correction");
+    assert.equal((await snapshot()).presentation.frame.pts, 2000000,
+      "Late metadata can resume presentation without another video output");
+    assert.deepEqual((await snapshot()).presentation.heldForMetadata, { A: false, B: false });
     await frame("A", 3000000); await frame("B", 3000000);
     near(await pixel(), [90, 90, 90], "New verified content restores correction");
     assert.equal((await snapshot()).presentation.frame.pts, 3000000);
@@ -308,9 +320,9 @@ const assets = path.resolve(__dirname, "../python/pigeonvision/ground/static");
     assert.match((await snapshot()).geometry.unverified.join(" "), /actual crop/);
     await geometry(undefined, "session-two"); await view("b"); await frame("B", 8000000);
     near(await pixel(), [90, 90, 90], "New-session frame metadata restores correction");
-    await emit({ type: "metadata", record: { type: "frame", camera_id: "B", session_id: "session-two", sensor_crop: null, scaler_crop: null } });
+    await emit({ type: "metadata", record: { type: "frame", camera_id: "B", session_id: "session-two" } });
     await frame("B", 8100000, [120, 160, 240]);
-    near(await pixel(), [90, 90, 90], "An occasional missing crop must hold the verified raw image");
+    near(await pixel(), [90, 90, 90], "An omitted crop must hold the verified raw image, as when null controls are stripped on the wire");
     assert.equal((await snapshot()).presentation.raw.B, 8000000);
     assert.equal((await snapshot()).presentation.frame.pts, null);
     await geometry(undefined, "session-two"); await frame("B", 8200000);
@@ -322,6 +334,56 @@ const assets = path.resolve(__dirname, "../python/pigeonvision/ground/static");
     assert.equal((await snapshot()).presentation.raw.B, 8300000);
     assert.equal((await snapshot()).presentation.heldForMetadata.B, false);
     await geometry(undefined, "session-two"); await view("b"); await frame("B", 8400000);
+
+    // A metadata-only cache refresh repairs a viewer reset without resetting
+    // its healthy decoders. Empty cache evidence never enables correction.
+    const requests = () => page.evaluate(() => window.testSent.filter(value => value.type === "request_metadata").length);
+    const beforeRequests = await requests();
+    await emit({ ...recoveryStatus, source: "udp://other-source:1234", generation: 8, reset: true });
+    await frame("A", 8500000, [120, 160, 240]); await frame("B", 8500000, [120, 160, 240]);
+    near(await pixel(), [90, 90, 90], "A reset must hold corrected pixels while a metadata refresh is pending");
+    await page.waitForFunction(count => window.testSent.filter(value => value.type === "request_metadata").length > count, beforeRequests);
+    await emit({ type: "metadata_snapshot", metadata: [] });
+    assert.equal((await snapshot()).colourEnabled, false);
+    near(await pixel(), [90, 90, 90], "An empty metadata cache must keep the old corrected image held");
+    await page.waitForTimeout(1300);
+    assert.equal(await requests(), beforeRequests + 1, "A continuous hold must issue only one bounded metadata request");
+    const recoveredRecords = [
+      { type: "metadata", record: { type: "session", session_id: "session-two", cameras: descriptions() } },
+      ...["A", "B"].map(camera_id => ({ type: "metadata", record: { type: "frame", session_id: "session-two",
+        camera_id, sensor_crop: [0, 0, 256, 256] } })),
+    ];
+    const beforeSnapshot = await snapshot();
+    await emit({ type: "metadata_snapshot", metadata: recoveredRecords });
+    near(await pixel(), [120, 120, 120], "A matching metadata snapshot must recover without a colour flash");
+    const afterSnapshot = await snapshot();
+    assert.deepEqual(afterSnapshot.decoded, beforeSnapshot.decoded, "Metadata recovery must not reset or resubmit video");
+    assert.equal(afterSnapshot.presentation.frame.pts, 8500000);
+    assert.ok(afterSnapshot.presentation.frame.frameAgeMs >= 1300, "Recovered pixels must retain their original receipt age");
+    assert.deepEqual(afterSnapshot.presentation.heldForMetadata, { A: false, B: false });
+    await page.waitForFunction(() => !/Waiting for camera metadata/.test(document.getElementById("overlay").textContent));
+
+    await emit({ type: "metadata", record: { type: "frame", camera_id: "B", session_id: "session-two", sensor_crop: null } });
+    await frame("B", 8600000, [120, 160, 240]);
+    const wrongGeometry = structuredClone(recoveredRecords);
+    wrongGeometry[2].record.sensor_crop = [1, 0, 255, 256];
+    await emit({ type: "metadata_snapshot", metadata: wrongGeometry });
+    await view("b");
+    near(await pixel(), [120, 160, 240], "An explicit snapshot mismatch must expose new pixels without applying correction");
+    assert.equal((await snapshot()).colourEnabled, false);
+    assert.equal((await snapshot()).presentation.heldForMetadata.B, false);
+    await geometry(undefined, "session-two"); await frame("B", 8700000);
+
+    await emit({ type: "metadata", record: { type: "frame", camera_id: "B", session_id: "session-two", sensor_crop: null } });
+    await frame("B", 8800000, [120, 160, 240]);
+    await page.evaluate(() => { window.testRetiredHeldFrame = window.testDecodedFrame; });
+    await emit({ type: "metadata_snapshot", metadata: [{ type: "metadata", record: {
+      type: "session", session_id: "session-snapshot-new", cameras: descriptions() } }] });
+    assert.equal(await page.evaluate(() => window.testRetiredHeldFrame.format), null,
+      "A different snapshot session must close the old retained output");
+    assert.equal((await snapshot()).presentation.raw.B, 8700000);
+    assert.equal((await snapshot()).presentation.frame.pts, null);
+    await geometry(undefined, "session-snapshot-new");
 
     // A capture session boundary must retire both queued pairs and delayed
     // decoder callbacks while keeping the previous corrected pixels visible.
@@ -376,6 +438,6 @@ const assets = path.resolve(__dirname, "../python/pigeonvision/ground/static");
     await frame("B", 8500000, [120, 160, 240]);
     near(await pixel(), [120, 160, 240], "A changed calibration cannot hold pixels verified for the prior camera");
     assert.deepEqual(failures, []);
-    console.log(JSON.stringify({ passed: true, checked: ["missing-identity-gate", "original-colour-toggle", "reconnect-preference", "physical-identity-mismatch", "crop-mismatch", "session-reset", "view-reset", "profile-removal", "no-profile-default", "independent-strengths", "identity-baseline", "shared-headroom-baseline", "profile-strength-defaults", "headroom-reconnect-preference", "held-raw-colour", "held-paired-colour", "unverified-recovery-hold", "held-presentation-age-and-pts", "withheld-frame-close-and-no-pair", "mismatched-new-frame-gate", "same-stream-recovery", "new-source-generation-hold", "new-session-crop-gate", "transient-missing-crop-hold", "explicit-crop-mismatch", "session-queued-frame-retirement", "session-delayed-output-retirement", "held-frame-profile-identity"] }));
+    console.log(JSON.stringify({ passed: true, checked: ["missing-identity-gate", "original-colour-toggle", "reconnect-preference", "physical-identity-mismatch", "crop-mismatch", "session-reset", "view-reset", "profile-removal", "no-profile-default", "independent-strengths", "identity-baseline", "shared-headroom-baseline", "profile-strength-defaults", "headroom-reconnect-preference", "held-raw-colour", "held-paired-colour", "unverified-recovery-hold", "held-presentation-age-and-pts", "bounded-latest-held-frame", "late-metadata-presentation", "metadata-snapshot-recovery", "empty-snapshot-hold", "snapshot-mismatch-gate", "snapshot-session-retirement", "mismatched-new-frame-gate", "same-stream-recovery", "new-source-generation-hold", "new-session-crop-gate", "transient-missing-crop-hold", "explicit-crop-mismatch", "session-queued-frame-retirement", "session-delayed-output-retirement", "held-frame-profile-identity"] }));
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });

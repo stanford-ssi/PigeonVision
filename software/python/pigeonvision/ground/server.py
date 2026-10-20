@@ -531,6 +531,12 @@ def create_app(source: str, *, calibration: str | None = None,
                                     type(value.get("sequence")) is int and value["sequence"] == connection.checkpoint and
                                     connection.ack is not None and not connection.ack.done()):
                                 connection.ack.set_result(None)
+                        elif kind == "request_metadata":
+                            # A viewer can repair lost geometry without replaying
+                            # video, resetting decoders, or changing the source.
+                            cache = presentation.cache
+                            records = [cache.session, *cache.frames.values()] if cache.session else []
+                            enqueue(connection, {"type": "metadata_snapshot", "metadata": records})
                         elif kind == "claim_control":
                             presentation.claim_control(ws)
                             notify_ownership()
