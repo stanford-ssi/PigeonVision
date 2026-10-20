@@ -11,11 +11,12 @@ def main() -> None:
     parser.add_argument("--calibration")
     parser.add_argument("--record-transport", metavar="PATH", help="Save live received UDP transport to a new .ts file")
     parser.add_argument("--radio-monitor-url", help="Optional gr-dvbs2rx HTTP monitor; freshness means monitor receipt, not RF or video progress")
+    parser.add_argument("--pes-access-units", action="store_true", help="Native PV transport only: each video PES is one complete H.264 access unit with explicit PTS/DTS")
     parser.add_argument("--no-browser", action="store_true")
     args = parser.parse_args()
     run(args.source, host=args.host, port=args.port, calibration=args.calibration,
         open_browser=not args.no_browser, record_transport=args.record_transport,
-        radio_monitor_url=args.radio_monitor_url)
+        radio_monitor_url=args.radio_monitor_url, pes_access_units=args.pes_access_units)
 
 
 if __name__ == "__main__":
