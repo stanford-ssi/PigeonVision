@@ -32,6 +32,25 @@ frame metadata avoided those drops; maximum queue age was 433 ms. One startup
 camera error per camera remains. Physical sensors and autonomous RP2350 startup
 still need testing. [SPI setup](../flight/spi.md).
 
+## ESP32-S3 cable link
+
+Experimental bench path: CM5 → PV-SPI → ESP32-S3 → attenuated B200 → LeanDVB → viewer.
+Both cameras remain 2064×1552 at 30 fps and 4 Mb/s each; transport is 9 Mb/s.
+The modem uses 2.420 GHz, 5 Msymbol/s, 8PSK 2/3, pilots and 0.35 roll-off.
+B200 reception is 10 MS/s. This is separate from the flight E200 profile below.
+
+| Settings | Observed seconds | Usable fps A / B | TS continuity errors |
+| --- | ---: | ---: | ---: |
+| 20 MHz SPI, fast-drift tracking, RRC 20 | 94 | 23.47 / 24.01 | 140 |
+| 20 MHz SPI, pilot tracking, RRC 20 | 94 | 29.66 / 29.64 | 9 |
+| 16 MHz SPI, pilot tracking, RRC 30 | 130 | 29.71 / 29.96 | 4 |
+
+Use pilot tracking with `--rrc-rej 30`; omit `--fastdrift`. The 124-second
+16 MHz SPI test accepted 106,213 messages with zero short transfers, CRC errors,
+sequence losses or overruns. No Pi queue expiry or receiver sample loss occurred
+in the measured intervals. Rare radio decode bursts remain; these short cable
+tests do not establish range or flight reliability.
+
 ## E200 receiver
 
 M4 Pro, Pluto/IIO firmware, **12 MS/s receive**, **8 Msymbol/s QPSK 2/3**, pilots,
