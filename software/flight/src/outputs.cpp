@@ -537,6 +537,7 @@ struct Transport {
       av_dict_set_int(&options, "muxrate", config.mux_bitrate, 0);
       av_dict_set(&options, "pcr_period", "20", 0);
       av_dict_set(&options, "pat_period", "0.1", 0);
+      av_dict_set(&options, "omit_video_pes_length", "0", 0);
       // libav's CBR TS mux adds 2*max_delay to ALL PTS/DTS and max_delay
       // to the initial PCR. Declare the common 1s media offset to the receiver;
       // copyts=1 removes the required startup transmission lead and is invalid.
