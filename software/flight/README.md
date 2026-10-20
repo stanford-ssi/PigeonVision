@@ -87,6 +87,16 @@ SPI ioctl completion and READY are not receiver acceptance evidence. The service
 uses SIGTERM and a 15 s stop timeout; kernel I/O itself is not userspace-bounded.
 No carrier rail/reset sequencing or AFE/LO/PA enable is implemented.
 
+If `capture_queue_full` drops recur in bursts, check `top` for a competing process.
+When `avahi-daemon` is occupying a core, connect SSH by IP before pausing mDNS:
+
+```sh
+sudo systemctl stop avahi-daemon.socket avahi-daemon.service
+```
+
+After the run, restore `.local` discovery with
+`sudo systemctl start avahi-daemon.socket avahi-daemon.service`.
+
 ## Carrier sensors and FC labels
 
 `sensors.backend` is `disabled`, `simulation` or `i2c`; `flight_uart.backend` is
