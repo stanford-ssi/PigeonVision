@@ -4,6 +4,7 @@ import { checkGeometry } from "./geometry.js";
 import { TelemetryState } from "./telemetry.js";
 import { ErrorState } from "./errors.js";
 import { Station } from "./station.js";
+import { LivePlayout } from "./playout.js";
 
 const $ = (id) => document.getElementById(id);
 const errors = new ErrorState();
@@ -72,6 +73,12 @@ let renderer, station,
   connectionEpoch = 0,
   metadataHoldAt = null,
   metadataRequested = false;
+const playout = new LivePlayout(changed => {
+  const visible = ["a", "b"].includes(renderer.mode) ? renderer.mode.toUpperCase() : "pair";
+  if (!changed.includes(visible)) return;
+  station.updateViewFrame(displayedFrame());
+  renderer.draw();
+});
 function renderErrors() {
   state.error = errors.message;
   $("error").textContent = state.error || "";
@@ -87,6 +94,7 @@ function clearError(component) {
 }
 function resetCamera(name) {
   const c = cameras[name];
+  playout.reset(name);
   c.epoch++;
   if (c.decoder?.state !== "closed") c.decoder?.close();
   c.decoder = null;
@@ -108,6 +116,7 @@ function resetCamera(name) {
 }
 function reset({ preserveGeometry = false } = {}) {
   for (const n of ["A", "B"]) resetCamera(n);
+  playout.reset();
   state.pair = null;
   if (!preserveGeometry) {
     state.frames = {};
@@ -270,22 +279,19 @@ function pairFrames() {
     if (Math.abs(delta) <= maxSkew) {
       const fa = a.shift(),
         fb = b.shift();
-      renderer.upload("A", fa, true, frameColourVerification.get(fa));
-      renderer.upload("B", fb, true, frameColourVerification.get(fb));
       const cached = cachedFrames.has(fa) || cachedFrames.has(fb);
-      state.pair = {
-        a: fa.timestamp,
-        b: fb.timestamp,
-        skew: delta,
-        at: cached ? null : Math.min(frameReceipts.get(fa), frameReceipts.get(fb)),
-        cached,
-      };
-      state.presentedPair = state.pair;
-      state.pairs++;
-      fa.close();
-      fb.close();
-      station.updateViewFrame(displayedFrame());
-      renderer.draw();
+      playout.enqueue("pair", {
+        pts: Math.max(fa.timestamp, fb.timestamp),
+        present: () => {
+          renderer.upload("A", fa, true, frameColourVerification.get(fa));
+          renderer.upload("B", fb, true, frameColourVerification.get(fb));
+          state.pair = { a: fa.timestamp, b: fb.timestamp, skew: delta,
+            at: cached ? null : Math.min(frameReceipts.get(fa), frameReceipts.get(fb)), cached };
+          state.presentedPair = state.pair;
+          state.pairs++;
+        },
+        close: () => { fa.close(); fb.close(); },
+      }, livePlayout() && !cached);
     } else {
       const name = delta < 0 ? "A" : "B";
       cameras[name].pending.shift().close();
@@ -328,6 +334,11 @@ function decoded(name, frame, epoch) {
   c.heldFrame?.close();
   c.heldFrame = null;
   if (hold) {
+    // This camera's queued outputs and pairs cannot restore current
+    // presentation while its newer content is held for verification.
+    playout.reset(name);
+    for (const pending of c.pending) pending.close();
+    c.pending = [];
     c.colourHeldFrames = Math.min(Number.MAX_SAFE_INTEGER, c.colourHeldFrames + 1);
     c.presentationCurrent = false;
     state.pair = null;
@@ -364,17 +375,27 @@ function presentHeldFrames() {
 function presentFrame(name, frame, verification) {
   const c = cameras[name], cached = cachedFrames.has(frame), receivedAt = frameReceipts.get(frame);
   frameColourVerification.set(frame, verification);
-  renderer.upload(name, frame, false, verification);
-  c.presentedTimestamp = frame.timestamp;
-  c.presentedAt = cached ? null : receivedAt;
-  c.presentationCurrent = !cached;
-  c.cached = cached;
+  // The raw and paired queues own separate VideoFrame references to the same
+  // decoded image. Either can retire its reference without invalidating the other.
+  const raw = frame.clone();
+  playout.enqueue(name, {
+    pts: raw.timestamp,
+    present: () => {
+      renderer.upload(name, raw, false, verification);
+      c.presentedTimestamp = raw.timestamp;
+      c.presentedAt = cached ? null : receivedAt;
+      c.presentationCurrent = !cached;
+      c.cached = cached;
+    },
+    close: () => raw.close(),
+  }, livePlayout() && !cached);
   updateColourControls();
   c.pending.push(frame);
   c.pending.sort((x, y) => x.timestamp - y.timestamp);
   pairFrames();
-  renderer.draw();
 }
+
+function livePlayout() { return !state.replay && !state.liveSnapshot; }
 
 function decoderFailed(name, error, epoch) {
   if (epoch !== cameras[name].epoch) return;
@@ -497,6 +518,7 @@ async function message(value, epoch = connectionEpoch, eventAt = performance.now
     const replayRestart = value.replay &&
       (value.source !== state.status?.source || value.generation !== state.status?.generation);
     if (replayRestart) { telemetry.reset(); station.resetMission(); }
+    if (state.replay !== value.replay || state.playing !== value.playing) playout.reset();
     state.status = value;
     if (value.state === "ready") clearError("source");
     state.replay = value.replay;
@@ -528,6 +550,7 @@ async function message(value, epoch = connectionEpoch, eventAt = performance.now
         // Retire queued frames and asynchronous outputs from the old capture.
         // resetCamera preserves the held textures and their presentation age.
         for (const name of ["A", "B"]) resetCamera(name);
+        playout.reset();
         station.updateViewFrame(displayedFrame());
       }
       state.geometrySessionId = sessionId;
@@ -889,6 +912,7 @@ try {
       colourGains: { A: [...renderer.colour.A.gain], B: [...renderer.colour.B.gain] },
       decoded: { A: cameras.A.decoded, B: cameras.B.decoded },
       pending: { A: cameras.A.pending.length, B: cameras.B.pending.length },
+      playout: playout.snapshot(),
       colourHeldFrames: { A: cameras.A.colourHeldFrames, B: cameras.B.colourHeldFrames },
       presentation: {
         raw: { A: cameras.A.presentedTimestamp, B: cameras.B.presentedTimestamp },

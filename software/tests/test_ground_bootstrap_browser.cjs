@@ -95,6 +95,7 @@ const { openGroundFixture } = require("./browser/ground_fixture.cjs");
     assert.ok((await snapshot()).presentation.frame.frameAgeMs > 3500, "Draining continuation cannot refresh old video");
     assert.equal((await snapshot()).station.mission.pressureFresh, false);
     assert.equal((await snapshot()).station.mission.phase, "UNKNOWN");
+    await page.waitForFunction(() => /stale/i.test(document.getElementById("overlay").textContent));
     assert.match(await page.locator("#overlay").textContent(), /stale/i);
     assert.match(await page.locator("#flight-telemetry").textContent(), /stale/);
 
@@ -114,6 +115,7 @@ const { openGroundFixture } = require("./browser/ground_fixture.cjs");
       window.testHoldDecodeOutputs = false;
       for (const output of window.testHeldDecodeOutputs.splice(0)) output();
     });
+    await page.waitForFunction(() => window.pigeonGround.snapshot().presentation.frame.pts === 6000);
     assert.ok((await snapshot()).presentation.frame.frameAgeMs >= 1500, "Decoder output must keep original arrival time");
 
     await emit(status(true, 3));

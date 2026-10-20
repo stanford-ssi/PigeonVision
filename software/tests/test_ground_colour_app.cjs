@@ -64,6 +64,7 @@ const origin = "http://127.0.0.1:8773";
     await page.locator("#advanced-controls > summary").click();
     const emit = value => page.evaluate(value => window.testSocket.onmessage({ data: JSON.stringify(value) }), value);
     const snapshot = () => page.evaluate(() => window.pigeonGround.snapshot());
+    const settled = () => page.waitForFunction(() => Object.values(window.pigeonGround.snapshot().playout.pending).every(count => count === 0));
     const strength = async (name, percent) => page.locator("#colour-strength-" + name.toLowerCase()).evaluate((input, value) => {
       input.value = String(value); input.dispatchEvent(new Event("input", { bubbles: true }));
     }, percent);
@@ -85,6 +86,7 @@ const origin = "http://127.0.0.1:8773";
       await emit({ type: "metadata", record: { type: "session", session_id, cameras: alter(descriptions()) } });
       for (const camera_id of ["A", "B"])
         await emit({ type: "metadata", record: { type: "frame", camera_id, sensor_crop: [0,0,256,256] } });
+      await settled();
     };
     await emit({ type: "calibration", calibration: profile });
     assert.equal((await snapshot()).colourEnabled, false);
@@ -235,6 +237,11 @@ const origin = "http://127.0.0.1:8773";
       }, { camera_id, timestamp_us, pixels });
       await page.waitForFunction(({ camera_id, before }) => window.pigeonGround.snapshot().decoded[camera_id] > before,
         { camera_id, before });
+      await page.waitForFunction(({ camera_id, timestamp_us }) => {
+        const state = window.pigeonGround.snapshot();
+        return state.presentation.heldForMetadata[camera_id] || state.presentation.raw[camera_id] === timestamp_us;
+      }, { camera_id, timestamp_us });
+      await settled();
     };
     const pixel = () => page.evaluate(() => {
       window.testRedraw();
@@ -359,6 +366,7 @@ const origin = "http://127.0.0.1:8773";
     ];
     const beforeSnapshot = await snapshot();
     await emit({ type: "metadata_snapshot", metadata: recoveredRecords });
+    await settled();
     near(await pixel(), [120, 120, 120], "A matching metadata snapshot must recover without a colour flash");
     const afterSnapshot = await snapshot();
     assert.deepEqual(afterSnapshot.decoded, beforeSnapshot.decoded, "Metadata recovery must not reset or resubmit video");
@@ -372,6 +380,7 @@ const origin = "http://127.0.0.1:8773";
     const wrongGeometry = structuredClone(recoveredRecords);
     wrongGeometry[2].record.sensor_crop = [1, 0, 255, 256];
     await emit({ type: "metadata_snapshot", metadata: wrongGeometry });
+    await settled();
     await view("b");
     near(await pixel(), [120, 160, 240], "An explicit snapshot mismatch must expose new pixels without applying correction");
     assert.equal((await snapshot()).colourEnabled, false);
