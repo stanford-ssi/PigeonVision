@@ -225,6 +225,7 @@ class Receiver:
             self._put(self.status(cameras=sorted(streams.values()),
                                   missing_cameras=sorted(set(VIDEO_PIDS.values()) - set(streams.values()))))
             last_pts, step_seen = {}, set()
+            session_id = reference_us = None
 
             def finish_step():
                 if not step_seen:
@@ -269,14 +270,21 @@ class Receiver:
                         if offset is not None:
                             if not isinstance(offset, int):
                                 raise ValueError("Transport PTS offset must be integer microseconds")
-                            if offset != self.transport_pts_offset_us:
+                            ident = record.get("session_id")
+                            changed = session_id is not None and ident is not None and ident != session_id
+                            if ident is not None:
+                                session_id = ident
+                            reference = record.get("pts_us")
+                            reference_us = reference + offset if type(reference) is int else None
+                            if offset != self.transport_pts_offset_us or changed:
                                 self.transport_pts_offset_us = offset
                                 for normalizer in normalizers.values():
                                     normalizer.waiting_for_keyframe = True
                                 last_pts.clear()
                                 step_seen.clear()
                                 anchor_pts = anchor_wall = None
-                                self._put(self.status(reset=True, reason="Applying declared common transport PTS offset"))
+                                self._put(self.status(reset=True, reason="Capture session changed" if changed else
+                                                      "Applying declared common transport PTS offset"))
                         self._put(message)
                     except (ValueError, UnicodeError):
                         self.metrics["metadata_errors"] += 1
@@ -285,7 +293,7 @@ class Receiver:
                     continue
                 index = packet.stream.index
                 name = streams[index]
-                timestamp = pts_microseconds(packet.pts, packet.time_base) - self.transport_pts_offset_us
+                timestamp = pts_microseconds(packet.pts, packet.time_base, reference_us) - self.transport_pts_offset_us
                 if name in last_pts and timestamp <= last_pts[name]:
                     # A backwards clock invalidates the decoder/pairing timeline.
                     self.metrics["timestamp_discontinuities"] += 1

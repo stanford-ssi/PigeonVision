@@ -520,6 +520,79 @@ def test_private_session_common_mux_offset(transport, tmp_path):
         receiver.stop()
 
 
+@pytest.mark.parametrize("pes_access_units", [False, True])
+@pytest.mark.parametrize("restart", [False, True])
+def test_declared_session_clock_preserves_pts_epoch_after_restart_and_real_wrap(tmp_path, pes_access_units, restart):
+    def capture(label, start):
+        path = tmp_path / f"{label}.ts"
+        with av.open(str(path), "w", format="mpegts", options={"mpegts_start_pid": "256",
+                     "mpegts_copyts": "1", "omit_video_pes_length": "0"}) as output:
+            streams = []
+            for _ in range(2):
+                stream = output.add_stream("libx264", rate=30)
+                stream.width = stream.height = 64
+                stream.pix_fmt = "yuv420p"
+                stream.codec_context.time_base = Fraction(1, 90000)
+                stream.codec_context.options = {"preset": "ultrafast", "tune": "zerolatency",
+                    "x264-params": "keyint=30:min-keyint=30:scenecut=0:bframes=0:repeat-headers=1:threads=1"}
+                streams.append(stream)
+            metadata = output.add_data_stream("bin_data")
+            metadata.time_base = Fraction(1, 90000)
+            for index in range(64):
+                pts = start + index * 3000
+                if index % 15 == 0:
+                    record = {"schema_version": 1, "type": "session", "session_id": label,
+                              "pts_us": pts_microseconds(pts, Fraction(1, 90000)) - 1_000_000,
+                              "transport_pts_offset_us": 1_000_000}
+                    packet = av.Packet(json.dumps(record).encode())
+                    packet.stream = metadata
+                    packet.pts = packet.dts = pts - 900
+                    packet.time_base = Fraction(1, 90000)
+                    output.mux(packet)
+                for camera, stream in enumerate(streams):
+                    frame = av.VideoFrame.from_ndarray(np.full((64, 64, 3), 80 + index, dtype=np.uint8), format="rgb24")
+                    frame.pts = pts + camera * 900
+                    frame.time_base = Fraction(1, 90000)
+                    for packet in stream.encode(frame):
+                        output.mux(packet)
+            for stream in streams:
+                for packet in stream.encode():
+                    output.mux(packet)
+        return path.read_bytes()
+
+    start = 90_000 if restart else (1 << 33) - 90_000
+    data = capture("new", start)
+    if restart:
+        data = capture("old", 170 * 90_000) + data
+    path = tmp_path / "timeline.ts"
+    path.write_bytes(data)
+    receiver = Receiver(str(path), replay=False, pes_access_units=pes_access_units)
+    units = {"A": [], "B": []}
+    session = None
+    def collect(message):
+        nonlocal session
+        if isinstance(message, bytes) and session == "new":
+            header, payload = unpack_message(message)
+            units[header["camera_id"]].append((header, payload))
+        elif isinstance(message, dict) and message.get("type") == "metadata" and message["record"].get("type") == "session":
+            session = message["record"]["session_id"]
+        return True
+    receiver._put = collect
+    receiver._read()
+    for camera, name in enumerate(("A", "B")):
+        stamps = [header["timestamp_us"] for header, _ in units[name]]
+        assert len(stamps) == 64
+        assert stamps == [pts_microseconds(start + index * 3000 + camera * 900, Fraction(1, 90000)) - 1_000_000
+                          for index in range(64)]
+        assert units[name][0][0]["keyframe"]
+        decoder = av.CodecContext.create("h264", "r")
+        decoded = []
+        for _, payload in units[name]:
+            decoded.extend(decoder.decode(av.Packet(payload)))
+        decoded.extend(decoder.decode(None))
+        assert len(decoded) == 64
+
+
 def test_telemetry_only_private_pid(tmp_path):
     path = tmp_path / "telemetry-only.ts"
     record = {"schema_version": 1, "type": "health", "phase": "COAST", "phase_stale": False}
