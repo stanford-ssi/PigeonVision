@@ -613,6 +613,46 @@ def test_ongoing_replay_follows_bootstrap_snapshot_without_missing_or_reordered_
     asyncio.run(scenario())
 
 
+def test_viewer_metadata_refresh_returns_only_current_geometry_without_video_or_controls(monkeypatch):
+    async def scenario():
+        app = create_app("udp://127.0.0.1:5000")
+        receiver, cache = app[RECEIVER], app[PRESENTATION].cache
+        monkeypatch.setattr(receiver, "start", lambda: None)
+        runner = web.AppRunner(app)
+        await runner.setup()
+        site = web.TCPSite(runner, "127.0.0.1", 0)
+        await site.start()
+        url = f"http://127.0.0.1:{site._server.sockets[0].getsockname()[1]}/ws?role=audience"
+        try:
+            async with ClientSession() as client, client.ws_connect(url) as ws:
+                while (await ws.receive_json(timeout=3))["type"] != "bootstrap_end":
+                    pass
+                await ws.send_json({"type": "request_metadata"})
+                assert await ws.receive_json(timeout=3) == {"type": "metadata_snapshot", "metadata": []}
+                records = [{"type": "metadata", "record": {"type": "session", "session_id": "current"}}]
+                records.extend({"type": "metadata", "record": {"type": "frame", "session_id": "current",
+                               "camera_id": name, "sensor_crop": [0, 0, 64, 64]}} for name in ("A", "B"))
+                for record in records:
+                    cache.accept(record)
+                cache.accept({"type": "metadata", "record": {"type": "health", "session_id": "current"}})
+                video = AccessUnit("A", 0, True, "avc1.42001f", b"not replayed").encode()
+                cache.accept(video)
+                await ws.send_json({"type": "request_metadata"})
+                assert await ws.receive_json(timeout=3) == {"type": "metadata_snapshot", "metadata": records}
+                assert cache.video["A"] == [video]
+                assert receiver.playing and receiver.steps == 0
+                assert app[PRESENTATION].owner is None
+                cache.accept({"type": "metadata", "record": {"type": "session", "session_id": "next"}})
+                await ws.send_json({"type": "request_metadata"})
+                response = await ws.receive_json(timeout=3)
+                assert response["metadata"] == [cache.session]
+                assert response["metadata"][0]["record"]["session_id"] == "next"
+        finally:
+            await runner.cleanup()
+
+    asyncio.run(scenario())
+
+
 def test_live_continuation_preserves_receiver_age_through_slow_bootstrap(monkeypatch):
     clock = [100.0]
     # Keep asyncio's real clock independent of the receiver clock under test.

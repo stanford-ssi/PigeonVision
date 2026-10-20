@@ -300,18 +300,20 @@ struct TsWriter {
 // shared metadata PID. Dropping telemetry never invalidates video reference frames.
 class TransportQueue {
 public:
+  using Clock = std::int64_t (*)();
+  explicit TransportQueue(Clock clock = [] { return boot_ns() / 1000; }) : clock_(clock) {}
   bool push(Encoded item) {
     std::lock_guard lock(mutex_);
     if (closed_)
       return false;
-    item.transport_admission_us = boot_ns() / 1000;
+    item.transport_admission_us = clock_();
     if (item.packet) {
       if (video_.size() == 240) {
         ++video_drops_;
-        ++generation_;
+        ++generations_[item.camera];
         return false;
       }
-      item.generation = generation_;
+      item.generation = generations_[item.camera];
       video_.push_back(std::move(item));
     } else {
       const auto type = item.metadata.value("type", std::string{});
@@ -349,23 +351,28 @@ public:
       ready_.wait(lock, [&] { return closed_ || !video_.empty() || !telemetry_.empty(); });
       if (video_.empty() && telemetry_.empty())
         return std::nullopt;
-      const auto now = boot_ns() / 1000;
+      const auto now = clock_();
       while (!telemetry_.empty() && now - telemetry_.front().transport_admission_us > 1000000) {
         count_telemetry_drop(telemetry_.front());
         telemetry_.pop_front();
         ++expired_;
       }
-      bool lost_video = false;
+      std::map<std::string, bool> lost_cameras;
       while (!video_.empty() && now - video_.front().transport_admission_us > 1000000) {
+        lost_cameras[video_.front().camera] = true;
         video_.pop_front();
         ++video_drops_;
         ++expired_;
-        lost_video = true;
       }
-      if (lost_video) {
-        ++generation_;
+      if (!lost_cameras.empty()) {
+        for (const auto &[camera, _] : lost_cameras)
+          ++generations_[camera];
+        // Reset only chains that lost packets. Preserve any capacity-drop
+        // boundaries already queued: flattening generations would hide a gap
+        // after an older IDR and incorrectly admit its dependent deltas.
         for (auto &item : video_)
-          item.generation = generation_;
+          if (lost_cameras.contains(item.camera))
+            ++item.generation;
       }
       if (video_.empty() && telemetry_.empty())
         continue;
@@ -412,14 +419,30 @@ private:
       sample_drops_ += item.metadata.value("sample_count", std::uint64_t{1});
   }
   mutable std::mutex mutex_;
+  Clock clock_;
   std::condition_variable ready_;
   std::deque<Encoded> video_, telemetry_;
   bool closed_ = false;
   std::size_t high_water_ = 0;
-  std::uint64_t generation_ = 0, video_drops_ = 0, telemetry_drops_ = 0, sample_drops_ = 0,
+  std::map<std::string, std::uint64_t> generations_;
+  std::uint64_t video_drops_ = 0, telemetry_drops_ = 0, sample_drops_ = 0,
                 rate_drops_ = 0, expired_ = 0;
   std::int64_t budget_time_ = 0;
   double budget_ = 6250;
+};
+struct VideoRecovery {
+  std::uint64_t generation = 0;
+  bool waiting_for_keyframe = true;
+  bool accept(const Encoded &item) {
+    if (item.generation != generation) {
+      generation = item.generation;
+      waiting_for_keyframe = true;
+    }
+    if (waiting_for_keyframe && !(item.packet->flags & AV_PKT_FLAG_KEY))
+      return false;
+    waiting_for_keyframe = false;
+    return true;
+  }
 };
 struct Transport {
   const Config &config;
@@ -524,28 +547,22 @@ struct Transport {
       output.header = true;
       logs.event("transport", "started", "",
                  config.spi ? config.spi->device : config.udp_destination);
-      std::uint64_t observed_generation = 0;
-      std::map<std::string, bool> waiting_for_keyframe;
+      std::map<std::string, VideoRecovery> recovery;
       for (const auto &[id, _] : parameters)
-        waiting_for_keyframe[id] = true;
+        recovery[id] = {};
       while (auto item = queue.pop()) {
         in_flight = true;
         queue_age_us = boot_ns() / 1000 - item->transport_admission_us;
         max_queue_age_us = std::max(max_queue_age_us.load(), queue_age_us.load());
-        if (item->packet && item->generation != observed_generation) {
-          observed_generation = item->generation;
-          for (auto &[_, wait] : waiting_for_keyframe)
-            wait = true;
-          logs.event("transport", "queue_overflow_waiting_for_keyframes");
-        }
         if (item->packet) {
-          auto &wait = waiting_for_keyframe.at(item->camera);
-          if (wait && !(item->packet->flags & AV_PKT_FLAG_KEY)) {
+          auto &camera_recovery = recovery.at(item->camera);
+          if (item->generation != camera_recovery.generation)
+            logs.event("transport", "queue_overflow_waiting_for_keyframes", item->camera);
+          if (!camera_recovery.accept(*item)) {
             ++drops;
             in_flight = false;
             continue;
           }
-          wait = false;
           auto *stream = streams.at(item->camera);
           const auto video_pts_us = item->packet->pts;
           av_packet_rescale_ts(item->packet.get(), us_timebase, stream->time_base);

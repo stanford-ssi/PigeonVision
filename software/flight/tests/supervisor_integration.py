@@ -68,6 +68,8 @@ class Capture:
             "flight_uart": {"backend": "simulation"},
         }
         settings.update(overrides or {})
+        if "session_dir" in settings:
+            settings.pop("session_root", None)
         self.config.write_text(json.dumps(settings))
         self.stdout = (directory / "stdout.jsonl").open("w")
         self.stderr = (directory / "stderr.log").open("w")
@@ -142,6 +144,23 @@ def run(binary, output):
         samples = [json.loads(line) for line in (sessions[0] / "sensors.jsonl").read_text().splitlines()]
         assert any(r.get("type") == "sensor_sample" and r["valid"] for r in samples)
         print("nominal simulation, telemetry, exclusive lock, SIGTERM: verified", flush=True)
+
+        identities = []
+        for index, basename in enumerate(("slot-0", "slot-1", "slot-0")):
+            directory = root / f"identity-{index}"
+            session = directory / basename
+            active = Capture(binary, directory, {"session_dir": str(session)})
+            active.collect(1.2)
+            health = active.health()
+            active.stop(expected_code=0, expected_failed=False)
+            manifest = json.loads((session / "session.json").read_text())
+            status = json.loads(active.status.read_text())
+            assert manifest["session_id"] == health["session_id"] == status["session_id"]
+            assert manifest["configuration"]["session_dir"] == str(session)
+            identities.append(manifest["session_id"])
+            active = None
+        assert len(set(identities)) == 3, "reused directory basenames must not reuse capture identities"
+        print("reused directory basenames: distinct IDs shared by manifest, transport and status", flush=True)
 
         active = Capture(binary, root / "missing-camera", {
             "cameras": [{"id": "A", "device": "nonexistent-pv-camera"}]})
