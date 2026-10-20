@@ -17,7 +17,7 @@ from pigeonvision.ground.server import CLIENTS, PRESENTATION, RECEIVER, Receiver
 from pigeonvision.ground.transport import (
     AccessUnit, H264Normalizer, START_CODE, annexb_nals, pts_microseconds, unpack_message,
 )
-from pigeonvision.ground.ts_input import ContinuityAudit
+from pigeonvision.ground.ts_input import ContinuityAudit, TsInput
 
 
 @pytest.fixture
@@ -85,8 +85,9 @@ def test_sps_reconfiguration_replaces_same_id():
     assert annexb_nals(unit.data) == [newer_sps, pps, idr]
 
 
-def test_real_mux_demux_preserves_shared_pts_and_decodes(transport):
-    receiver = Receiver(str(transport))
+@pytest.mark.parametrize("pes_access_units", [False, True])
+def test_real_mux_demux_preserves_shared_pts_and_decodes(transport, pes_access_units):
+    receiver = Receiver(str(transport), pes_access_units=pes_access_units)
     receiver.start()
     receiver.control("play")
     units = {"A": [], "B": []}
@@ -119,6 +120,116 @@ def test_real_mux_demux_preserves_shared_pts_and_decodes(transport):
             assert decoded[0].width == 64
     finally:
         receiver.stop()
+
+
+def video_pes_spans(data):
+    spans, current = {}, {}
+    for pos in range(0, len(data), 188):
+        packet = data[pos:pos + 188]
+        pid = ((packet[1] & 31) << 8) | packet[2]
+        if pid not in (256, 257) or not packet[3] & 16:
+            continue
+        if packet[1] & 64:
+            current[pid] = pos
+            spans[pos] = []
+        if pid in current:
+            spans[current[pid]].append(pos)
+    return spans
+
+
+def test_pes_access_units_emits_complete_frame_without_future_frame_read_ahead(tmp_path, monkeypatch):
+    path = tmp_path / "finite-pes.ts"
+    rng = np.random.default_rng(42)
+    with av.open(str(path), "w", format="mpegts", options={"mpegts_start_pid": "256",
+                 "mpegts_copyts": "1", "omit_video_pes_length": "0"}) as output:
+        stream = output.add_stream("libx264", rate=30)
+        stream.width = stream.height = 128
+        stream.pix_fmt = "yuv420p"
+        stream.bit_rate = 4_000_000
+        stream.codec_context.time_base = Fraction(1, 90000)
+        stream.codec_context.options = {"preset": "ultrafast", "tune": "zerolatency",
+                                       "x264-params": "keyint=30:bframes=0:repeat-headers=1:threads=1"}
+        for index in range(160):
+            frame = av.VideoFrame.from_ndarray(rng.integers(0, 256, (128, 128, 3), dtype=np.uint8), format="rgb24")
+            frame.pts = 450000 + index * 3000
+            frame.time_base = Fraction(1, 90000)
+            for packet in stream.encode(frame):
+                output.mux(packet)
+        for packet in stream.encode():
+            output.mux(packet)
+    data = path.read_bytes()
+    spans = video_pes_spans(data)
+    with av.open(str(path)) as container:
+        ends = {pts_microseconds(p.pts, p.time_base): spans[p.pos][-1] + 188
+                for p in container.demux() if p.size and p.pts is not None}
+    position = [0]
+    class PacketInput(TsInput):
+        def read(self, size=-1):
+            data = super().read(min(size, 188) if size >= 0 else 188)
+            position[0] = self.file.tell()
+            return data
+    monkeypatch.setattr("pigeonvision.ground.server.TsInput", PacketInput)
+    def receive(fast):
+        units, ahead = [], []
+        receiver = Receiver(str(path), replay=False, pes_access_units=fast)
+        def collect(message):
+            if isinstance(message, bytes):
+                header, _ = unpack_message(message)
+                units.append(message)
+                pts = header["timestamp_us"]
+                if 8_000_000 <= pts < 9_000_000:
+                    ahead.append(position[0] - ends[pts])
+            return True
+        receiver._put = collect
+        receiver._read()
+        return units, ahead
+    generic, generic_ahead = receive(False)
+    fast, fast_ahead = receive(True)
+    assert len(fast) == 160 and fast == generic, "PES mode must preserve every AU payload and PTS"
+    assert len(fast_ahead) == 30
+    assert max(fast_ahead) <= 188, "A complete finite PES must not wait for the next video frame"
+    assert max(generic_ahead) > 188, "Control must exercise parser read-ahead"
+
+
+def test_default_parser_preserves_access_unit_split_across_video_pes(transport, tmp_path):
+    data = bytearray(transport.read_bytes())
+    # Split one IDR at its final TS packet. Its existing adaptation stuffing
+    # has room for a second PES header, so PCR, payload bytes and CCs stay intact.
+    spans = video_pes_spans(data)
+    first, packets = next((start, packets) for start, packets in spans.items()
+                          if (((data[start + 1] & 31) << 8) | data[start + 2]) == 256 and len(packets) > 1)
+    tail = packets[-1]
+    assert data[tail + 3] & 32 and data[tail + 4] >= 10 and data[tail + 5] == 0
+    start_payload = first + (5 + data[first + 4] if data[first + 3] & 32 else 4)
+    assert data[start_payload + 4:start_payload + 6] == b"\0\0"
+    payload = tail + 5 + data[tail + 4]
+    data[tail + 1] |= 64
+    data[tail + 4] -= 9
+    data[payload - 9:payload] = b"\0\0\x01\xe0\0\0\x80\0\0"
+    fragmented = tmp_path / "fragmented-au.ts"
+    fragmented.write_bytes(data)
+    def receive(path):
+        receiver = Receiver(str(path), replay=False)
+        assert receiver.pes_access_units is False
+        units = []
+        receiver._put = lambda message: (units.append(message) if isinstance(message, bytes) else None) or True
+        receiver._read()
+        return units
+    assert receive(fragmented) == receive(transport), "Generic TS must retain parser reassembly and timestamps"
+
+
+def test_native_pes_option_reaches_receiver_through_both_clis(monkeypatch):
+    from pigeonvision.cli import main
+    from pigeonvision.ground.__main__ import main as ground_main
+    apps = []
+    monkeypatch.setattr("pigeonvision.ground.server.web.run_app", lambda app, **kwargs: apps.append(app))
+    for enabled in (False, True):
+        options = ["--pes-access-units"] if enabled else []
+        assert main(["view", "udp://127.0.0.1:5000", "--no-browser", *options]) == 0
+        monkeypatch.setattr("sys.argv", ["pv-ground", "udp://127.0.0.1:5000", "--no-browser", *options])
+        ground_main()
+        for app in apps[-2:]:
+            assert app[RECEIVER].status()["pes_access_units"] is enabled
 
 
 def test_replay_step_and_missing_camera_are_explicit(transport):
