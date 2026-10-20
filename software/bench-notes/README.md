@@ -65,7 +65,7 @@ and no persistent line at +1 MHz. Brief station IDs produce that +1 MHz tone
 at the start and end of a keyed run.
 
 Live browser presentation now uses a bounded 90 ms timestamp buffer. A mocked
-three-frame burst test improved from 10 to 30 displayed frames per second.
+three-frame burst test improved from 10 to 30 presented timestamps per second.
 Recovery, metadata, colour and bootstrap regressions pass; live motion after
 this change still needs checking.
 

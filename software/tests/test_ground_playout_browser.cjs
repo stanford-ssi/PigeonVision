@@ -8,10 +8,11 @@ const { openGroundFixture } = require("./browser/ground_fixture.cjs");
   try {
     await page.evaluate(async () => {
       const { Renderer } = await import("/static/projection.js");
-      const draw = Renderer.prototype.draw;
+      // This entire file tests PTS/RAF scheduling and frame ownership, not the
+      // runner's full-viewport shader throughput. Keep real queues, VideoFrames
+      // and texture uploads; test_ground_colour_app.cjs checks rasterized pixels.
       Renderer.prototype.draw = function () {
         if (window.testTrace) window.testTrace.draws++;
-        return draw.call(this);
       };
       window.testFrames = [];
       const Decoder = window.VideoDecoder;
