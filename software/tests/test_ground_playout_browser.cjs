@@ -203,11 +203,40 @@ const { openGroundFixture } = require("./browser/ground_fixture.cjs");
     });
     assert.ok(healthy >= 7, `Repeated A resets must preserve B cadence; only ${healthy} B frames appeared`);
     await emit({ ...status(true), reset: true });
+    await geometry("slow-start"); await view("perspective");
+    // A slow first decode must not permanently add its startup cost to the
+    // presentation clock and overflow otherwise healthy six-frame queues.
+    const startup = await page.evaluate(async () => {
+      const base = 50000000, start = performance.now(), seen = [];
+      let sampling = true, previous = null;
+      const sample = now => {
+        const pts = window.pigeonGround.snapshot().presentation.frame.pts;
+        if (pts >= base + 200000 && pts !== previous) { seen.push({ now, pts }); previous = pts; }
+        if (sampling) requestAnimationFrame(sample);
+      };
+      requestAnimationFrame(sample);
+      window.testHoldDecodeOutputs = true;
+      window.testPair(base, true);
+      await new Promise(resolve => setTimeout(resolve, 120));
+      window.testHoldDecodeOutputs = false;
+      for (const output of window.testHeldDecodeOutputs.splice(0)) output();
+      await Promise.all(Array.from({ length: 10 }, (_, group) => new Promise(resolve => setTimeout(() => {
+        for (let i = 0; i < 3; i++) window.testPair(base + 200000 + Math.round((group * 3 + i) * 1000000 / 30));
+        resolve();
+      }, Math.max(0, start + 200 + group * 100 - performance.now())))));
+      await new Promise(resolve => setTimeout(resolve, 400)); sampling = false;
+      const gaps = seen.slice(1).map((item, i) => item.now - seen[i].now).sort((a, b) => a - b);
+      return { displayed: seen.length, medianGapMs: gaps[Math.floor(gaps.length / 2)] };
+    });
+    assert.ok(startup.displayed >= 28, `Slow initial decode must preserve subsequent 30 fps: ${JSON.stringify(startup)}`);
+    assert.ok(startup.medianGapMs > 25 && startup.medianGapMs < 42, JSON.stringify(startup));
+    await emit({ ...status(true), reset: true });
     assert.equal(await page.evaluate(() => window.testFrames.every(frame => frame.format === null)), true);
     assert.deepEqual(errors, []);
     console.log(JSON.stringify({ checked: ["paired and raw burst cadence", "one visible draw per refresh",
       "late decoder catch-up", "bounded queues", "receipt age", "pause/resume", "reset and backward PTS", "frame closure",
       "metadata-hold queue retirement", "healthy raw camera survives partner metadata hold",
-      "unmatched pre-hold frame retirement", "healthy camera survives partner resets"], results }));
+      "unmatched pre-hold frame retirement", "healthy camera survives partner resets",
+      "slow first decode preserves subsequent cadence"], results, startup }));
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });

@@ -27,7 +27,10 @@ export class LivePlayout {
     }
     if (this.clock === null) {
       const pts = Math.min(...Object.values(this.queues).filter(q => q.length).map(q => q[0].pts));
-      this.clock = { pts, at: performance.now() + this.delayMs };
+      // Decoder startup can be much slower than steady output. Its first
+      // completion must not add permanent latency or overflow healthy queues.
+      const at = Number.isFinite(item.at) ? item.at : performance.now();
+      this.clock = { pts, at: at + this.delayMs };
     }
     this.schedule();
   }

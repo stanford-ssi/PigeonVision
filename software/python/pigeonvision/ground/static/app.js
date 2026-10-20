@@ -282,6 +282,7 @@ function pairFrames() {
       const cached = cachedFrames.has(fa) || cachedFrames.has(fb);
       playout.enqueue("pair", {
         pts: Math.max(fa.timestamp, fb.timestamp),
+        at: Math.min(frameReceipts.get(fa), frameReceipts.get(fb)),
         present: () => {
           renderer.upload("A", fa, true, frameColourVerification.get(fa));
           renderer.upload("B", fb, true, frameColourVerification.get(fb));
@@ -380,6 +381,7 @@ function presentFrame(name, frame, verification) {
   const raw = frame.clone();
   playout.enqueue(name, {
     pts: raw.timestamp,
+    at: receivedAt,
     present: () => {
       renderer.upload(name, raw, false, verification);
       c.presentedTimestamp = raw.timestamp;
