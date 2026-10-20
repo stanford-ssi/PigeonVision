@@ -5,14 +5,18 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 const assets = path.resolve(__dirname, "../python/pigeonvision/ground/static");
+const origin = "http://127.0.0.1:8773";
 (async () => {
-  const browser = await chromium.launch({ channel: "chrome", headless: true, args: ["--enable-gpu"] });
+  const browser = await chromium.launch({ channel: process.env.PV_TEST_BROWSER || "chrome", headless: true,
+    args: ["--enable-gpu", "--enable-unsafe-swiftshader"] });
   try {
     const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
     const failures = [];
     page.on("pageerror", error => failures.push(error.message));
-    await page.route("http://127.0.0.1:8773/**", route => {
-      const resource = new URL(route.request().url()).pathname;
+    await page.route("**/*", route => {
+      const url = new URL(route.request().url());
+      if (url.origin !== origin) return route.abort();
+      const resource = url.pathname;
       const file = resource === "/" ? "index.html" : resource.replace(/^\/static\//, "");
       if (file.includes("..") || !fs.existsSync(path.join(assets, file))) return route.abort();
       const contentType = file.endsWith(".js") ? "application/javascript" : file.endsWith(".css") ? "text/css" : file.endsWith(".ttf") ? "font/ttf" : file.endsWith(".png") ? "image/png" : "text/html";
@@ -53,7 +57,7 @@ const assets = path.resolve(__dirname, "../python/pigeonvision/ground/static");
         close() { this.readyState = 3; this.onclose?.(); }
       };
     });
-    await page.goto("http://127.0.0.1:8773/");
+    await page.goto(origin);
     await page.waitForFunction(() => window.pigeonGround?.snapshot().connected && window.pigeonGround.snapshot().station.controlling);
     await page.locator("#controls-toggle").click();
     await page.locator("#operator-controls").waitFor({ state: "visible" });
