@@ -7,6 +7,7 @@ export class LivePlayout {
     this.limit = limit;
     this.queues = { A: [], B: [], pair: [] };
     this.clock = null;
+    this.latestPTS = null;
     this.request = null;
     this.dropped = 0;
   }
@@ -16,8 +17,16 @@ export class LivePlayout {
       this.presented([key]);
       return;
     }
-    if (this.clock && this.clock.at + (item.pts - this.clock.pts) / 1000 - performance.now() > this.delayMs + 200)
-      this.reset(); // A forward timestamp discontinuity must not freeze the view.
+    if (this.clock && this.clock.at + (item.pts - this.clock.pts) / 1000 - performance.now() > this.delayMs + 200) {
+      if (item.pts - this.latestPTS > 200000) {
+        this.reset(); // A forward timestamp discontinuity must not freeze the view.
+      } else {
+        // Catch up to the earlier arrival time and keep queued frames.
+        const at = Number.isFinite(item.at) ? item.at : performance.now();
+        this.clock.at = Math.min(this.clock.at, at + this.delayMs - (item.pts - this.clock.pts) / 1000);
+      }
+    }
+    this.latestPTS = Math.max(this.latestPTS ?? item.pts, item.pts);
     const queue = this.queues[key];
     queue.push(item);
     queue.sort((a, b) => a.pts - b.pts);
@@ -60,7 +69,10 @@ export class LivePlayout {
     this.request = null;
     for (const key of camera === null ? ["A", "B", "pair"] : [camera, "pair"])
       for (const item of this.queues[key].splice(0)) item.close();
-    if (camera === null) this.clock = null;
+    if (camera === null) {
+      this.clock = null;
+      this.latestPTS = null;
+    }
     // Keep the shared clock for a surviving camera. Repeated failures of its
     // partner must not keep postponing frames which already have a due time.
     this.schedule();

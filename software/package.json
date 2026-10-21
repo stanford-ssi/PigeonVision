@@ -2,7 +2,7 @@
   "name": "pigeonvision-tests",
   "private": true,
   "scripts": {
-    "test:browser": "node tests/test_ground_recovery_browser.cjs && node tests/test_ground_bootstrap_browser.cjs && node tests/test_ground_colour_app.cjs && node tests/test_ground_playout_browser.cjs"
+    "test:browser": "node tests/test_ground_playout.cjs && node tests/test_ground_recovery_browser.cjs && node tests/test_ground_bootstrap_browser.cjs && node tests/test_ground_colour_app.cjs && node tests/test_ground_playout_browser.cjs"
   },
   "devDependencies": {
     "playwright": "1.62.1"
