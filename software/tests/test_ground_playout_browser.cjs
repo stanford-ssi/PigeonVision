@@ -230,13 +230,46 @@ const { openGroundFixture } = require("./browser/ground_fixture.cjs");
     });
     assert.ok(startup.displayed >= 28, `Slow initial decode must preserve subsequent 30 fps: ${JSON.stringify(startup)}`);
     assert.ok(startup.medianGapMs > 25 && startup.medianGapMs < 42, JSON.stringify(startup));
+    const beforeMode = await page.evaluate(() => window.testDecoders.map(decoder => decoder.state));
+    await page.selectOption("#playout-mode", "smooth");
+    assert.equal((await snapshot()).playout.delayMs, 220);
+    assert.equal((await snapshot()).playout.limit, 16);
+    assert.deepEqual(await page.evaluate(() => window.testDecoders.map(decoder => decoder.state)), beforeMode);
+    await emit({ ...status(true), reset: true }); await geometry("smooth"); await view("a");
+    const smooth = await page.evaluate(async () => {
+      const base = 60000000, start = performance.now() + 50, seen = [];
+      let sampling = true, previous = null;
+      const sample = now => {
+        const pts = window.pigeonGround.snapshot().presentation.frame.pts;
+        if (pts >= base && pts !== previous) { seen.push({ now, pts }); previous = pts; }
+        if (sampling) requestAnimationFrame(sample);
+      };
+      requestAnimationFrame(sample);
+      await Promise.all(Array.from({ length: 5 }, (_, group) => new Promise(resolve => setTimeout(() => {
+        for (let i = 0; i < 6; i++) window.testPair(base + Math.round((group*6+i)*1000000/30), group === 0 && i === 0);
+        resolve();
+      }, Math.max(0, start + group*200 - performance.now())))));
+      await new Promise(resolve => setTimeout(resolve, 550)); sampling = false;
+      const gaps = seen.slice(1).map((item, i) => item.now - seen[i].now);
+      return { displayed: seen.length, maxGapMs: Math.max(...gaps) };
+    });
+    assert.equal(smooth.displayed, 30, JSON.stringify(smooth));
+    assert.ok(smooth.maxGapMs < 70, JSON.stringify(smooth));
     await emit({ ...status(true), reset: true });
     assert.equal(await page.evaluate(() => window.testFrames.every(frame => frame.format === null)), true);
+    await page.reload();
+    await page.waitForFunction(() => window.pigeonGround?.snapshot().connected);
+    assert.equal(await page.inputValue("#playout-mode"), "smooth");
+    assert.equal((await snapshot()).playout.delayMs, 220);
+    await page.selectOption("#playout-mode", "low");
+    assert.equal((await snapshot()).playout.delayMs, 90);
+    assert.equal((await snapshot()).playout.limit, 6);
     assert.deepEqual(errors, []);
     console.log(JSON.stringify({ checked: ["paired and raw burst cadence", "one visible draw per refresh",
       "late decoder catch-up", "bounded queues", "receipt age", "pause/resume", "reset and backward PTS", "frame closure",
       "metadata-hold queue retirement", "healthy raw camera survives partner metadata hold",
       "unmatched pre-hold frame retirement", "healthy camera survives partner resets",
-      "slow first decode preserves subsequent cadence"], results, startup }));
+      "slow first decode preserves subsequent cadence", "smooth six-frame bursts",
+      "playback choice persists without decoder reset"], results, startup, smooth }));
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });

@@ -144,7 +144,55 @@ for (const leader of ["A", "B"]) {
   assert.ok(f.frames.every(frame => frame.closed === 1));
 }
 
+// Increasing delay fills the buffer once without replacing its arrival clock.
+// Switching back bounds every queue immediately and closes trimmed frames once.
+{
+  const f = fixture();
+  const first = f.enqueue("A", 0);
+  f.enqueue("B", 33333);
+  const clock = f.playout.clock, floor = clock.at - f.playout.delayMs;
+  f.playout.setDelay(220, 16);
+  assert.equal(f.playout.clock, clock);
+  assert.equal(clock.at - f.playout.delayMs, floor);
+  assert.equal(f.playout.snapshot().delayMs, 220);
+  assert.equal(f.playout.snapshot().limit, 16);
+  assert.equal(first.closed, 0);
+  f.advance(150);
+  assert.equal(first.presented, 0);
+  for (let i = 1; i <= 20; i++) f.enqueue("A", i * 33333);
+  assert.equal(f.playout.queues.A.length, 16);
+  const before = f.playout.dropped;
+  f.playout.setDelay(90, 6);
+  assert.equal(f.playout.clock, clock);
+  assert.equal(f.playout.snapshot().delayMs, 90);
+  assert.equal(f.playout.snapshot().limit, 6);
+  assert.equal(f.playout.queues.A.length, 6);
+  assert.equal(f.playout.dropped, before + 10);
+  assert.deepEqual(f.resets, []);
+  f.advance(1000);
+  assert.ok(f.frames.every(frame => frame.closed === 1));
+}
+
+// Reject bad settings before changing the clock, bounds or frame ownership.
+{
+  const f = fixture();
+  f.enqueue("A", 0);
+  const clock = f.playout.clock, at = clock.at;
+  for (const [delay, limit] of [[NaN, 16], [Infinity, 16], [-1, 16], [220, 0],
+    [220, 1.5], [220, Infinity], ["220", 16]]) {
+    assert.throws(() => f.playout.setDelay(delay, limit), { name: "RangeError" });
+    assert.equal(f.playout.clock, clock);
+    assert.equal(clock.at, at);
+    assert.equal(f.playout.delayMs, 90);
+    assert.equal(f.playout.limit, 6);
+    assert.equal(f.frames[0].closed, 0);
+  }
+  f.playout.reset();
+  assert.equal(f.frames[0].closed, 1);
+}
+
 console.log(JSON.stringify({ checked: ["A/B catch-up preserves common clock",
   "clock catch-up retains healthy queued partner without extra latency",
   "bounded default queues", "true forward jump recovers", "wall-time pause",
-  "surviving camera", "full backward/session reset", "unclocked bootstrap", "frame closure"] }));
+  "surviving camera", "full backward/session reset", "unclocked bootstrap", "frame closure",
+  "buffer switch preserves arrival clock", "shrinking closes bounded queues", "invalid settings are atomic"] }));

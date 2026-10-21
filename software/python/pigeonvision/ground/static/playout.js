@@ -11,6 +11,19 @@ export class LivePlayout {
     this.request = null;
     this.dropped = 0;
   }
+  setDelay(delayMs, limit) {
+    if (!Number.isFinite(delayMs) || delayMs < 0 || !Number.isInteger(limit) || limit < 1)
+      throw new RangeError("Playout needs a nonnegative delay and a positive integer limit");
+    if (this.clock) this.clock.at += delayMs - this.delayMs;
+    this.delayMs = delayMs;
+    this.limit = limit;
+    for (const queue of Object.values(this.queues))
+      while (queue.length > this.limit) {
+        queue.shift().close();
+        this.dropped++;
+      }
+    this.schedule();
+  }
   enqueue(key, item, clocked = true) {
     if (!clocked) {
       try { item.present(); } finally { item.close(); }
@@ -78,7 +91,7 @@ export class LivePlayout {
     this.schedule();
   }
   snapshot() {
-    return { delayMs: this.delayMs, dropped: this.dropped,
+    return { delayMs: this.delayMs, limit: this.limit, dropped: this.dropped,
       pending: Object.fromEntries(Object.entries(this.queues).map(([key, queue]) => [key, queue.length])) };
   }
 }

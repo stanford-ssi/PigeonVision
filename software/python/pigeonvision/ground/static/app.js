@@ -79,6 +79,20 @@ const playout = new LivePlayout(changed => {
   station.updateViewFrame(displayedFrame());
   renderer.draw();
 });
+const playoutMode = $("playout-mode");
+const playoutKey = "pigeonvision.playoutMode";
+try {
+  if (localStorage.getItem(playoutKey) === "smooth") playoutMode.value = "smooth";
+} catch {}
+function updatePlayout() {
+  const smooth = playoutMode.value === "smooth";
+  playout.setDelay(smooth ? 220 : 90, smooth ? 16 : 6);
+}
+updatePlayout();
+playoutMode.onchange = () => {
+  updatePlayout();
+  try { localStorage.setItem(playoutKey, playoutMode.value); } catch {}
+};
 function renderErrors() {
   state.error = errors.message;
   $("error").textContent = state.error || "";
