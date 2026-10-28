@@ -76,4 +76,32 @@ The mixer and passive losses are planning assumptions, not measurements. Add inp
 
 The proposed +7 to +8 dBm average PA drive corresponds to 1.17-1.48 W by linear extrapolation. With the same loss assumptions, the mixer input would be +11 to +12 dBm average, around the RF2052's published typical CW compression point before allowing for waveform peaks. Therefore the existing loss-only mixer cannot both accept very low ESP32 power and deliver that PA drive. A linear driver after the mixer/filter would let the mixer operate at a lower level, at the expense of another gain stage.
 
+The input reference plane matters for RFFC2072A too. A +7 dBm mixer input, -2 dB nominal conversion gain and 2 dB assumed following passive loss yield +3 dBm at the PA, then 26.7 dBm (0.47 W) at its output by gain extrapolation. This is not the same operating point as +7 dBm directly at the PA input. The -2 dB figure excludes balun losses; the exact assembled loss remains to be measured.
+
+RFFC2072A contains mixer 2; its mixer 1 input/output pins are NC (Rev F p. 19). Use the mixer 2 curves on p. 15. Both sets of curves have their own stated 1000 MHz LO / 100 MHz IF test conditions. At high temperature the curves also show that the highest bias code does not maximize compression headroom. A typical 8.5 dBm CW input P1dB with 7 dBm average drive leaves only 1.5 dB before that CW point; 4 dB waveform peaks reach 11 dBm. That does not prove reception fails, but it cannot establish low distortion from the average level alone. Select bias using measured MER/spectrum and loss at the actual conversion.
+
 There is a separate PA limit. For an assumed waveform PAPR of 4-5 dB, 2 W average asks for peaks of 37.0-38.0 dBm, above this tune's measured CW compression and saturation levels. As a reference calculation, placing peaks at its 33.6 dBm CW OP1dB gives average powers of 0.91 W at 4 dB PAPR and 0.72 W at 5 dB PAPR. This is not a universal clean-output ceiling: crest-factor statistics, AM/PM and the permitted distortion/regrowth decide the actual average operating point. Measure the real waveform's PAPR and MER/spectrum versus drive. A reliable 2 W average goal may require a PA with more peak headroom, regardless of the mixer bias setting.
+
+## Range with the owned antenna pair
+
+The flight antenna is [TrueRC Singularity 1280 V2 BLACK RHCP](https://truerc.com/37938-singularity-1280-v2-black), nominally 1.9 dBic over 1250-1290 MHz. The ground antenna is [TrueRC X2-AIR 1.3 RHCP](https://truerc.com/35572-xc2b2-air-1-3), nominally 13 dBic over 1200-1360 MHz. Use these co-polar gains directly in the link equation. The workbook's older 3 dB linear-to-circular penalty does not apply to an ideal RHCP pair; a separate 0.5 dB residual polarization allowance is assumed here, not measured.
+
+Run `python3 hardware/yapogee-s3/analysis/link_budget.py`. It writes full tables and inputs to `output/link-budget.md` and `output/link-budget.json`. Defaults use the owned antennas and retain the workbook's 1 dB PA output filter, 0.3 dB flight cable, 1 dB receive cable/filter and 2 dB ground-pointing loss. With 0.5 dB polarization allowance, total fixed loss is 4.8 dB. Receiver NF is assumed 8 dB at its input connector, excluding the separately counted receive feeder/filter. The calculation adds a new 2 dB implementation allowance and retains the 10 dB reserve. Neither receiver NF nor implementation loss is measured.
+
+From [ETSI Table 13](https://www.etsi.org/deliver/etsi_en/302300_302399/30230701/01.04.01_60/en_30230701v010401p.pdf), normal-frame ideal Es/N0 is 1.00 dB for QPSK 1/2 and 6.62 dB for 8PSK 2/3. With 290 K noise temperature and the above allowances, the estimated receiver-input thresholds are -92.98 dBm at 10 Msym/s QPSK 1/2 and -90.37 dBm at 5 Msym/s 8PSK 2/3. QPSK requires a ground receiver supporting 10 Msym/s; the current S3 receiver implements only 1 and 5 Msym/s.
+
+| Assumed clean average PA output before final filter | QPSK 1/2 free-space slant range with 10 dB reserve | 8PSK 2/3 free-space slant range with 10 dB reserve |
+| --- | ---: | ---: |
+| 0.10 W | 8.40 km | 6.22 km |
+| 0.25 W | 13.28 km | 9.83 km |
+| 0.50 W | 18.78 km | 13.90 km |
+| 1.00 W | 26.56 km | 19.66 km |
+| 2.00 W | 37.56 km | 27.81 km |
+
+At 10,000 ft AGL and 100 m station offset (3.050 km slant), 0.5 W QPSK has 15.79 dB remaining after the separate 10 dB reserve. At 30,000 ft and the same offset (9.145 km), the remaining margin is 6.25 dB. These are conditional planning results; the table does not establish that the mixer/PA can produce each clean output power.
+
+The equations are `FSPL = 20*log10(4*pi*d*f/c)` and `P_RX = P_PA + G_flight + G_ground - losses - FSPL`, with power in dBm and gains/losses in dB. At 290 K, `P_threshold = 10*log10(k*T*1000) + NF + 10*log10(Rs) + Es/N0 + implementation_allowance`. This symbol-rate form accounts for the bandwidth trade without adding roll-off noise twice.
+
+Nominal antenna gain is not the gain in every direction. The X2-AIR's -3 dB beamwidth is 74 degrees horizontal by 34 degrees vertical; its broader advertised coverage is not constant 13 dBic gain. Aim it at the flight volume. Mounted flight pattern, axial ratio, airframe blockage and actual receiver sensitivity remain to be measured. Each additional 10 dB loss divides the calculated free-space range by 3.162. For example, use `--extra-loss-db 10` for that sensitivity case.
+
+The owned flight antenna also constrains bandwidth. A 13.5 MHz waveform at 1280 MHz lies nominally in 1273.25-1286.75 MHz and fits its stated band. A 40 MHz waveform at 1280 MHz extends to 1300 MHz, outside that band. Moving a 40 MHz waveform to 1270 MHz only touches both stated band edges, leaving no additional guard.

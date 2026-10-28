@@ -67,6 +67,8 @@ Using ETSI's ideal AWGN thresholds, QPSK 1/2 at 10 Msym/s needs about `6.62 - 1.
 
 The current S3 receiver's documented rates are 1 and 5 Msym/s. A 10 Msym/s flight mode therefore needs a suitable SDR receiver or further S3 receiver development. An S3 ground receiver also needs RF conversion from the flight band into its supported input range.
 
+The owned antennas are TrueRC Singularity 1280 V2 BLACK RHCP on the rocket and X2-AIR 1.3 RHCP on the ground. Their nominal gains are 1.9 and 13 dBic. The flight antenna's stated 1250-1290 MHz band accommodates a 13.5 MHz waveform centered at 1280 MHz, but not a 40 MHz waveform at that center. The [antenna-specific range calculation](analysis/README.md#range-with-the-owned-antenna-pair) gives conditional free-space budgets and identifies the pointing/pattern assumptions.
+
 ## Evidence and next design decisions
 
 The ESP32 modem evidence is pinned to [f614979](https://github.com/Rivercraft911/esp-dvbs2/tree/f6149796044796f83fe10a27dc381554df21a2d8):
