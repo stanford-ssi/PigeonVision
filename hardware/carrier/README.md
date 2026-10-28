@@ -1,6 +1,6 @@
 # Carrier
 
-**Current plan:** one CM5, two cameras, SPI to the RP2350 transmitter and Ethernet for service or the E200 fallback. Record to eMMC. Use a 3S 5 Ah battery; one hour including pad time is a planning target. The RP2350 lives on the transmitter board. Carrier diameter is 5.7 in (144.78 mm).
+**Current plan:** one CM5, two cameras, SPI to [Yapogee S3](../yapogee-s3/README.md) and Ethernet for service or the E200 fallback. Yapogee uses an ESP32-S3-WROOM-1U-N16R8 module and converts its RF output to 1.28 GHz; the PA/filter is a separate board. Record to eMMC. Use a 3S 5 Ah battery; one hour including pad time is a planning target. Carrier diameter is 5.7 in (144.78 mm). The transmitter and PA interfaces still need carrier schematic integration.
 
 ![Carrier block diagram](block-diagram.svg)
 
@@ -12,37 +12,42 @@
 | CM5 connectors | 2 × Amphenol 10164227-1001A1RLF, 1.5 mm stack |
 | Cameras | 2 × FRAMOS IMX900 + CIL212; retain the working FRAMOS adapters. J7/J8 use vertical Hirose FH12-22S-0.5SVA(54) FFC connectors with CM5IO-style pinout |
 | Input protection | LM74502DDFR, 2 × CSD18540Q5B, SMBJ18CA; unfused input |
-| Main 5 V | LM61495RPHR; CM5 and transmitter core or E200 |
+| Main 5 V | LM61495RPHR; CM5 and Yapogee, with E200 as an alternate transmitter |
 | RF 5 V | TPS62933FDRLR; separate supply, default off |
 | Camera rail | TPS62933FDRLR: shared 3V3_CAM from VBAT, enabled by 3V3_CM5; adapter boards provide camera-specific rails |
 | Battery monitor | INA226AIDGSR + WSL25125L000FEA18, 5 mΩ |
 | Sensors | BMI088, BMP581 and INA226 on CM5 GPIO2/3 I²C; polling without interrupt wiring |
 | Camera control | Dedicated CM5 camera I²C lines; CAM0_RST from J1.97 and CAM1_RST from J1.100. Synchronization access reserved, synchronized exposures not required |
 | Ethernet | EDAC A70-112-331N126 with integrated magnetics |
-| Service | USB-C data/recovery, nRPIBOOT shunt, PWR_BUT button, J12 debug UART and CM5 activity LED on carrier; separate USB-C, BOOTSEL, reset and SWD on transmitter |
+| Service | USB-C data/recovery, nRPIBOOT shunt, PWR_BUT button, J12 debug UART and CM5 activity LED on carrier; separate USB-C, BOOT, reset and UART access on Yapogee |
 | Flight UART | Receive required; return TX optional. Logic voltage, connector and protocol TBD |
 
 Both camera connectors receive the shared 3V3_CAM rail; MIPI connects directly to CM5. Keep the working adapter boards and their camera-specific power sequencing. The carrier does not replace their internal regulator circuitry.
 
-Sensors use CM5 3.3 V. The transmitter core gets 5V_MAIN and makes its own local rails; the selected GRF5613 PA uses switched 5V_RF. Keep space, 5 V power and Ethernet for the E200 fallback. The bench input is a PJ-102AH barrel jack beside the battery connector, used with the battery unplugged.
+Sensors use CM5 3.3 V. Yapogee receives 5V_MAIN through castellations and makes its own 3.328 V main and quiet 3.0 V rails. Reserve 1.5 A for the daughterboard. Its USB-C port also supports standalone power from a source advertising at least 1.5 A; eligible USB has priority when both sources are present. The selected GRF5613 PA uses the separate switched 5V_RF rail. Keep space, 5 V power and Ethernet for the E200 fallback. The bench input is a PJ-102AH barrel jack beside the battery connector, used with the battery unplugged.
 
 J1 uses vertical AMASS XT60PB-M30.G.Y: pin 1, at the keyed end marked −, is GND; pin 2, at the flat end marked +, is VBAT_RAW. J6 and both camera connectors are also vertical. USB-C J10 and the PJ-102AH bench input J2 remain horizontal. [Connector geometry, sourcing and model limits](../libraries/review/vertical-connectors.md).
 
-Reserve these CM5 pins for PV-SPI. J1 numbers are the module connector pads, not IO-board header positions.
+The planned Yapogee connection uses 16 castellated interface positions plus three GND anchors. [Pad assignment and mechanical contract](../yapogee-s3/interfaces.md). The daughterboard takes SCLK, CS_N and D0–D3; READY and PA_EN return to the carrier. HOST_3V3 is the translators' carrier-side reference, separate from Yapogee's local regulator output.
 
-| Signal | CM5 GPIO | J1 pad | Pico Plus 2 GPIO |
+The existing CM5 reservations are retained as the starting point for SPI integration. J1 numbers below are module-connector pads, not IO-board header positions. These carrier connections are not yet implemented.
+
+| Signal | CM5 GPIO reservation | CM5 J1 pad | Yapogee castellation |
 | --- | --- | --- | --- |
-| SCK | 11 | 38 | 17 |
-| MOSI | 10 | 44 | 18 |
-| CS_N | 8 | 39 | 19 |
-| READY | 25 | 41 | 22 |
-| MISO, reserved | 9 | 40 | 20 |
+| SCLK | 11 | 38 | 2 |
+| D0 / MOSI | 10 | 44 | 5 |
+| CS_N | 8 | 39 | 4 |
+| READY | 25 | 41 | 11 |
+| D1–D3 | Pending carrier allocation | Pending | 7, 8, 10 |
+| PA_EN return | Pending carrier routing | Pending | 13 |
+| HOST_3V3 | CM5 3.3 V reference | Supply connection pending | 14 |
+| 5V_CARRIER | 5V_MAIN | Supply connection pending | 16 |
 
-3.3 V logic with CM5 GPIO_VREF tied to CM5 3.3 V, common GND, 20 MHz SPI mode 0. On the transmitter: 4.7 kΩ CS_N pull-up and 4.7–6.8 kΩ READY pull-down. MISO is unused in v1. Keep sensors off this dedicated SPI bus. Transmitter reset and its connector pin numbering remain to be assigned.
+SPI is the baseline transport; the quad data pins are reserved for future implementation. The measured 20 MHz mode-0 PV-SPI bench results belong to the earlier Pico path. Its framing, READY behavior, startup and uncertain-transfer recovery require reconciliation with the ESP32 firmware before treating that result as S3 integration evidence. Keep sensors off this dedicated bus. [Measured SPI result](../../software/flight/spi.md).
 
-The RF buck enable is GPIO17 / J1.50, with its existing 10 kΩ pull-down. Reserve GPIO22 / J1.46 for a separate 3.3 V PA_EN request. The proposed four-pin Molex 0430450418 PA connector carries 1: 5V_RF, 2: GND, 3: PA_EN, 4: GND. Local PA circuitry must default off and handle GRF5613 shutdown polarity and bias. This interface is a pin plan; it has not been wired into the carrier schematic. [PA plan](../rf-frontend/README.md).
+The RF buck enable remains GPIO17 / J1.50 with its existing 10 kΩ pull-down. The earlier CM5 GPIO22 / J1.46 PA_EN reservation has not been wired. The new Yapogee contract returns PA_EN on castellation 13; resolve that route and any host monitoring/interlock before connecting the PA. Do not connect two actively driven enable sources together.
 
-PV-SPI v1 carries video only; USB currently starts/configures the Pico. Autonomous startup and status/control still need firmware work. USB-C service ports must not backfeed the battery rails. [Protocol](https://github.com/Rivercraft911/RP2350_IQ_Benchmark/blob/main/docs/pv-spi-spec.md) · [Measured SPI result](https://github.com/stanford-ssi/PigeonVision/blob/main/software/flight/spi.md)
+The proposed four-pin Molex 0430450418 PA connector carries 1: 5V_RF, 2: GND, 3: PA_EN, 4: GND. Local PA circuitry must default off and handle GRF5613 shutdown polarity and bias sequencing. This remains a pin plan with no carrier control wiring applied. [PA plan](../rf-frontend/README.md). The transmitter's standalone USB source selection and reverse blocking are on Yapogee; source transitions and carrier backfeed still need hardware checks.
 
 J12 is a JST SH BM03B-SRSS-TB debug UART on CM5 GPIO14/15 using the Raspberry Pi debug-connector pinout: 1 RX into the CM5 (GPIO15), 2 GND, 3 TX from the CM5 (GPIO14). A Raspberry Pi Debug Probe plugs in with a straight-through cable. Both lines have 1 kΩ series resistors. The specification calls for 100 Ω, but CM5 GPIO pads are not failsafe, so the larger value limits back-feed from a powered probe into an unpowered CM5. LED4 (via R41, 220 Ω from 3V3_CM5) shows CM5 activity on LED_nACT.
 
@@ -56,6 +61,6 @@ Camera, sensor, Ethernet and USB/service hierarchy is connected, along with CM5 
 
 The 2026-10-06 direct-switch check reports no ERC errors or warnings. All 200 CM5 contacts are connected or intentionally marked unused; all 147 components and 670 numbered PCB pads matched the exported schematic at that time (152 components after the 2026-10-07 additions; schematic parity remains clean). The switch change affects only J6.1 among the retained component connections. [Switch verification](../../build/pull-pin-direct-2026-10-06/verification.json). Unwired pins reserved for SPI and PA_EN currently have no-connect marks; replace those marks with the RF interface wiring when it is finalized. Power-source flags identify feeds through passive parts, including U7's internally charged bootstrap node. The review does not establish hardware performance: switch contact states, camera adapter current/sequencing, XT60 revision/fit, power transitions and final layout remain to be checked. [Connection review](../../build/carrier-closeout-2026-10-05/connection-review.json) · [Footprint review](../../build/carrier-closeout-2026-10-05/all-footprints-audit.json).
 
-The design master still budgets E200 power. Add a separate RP2350 + AFE7071 core load once estimated, keeping the E200 fallback as an alternative. GRF5613 is selected for PA planning; its loaded current and thermal performance remain unmeasured. Confirm mounting and connector access before final layout.
+The design master still budgets E200 power. Reconcile it with the accepted 1.5 A Yapogee allocation on 5V_MAIN, keeping E200 as an alternative rather than adding both transmitter loads to one flight configuration. GRF5613 is selected for PA planning; its loaded current and thermal performance remain unmeasured. Confirm mounting and connector access before final layout.
 
 [Library and sourcing](../libraries/README.md) · [CM5 datasheet](https://datasheets.raspberrypi.com/cm5/cm5-datasheet.pdf) · [Camera datasheet](https://www.mouser.com/catalog/specsheets/FRAMOS_2-12-2026_FSM.GO-IMX900_Datasheet_v1.2a.pdf)

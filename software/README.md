@@ -1,4 +1,4 @@
-# PigeonVision bench software
+# PigeonVision software
 
 The CM5 bench captures both colour IMX900 cameras, records their original video,
 and streams to the Mac's interactive A/B and panorama viewer. It uses the official
@@ -11,20 +11,43 @@ lens fits with **nominal** opposed-camera alignment. One-hour performance,
 held-out seam accuracy, colour accuracy and exposure synchronization remain
 unqualified. See the [bench evidence](bench-notes/README.md#cameras).
 
-Native SPI is the baseline CM5-to-Pico link. With a fan, the two-minute test
+The existing native SPI sender was benchmarked with the CM5 and Pico. With a fan, the two-minute test
 reached **29.99 fps per camera and 9 Mb/s TS**, with matching Pico counts and
 CRC. CPU averaged 61.4%; maximum temperature was 56.75°C. Each camera had one
 66.7 ms interval after warm-up. Keep `pv spi` for patterns and file tests.
-See [SPI results and setup](flight/spi.md). RF remains untested.
+See [SPI results and setup](flight/spi.md). Those are Pico transport results;
+they do not qualify the new transmitter board.
 
-**Flight:** one CM5 records both cameras and sends MPEG-TS over native PV-SPI to an RP2350B + AFE7071 transmitter. Ethernet remains the E200 fallback. The ground E200 and MacBook decode and stitch. Startup and sensor code are implemented; physical carrier sensors and the complete RF path still need testing.
+**Flight plan:** one CM5 records both cameras and sends MPEG-TS over SPI to
+[Yapogee S3](../hardware/yapogee-s3/README.md). Its ESP32-S3-WROOM-1U-N16R8
+generates DVB-S2 at 2.42 GHz. A short U.FL jumper feeds the RFFC5072A converter;
+a 3.70 GHz LO produces 1.28 GHz, followed by the SPF5043Z driver, SMA cable and
+separate GRF5613 PA/final filter. High-side conversion needs IQ conjugation or
+equivalent receiver handling. Ethernet remains the E200 fallback. The ground
+receiver remains to be selected and qualified; the Mac decodes and stitches.
+
+The [S3 reference firmware](https://github.com/Rivercraft911/esp-dvbs2) already
+implements PV-SPI v1: one 1332-byte message per CS, CRC-32 and READY backpressure.
+Single-line SPI is the baseline; quad data pins are reserved on the board.
+The ESP32 path has conducted RF/video evidence. Carrier GPIO configuration,
+converter/PA control, autonomous flight startup and the complete new RF chain
+still need integration and hardware testing. The diagrams distinguish that plan
+from the existing CM5 capture, sensor and recording software.
+
+The reference firmware also has an [S3 DVB-S2 receiver](https://github.com/Rivercraft911/esp-dvbs2/blob/main/docs/receiver.md) using raw-IQ capture, with conducted tests at 2.42 GHz. Receiving at 1.28 GHz would require its own suitable RF conversion path; the present Yapogee amplifier/converter chain is arranged for transmission.
+
+[Editable architecture](architecture.drawio) · [Data flow](diagrams/data-flow.svg) ·
+[CM5 lifecycle](diagrams/cm5-lifecycle.svg) ·
+[Sensors and telemetry](diagrams/sensors-telemetry.svg) ·
+[Yapogee S3 lifecycle](diagrams/transmitter-lifecycle.svg) ·
+[Startup/shutdown](diagrams/startup-shutdown.svg)
 
 ## Start here
 
 | Guide | Covers |
 | --- | --- |
 | [Native capture](flight/README.md) | C++20/libcamera/x264 build, buffers, recording and transport |
-| [CM5 → Pico SPI](flight/spi.md) | PV-SPI wiring, sender, backpressure, evidence and viewer copy |
+| [CM5 SPI bench](flight/spi.md) | Existing sender, Pico wiring/evidence, backpressure and viewer copy |
 | [Ground app](python/pigeonvision/ground/README.md) | Viewing, replay, received-TS recording and colour controls |
 | [Calibration](calibration/README.md) | Board collection, lens fitting and nominal preview |
 | [Shared interfaces](shared/README.md) | Configuration, session/frame records, timestamps and calibration schema |
@@ -145,7 +168,9 @@ unknown; portable/synthetic tests do not qualify hardware.
 After wired qualification: BMI088/BMP581 and receive-only flight-controller UART;
 E200 cable/attenuator transport; custom-carrier power/reset/GPIO; then systemd
 startup/recovery and storage interruption tests. Keep video independent of
-recovery functions. The radio target remains DVB-S2 QPSK 2/3, normal frames,
-pilots, 8 MSymbol/s and 9 Mb/s TS; E200 firmware needs hardware qualification.
-PA control stays off pending its own authorized procedure. Keep generated
-evidence under ignored `output/` directories.
+recovery functions. The camera mux planning rate remains 9 Mb/s TS. QPSK and
+8PSK are waveform candidates; symbol rate, coding, occupied bandwidth and
+delivered PA power need qualification on the selected S3/converter/PA/receiver
+chain. The earlier Pico profile and measurements remain bench evidence, not a
+frozen S3 flight profile. PA control stays off pending its own authorized
+procedure. Keep generated evidence under ignored `output/` directories.

@@ -6,11 +6,11 @@ One CM5 captures two fisheye cameras. SPI feeds [Yapogee S3](yapogee-s3/README.m
 
 [Edit diagram](system.drawio)
 
-This diagram retains the earlier RP2350/AFE7071 architecture. The [Yapogee S3 guide](yapogee-s3/README.md) contains the new signal and power diagram; carrier pin assignments and legacy diagrams still need reconciliation with its final interface.
+The diagram shows the planned system: WROOM-1U waveform generation, RFFC5072A conversion, an onboard SPF5043Z driver and a separately powered GRF5613 PA/filter. Carrier wiring and software startup still need reconciliation with the [Yapogee S3 interface](yapogee-s3/interfaces.md).
 
 - [Carrier](carrier/README.md): compute, cameras, power and sensors.
-- [Yapogee S3](yapogee-s3/README.md): ESP32 modem, integrated RF converter and 5 V input. Architecture draft.
-- [RF frontend](rf-frontend/README.md): driver, PA and output filter.
+- [Yapogee S3](yapogee-s3/README.md): WROOM modem, integrated RF converter, main/quiet supplies and 5 V interface.
+- [RF frontend](rf-frontend/README.md): separate PA, final filter and antenna interface.
 - [Project library](libraries/README.md): KiCad parts and CM5 placement.
 
 Use one flight transmitter at a time, connected by SMA coax to the separate PA/filter board. Swap cables/configuration for the E200 fallback. The diagrams show the planned interfaces, not a completed schematic.

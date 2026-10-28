@@ -2,9 +2,15 @@
 
 ESP32-S3 DVB-S2 transmitter daughterboard for PigeonVision. The CM5 supplies MPEG-TS over SPI, with quad data pins reserved. An ESP32-S3-WROOM-1U-N16R8 module generates the waveform at its matched 2.42 GHz RF port. A short U.FL jumper feeds the RFFC5072A; a 3.70 GHz LO converts it to 1.28 GHz. High-side conversion requires transmit IQ conjugation or equivalent receiver handling.
 
-Open the [KiCad project](kicad/YapogeeS3.kicad_pro). The schematic remains unwired. The PCB has mechanical reference placements; complete component placement and routing remain.
+Open the [KiCad project](kicad/YapogeeS3.kicad_pro). Schematic capture is in progress. The PCB has mechanical reference placements; complete component placement and routing remain.
 
 [Circuit BOM](BOM.csv) · [BOM by MPN](BOM_by_MPN.csv) · [Shield lid](BOM_mechanical.csv) · [RF jumper](BOM_offboard.csv) · [Interfaces](interfaces.md)
+
+![RF signal path](block-diagram.svg)
+
+![Power and interface domains](power.svg)
+
+[Edit the RF and power diagrams](block-diagram.drawio)
 
 ```mermaid
 flowchart LR

@@ -1,0 +1,292 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" type="device">
+  <diagram name="Yapogee S3 RF signal path" id="rf-signal">
+    <mxGraphModel grid="1" gridSize="10" guides="1" page="1" pageScale="1" pageWidth="1530" pageHeight="980" math="0" shadow="0" background="#ffffff">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="Yapogee S3 RF signal path" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=26;fontColor=#222222;fontStyle=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="22" width="1450" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="2420 MHz source • 3700 MHz high-side LO • 1280 MHz output" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=16;fontColor=#222222;fontStyle=0;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="67" width="1450" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="board" value="" style="rounded=0;fillColor=#d9ead3;strokeColor=#91ad84;strokeWidth=1.5;connectable=0;" vertex="1" parent="1">
+          <mxGeometry x="340" y="130" width="1150" height="690" as="geometry" />
+        </mxCell>
+        <mxCell id="board_label" value="YAPOGEE S3 DAUGHTERBOARD" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=16;fontColor=#222222;fontStyle=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="358" y="140" width="1114" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="cm5" value="&lt;b&gt;Carrier CM5&lt;/b&gt;&lt;br&gt;MPEG-TS over SPI&lt;br&gt;Quad pins reserved" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#d4e4f4;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=7;" vertex="1" parent="1">
+          <mxGeometry x="50" y="190" width="240" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="module" value="&lt;b&gt;ESP32-S3-WROOM-1U-N16R8&lt;/b&gt;&lt;br&gt;S3 + 16 MB flash + 8 MB PSRAM&lt;br&gt;Crystal and RF match internal" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#ffffff;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=7;" vertex="1" parent="1">
+          <mxGeometry x="370" y="190" width="340" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="jumper" value="&lt;b&gt;25 mm RF jumper&lt;/b&gt;&lt;br&gt;A-1PA-132-025B2&lt;br&gt;Module U.FL → J502" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#ffffff;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=7;" vertex="1" parent="1">
+          <mxGeometry x="790" y="190" width="250" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="input" value="&lt;b&gt;Input pad / balun&lt;/b&gt;&lt;br&gt;6 dB pad + 2450BL15B&lt;br&gt;100 pF DC blocks" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#ffffff;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=7;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="190" width="340" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="mixer" value="&lt;b&gt;RFFC5072ATR13&lt;/b&gt;&lt;br&gt;PLL / VCO / mixer&lt;br&gt;3.70 − 2.42 = 1.28 GHz&lt;br&gt;Quiet 3.0 V supply" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#ffffff;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=7;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="450" width="340" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="output" value="&lt;b&gt;Output network&lt;/b&gt;&lt;br&gt;DC bias chokes / blocks&lt;br&gt;BD1222 balun&lt;br&gt;LFCN-1450+ low-pass" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#ffffff;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=7;" vertex="1" parent="1">
+          <mxGeometry x="790" y="450" width="250" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="driver" value="&lt;b&gt;SPF5043Z driver&lt;/b&gt;&lt;br&gt;Switched main rail&lt;br&gt;1 Ω / 10 µF supply filter&lt;br&gt;3 dB RF output pad" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#ffffff;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=7;" vertex="1" parent="1">
+          <mxGeometry x="370" y="450" width="340" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="sma" value="&lt;b&gt;SMA output&lt;/b&gt;&lt;br&gt;SMA-J-P-H-ST-EM3&lt;br&gt;PA input target ≈ +6.2 dBm avg*" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#ffffff;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=7;" vertex="1" parent="1">
+          <mxGeometry x="370" y="690" width="340" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="reference" value="&lt;b&gt;40 MHz reference&lt;/b&gt;&lt;br&gt;H13 CMOS TCXO + buffer&lt;br&gt;330 Ω / 220 Ω divider + AC block" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#ffffff;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=7;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="690" width="340" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="pa" value="&lt;b&gt;Separate GRF5613 PA&lt;/b&gt;&lt;br&gt;EVB184 1280 MHz tune&lt;br&gt;Then final filter / antenna" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#d4e4f4;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=7;" vertex="1" parent="1">
+          <mxGeometry x="50" y="690" width="240" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="edge1" parent="1" edge="1" source="cm5" target="module" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=0;rounded=0;html=0;strokeColor=#222222;strokeWidth=1.8;endArrow=block;endFill=1;startArrow=none;exitX=1;exitY=0.5;exitPerimeter=0;entryX=0;entryY=0.5;entryPerimeter=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_label1" value="SPI" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=14;fontColor=#222222;fontStyle=0;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="310" y="210" width="55" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="edge2" parent="1" edge="1" source="module" target="jumper" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=0;rounded=0;html=0;strokeColor=#222222;strokeWidth=1.8;endArrow=block;endFill=1;startArrow=none;exitX=1;exitY=0.5;exitPerimeter=0;entryX=0;entryY=0.5;entryPerimeter=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_label2" value="2.42 GHz" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=14;fontColor=#222222;fontStyle=0;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="716" y="210" width="80" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="edge3" parent="1" edge="1" source="jumper" target="input" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=0;rounded=0;html=0;strokeColor=#222222;strokeWidth=1.8;endArrow=block;endFill=1;startArrow=none;exitX=1;exitY=0.5;exitPerimeter=0;entryX=0;entryY=0.5;entryPerimeter=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_label3" value="50 Ω" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=14;fontColor=#222222;fontStyle=0;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="1055" y="210" width="65" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="edge4" parent="1" edge="1" source="input" target="mixer" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=0;rounded=0;html=0;strokeColor=#222222;strokeWidth=1.8;endArrow=block;endFill=1;startArrow=none;exitX=0.5;exitY=1;exitPerimeter=0;entryX=0.5;entryY=0;entryPerimeter=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_label4" value="2.42 GHz RF" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=14;fontColor=#222222;fontStyle=0;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="355" width="140" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="edge5" parent="1" edge="1" source="mixer" target="output" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=0;rounded=0;html=0;strokeColor=#222222;strokeWidth=1.8;endArrow=block;endFill=1;startArrow=none;exitX=0;exitY=0.5;exitPerimeter=0;entryX=1;entryY=0.5;entryPerimeter=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_label5" value="1.28 GHz" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=14;fontColor=#222222;fontStyle=0;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="1048" y="475" width="80" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="edge6" parent="1" edge="1" source="output" target="driver" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=0;rounded=0;html=0;strokeColor=#222222;strokeWidth=1.8;endArrow=block;endFill=1;startArrow=none;exitX=0;exitY=0.5;exitPerimeter=0;entryX=1;entryY=0.5;entryPerimeter=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_label6" value="1.28 GHz" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=14;fontColor=#222222;fontStyle=0;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="716" y="475" width="80" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="edge7" parent="1" edge="1" source="driver" target="sma" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=0;rounded=0;html=0;strokeColor=#222222;strokeWidth=1.8;endArrow=block;endFill=1;startArrow=none;exitX=0.5;exitY=1;exitPerimeter=0;entryX=0.5;entryY=0;entryPerimeter=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_label7" value="50 Ω RF" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=14;fontColor=#222222;fontStyle=0;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="550" y="620" width="100" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="edge8" parent="1" edge="1" source="sma" target="pa" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=0;rounded=0;html=0;strokeColor=#222222;strokeWidth=1.8;endArrow=block;endFill=1;startArrow=none;exitX=0;exitY=0.5;exitPerimeter=0;entryX=1;entryY=0.4090909090909091;entryPerimeter=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_label8" value="Coax" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=14;fontColor=#222222;fontStyle=0;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="305" y="705" width="60" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="edge9" parent="1" edge="1" source="reference" target="mixer" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=0;rounded=0;html=0;strokeColor=#222222;strokeWidth=1.8;endArrow=block;endFill=1;startArrow=none;exitX=0.5;exitY=0;exitPerimeter=0;entryX=0.5;entryY=1;entryPerimeter=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_label9" value="REF" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=14;fontColor=#222222;fontStyle=0;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="620" width="90" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="iq" value="High-side conversion reverses the complex spectrum. Implement transmit IQ conjugation or equivalent receiver handling." style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=16;fontColor=#222222;fontStyle=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="850" width="1450" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="power_note" value="*Planning average for 1 W at the PA output before final filtering, using the EVB184 typical gain. Add interconnect loss and calibrate the actual drive." style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=15;fontColor=#222222;fontStyle=0;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="895" width="1450" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="validation" value="Actual waveform peaks, MER, spurs, reference loading and modulated PA output remain hardware checks." style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=14;fontColor=#222222;fontStyle=0;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="938" width="1450" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="Yapogee S3 power and interfaces" id="power-interfaces">
+    <mxGraphModel grid="1" gridSize="10" guides="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1150" math="0" shadow="0" background="#ffffff">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="Yapogee S3 power and interfaces" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=26;fontColor=#222222;fontStyle=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="22" width="1520" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="Selected 5 V independently feeds the main buck and the quiet RF LDO" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=16;fontColor=#222222;fontStyle=0;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="67" width="1520" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="usb" value="&lt;b&gt;Standalone USB-C&lt;/b&gt;&lt;br&gt;VBUS ≤ 5.5 V&lt;br&gt;Source advertises ≥ 1.5 A" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#d4e4f4;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=7;" vertex="1" parent="1">
+          <mxGeometry x="50" y="200" width="230" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="carrier" value="&lt;b&gt;Carrier castellations&lt;/b&gt;&lt;br&gt;5V_CARRIER + GND&lt;br&gt;4.75–5.25 V input" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#d4e4f4;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=7;" vertex="1" parent="1">
+          <mxGeometry x="50" y="400" width="230" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="qualifier" value="&lt;b&gt;USB qualification&lt;/b&gt;&lt;br&gt;STUSB4500L CC detection&lt;br&gt;SN74LVC1G97 logic&lt;br&gt;Autonomous cold start" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#ffffff;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=7;" vertex="1" parent="1">
+          <mxGeometry x="360" y="180" width="300" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="mux" value="&lt;b&gt;TPS2116DRLR&lt;/b&gt;&lt;br&gt;Reverse-blocking source mux&lt;br&gt;Eligible USB wins&lt;br&gt;Otherwise powered carrier" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#ffffff;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=7;" vertex="1" parent="1">
+          <mxGeometry x="790" y="310" width="300" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="selected" value="&lt;b&gt;SELECTED_5V&lt;/b&gt;&lt;br&gt;Common regulator input&lt;br&gt;Board input ceiling: 5.5 V" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#ffffff;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=7;" vertex="1" parent="1">
+          <mxGeometry x="1170" y="310" width="340" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="buck" value="&lt;b&gt;TPS62933FDRLR&lt;/b&gt;&lt;br&gt;Main rail: 3.328 V nominal&lt;br&gt;31.6 kΩ / 10 kΩ feedback&lt;br&gt;2.2 µH inductor" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#ffffff;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=7;" vertex="1" parent="1">
+          <mxGeometry x="480" y="600" width="300" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="ldo" value="&lt;b&gt;TPS7A9001DSKR&lt;/b&gt;&lt;br&gt;Quiet RF: 3.000 V nominal&lt;br&gt;33 kΩ / 12 kΩ + 560 Ω bleeder&lt;br&gt;CIN / COUT ≥ 10 µF effective" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#ffffff;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=7;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="600" width="340" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="digital" value="&lt;b&gt;Module / digital loads&lt;/b&gt;&lt;br&gt;WROOM-1U-N16R8&lt;br&gt;Reset supervisor&lt;br&gt;USB / host interface" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#ffffff;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=7;" vertex="1" parent="1">
+          <mxGeometry x="50" y="850" width="280" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="driver" value="&lt;b&gt;Driver supply branch&lt;/b&gt;&lt;br&gt;TPS22919 load switch&lt;br&gt;1 Ω / 10 µF local filter&lt;br&gt;SPF5043Z" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#ffffff;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=7;" vertex="1" parent="1">
+          <mxGeometry x="480" y="850" width="300" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="translate" value="&lt;b&gt;RF control translator&lt;/b&gt;&lt;br&gt;3V3_MAIN ↔ RF_3V0&lt;br&gt;SN74AXC4T774" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#ffffff;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=7;" vertex="1" parent="1">
+          <mxGeometry x="820" y="850" width="230" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="rf_load" value="&lt;b&gt;Quiet RF loads&lt;/b&gt;&lt;br&gt;RFFC5072A&lt;br&gt;40 MHz TCXO&lt;br&gt;74LVC1G34 buffer" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#ffffff;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=7;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="850" width="340" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="edge1" parent="1" edge="1" source="usb" target="qualifier" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=0;rounded=0;html=0;strokeColor=#222222;strokeWidth=1.8;endArrow=block;endFill=1;startArrow=none;exitX=1;exitY=0.5;exitPerimeter=0;entryX=0;entryY=0.5;entryPerimeter=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_label1" value="CC/VBUS" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=14;fontColor=#222222;fontStyle=0;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="288" y="210" width="65" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="edge2" parent="1" edge="1" source="usb" target="mux" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=0;rounded=0;html=0;strokeColor=#d92d2d;strokeWidth=2.5;endArrow=block;endFill=1;startArrow=none;exitX=0.5;exitY=1;exitPerimeter=0;entryX=0;entryY=0.25;entryPerimeter=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="165" y="345" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_label2" value="5V_USB" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=14;fontColor=#d92d2d;fontStyle=0;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="430" y="315" width="100" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="edge3" parent="1" edge="1" source="carrier" target="mux" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=0;rounded=0;html=0;strokeColor=#d92d2d;strokeWidth=2.5;endArrow=block;endFill=1;startArrow=none;exitX=1;exitY=0.5;exitPerimeter=0;entryX=0;entryY=0.75;entryPerimeter=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="720" y="450" />
+              <mxPoint x="720" y="415" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_label3" value="5V_CARRIER" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=14;fontColor=#d92d2d;fontStyle=0;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="430" y="415" width="150" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="edge4" parent="1" edge="1" source="qualifier" target="mux" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=0;rounded=0;html=0;strokeColor=#222222;strokeWidth=1.8;endArrow=block;endFill=1;startArrow=none;exitX=1;exitY=0.5;exitPerimeter=0;entryX=0.5;entryY=0;entryPerimeter=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="940" y="250" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_label4" value="USB eligibility" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=14;fontColor=#222222;fontStyle=0;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="765" y="210" width="150" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="edge5" parent="1" edge="1" source="mux" target="selected" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=0;rounded=0;html=0;strokeColor=#d92d2d;strokeWidth=2.5;endArrow=block;endFill=1;startArrow=none;exitX=1;exitY=0.5;exitPerimeter=0;entryX=0;entryY=0.5;entryPerimeter=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge6" parent="1" edge="1" source="selected" target="buck" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=0;rounded=0;html=0;strokeColor=#d92d2d;strokeWidth=2.5;endArrow=block;endFill=1;startArrow=none;exitX=0.5;exitY=1;exitPerimeter=0;entryX=0.5;entryY=0;entryPerimeter=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1340" y="530" />
+              <mxPoint x="630" y="530" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_label6" value="SELECTED_5V" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=14;fontColor=#d92d2d;fontStyle=0;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="790" y="495" width="170" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="edge7" parent="1" edge="1" source="selected" target="ldo" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=0;rounded=0;html=0;strokeColor=#d92d2d;strokeWidth=2.5;endArrow=block;endFill=1;startArrow=none;exitX=0.5;exitY=1;exitPerimeter=0;entryX=0.5;entryY=0;entryPerimeter=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1340" y="530" />
+              <mxPoint x="1290" y="530" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge8" parent="1" edge="1" source="buck" target="digital" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=0;rounded=0;html=0;strokeColor=#d92d2d;strokeWidth=2.5;endArrow=block;endFill=1;startArrow=none;exitX=0.5;exitY=1;exitPerimeter=0;entryX=0.5;entryY=0;entryPerimeter=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="630" y="790" />
+              <mxPoint x="190" y="790" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_label8" value="3V3_MAIN" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=14;fontColor=#d92d2d;fontStyle=0;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="300" y="755" width="130" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="edge9" parent="1" edge="1" source="buck" target="driver" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=0;rounded=0;html=0;strokeColor=#d92d2d;strokeWidth=2.5;endArrow=block;endFill=1;startArrow=none;exitX=0.5;exitY=1;exitPerimeter=0;entryX=0.5;entryY=0;entryPerimeter=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge10" parent="1" edge="1" source="buck" target="translate" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=0;rounded=0;html=0;strokeColor=#d92d2d;strokeWidth=2.5;endArrow=block;endFill=1;startArrow=none;exitX=1;exitY=0.5;exitPerimeter=0;entryX=0.5;entryY=0;entryPerimeter=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="935" y="670" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge11" parent="1" edge="1" source="ldo" target="translate" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=0;rounded=0;html=0;strokeColor=#d92d2d;strokeWidth=2.5;endArrow=block;endFill=1;startArrow=none;exitX=0;exitY=0.5;exitPerimeter=0;entryX=1;entryY=0.5;entryPerimeter=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1085" y="670" />
+              <mxPoint x="1085" y="925" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge12" parent="1" edge="1" source="ldo" target="rf_load" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=0;rounded=0;html=0;strokeColor=#d92d2d;strokeWidth=2.5;endArrow=block;endFill=1;startArrow=none;exitX=0.5;exitY=1;exitPerimeter=0;entryX=0.5;entryY=0;entryPerimeter=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_label12" value="RF_3V0" style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=14;fontColor=#d92d2d;fontStyle=0;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="775" width="120" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="host" value="Carrier signals: SCLK, CS_N and D0–D3 → S3; READY and PA_EN → carrier. HOST_3V3 is the host-side translator reference." style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=16;fontColor=#222222;fontStyle=0;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1035" width="1520" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="pa_note" value="The external PA has a separate 5V_RF supply. It is outside the daughterboard power allocation." style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=15;fontColor=#222222;fontStyle=0;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1080" width="1520" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="limits" value="Source handover may reset the board. Verify dynamic rail limits, minimum effective capacitance and enclosed temperatures." style="text;html=0;align=left;verticalAlign=middle;fillColor=none;strokeColor=none;fontFamily=Arial;fontSize=14;fontColor=#222222;fontStyle=0;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1115" width="1520" height="25" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
