@@ -81,7 +81,7 @@ The service button is `PigeonVision:PTS636_SK25_SMTR_LFS`, with a matching two-p
 
 ## Adding or substituting parts
 
-Yapogee S3's [selected BOM](../yapogee-s3/BOM.csv) uses this library for the bare ESP32-S3R8, flash, crystals, RFFC5072A converter, baluns, filter, SPF5043Z driver and power/interface parts. Its custom footprints include the SPF5043Z's widened ground lead and manufacturer land patterns for the converter, baluns, TCXO, power packages and inductors. Standard package derivatives retain KiCad library licensing. Vendor downloads, pricing and working review material are kept outside the public repository. Library pin/pad and native loading checks support schematic capture; they do not qualify RF performance, soldering or a completed PCB.
+Yapogee S3's [selected BOM](../yapogee-s3/BOM.csv) uses this library for the ESP32-S3-WROOM-1U-N16R8 module, U.FL input socket, RFFC5072A converter, baluns, filter, SPF5043Z driver and power/interface parts. Its custom footprints include the SPF5043Z's widened ground lead and manufacturer land patterns for the converter, baluns, TCXO, power packages and inductors. Standard package derivatives retain KiCad library licensing. Vendor downloads, pricing and working review material are kept outside the public repository. Library pin/pad and native loading checks support schematic capture; they do not qualify RF performance, soldering or a completed PCB.
 
 1. Keep exact manufacturer identity and supplier codes, including packaging suffixes.
 2. Verify every symbol pin and pad against the latest manufacturer drawing.

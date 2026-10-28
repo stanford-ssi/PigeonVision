@@ -1,5 +1,5 @@
 {
-  "version": "0.2",
+  "version": "0.3",
   "units": "mm",
   "module_outline_mm": [
     0,
@@ -587,5 +587,40 @@
     "The carrier outline is unchanged. Check structural strength, cable head, rounded carrier-notch corners and future copper clearance before integration."
   ],
   "status": "Mechanical prototype contract; component fit, cable fit and fabrication process require qualification.",
-  "carrier_integration": "Origin is a proposed position; original carrier PCB has not been changed. Cutout contour is a proposal on Dwgs.User, not carrier Edge.Cuts."
+  "carrier_integration": "Origin is a proposed position; original carrier PCB has not been changed. Cutout contour is a proposal on Dwgs.User, not carrier Edge.Cuts.",
+  "rf_module": {
+    "mpn": "ESP32-S3-WROOM-1U-N16R8",
+    "center_module_mm": [
+      26,
+      15.1
+    ],
+    "rotation_deg": 0,
+    "body_mm": [
+      18,
+      19.2
+    ],
+    "nominal_height_mm": 3.2,
+    "height_tolerance_mm": 0.15,
+    "integrated_antenna_socket_module_mm": [
+      32,
+      7.96
+    ]
+  },
+  "rf_input": {
+    "reference": "J502",
+    "mpn": "U.FL-R-SMT-1(80)",
+    "center_module_mm": [
+      48,
+      20.96
+    ],
+    "rotation_deg": 0
+  },
+  "rf_jumper": {
+    "reference": "W501",
+    "mpn": "A-1PA-132-025B2",
+    "nominal_length_mm": 25,
+    "drawing_layer": "Dwgs.User",
+    "status": "Nominal routing envelope only; verify manufacturer length datum, bend, retention and actual mated height.",
+    "centerline_quarter_turn_radius_mm": 9.319584732650974
+  }
 }
