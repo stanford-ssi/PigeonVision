@@ -1,5 +1,7 @@
 # Mixer linearity estimate
 
+The [firmware crest-factor calculation and updated parts comparison](crest-factor.md) replace the earlier assumed 4-5 dB waveform PAPR with about 3.8 dB for the current 40 MS/s modes, using 4 dB as a preliminary envelope allowance. This is calculated, not measured RF.
+
 The RF2052 is still a credible converter candidate. Its lower headline IIP3 does not establish a material DVB-S2 penalty at the actual mixer drive level. The decision needs ESP32 power and spectrum, required PA drive, and converter distortion at the proposed frequency pair.
 
 ## What the datasheets provide
