@@ -1,11 +1,13 @@
 # Yapogee S3 KiCad project
 
-Open [YapogeeS3.kicad_pro](YapogeeS3.kicad_pro) in KiCad 10 to begin the transmitter schematic and PCB.
+Open [YapogeeS3.kicad_pro](YapogeeS3.kicad_pro) in KiCad 10.
 
-- [Schematic](YapogeeS3.kicad_sch): an A4 starter with the selected signal path noted; no components or electrical connections yet.
-- [PCB](YapogeeS3.kicad_pcb): empty native board; the design basis is four copper layers and 1.6 mm FR4. Outline, fabricator dielectric stackup, impedance geometry and routing remain to be designed.
-- `sym-lib-table` and `fp-lib-table`: reference the shared PigeonVision library through `${KIPRJMOD}/../../libraries`, so the checkout can move.
+- [Schematic](YapogeeS3.kicad_sch): unwired A4 starter; exact parts are in the [BOM](../BOM.csv).
+- [PCB](YapogeeS3.kicad_pcb): 53 × 40 mm mechanical starting envelope, four copper layers, castellations, shield frame, SMA and USB. These are mechanical reference placements with no circuit nets or routing; reconcile them during schematic capture.
+- Library tables resolve through ${KIPRJMOD}/../../libraries.
 
-Keep transmitter project files here, component libraries under the shared hardware library, and generated exports and checks in this folder's ignored `output/` directory. The carrier is a separate KiCad project under `hardware/carrier/`.
+Board-only J100 contains the real Edge.Cuts, including the SMA notch, and 19 physical edge pads. It is excluded from the purchased BOM and placement files. Use PigeonVision:YapogeeS3_ModuleEdge_Interface16 for its electrical capture and reconcile the existing footprint. The matching carrier symbol/landing is also available; its cutout is a planning contour requiring separate carrier integration.
 
-The [architecture and interfaces](../README.md) describe the nominal 5 V input and selected bare-chip converter chain. The [BOM](../BOM.csv) assigns exact MPNs, library symbols and local footprints. Place parts through the `PigeonVision` library; DNP is an instance assembly choice. Vendor drawings and working reviews stay outside the public repository. Circuit capture and hardware qualification remain to be completed.
+[Power and interface contract](../interfaces.md) · [Mechanical dimensions](../mechanical-interface.json) · [Selected stackup basis](../stackup.json)
+
+Keep generated exports in the ignored output/ directory. Research and vendor downloads stay outside the public repository. The original carrier is unchanged. Circuit capture, placement, actual fabrication stackup/impedance setup and hardware qualification remain.

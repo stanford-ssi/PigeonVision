@@ -1,0 +1,591 @@
+{
+  "version": "0.2",
+  "units": "mm",
+  "module_outline_mm": [
+    0,
+    0,
+    53,
+    40
+  ],
+  "module_origin_on_carrier_mm": [
+    74.5,
+    115.5
+  ],
+  "pin_contract": [
+    {
+      "number": 1,
+      "net_function": "GND",
+      "center_module_xy_mm": [
+        18,
+        0
+      ],
+      "edge": "north"
+    },
+    {
+      "number": 2,
+      "net_function": "SCLK",
+      "center_module_xy_mm": [
+        20,
+        0
+      ],
+      "edge": "north"
+    },
+    {
+      "number": 3,
+      "net_function": "GND",
+      "center_module_xy_mm": [
+        22,
+        0
+      ],
+      "edge": "north"
+    },
+    {
+      "number": 4,
+      "net_function": "CS_N",
+      "center_module_xy_mm": [
+        24,
+        0
+      ],
+      "edge": "north"
+    },
+    {
+      "number": 5,
+      "net_function": "D0",
+      "center_module_xy_mm": [
+        26,
+        0
+      ],
+      "edge": "north"
+    },
+    {
+      "number": 6,
+      "net_function": "GND",
+      "center_module_xy_mm": [
+        28,
+        0
+      ],
+      "edge": "north"
+    },
+    {
+      "number": 7,
+      "net_function": "D1",
+      "center_module_xy_mm": [
+        30,
+        0
+      ],
+      "edge": "north"
+    },
+    {
+      "number": 8,
+      "net_function": "D2",
+      "center_module_xy_mm": [
+        32,
+        0
+      ],
+      "edge": "north"
+    },
+    {
+      "number": 9,
+      "net_function": "GND",
+      "center_module_xy_mm": [
+        34,
+        0
+      ],
+      "edge": "north"
+    },
+    {
+      "number": 10,
+      "net_function": "D3",
+      "center_module_xy_mm": [
+        36,
+        0
+      ],
+      "edge": "north"
+    },
+    {
+      "number": 11,
+      "net_function": "READY",
+      "center_module_xy_mm": [
+        38,
+        0
+      ],
+      "edge": "north"
+    },
+    {
+      "number": 12,
+      "net_function": "GND",
+      "center_module_xy_mm": [
+        40,
+        0
+      ],
+      "edge": "north"
+    },
+    {
+      "number": 13,
+      "net_function": "PA_EN",
+      "center_module_xy_mm": [
+        42,
+        0
+      ],
+      "edge": "north"
+    },
+    {
+      "number": 14,
+      "net_function": "HOST_3V3",
+      "center_module_xy_mm": [
+        44,
+        0
+      ],
+      "edge": "north"
+    },
+    {
+      "number": 15,
+      "net_function": "GND",
+      "center_module_xy_mm": [
+        46,
+        0
+      ],
+      "edge": "north"
+    },
+    {
+      "number": 16,
+      "net_function": "5V_CARRIER",
+      "center_module_xy_mm": [
+        48,
+        0
+      ],
+      "edge": "north"
+    },
+    {
+      "number": 1,
+      "net_function": "GND_ANCHOR",
+      "center_module_xy_mm": [
+        16,
+        40
+      ],
+      "edge": "south"
+    },
+    {
+      "number": 1,
+      "net_function": "GND_ANCHOR",
+      "center_module_xy_mm": [
+        48,
+        40
+      ],
+      "edge": "south"
+    },
+    {
+      "number": 1,
+      "net_function": "GND_ANCHOR",
+      "center_module_xy_mm": [
+        0,
+        8
+      ],
+      "edge": "west"
+    }
+  ],
+  "module_through_holes": {
+    "diameter": 1.0,
+    "pad_diameter": 1.6,
+    "annular_ring": 0.3,
+    "main_pitch": 2.0,
+    "main_hole_edge_gap": 1.0,
+    "copper_gap": 0.4,
+    "mask_expansion": 0.05,
+    "top_bottom_copper": true,
+    "edge_bisects_drill": true,
+    "fabrication_property": "pad_prop_castellated",
+    "process": "JLCPCB CastellatedHoles=Yes; CNCmilling, noVcut oncastellatededges"
+  },
+  "carrier_lands": [
+    {
+      "pin": 1,
+      "at_module_mm": [
+        18,
+        -0.1
+      ],
+      "size_mm": [
+        1.6,
+        2.6
+      ],
+      "normal": "north"
+    },
+    {
+      "pin": 2,
+      "at_module_mm": [
+        20,
+        -0.1
+      ],
+      "size_mm": [
+        1.6,
+        2.6
+      ],
+      "normal": "north"
+    },
+    {
+      "pin": 3,
+      "at_module_mm": [
+        22,
+        -0.1
+      ],
+      "size_mm": [
+        1.6,
+        2.6
+      ],
+      "normal": "north"
+    },
+    {
+      "pin": 4,
+      "at_module_mm": [
+        24,
+        -0.1
+      ],
+      "size_mm": [
+        1.6,
+        2.6
+      ],
+      "normal": "north"
+    },
+    {
+      "pin": 5,
+      "at_module_mm": [
+        26,
+        -0.1
+      ],
+      "size_mm": [
+        1.6,
+        2.6
+      ],
+      "normal": "north"
+    },
+    {
+      "pin": 6,
+      "at_module_mm": [
+        28,
+        -0.1
+      ],
+      "size_mm": [
+        1.6,
+        2.6
+      ],
+      "normal": "north"
+    },
+    {
+      "pin": 7,
+      "at_module_mm": [
+        30,
+        -0.1
+      ],
+      "size_mm": [
+        1.6,
+        2.6
+      ],
+      "normal": "north"
+    },
+    {
+      "pin": 8,
+      "at_module_mm": [
+        32,
+        -0.1
+      ],
+      "size_mm": [
+        1.6,
+        2.6
+      ],
+      "normal": "north"
+    },
+    {
+      "pin": 9,
+      "at_module_mm": [
+        34,
+        -0.1
+      ],
+      "size_mm": [
+        1.6,
+        2.6
+      ],
+      "normal": "north"
+    },
+    {
+      "pin": 10,
+      "at_module_mm": [
+        36,
+        -0.1
+      ],
+      "size_mm": [
+        1.6,
+        2.6
+      ],
+      "normal": "north"
+    },
+    {
+      "pin": 11,
+      "at_module_mm": [
+        38,
+        -0.1
+      ],
+      "size_mm": [
+        1.6,
+        2.6
+      ],
+      "normal": "north"
+    },
+    {
+      "pin": 12,
+      "at_module_mm": [
+        40,
+        -0.1
+      ],
+      "size_mm": [
+        1.6,
+        2.6
+      ],
+      "normal": "north"
+    },
+    {
+      "pin": 13,
+      "at_module_mm": [
+        42,
+        -0.1
+      ],
+      "size_mm": [
+        1.6,
+        2.6
+      ],
+      "normal": "north"
+    },
+    {
+      "pin": 14,
+      "at_module_mm": [
+        44,
+        -0.1
+      ],
+      "size_mm": [
+        1.6,
+        2.6
+      ],
+      "normal": "north"
+    },
+    {
+      "pin": 15,
+      "at_module_mm": [
+        46,
+        -0.1
+      ],
+      "size_mm": [
+        1.6,
+        2.6
+      ],
+      "normal": "north"
+    },
+    {
+      "pin": 16,
+      "at_module_mm": [
+        48,
+        -0.1
+      ],
+      "size_mm": [
+        1.6,
+        2.6
+      ],
+      "normal": "north"
+    },
+    {
+      "pin": 1,
+      "at_module_mm": [
+        16,
+        40.1
+      ],
+      "size_mm": [
+        1.6,
+        2.6
+      ],
+      "normal": "south"
+    },
+    {
+      "pin": 1,
+      "at_module_mm": [
+        48,
+        40.1
+      ],
+      "size_mm": [
+        1.6,
+        2.6
+      ],
+      "normal": "south"
+    },
+    {
+      "pin": 1,
+      "at_module_mm": [
+        -0.1,
+        8
+      ],
+      "size_mm": [
+        2.6,
+        1.6
+      ],
+      "normal": "west"
+    }
+  ],
+  "shield": {
+    "frame_mpn": "BMI-S-206-F",
+    "lid_mpn": "BMI-S-206-C",
+    "frame_center_module_xy": [
+      33.25,
+      20.0
+    ],
+    "frame_size_mm": [
+      36.83,
+      33.68
+    ],
+    "cover_max_size_nominal_mm": [
+      37.29,
+      34.14
+    ],
+    "assembled_height_nominal_mm": 5.21,
+    "component_height_under_shield_limit_proposed_mm": 3.5,
+    "stock_footprint": "RF_Shielding:Laird_Technologies_BMI-S-206-F_36.83x33.68mm"
+  },
+  "carrier_cutout": {
+    "status": "Proposal for later carrier integration; no original carrier edits. Replace outline section with three notch edges; do not add a closed rectangle intersecting original outline.",
+    "sma_origin_module_mm": [
+      0,
+      33
+    ],
+    "sma_mpn": "SMA-J-P-H-ST-EM3",
+    "removed_region_carrier_xy_bounds_mm": [
+      45,
+      142.5,
+      82.5,
+      154.5
+    ],
+    "new_edge_points_carrier_mm": [
+      [
+        49.72761890256397,
+        142.5
+      ],
+      [
+        82.5,
+        142.5
+      ],
+      [
+        82.5,
+        154.5
+      ],
+      [
+        48.22792267935437,
+        154.5
+      ]
+    ],
+    "retained_clipped_arc_carrier_mm": {
+      "start": [
+        35.984113,
+        141.287964
+      ],
+      "mid": [
+        43.138713465849165,
+        138.68672042857838
+      ],
+      "end": [
+        49.72761890256397,
+        142.5
+      ]
+    },
+    "retained_clipped_line_carrier_mm": {
+      "start": [
+        48.22792267935437,
+        154.5
+      ],
+      "end": [
+        47.202228,
+        155.525694
+      ]
+    },
+    "clearance_basis": "12mmwide open-to-left-edge corridor for9mmREF connector body and nominal up-to10mmOD SMA nut with1mm lateral clearance. Body extends3.02mmREF belowmodule seating plane. Exact cablehead/strainrelief, enclosure, structural load and futurecarrier routing remain unverified."
+  },
+  "usb_placement": {
+    "stock_footprint": "PigeonVision:USB_C_Receptacle_GCT_USB4105_GF_A_16P",
+    "origin_module_mm": [
+      3.675,
+      21
+    ],
+    "rotation_deg": 270,
+    "courtyard_bounds_module_mm": [
+      -0.505,
+      15.68,
+      8.435,
+      26.32
+    ],
+    "plug_corridor_bounds_module_mm": [
+      -20,
+      15,
+      0,
+      27
+    ]
+  },
+  "sma_placement": {
+    "mpn": "SMA-J-P-H-ST-EM3",
+    "origin_module_mm": [
+      0,
+      33
+    ],
+    "rotation_deg": 0,
+    "module_notch_rectangle_mm": [
+      0,
+      29.44,
+      7,
+      36.56
+    ],
+    "relief_circle_centers_module_mm": [
+      [
+        6.8,
+        29.69
+      ],
+      [
+        6.8,
+        36.31
+      ]
+    ],
+    "relief_radius_mm": 0.4,
+    "connector_body_nominal_bounds_module_mm": [
+      -6,
+      28.5,
+      7,
+      37.5
+    ],
+    "body_above_seating_mm_ref": 3.98,
+    "body_below_seating_mm_ref": 3.02,
+    "signal_pad_center_module_mm": [
+      8.35,
+      33
+    ],
+    "signal_pad_size_mm": [
+      2.3,
+      1
+    ],
+    "ground_pad_centers_module_mm": [
+      [
+        3.5,
+        28.72
+      ],
+      [
+        3.5,
+        37.28
+      ]
+    ],
+    "ground_pad_size_mm": [
+      7,
+      1.44
+    ],
+    "no_thickness_clamp": true,
+    "manufacturer_source": "https://suddendocs.samtec.com/prints/sma-j-p-x-st-em3-mkt.pdf",
+    "revision": "D"
+  },
+  "fabrication_open_conditions": [
+    "Samtec specifies a 7.12 +/-0.10 mm notch and R0.40 mm reliefs. Standard routing radius and outline tolerance do not qualify the fit.",
+    "Obtain CAM acceptance for 0.80 mm NPTH corner-relief drills with routing, precision processing, or a reviewed relief change. Do not silently substitute R0.50 mm.",
+    "The carrier outline is unchanged. Check structural strength, cable head, rounded carrier-notch corners and future copper clearance before integration."
+  ],
+  "status": "Mechanical prototype contract; component fit, cable fit and fabrication process require qualification.",
+  "carrier_integration": "Origin is a proposed position; original carrier PCB has not been changed. Cutout contour is a proposal on Dwgs.User, not carrier Edge.Cuts."
+}

@@ -1,0 +1,60 @@
+{
+  "manufacturer": "JLCPCB",
+  "stackup": "JLC04161H-7628",
+  "nominal_finished_board_mm": 1.6,
+  "outer_copper_oz": 1.0,
+  "inner_copper_oz": 0.5,
+  "layers": [
+    {
+      "name": "F.Cu",
+      "thickness_mm": 0.035,
+      "function": "L1components/RF/USB/signals andlocalGND"
+    },
+    {
+      "name": "dielectric1",
+      "type": "7628prepreg",
+      "thickness_mm": 0.2104,
+      "relative_permittivity": 4.4
+    },
+    {
+      "name": "In1.Cu",
+      "thickness_mm": 0.0152,
+      "function": "L2solidGND;nosplitsunderroutedRF/USB/SPI"
+    },
+    {
+      "name": "core",
+      "type": "FR4",
+      "thickness_mm": 1.065,
+      "relative_permittivity": 4.6
+    },
+    {
+      "name": "In2.Cu",
+      "thickness_mm": 0.0152,
+      "function": "L3powerpours,limitedlowspeedsignalswithcontinuousreturnadjacent"
+    },
+    {
+      "name": "dielectric2",
+      "type": "7628prepreg",
+      "thickness_mm": 0.2104,
+      "relative_permittivity": 4.4
+    },
+    {
+      "name": "B.Cu",
+      "thickness_mm": 0.035,
+      "function": "L4 covered GND dominant/short low-speed signals. Bottom components allowed with purpose-made carrier clearance if placement proves benefit."
+    }
+  ],
+  "mask_model_from_JLC_official_page": {
+    "dielectric_constant": 3.8,
+    "coating_above_substrate_mm": 0.03048,
+    "coating_above_trace_mm": 0.01524,
+    "coating_between_traces_mm": 0.03048
+  },
+  "sources": [
+    "https://jlcpcb.com/impedance",
+    "https://jlcpcb.com/pcb-impedance-calculator",
+    "https://jlcpcb.com/help/article/user-guide-to-the-jlcpcb-impedance-calculator",
+    "https://jlcpcb.com/capabilities/pcb-capabilities/"
+  ],
+  "status": "Selected fabrication basis; not yet entered as final PCB stackup or impedance widths."
+}
