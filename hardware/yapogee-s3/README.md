@@ -2,7 +2,7 @@
 
 Yapogee S3 is PigeonVision's proposed ESP32-S3 transmitter board. The CM5 supplies MPEG-TS over SPI; the S3 performs DVB-S2 encoding and pulse shaping through its own radio. An integrated mixer, PLL and VCO translate the resulting 2.42 GHz RF signal to approximately 1.28 GHz. The board takes nominal 5 V from the carrier and feeds a separate PA/filter board through a 50 ohm RF interface.
 
-The [original Yapogee](https://github.com/Rivercraft911/yapogee) uses RP2350B, AFE7071 and an external LO. This version retains the name while replacing that waveform-generation hardware. Schematic capture and layout for the S3 board have not started on this branch.
+The [original Yapogee](https://github.com/Rivercraft911/yapogee) uses RP2350B, AFE7071 and an external LO. This version retains the name while replacing that waveform-generation hardware. Open the [KiCad starter project](kicad/YapogeeS3.kicad_pro) to begin capture; its schematic and PCB contain no circuit yet. [Project folder and library setup](kicad/README.md).
 
 ```mermaid
 flowchart LR
@@ -78,4 +78,4 @@ The ESP32 modem evidence is pinned to [f614979](https://github.com/Rivercraft911
 
 Before fixing the RF components, measure ESP32 average power, peaks, spectrum and MER versus drive; compare converter loss and added distortion; then determine the PA input needed at a permitted clean output power. Qualify the actual ground receiver and the complete 5 V power/startup interface.
 
-Flight channel, bandwidth, power and retuning access require coordination against the current [ESRA documents](https://www.esrarocket.org/documents-and-forms), including the [2027 DTEG Rev P1](https://www.esrarocket.org/s/2027-IREC-DTEG-REV-P1.pdf). The 0.5 W PA value in legacy documentation remains an unverified planning target.
+The current engineering target is 1-2 W average RF output. The [PA drive calculation](analysis/README.md#pa-drive-and-output-power) distinguishes required drive from the GRF5613's available modulated-output headroom; this target is not established by its CW wattage rating. Specify whether the target applies before or after the final filter. Flight channel, bandwidth, power and retuning access require coordination against the current [ESRA documents](https://www.esrarocket.org/documents-and-forms), including the [2027 DTEG Rev P1](https://www.esrarocket.org/s/2027-IREC-DTEG-REV-P1.pdf).
