@@ -12,5 +12,5 @@
 (fp_line (start -1.3 1.65) (end -1.3 -1.65) (stroke (width 0.05) (type solid)) (layer "F.CrtYd"))
  (fp_circle (center 1.15 -0.9) (end 1.24 -0.9) (stroke (width 0.12) (type solid)) (fill none) (layer "F.SilkS"))
  (pad "1" smd rect (at 0.65 -0.9) (size 0.35 1.0) (layers "F.Cu" "F.Mask" "F.Paste"))(pad "2" smd rect (at 0 -0.9) (size 0.35 1.0) (layers "F.Cu" "F.Mask" "F.Paste"))(pad "3" smd rect (at -0.65 -0.9) (size 0.35 1.0) (layers "F.Cu" "F.Mask" "F.Paste"))(pad "4" smd rect (at -0.65 0.9) (size 0.35 1.0) (layers "F.Cu" "F.Mask" "F.Paste"))(pad "5" smd rect (at 0 0.9) (size 0.35 1.0) (layers "F.Cu" "F.Mask" "F.Paste"))(pad "6" smd rect (at 0.65 0.9) (size 0.35 1.0) (layers "F.Cu" "F.Mask" "F.Paste"))
- 
+
 )
