@@ -1,0 +1,354 @@
+(kicad_sch
+	(version 20260306)
+	(generator "eeschema")
+	(generator_version "10.0")
+	(uuid "e7fe9e5f-7d31-493c-ba3a-36aeb4e127a4")
+	(paper "A4")
+	(title_block
+		(title "PigeonVision RF Front End - GRF5613 Power Amplifier")
+		(date "2026-10-28")
+		(rev "A (prototype 1)")
+		(company "Stanford Student Space Initiative")
+		(comment 1 "GRF5613, Guerrilla RF EVB184 tune, 1.28 GHz, 0.5 W avg DVB-S2")
+		(comment 2 "M-designators = Guerrilla eval board (QFN16-30-21-D) references")
+		(comment 3 "Authors: Benson Gao, Ryan McCormick   Review: Gabriel Irazabal")
+		(comment 4 "Net class SE_50: */RF_*")
+	)
+	(lib_symbols)
+	(text "Net class SE_50 (50 ohm single-ended GCPW): pattern */RF_*"
+		(exclude_from_sim no)
+		(at 38.1 135.89 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "26edd36d-1632-41c1-bb5c-074e01443b0d")
+	)
+	(text "Design Master: RF front end tab (link TBD).  Variants: FLIGHT = D2/R107 DNP"
+		(exclude_from_sim no)
+		(at 38.1 143.51 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "2733af0a-9619-43c9-8e0f-2f3b9239408f")
+	)
+	(text "Thermal: ~2.5 - 3.5 W dissipated, GRF5613 package base <= 85 C, 60 min continuous soak"
+		(exclude_from_sim no)
+		(at 38.1 132.08 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "43f3ed6a-09a9-48b9-933d-c6dfa4cf84e0")
+	)
+	(text "Power:  J6 5V_RF 4.88 - 5.20 V (TPS62933, default off); 0.31 A idle, ~0.65 A at 27 dBm, 1.2 A saturated; F1 2 A"
+		(exclude_from_sim no)
+		(at 38.1 124.46 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "4647f58a-d414-4830-a4c5-a9169b1d335b")
+	)
+	(text "REQUIREMENTS"
+		(exclude_from_sim no)
+		(at 38.1 111.76 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left bottom)
+		)
+		(uuid "46f49390-2b2c-400d-a926-50c294ed1292")
+	)
+	(text "PigeonVision RF FRONT END - TOP LEVEL"
+		(exclude_from_sim no)
+		(at 38.1 30.48 0)
+		(effects
+			(font
+				(size 2 2)
+			)
+			(justify left bottom)
+		)
+		(uuid "4c6a87ed-37e7-4f17-8f4a-3b8641f35e49")
+	)
+	(text "RF out: J3 SMA, >= +27 dBm average at connector after LPF; 2nd harmonic rejection ~30 dB (LFCN-1400+ measured S-parameters)"
+		(exclude_from_sim no)
+		(at 38.1 120.65 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "568520de-4c9a-4e77-9860-23a89fd04615")
+	)
+	(text "RF in:  J1 SMA, ~+10 dBm (source level TBC with River), 50 ohm, 1.28 GHz DVB-S2 QPSK 8 Msym/s (~9.6 MHz occupied)"
+		(exclude_from_sim no)
+		(at 38.1 116.84 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "699d650f-3ebd-475c-9d69-e4d717a3ad20")
+	)
+	(text "Control: PA_EN 3.3 V active-high (CM5 GPIO22); 10 kOhm pull-down -> PA OFF when unpowered or disconnected"
+		(exclude_from_sim no)
+		(at 38.1 128.27 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "8ea894d3-85da-4d28-b727-870e3aeb4c8c")
+	)
+	(text "RF Chain: J1 SMA -> 4 dB pi pad -> GRF5613 (EVB184 tune) -> LFCN-1400+ -> J3 SMA.  5V_PA and GND are global power nets."
+		(exclude_from_sim no)
+		(at 38.1 41.91 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "a53b19b7-de4b-44b4-95c6-460ec0bb116b")
+	)
+	(text "ERC: symbol-library-not-configured warnings ignored on purpose - all symbols are embedded (Altium import + PV_RF)"
+		(exclude_from_sim no)
+		(at 38.1 139.7 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "af5ad0d4-7a37-4da1-9d75-298cf58b0a9e")
+	)
+	(text "J6 (5V_RF, GND, PA_EN) -> Power Entry -> 5V_PA (global)   |   PA_EN -> PA Enable -> PA_SHDN -> RF Chain"
+		(exclude_from_sim no)
+		(at 38.1 38.1 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "b4e583da-9c9b-4b24-b116-719ed1bb3c1a")
+	)
+	(wire
+		(pts
+			(xy 83.82 76.2) (xy 114.3 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "36138db4-35f1-42cd-8d89-834cc24fd946")
+	)
+	(wire
+		(pts
+			(xy 160.02 76.2) (xy 190.5 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d150eff2-42e5-4f2b-9284-d3f0260e13eb")
+	)
+	(sheet
+		(at 38.1 63.5)
+		(size 45.72 25.4)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "98e55e43-876e-4f01-957b-37bee1d6f2a9")
+		(property "Sheetname" "Power Entry"
+			(at 38.1 62.79 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "power_entry.kicad_sch"
+			(at 38.1 89.49 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "PA_EN" output
+			(at 83.82 76.2 0)
+			(uuid "9888aaac-3647-4472-a2a4-2647e742a770")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(instances
+			(project "pigeonvision_pa"
+				(path "/e7fe9e5f-7d31-493c-ba3a-36aeb4e127a4"
+					(page "2")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 114.3 63.5)
+		(size 45.72 25.4)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "9fc1a283-1d36-4d24-96df-bfa313cf14fd")
+		(property "Sheetname" "PA Enable"
+			(at 114.3 62.79 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "pa_enable.kicad_sch"
+			(at 114.3 89.49 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "PA_EN" input
+			(at 114.3 76.2 180)
+			(uuid "e4448c12-f4d6-46ab-9d49-d3128638856b")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "PA_SHDN" output
+			(at 160.02 76.2 0)
+			(uuid "0bd9790b-1327-4da3-982f-5e3596449749")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(instances
+			(project "pigeonvision_pa"
+				(path "/e7fe9e5f-7d31-493c-ba3a-36aeb4e127a4"
+					(page "3")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 190.5 55.88)
+		(size 63.5 40.64)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "a6fc659e-6948-4a2d-b7fa-36cc3db0ce03")
+		(property "Sheetname" "RF Chain"
+			(at 190.5 55.17 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "rf_chain.kicad_sch"
+			(at 190.5 97.11 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "PA_SHDN" input
+			(at 190.5 76.2 180)
+			(uuid "cc94b26f-bd7e-4f31-824d-b954402cc1a9")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(instances
+			(project "pigeonvision_pa"
+				(path "/e7fe9e5f-7d31-493c-ba3a-36aeb4e127a4"
+					(page "4")
+				)
+			)
+		)
+	)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+	(embedded_fonts no)
+)
