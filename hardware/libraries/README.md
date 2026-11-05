@@ -83,6 +83,8 @@ The service button is `PigeonVision:PTS636_SK25_SMTR_LFS`, with a matching two-p
 
 Yapogee S3's [selected BOM](../yapogee-s3/BOM.csv) uses this library for the ESP32-S3-WROOM-1U-N16R8 module, U.FL input socket, RFFC5072A converter, baluns, filter, SPF5043Z driver and power/interface parts. Its custom footprints include the SPF5043Z's widened ground lead and manufacturer land patterns for the converter, baluns, TCXO, power packages and inductors. Standard package derivatives retain KiCad library licensing. Vendor downloads, pricing and working review material are kept outside the public repository. Library pin/pad and native loading checks support schematic capture; they do not qualify RF performance, soldering or a completed PCB.
 
+The [55 × 43.18 mm module interface](PigeonVision.pretty/YapogeeS3_Edge_Header16_55x43p18_P2p54_GND12.kicad_mod) pairs 0.8 mm castellations with 1.1 mm header holes on two separate 1×8 rows at 2.54 mm pitch. Its [carrier landing](PigeonVision.pretty/YapogeeS3_CarrierLanding16_55x43p18_P2p54_GND12.kicad_mod) has 28 solder lands: the 16 logical contacts and 12 extra GND anchors. J1 is assigned to this interface. Header body guides remain on B.Fab; compact pin labels remain on silk. Bench headers mount underneath and are omitted for flush carrier assembly. J1 carries real Edge.Cuts, R1 outer corners and the Samtec notch. Header holes are 1.60 mm inboard with continuous oval top copper lands. Carrier integration and assembly qualification remain.
+
 1. Keep exact manufacturer identity and supplier codes, including packaging suffixes.
 2. Verify every symbol pin and pad against the latest manufacturer drawing.
 3. Check land/stencil geometry and model orientation; record model provenance.

@@ -398,15 +398,5 @@
 		(layers "F.Cu" "F.Mask" "F.Paste")
 	)
 	(embedded_fonts no)
-	(model "${KICAD10_3DMODEL_DIR}/RF_Shielding.3dshapes/Laird_Technologies_BMI-S-206-F_36.83x33.68mm.step"
-		(offset
-			(xyz 0 0 0)
-		)
-		(scale
-			(xyz 1 1 1)
-		)
-		(rotate
-			(xyz 0 0 0)
-		)
-	)
+	(model "${KIPRJMOD}/../../libraries/3dmodels/Laird_BMI_S_206_F_NOMINAL_FRAME.step" (offset (xyz 0 0 0)) (scale (xyz 1 1 1)) (rotate (xyz 0 0 0)))
 )

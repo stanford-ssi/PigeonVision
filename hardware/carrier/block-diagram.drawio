@@ -193,7 +193,7 @@
         <mxCell id="8" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.8787878787878788;entryY=1;entryPerimeter=0;rounded=0;strokeColor=#222222;strokeWidth=1.8;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=14;fontColor=default;labelBackgroundColor=default;startArrow=none;startFill=1;endArrow=block;endFill=1;jettySize=0;exitX=0.5;exitY=0;exitPerimeter=0;" edge="1" parent="1" source="boot" target="cm">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="tx_spi" value="&lt;b&gt;Yapogee S3 interface&lt;/b&gt;&lt;br&gt;SPI; quad pins reserved&lt;br&gt;READY / PA_EN return&lt;br&gt;5V_MAIN / HOST_3V3 / GND" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#d4e4f4;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=5;" parent="1" vertex="1">
+        <mxCell id="tx_spi" value="&lt;b&gt;Yapogee S3 interface&lt;/b&gt;&lt;br&gt;Direct 3.3 V SPI; quad reserved&lt;br&gt;READY / PA_EN return&lt;br&gt;5V_MAIN / GND; pad14 reserved" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Arial;fillColor=#d4e4f4;strokeColor=#222222;strokeWidth=1.5;align=center;verticalAlign=middle;fontSize=16;spacing=5;" parent="1" vertex="1">
           <mxGeometry x="1230" y="290" width="310" height="105" as="geometry" />
         </mxCell>
         <mxCell id="tx_spi_edge" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#222222;strokeWidth=1.8;endArrow=block;startArrow=block;endFill=1;startFill=1;exitX=1;exitY=0.10869565217391304;exitPerimeter=0;entryX=0;entryY=0.5;entryPerimeter=0;jettySize=0;fontFamily=Arial;fontSize=14;labelBackgroundColor=none;" parent="1" source="cm" target="tx_spi" edge="1" value="MPEG-TS / status">

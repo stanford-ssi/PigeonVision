@@ -25,4 +25,5 @@
 (fp_line (start 10 5.5) (end -6.5 5.5) (stroke (width 0.05) (type default)) (layer "F.CrtYd"))
 (fp_line (start -6.5 5.5) (end -6.5 -5.5) (stroke (width 0.05) (type default)) (layer "F.CrtYd"))
  (fp_line (start 9.9 -0.45) (end 9.9 0.45) (stroke (width 0.12) (type default)) (layer "F.SilkS"))
+	(model "${KIPRJMOD}/../../libraries/3dmodels/Samtec_SMA_J_P_H_ST_EM3.stp" (offset (xyz 1.5 0 -3.02)) (scale (xyz 1 1 1)) (rotate (xyz -90 0 0)))
 )

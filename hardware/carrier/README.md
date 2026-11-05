@@ -24,30 +24,30 @@
 
 Both camera connectors receive the shared 3V3_CAM rail; MIPI connects directly to CM5. Keep the working adapter boards and their camera-specific power sequencing. The carrier does not replace their internal regulator circuitry.
 
-Sensors use CM5 3.3 V. Yapogee receives 5V_MAIN through castellations and makes its own 3.328 V main and quiet 3.0 V rails. Reserve 1.5 A for the daughterboard. Its USB-C port also supports standalone power from a source advertising at least 1.5 A; eligible USB has priority when both sources are present. The selected GRF5613 PA uses the separate switched 5V_RF rail. Keep space, 5 V power and Ethernet for the E200 fallback. The bench input is a PJ-102AH barrel jack beside the battery connector, used with the battery unplugged.
+Sensors use CM5 3.3 V. Yapogee receives 5V_MAIN through castellations and makes its own 3.328 V main and quiet 3.0 V rails. Reserve 1.5 A for the daughterboard. Its USB-C port supports standalone power before installation from a known 5 V source providing at least 1.5 A. Once mounted, leave JP1 open and use USB for data only while the carrier is on. Independent Pi PMIC-off operation is unsupported. The selected GRF5613 PA uses the separate switched 5V_RF rail. Keep space, 5 V power and Ethernet for the E200 fallback. The bench input is a PJ-102AH barrel jack beside the battery connector, used with the battery unplugged.
 
 J1 uses vertical AMASS XT60PB-M30.G.Y: pin 1, at the keyed end marked −, is GND; pin 2, at the flat end marked +, is VBAT_RAW. J6 and both camera connectors are also vertical. USB-C J10 and the PJ-102AH bench input J2 remain horizontal. [Connector geometry, sourcing and model limits](../libraries/review/vertical-connectors.md).
 
-The planned Yapogee connection uses 16 castellated interface positions plus three GND anchors. [Pad assignment and mechanical contract](../yapogee-s3/interfaces.md). The daughterboard takes SCLK, CS_N and D0–D3; READY and PA_EN return to the carrier. HOST_3V3 is the translators' carrier-side reference, separate from Yapogee's local regulator output.
+The planned Yapogee connection uses 16 castellated interface positions plus three GND anchors. [Pad assignment and mechanical contract](../yapogee-s3/interfaces.md). The daughterboard takes SCLK, CS_N and D0–D3; READY and PA_EN return to the carrier. The host interface is direct 3.3 V GPIO; pad 14 is reserved and unconnected. The carrier must provide a 4.7 kΩ CS_N pull-up to Pi 3V3. This pull-up and the carrier bus routing are not yet captured. Neither endpoint may drive or pull up an unpowered receiver; startup, stop and voltage corners remain to be qualified.
 
-The existing CM5 reservations are retained as the starting point for SPI integration. J1 numbers below are module-connector pads, not IO-board header positions. These carrier connections are not yet implemented.
+The existing CM5 reservations are retained as the starting point for SPI integration. J3 numbers below are module-connector pads, not IO-board header positions. These carrier connections are not yet implemented.
 
-| Signal | CM5 GPIO reservation | CM5 J1 pad | Yapogee castellation |
+| Signal | CM5 GPIO reservation | CM5 J3 pad | Yapogee castellation |
 | --- | --- | --- | --- |
 | SCLK | 11 | 38 | 2 |
 | D0 / MOSI | 10 | 44 | 5 |
 | CS_N | 8 | 39 | 4 |
 | READY | 25 | 41 | 11 |
 | D1–D3 | Pending carrier allocation | Pending | 7, 8, 10 |
-| PA_EN return | Pending carrier routing | Pending | 13 |
-| HOST_3V3 | CM5 3.3 V reference | Supply connection pending | 14 |
+| PA_EN request into Pi | 22, input | 46, routing pending | 13 |
+| Reserved | No connection | — | 14 |
 | 5V_CARRIER | 5V_MAIN | Supply connection pending | 16 |
 
 SPI is the baseline transport; the quad data pins are reserved for future implementation. The measured 20 MHz mode-0 PV-SPI bench results belong to the earlier Pico path. Its framing, READY behavior, startup and uncertain-transfer recovery require reconciliation with the ESP32 firmware before treating that result as S3 integration evidence. Keep sensors off this dedicated bus. [Measured SPI result](../../software/flight/spi.md).
 
-The RF buck enable remains GPIO17 / J1.50 with its existing 10 kΩ pull-down. The earlier CM5 GPIO22 / J1.46 PA_EN reservation has not been wired. The new Yapogee contract returns PA_EN on castellation 13; resolve that route and any host monitoring/interlock before connecting the PA. Do not connect two actively driven enable sources together.
+The Pi controls the RF buck through GPIO17 / J3.50, with its existing 10 kΩ pull-down. Yapogee returns its PA request on castellation 13, planned for GPIO22 / J3.46 as a Pi input. That return route and its firmware are unfinished. Yapogee receives 5V_MAIN so it remains powered while the Pi holds PA power off.
 
-The proposed four-pin Molex 0430450418 PA connector carries 1: 5V_RF, 2: GND, 3: PA_EN, 4: GND. Local PA circuitry must default off and handle GRF5613 shutdown polarity and bias sequencing. This remains a pin plan with no carrier control wiring applied. [PA plan](../rf-frontend/README.md). The transmitter's standalone USB source selection and reverse blocking are on Yapogee; source transitions and carrier backfeed still need hardware checks.
+The proposed four-pin Molex 0430450418 PA connector reserves 1: 5V_RF, 2: GND, 3: Pi-controlled PA bias/disable, 4: GND. Pin 3 is separate from the request into GPIO22. Local PA circuitry must default off and handle GRF5613 shutdown polarity and bias sequencing. The connector and bias control remain a pin plan. [PA plan](../rf-frontend/README.md). Yapogee uses manual source selection: its USB power bridge is open whenever installed. USB-only power is for preinstallation with the carrier disconnected; USB data requires the carrier on. Local ESP BOOT/RESET and native USB flashing do not control the Pi.
 
 J12 is a JST SH BM03B-SRSS-TB debug UART on CM5 GPIO14/15 using the Raspberry Pi debug-connector pinout: 1 RX into the CM5 (GPIO15), 2 GND, 3 TX from the CM5 (GPIO14). A Raspberry Pi Debug Probe plugs in with a straight-through cable. Both lines have 1 kΩ series resistors. The specification calls for 100 Ω, but CM5 GPIO pads are not failsafe, so the larger value limits back-feed from a powered probe into an unpowered CM5. LED4 (via R41, 220 Ω from 3V3_CM5) shows CM5 activity on LED_nACT.
 

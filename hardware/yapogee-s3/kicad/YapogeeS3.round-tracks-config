@@ -1,0 +1,9 @@
+Default	False	2.0	3
+POWER3V3	False	2.0	3
+POWER5V	False	2.0	3
+POWER_RF	False	2.0	3
+REF40	False	2.0	3
+RF50	True	2.0	3
+RF_MATCH	True	1.0	3
+USB90	False	2.0	3
+False	True	False

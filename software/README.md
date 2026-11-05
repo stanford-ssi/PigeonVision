@@ -28,7 +28,7 @@ receiver remains to be selected and qualified; the Mac decodes and stitches.
 
 The [S3 reference firmware](https://github.com/Rivercraft911/esp-dvbs2) already
 implements PV-SPI v1: one 1332-byte message per CS, CRC-32 and READY backpressure.
-Single-line SPI is the baseline; quad data pins are reserved on the board.
+Single-line SPI is the baseline; quad data pins are reserved on the board. The board uses direct 3.3 V host GPIO; GPIO2 is free after removing HOST_OE_N. Castellation 14 is reserved. Mounted JP1 stays open and USB data requires carrier power. ESP BOOT/RESET and native USB flashing are local; independent Pi PMIC-off operation is unsupported. Neither endpoint may drive or pull up an unpowered receiver; startup/stop and voltage corners remain to be qualified.
 The ESP32 path has conducted RF/video evidence. Carrier GPIO configuration,
 converter/PA control, autonomous flight startup and the complete new RF chain
 still need integration and hardware testing. The diagrams distinguish that plan

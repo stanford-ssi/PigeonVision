@@ -8,18 +8,18 @@
     {
       "name": "F.Cu",
       "thickness_mm": 0.035,
-      "function": "L1components/RF/USB/signals andlocalGND"
+      "function": "L1 components, RF, USB, signals and local GND"
     },
     {
       "name": "dielectric1",
-      "type": "7628prepreg",
+      "type": "7628 prepreg",
       "thickness_mm": 0.2104,
       "relative_permittivity": 4.4
     },
     {
       "name": "In1.Cu",
       "thickness_mm": 0.0152,
-      "function": "L2solidGND;nosplitsunderroutedRF/USB/SPI"
+      "function": "L2 solid GND; no splits under RF, USB or SPI"
     },
     {
       "name": "core",
@@ -30,11 +30,11 @@
     {
       "name": "In2.Cu",
       "thickness_mm": 0.0152,
-      "function": "L3powerpours,limitedlowspeedsignalswithcontinuousreturnadjacent"
+      "function": "L3 power pours and limited low-speed signals with continuous return"
     },
     {
       "name": "dielectric2",
-      "type": "7628prepreg",
+      "type": "7628 prepreg",
       "thickness_mm": 0.2104,
       "relative_permittivity": 4.4
     },
@@ -56,5 +56,34 @@
     "https://jlcpcb.com/help/article/user-guide-to-the-jlcpcb-impedance-calculator",
     "https://jlcpcb.com/capabilities/pcb-capabilities/"
   ],
-  "status": "Selected fabrication basis; not yet entered as final PCB stackup or impedance widths."
+  "status": "Selected JLC standard 1.6mm ordering category; physical stack and routing defaults entered in KiCad. Geometry requires controlled-impedance CAM confirmation.",
+  "vendor_calculator_nominal_finished_mm": 1.59,
+  "copper_and_dielectric_sum_mm": 1.5862,
+  "kicad_total_with_two_nominal_mask_coatings_mm": 1.61668,
+  "routing": {
+    "model": "Coplanar with ground, solder mask retained; L1 referenced to continuous L2",
+    "RF50": {
+      "target_ohm": 50,
+      "vendor_width_mm": 0.3203,
+      "route_width_mm": 0.32,
+      "ground_gap_mm": 0.25
+    },
+    "USB90": {
+      "target_differential_ohm": 90,
+      "vendor_width_mm": 0.2347,
+      "route_width_mm": 0.235,
+      "pair_edge_gap_mm": 0.15,
+      "outer_ground_gap_mm": 0.25
+    },
+    "RF_MATCH": {
+      "route_width_mm": 0.2,
+      "pair_gap_mm": 0.2,
+      "status": "Short lumped matching interconnect default; not a controlled 100/200 ohm transmission line"
+    },
+    "limits": [
+      "Maintain the specified coplanar ground gap during layout; netclass clearance is only a minimum.",
+      "Reference/mixer models and geometry are nominal; fabricated impedance and matching remain unmeasured.",
+      "1.6 mm is the order category. Manufacturer Cu + dielectric sum is 1.5862 mm; KiCad adds nominal mask coatings without changing core or prepreg thicknesses."
+    ]
+  }
 }

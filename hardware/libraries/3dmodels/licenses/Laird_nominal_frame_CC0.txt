@@ -1,0 +1,15 @@
+Laird_BMI_S_206_F_NOMINAL_FRAME.step and build_nominal_frame.py
+
+Project-authored simplified nominal geometry, generated from factual product
+dimensions on the manufacturer's product page. This is not the manufacturer CAD
+model and does not reproduce its detailed geometry.
+
+To the extent copyright or related rights apply to this project-authored script
+and generated nominal geometry, they are dedicated to the public domain under
+CC0 1.0 Universal: https://creativecommons.org/publicdomain/zero/1.0/
+
+The manufacturer name and part number identify the intended component; no
+endorsement is claimed. No warranty of fit, clearance or dimensional accuracy.
+
+This dedication DOES NOT apply to Laird_BMI-S-206-F_VENDOR.STP, which remains a
+private vendor download with redistribution rights not established.

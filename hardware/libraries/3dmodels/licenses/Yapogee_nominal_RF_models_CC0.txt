@@ -1,0 +1,2 @@
+The original project-authored visual models Johanson_2450BL15B0100001E_NOMINAL.step and Qorvo_SPF5043Z_WideGND_NOMINAL.step are dedicated to the public domain under CC0 1.0 Universal: https://creativecommons.org/publicdomain/zero/1.0/
+This dedication applies to the original models only. No third-party CAD or artwork is included.

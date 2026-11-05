@@ -24,4 +24,5 @@
 (pad "11" thru_hole circle (at -0.35 0.75) (size .4 .4) (drill .2) (layers "*.Cu" "F.Mask") (zone_connect 2))
 (pad "11" thru_hole circle (at 0.35 -0.75) (size .4 .4) (drill .2) (layers "*.Cu" "F.Mask") (zone_connect 2))
 (pad "11" thru_hole circle (at 0.35 0.75) (size .4 .4) (drill .2) (layers "*.Cu" "F.Mask") (zone_connect 2))
+	(model "${KIPRJMOD}/../../libraries/3dmodels/KiCad_WSON-10_2.5x2.5_EP1.2x2.step" (offset (xyz 0 0 0)) (scale (xyz 1 1 1)) (rotate (xyz 0 0 0)))
 )

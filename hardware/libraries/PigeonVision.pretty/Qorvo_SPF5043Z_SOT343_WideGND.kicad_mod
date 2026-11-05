@@ -12,4 +12,9 @@
 (pad "2" smd roundrect (at -0.825 0.65) (size 1.05 0.85) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio .15))
 (pad "3" smd roundrect (at 0.825 0.65) (size 1.05 0.5) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio .15))
 (pad "4" smd roundrect (at 0.825 -0.65) (size 1.05 0.5) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio .15))
+	(model "${KIPRJMOD}/../../libraries/3dmodels/Qorvo_SPF5043Z_WideGND_NOMINAL.step"
+		(offset (xyz 0 0 0))
+		(scale (xyz 1 1 1))
+		(rotate (xyz 0 0 0))
+	)
 )

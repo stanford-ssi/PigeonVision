@@ -1,0 +1,528 @@
+{
+  "installed_KiCad_version": "10.0.0",
+  "redistributable_new_assets": {
+    "ESP32-S3-WROOM-1U.STEP": {
+      "source": "https://github.com/espressif/kicad-libraries/blob/dd76561812ab300351234ba6e0ec1295641796f0/3dmodels/espressif.3dshapes/ESP32-S3-WROOM-1U.STEP",
+      "attribution": "Espressif Systems official KiCad library",
+      "license": "CC-BY-SA-4.0 with KiCad electronic-design exception",
+      "license_files": [
+        "licenses/Espressif_KiCad_LICENSE.md"
+      ],
+      "classification": "Exact official vendor model; transform matched to this project footprint",
+      "sha256": "7be82bdafece2891b297546eb0643ff254e3d8161074ebdc972e0d78e79a4bdb",
+      "target_from_repo": "hardware/libraries/3dmodels/ESP32-S3-WROOM-1U.STEP",
+      "public_stage_allowed": true,
+      "bounds": {
+        "min_mm": [
+          -5.775277712154868e-14,
+          -7.474243027199849e-17,
+          0.0
+        ],
+        "max_mm": [
+          18.000000000000004,
+          19.2,
+          3.2000001
+        ],
+        "size_mm": [
+          18.00000000000006,
+          19.2,
+          3.2000001
+        ]
+      }
+    },
+    "KiCad_WSON-10_2.5x2.5_EP1.2x2.step": {
+      "source": "Installed official KiCad10.0.0:Package_SON.3dshapes/WSON-10-1EP_2.5x2.5mm_P0.5mm_EP1.2x2mm.step",
+      "upstream": "https://gitlab.com/kicad/libraries/kicad-packages3D/-/tree/master/Package_SON.3dshapes",
+      "attribution": "Copyright2023 KiCAD; original model header retained",
+      "license": "CC-BY-SA-4.0 with KiCad electronic-design exception",
+      "license_files": [
+        "licenses/KiCad_packages3D_LICENSE.txt"
+      ],
+      "classification": "Nominal DSK0010A package for TPS7A90; not exact supplier CAD/tolerance envelope",
+      "sha256": "26b11479728c38545462bbe7bb9e39e93c46ecc441c206ecdfeae513ed7b7b44",
+      "target_from_repo": "hardware/libraries/3dmodels/KiCad_WSON-10_2.5x2.5_EP1.2x2.step",
+      "public_stage_allowed": true,
+      "bounds": {
+        "min_mm": [
+          -1.25,
+          -1.2375,
+          0.0
+        ],
+        "max_mm": [
+          1.25,
+          1.2375000000000003,
+          0.76
+        ],
+        "size_mm": [
+          2.5,
+          2.4750000000000005,
+          0.76
+        ]
+      }
+    },
+    "KiCad_Texas_DRT-3.step": {
+      "source": "Installed official KiCad10.0.0:Package_TO_SOT_SMD.3dshapes/Texas_DRT-3.step",
+      "upstream": "https://gitlab.com/kicad/libraries/kicad-packages3D/-/tree/master/Package_TO_SOT_SMD.3dshapes",
+      "attribution": "Copyright2017 kicad StepUp; original model header retained",
+      "license": "File header:GPL-3.0-or-later with KiCad design exception",
+      "license_files": [
+        "licenses/GPL-3.0.txt",
+        "licenses/KiCad_packages3D_LICENSE.txt"
+      ],
+      "classification": "Official nominal Texas DRT-3 package; stock footprint geometry matches all3 project pads",
+      "sha256": "826a53de4a90e738d560e4a906235ba95541b3da40b62f22d8f9e30fd9f39744",
+      "target_from_repo": "hardware/libraries/3dmodels/KiCad_Texas_DRT-3.step",
+      "public_stage_allowed": true,
+      "bounds": {
+        "min_mm": [
+          -0.5000001,
+          -0.5000001,
+          -1e-07
+        ],
+        "max_mm": [
+          0.5000001,
+          0.5000001,
+          0.5000001
+        ],
+        "size_mm": [
+          1.0000002,
+          1.0000002,
+          0.5000001999999999
+        ]
+      }
+    },
+    "KiCad_SOT23_REPRESENTATIVE_TLV803E.step": {
+      "source": "Installed official KiCad10.0.0:Package_TO_SOT_SMD.3dshapes/SOT-23.step",
+      "upstream": "https://gitlab.com/kicad/libraries/kicad-packages3D/-/tree/master/Package_TO_SOT_SMD.3dshapes",
+      "attribution": "Copyright2025 KiCAD; original model header retained",
+      "license": "CC-BY-SA-4.0 with KiCad electronic-design exception",
+      "license_files": [
+        "licenses/KiCad_packages3D_LICENSE.txt"
+      ],
+      "classification": "Representative DBZ body; model1.20mm high versus exactTImax1.12mm; not clearance proof",
+      "sha256": "dd5d1711204e1d8d26cd11490923bd84340820baa69538c385a4300ec2539bc0",
+      "target_from_repo": "hardware/libraries/3dmodels/KiCad_SOT23_REPRESENTATIVE_TLV803E.step",
+      "public_stage_allowed": true,
+      "bounds": {
+        "min_mm": [
+          -1.25,
+          -1.5000001000000003,
+          0.0
+        ],
+        "max_mm": [
+          1.25,
+          1.5000001000000003,
+          1.2000001
+        ],
+        "size_mm": [
+          2.5,
+          3.0000002000000006,
+          1.2000001
+        ]
+      }
+    },
+    "KiCad_Bourns_SRP5030T_REPRESENTATIVE.step": {
+      "source": "Installed official KiCad10.0.0:Inductor_SMD.3dshapes/L_Bourns_SRP5030T.step",
+      "upstream": "https://gitlab.com/kicad/libraries/kicad-packages3D/-/tree/master/Inductor_SMD.3dshapes",
+      "attribution": "KiCad packages3D contributors; original file retained unchanged",
+      "license": "KiCad library collection CC-BY-SA-4.0 with KiCad electronic-design exception",
+      "license_files": [
+        "licenses/KiCad_packages3D_LICENSE.txt"
+      ],
+      "classification": "SRP5030T representative for SRP5030TA;5.72x5.2x2.8mm nominal package, not exact TA CAD",
+      "sha256": "ebf3894bb261351d8267586e692dae24eedf3874224fd171e843f24619130354",
+      "target_from_repo": "hardware/libraries/3dmodels/KiCad_Bourns_SRP5030T_REPRESENTATIVE.step",
+      "public_stage_allowed": true,
+      "bounds": {
+        "min_mm": [
+          -2.86,
+          -2.6,
+          0.0
+        ],
+        "max_mm": [
+          2.86,
+          2.6,
+          2.8
+        ],
+        "size_mm": [
+          5.72,
+          5.2,
+          2.8
+        ]
+      }
+    },
+    "Laird_BMI_S_206_F_NOMINAL_FRAME.step": {
+      "source": "Original project-authored open-frame approximation from factual manufacturer36.83x33.68x5.08mm/0.20mm wall dimensions",
+      "upstream": "https://www.laird.com/products/custom-precision-metal-stamping-emi-non-emi/board-level-shields/two-piece-board-level-shields/bmi-s-206-f",
+      "attribution": "Original IREC project nominal geometry; no vendor CAD redistributed",
+      "license": "CC0-1.0",
+      "license_files": [
+        "licenses/Laird_nominal_frame_CC0.txt"
+      ],
+      "classification": "Simplified nominal open frame; omits feet/latches/bars/tolerances. Private vendor CAD protrusions are larger. Not clearance proof.",
+      "sha256": "ac632054c2343b2e19192a03abaf90c0439d5b91af1ba3965970575faad97cd2",
+      "target_from_repo": "hardware/libraries/3dmodels/Laird_BMI_S_206_F_NOMINAL_FRAME.step",
+      "public_stage_allowed": true,
+      "bounds": {
+        "min_mm": [
+          -18.415,
+          -16.84,
+          0.0
+        ],
+        "max_mm": [
+          18.415,
+          16.84,
+          5.08
+        ],
+        "size_mm": [
+          36.83,
+          33.68,
+          5.08
+        ]
+      }
+    },
+    "Samtec_EM3_NOMINAL_ENVELOPE.step": {
+      "source": "Original project-authored block/cylinder envelope from factual SamtecRevD nominal dimensions; not vendor CAD",
+      "upstream": "https://suddendocs.samtec.com/prints/sma-j-p-x-st-em3-mkt.pdf",
+      "attribution": "Original IREC project simplified nominal geometry; drawing artwork and vendor CAD not redistributed",
+      "license": "CC0-1.0",
+      "license_files": [
+        "licenses/Samtec_nominal_envelope_CC0.txt"
+      ],
+      "classification": "Nominal EM3 visual envelope; rounded body represented by blocks, no detailed threads; mating/cutout fit unverified",
+      "sha256": "409e40165a08f1bb602a37c848e5c6a18852510543223d53d9fc067af0ffcdba",
+      "target_from_repo": "hardware/libraries/3dmodels/Samtec_EM3_NOMINAL_ENVELOPE.step",
+      "public_stage_allowed": true,
+      "bounds": {
+        "min_mm": [
+          -6.0,
+          -4.5,
+          -3.02
+        ],
+        "max_mm": [
+          9.0,
+          4.5,
+          3.98
+        ],
+        "size_mm": [
+          15.0,
+          9.0,
+          7.0
+        ]
+      }
+    },
+    "Samtec_SMA_J_P_H_ST_EM3.stp": {
+      "source": "https://samtec-embedded.customer-domain.samtec.com/3d-cad-models/sso/sma-j-p-h-st-em3-samtec?info=samtec%2Fconnectors%2Frf_interconnects%2F50_ohms%2Fsma_50_ohm%2Fsma_asmtab.prj",
+      "manufacturer_page": "https://www.samtec.com/products/sma-j-p-h-st-em3",
+      "attribution": "Samtec, SMA-J-P-H-ST-EM3; CADENAS/PARTsolutions export. Original STEP file unchanged.",
+      "license": "CC-BY-ND-4.0, explicitly declared in original STEP FILE_NAME author field; CADENAS terms8 defer to attached CreativeCommons license.",
+      "license_files": [
+        "licenses/Samtec_CADENAS_CC-BY-ND-4.0.txt"
+      ],
+      "classification": "Exact configured manufacturer CAD model, nominal geometry; not a production tolerance or RF launch certificate.",
+      "sha256": "40735221a6a73f480fe41517127f486fac7721b4a25ea61593fc38c89c0d7b23",
+      "target_from_repo": "hardware/libraries/3dmodels/Samtec_SMA_J_P_H_ST_EM3.stp",
+      "public_stage_allowed": true,
+      "original_filename": "SMA-J-P-H-ST-EM3.stp",
+      "modified": false,
+      "raw_bounds": {
+        "min": [
+          -7.5000001,
+          -8.881784197001252e-16,
+          -4.5
+        ],
+        "max": [
+          7.5000001,
+          7.000000000000001,
+          4.5
+        ],
+        "size": [
+          15.0000002,
+          7.000000000000002,
+          9.0
+        ]
+      },
+      "transform_for_project_footprint": {
+        "offset_mm": [
+          1.5,
+          0,
+          -3.02
+        ],
+        "rotate_deg": [
+          -90,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "placed_local_bounds_mm": {
+        "x": [
+          -6,
+          9
+        ],
+        "y": [
+          -4.5,
+          4.5
+        ],
+        "z_relative_top_copper": [
+          -3.02,
+          3.98
+        ]
+      },
+      "verification": "Native KiCad isolated coupon render + native STEP export read with OCCT. Mounting ledge aligns to PCBtop; signal/ground lands retained unchanged. VendorSTEP BRep valid. Fit/mating/cutout tolerance still unverified."
+    },
+    "KiCad_Inductor_SMD_L_0402_1005Metric.step": {
+      "source": "Installed official KiCad 10.0.0: Inductor_SMD.3dshapes/L_0402_1005Metric.step",
+      "upstream": "https://gitlab.com/kicad/libraries/kicad-packages3D/-/tree/master/Inductor_SMD.3dshapes",
+      "attribution": "Copyright 2017 kicad StepUp; original file and license header retained unchanged",
+      "license": "CC-BY-SA-4.0 with KiCad electronic-design exception",
+      "license_files": [
+        "licenses/KiCad_packages3D_LICENSE.txt"
+      ],
+      "classification": "Representative 1.0 x 0.5 mm nominal body for LQW15AN7N5G80D; exact Murata nominal body is 1.0 x 0.6 mm. Not supplier CAD or clearance proof.",
+      "sha256": "8bf2ae2bbd9d8b716db21d8d7fb903fac5ba2696150c3ec2e35bcea17b208ff2",
+      "target_from_repo": "hardware/libraries/3dmodels/KiCad_Inductor_SMD_L_0402_1005Metric.step",
+      "public_stage_allowed": true,
+      "modified": false
+    },
+    "KiCad_QFN32_5x5_EP3p7_RFFC5072A_NOMINAL.step": {
+      "source": "Installed official KiCad10.0.0:Package_DFN_QFN.3dshapes/QFN-32-1EP_5x5mm_P0.5mm_EP3.7x3.7mm.step",
+      "upstream": "https://gitlab.com/kicad/libraries/kicad-packages3D/-/tree/master/Package_DFN_QFN.3dshapes",
+      "attribution": "Copyright 2025 KiCAD; original STEP header retained",
+      "license": "CC-BY-SA-4.0 with KiCad electronic-design exception",
+      "license_files": [
+        "licenses/KiCad_packages3D_LICENSE.txt"
+      ],
+      "classification": "Nominal QFN32 5x5x0.85 mm, 0.5 mm pitch, EP3.7; not exact Qorvo CAD or a tolerance envelope",
+      "sha256": "7e77a52b3e261a45529e0df739376ea7cd79204fb1afad81332a50f4f1607000",
+      "target_from_repo": "hardware/libraries/3dmodels/KiCad_QFN32_5x5_EP3p7_RFFC5072A_NOMINAL.step",
+      "public_stage_allowed": true,
+      "bounds": {
+        "min_mm": [
+          -2.5,
+          -2.5,
+          0.0
+        ],
+        "max_mm": [
+          2.5,
+          2.5,
+          0.85
+        ],
+        "size_mm": [
+          5.0,
+          5.0,
+          0.85
+        ]
+      },
+      "transform": {
+        "offset_mm": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "rotation_degrees": [
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    "Johanson_2450BL15B0100001E_NOMINAL.step": {
+      "sha256": "8f7ff5fe35937c3a7306d32931f2baf91e1f4ff0580cb737ad6d4ed592dca7bf",
+      "bounds_mm": [
+        [
+          -1.0,
+          -0.625,
+          0.0
+        ],
+        [
+          1.0,
+          0.625,
+          0.95
+        ]
+      ],
+      "dimensions_mm": [
+        2.0,
+        1.25,
+        0.95
+      ],
+      "source": "https://www.johansontechnology.com/docs/4499/Balun-2450BL15B0100001E.pdf",
+      "target_from_repo": "hardware/libraries/3dmodels/Johanson_2450BL15B0100001E_NOMINAL.step",
+      "reference": "T1",
+      "transform": {
+        "offset_mm": [
+          0,
+          0,
+          0
+        ],
+        "rotation_degrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "public_stage_allowed": true,
+      "classification": "Original drawing-based nominal visual model, simplified package geometry",
+      "license": "CC0-1.0",
+      "license_files": [
+        "licenses/Yapogee_nominal_RF_models_CC0.txt"
+      ]
+    },
+    "Qorvo_SPF5043Z_WideGND_NOMINAL.step": {
+      "sha256": "a97c3fb75456f8a18ec642d77fee7bb180388782627c7a17e4f86f6831542e67",
+      "bounds_mm": [
+        [
+          -1.05,
+          -1.0,
+          0.0
+        ],
+        [
+          1.05,
+          1.0,
+          0.94
+        ]
+      ],
+      "dimensions_mm": [
+        2.1,
+        2.0,
+        0.94
+      ],
+      "source": "https://www.qorvo.com/products/p/SPF5043Z",
+      "target_from_repo": "hardware/libraries/3dmodels/Qorvo_SPF5043Z_WideGND_NOMINAL.step",
+      "reference": "U10",
+      "transform": {
+        "offset_mm": [
+          0,
+          0,
+          0
+        ],
+        "rotation_degrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "public_stage_allowed": true,
+      "classification": "Original drawing-based nominal visual model, simplified package geometry",
+      "license": "CC0-1.0",
+      "license_files": [
+        "licenses/Yapogee_nominal_RF_models_CC0.txt"
+      ]
+    }
+  },
+  "existing_local_assets_reused": [
+    "KiCad_Capacitor_SMD_C_0402_1005Metric.step",
+    "KiCad_Capacitor_SMD_C_0603_1608Metric.step",
+    "KiCad_Capacitor_SMD_C_1206_3216Metric.step",
+    "TI_PW0016A_TSSOP16_KiCad.step"
+  ],
+  "private_vendor_asset_excluded": "special/Laird_BMI-S-206-F_VENDOR.STP:redistribution permission not established",
+  "scope": "Only assets/ is public-ready staging; private source PDFs/vendor CAD elsewhere must not be copied as assets.",
+  "local_manufacturer_assets": {
+    "TTM_BD1222J50200AHF.STEP": {
+      "sha256": "015d4eaf22baf12516bb9313f93ca9c61be9775eb35a1c05905e0e9c0819213a",
+      "bounds_mm": [
+        [
+          -1.0191000000000001,
+          -0.34,
+          -0.6441000000000001
+        ],
+        [
+          1.0190999999999997,
+          0.34,
+          0.6441000000000001
+        ]
+      ],
+      "dimensions_mm": [
+        2.0382,
+        0.68,
+        1.2882
+      ],
+      "source": "https://cdn.ttm.com/repository/products/wireless-xinger/balun-transformers/BD1222J50200AHF/BD1222J50200AHF.STEP",
+      "target_from_repo": "hardware/libraries/3dmodels/TTM_BD1222J50200AHF.STEP",
+      "reference": "T2",
+      "transform": {
+        "offset_mm": [
+          0,
+          0,
+          0.34
+        ],
+        "rotation_degrees": [
+          -90,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "public_stage_allowed": false,
+      "classification": "Original manufacturer STEP, unchanged; local download",
+      "license": "Redistribution permission not established"
+    },
+    "Abracon_ATXAIG-H13.step": {
+      "sha256": "ca8e60fb532e7a2e3327fb5ef684230cd75e8d49f3a4561a1015207e4f4a95b8",
+      "bounds_mm": [
+        [
+          -0.9999999999999998,
+          0.0,
+          -0.799999999999998
+        ],
+        [
+          1.0000000000000002,
+          0.8010001000000002,
+          0.8000000000000023
+        ]
+      ],
+      "dimensions_mm": [
+        2.0,
+        0.801,
+        1.6
+      ],
+      "source": "https://abracon.com/Support/STEP/ATXAIG-H13.STEP.zip",
+      "target_from_repo": "hardware/libraries/3dmodels/Abracon_ATXAIG-H13.step",
+      "reference": "Y1",
+      "transform": {
+        "offset_mm": [
+          0,
+          0,
+          0
+        ],
+        "rotation_degrees": [
+          -90,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "public_stage_allowed": false,
+      "classification": "Original manufacturer STEP, unchanged; local download",
+      "license": "Redistribution permission not established"
+    }
+  }
+}

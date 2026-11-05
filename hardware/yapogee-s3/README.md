@@ -1,47 +1,35 @@
 # Yapogee S3
 
-ESP32-S3 DVB-S2 transmitter daughterboard for PigeonVision. The CM5 supplies MPEG-TS over SPI, with quad data pins reserved. An ESP32-S3-WROOM-1U-N16R8 module generates the waveform at its matched 2.42 GHz RF port. A short U.FL jumper feeds the RFFC5072A; a 3.70 GHz LO converts it to 1.28 GHz. High-side conversion requires transmit IQ conjugation or equivalent receiver handling.
+DVB-S2 transmitter daughterboard for PigeonVision. CM5 SPI feeds an ESP32-S3-WROOM-1U-N16R8. RFFC5072A converts 2.42 GHz to 1.28 GHz using a 3.70 GHz LO. High-side conversion requires IQ conjugation.
 
-Open the [KiCad project](kicad/YapogeeS3.kicad_pro). Schematic capture is in progress. The PCB has mechanical reference placements; complete component placement and routing remain.
-
-[Circuit BOM](BOM.csv) · [BOM by MPN](BOM_by_MPN.csv) · [Shield lid](BOM_mechanical.csv) · [RF jumper](BOM_offboard.csv) · [Interfaces](interfaces.md)
+[KiCad project](kicad/YapogeeS3.kicad_pro) · [Design Master](design-master.xlsx) · [Datasheet PDFs](datasheets.md) · [BOM](BOM.csv) · [Interfaces](interfaces.md)
 
 ![RF signal path](block-diagram.svg)
 
-![Power and interface domains](power.svg)
+[Edit diagram](block-diagram.drawio)
 
-[Edit the RF and power diagrams](block-diagram.drawio)
-
-```mermaid
-flowchart LR
-    CM5[CM5 SPI] --> IO[Isolated host interface]
-    IO --> S3[WROOM-1U: S3, flash, PSRAM, crystal and RF match]
-    S3 --> CABLE[25 mm U.FL jumper]
-    CABLE --> PAD[Input pad and balun]
-    PAD --> MIX[RFFC5072A]
-    REF[40 MHz TCXO and buffered divider] --> MIX
-    MIX --> LPF[Output balun and LFCN-1450+]
-    LPF --> DRV[SPF5043Z]
-    DRV --> OUT[3 dB pad and SMA]
-    OUT --> PA[Separate PA and final filter]
-```
-
-| Block | Selected part |
+| Block | Part |
 | --- | --- |
-| MCU module | ESP32-S3-WROOM-1U-N16R8; 16 MB flash, 8 MB octal PSRAM |
-| RF link | A-1PA-132-025B2 jumper; U.FL-R-SMT-1(80) board socket |
-| Converter / reference | RFFC5072ATR13; ATXAIG-H13-F-40.000MHZ-F25-T3 with 74LVC1G34GV,125 |
-| RF driver / filter | SPF5043Z; LFCN-1450+ |
-| Main / quiet RF power | TPS62933FDRLR, nominal 3.328 V; TPS7A9001DSKR, nominal 3.0 V |
-| Source selection / USB detection | TPS2116DRLR; STUSB4500LQTR and SN74LVC1G97DBVR |
-| Output / shield | SMA-J-P-H-ST-EM3; BMI-S-206-F frame and BMI-S-206-C lid |
+| MCU | ESP32-S3-WROOM-1U-N16R8 |
+| RF jumper | A-1PA-132-025B2, 25 mm |
+| Mixer / LO | RFFC5072ATR13 |
+| Reference | ATXAIG-H13-F-40.000MHZ-F25-T3 + 74LVC1G34GV,125 |
+| Driver / filter | SPF5043Z + LFCN-1450+ |
+| Main supply | TPS62933FDRLR, 3.328 V nominal |
+| Main inductor | Bourns SRP5030TA-2R2M, 2.2 µH |
+| Quiet RF supply | TPS7A9001DSKR, 3.000 V nominal |
+| Shield | BMI-S-206-F / BMI-S-206-C |
 
-USB-C supports standalone operation from a source advertising at least 1.5 A. Carrier power enters through castellations. Eligible USB wins when both sources are present. The external PA has its separate supply. USB VBUS must stay at or below the source selector's 5.5 V recommended maximum.
+Current BOM: 119 purchased fitted positions, 59 unique MPNs and 0 DNP positions. The 15 PCB connector, jumper and test features are excluded from that purchase count; the shield lid and RF jumper are separate offboard items. This is the prototype population, not an assembly release.
 
-Selected 5 V feeds the main buck and the separate quiet RF LDO. The module, interface and switched driver use the main rail. The converter, TCXO and buffer use quiet 3.0 V; retain the RF control level translator. This preserves the mixer’s nominal characterization supply and margin below its 3.3 V operating ceiling. The LDO needs its thermal pad, bulk capacitors, feedback network and minimum-load bleeder.
+JP1 is open for external power. Close it for standalone USB power before installation, with the carrier disconnected. Mounted JP1 stays open; USB data requires the carrier on. Independent Pi PMIC-off operation is unsupported. USB operation requires a known 5 V source providing at least 1.5 A. The external PA has a separate supply.
 
-The 53 × 40 mm starting envelope retains 16 interface positions and three GND anchors. The module and RF jumper have nominal poses under the removable shield; actual cable length, bend, retention and mated height need a sample check. The SMA carrier relief remains a proposal. The original carrier PCB is unchanged.
+The host uses direct 3.3 V GPIO; the RF control translator remains. BOOT/RESET use normally-open PCB jumper pads. Native USB programming is local to the ESP32. Neither endpoint may drive an unpowered receiver. RF capture is complete; placement, routing and carrier integration remain. Four-layer, 55 × 43.18 mm outline carried by J1. Stability, RF, thermal and mechanical performance remain to be measured.
 
-The module internalizes the chip RF match, crystal, flash and local high-speed memory routing. No 0201 parts remain in the selected PCB BOM. The [four-layer fabrication basis](stackup.json) uses JLC04161H-7628 with continuous L2 GND; actual stackup entry and impedance widths remain.
+## RF response
 
-RF matching, PLL configuration, reference loading/phase noise, source transitions, thermal behavior and modulated power need hardware qualification. SPF5043Z uses its approximately 3 V typical characterization for the switched main-rail branch; its recommended-voltage table remains 4.75–5.25 V. Clean 1–2 W from the separate PA is a hardware target.
+Manufacturer filter examples and nominal matching calculations. [Sources and model limits](plots/README.md).
+
+![Output low-pass filter](plots/filter-response.svg)
+
+![Mixer output matching](plots/output-matching.svg)
