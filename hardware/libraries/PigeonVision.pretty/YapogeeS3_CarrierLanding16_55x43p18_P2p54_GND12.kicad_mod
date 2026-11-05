@@ -64,4 +64,6 @@
 (fp_line (start 6.487750100 30.710000000) (end 0.000000000 30.710000000) (stroke (width .05) (type default)) (layer "Dwgs.User"))
 (fp_line (start 0.000000000 30.710000000) (end 0.000000000 1.000000000) (stroke (width .05) (type default)) (layer "Dwgs.User"))
 (fp_arc (start 0.000000000 1.000000000) (mid 0.292893219 0.292893219) (end 1.000000000 0.000000000) (stroke (width .05) (type default)) (layer "Dwgs.User"))
+
+	(fp_rect (start -1.35 -1.35) (end 56.35 44.53) (stroke (width .05) (type default)) (fill none) (layer "F.CrtYd"))
 )

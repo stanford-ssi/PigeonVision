@@ -29,7 +29,7 @@ Top view; module origin is its upper-left corner. The reference envelope is 55 �
 | 7 | D1 | 15 | GND |
 | 8 | D2 | 16 | GND |
 
-SCLK, CS_N and D0–D3 flow into the transmitter; READY and PA_EN return to the carrier. Pad 14 is reserved and unconnected. The host interface uses direct 3.3 V GPIO. Neither endpoint may drive or pull up an unpowered receiver. The carrier must provide a 4.7 kΩ CS_N pull-up to Pi 3V3; that carrier change is not yet captured. Startup, stop and supply-voltage corners remain to be qualified. Twelve perimeter GND anchors share pad number 1: 28 solder-down contacts, including 18 GND sites, retain the same 16 logical numbers. Header rows run north: 1, 2, 4, 5, 7, 8, 10, 9; south: 3, 6, 11, 12, 13, 14, 15, 16. Use the coordinate table in mechanical-interface.json for the mating carrier.
+SCLK, CS_N and D0–D3 flow into the transmitter; READY and PA_EN return to the carrier. Pad 14 is reserved and unconnected. The host interface uses direct 3.3 V GPIO. Neither endpoint may drive or pull up an unpowered receiver. Carrier R42 pulls CS_N up to 3V3_CM5 with 4.7 kΩ. The carrier uses single-lane SPI0, with D1–D3 reserved at the landing. Startup, stop and supply-voltage corners remain to be qualified. Twelve perimeter GND anchors share pad number 1: 28 solder-down contacts, including 18 GND sites, retain the same 16 logical numbers. Header rows run north: 1, 2, 4, 5, 7, 8, 10, 9; south: 3, 6, 11, 12, 13, 14, 15, 16. Use the coordinate table in mechanical-interface.json for the mating carrier.
 
 PA_EN is a request to the Pi. The Pi owns the separate PA power enable. Supply the installed daughterboard from carrier 5V_MAIN so it can issue that request while PA power is off. Carrier routing and firmware remain unfinished.
 
@@ -41,7 +41,7 @@ J1 uses the 55 × 43.18 mm Edge_Header16_GND12 footprint; the shared carrier-lan
 
 ## Connectors and shield
 
-SMA-J-P-H-ST-EM3 occupies the left notch at local (0,34.27) mm. Its signal land sits inward of the back wall. The proposed carrier opening continues to the existing carrier edge for the body and mating nut. The receiving footprint shows that proposal on Dwgs.User and does not change carrier Edge.Cuts. Check the actual cable envelope.
+SMA-J-P-H-ST-EM3 occupies the left notch at local (0,34.27) mm. Its signal land sits inward of the back wall. The proposed carrier opening continues to the existing carrier edge for the body and mating nut. The carrier PCB shows the corridor on User.Drawings. Confirm the actual cable envelope before creating the carrier Edge.Cuts opening.
 
 USB-C is at local (3.675,21) mm, rotation 270°, opening left. Proposed shield-frame center is (32.5,21.59) mm. Buy BMI-S-206-C separately; nominal assembled shield height is 5.21 mm. Reserve at most 3.5 mm component height underneath. Keep the buck outside the frame with continuous L2 GND.
 

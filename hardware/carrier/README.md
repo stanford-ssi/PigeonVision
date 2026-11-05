@@ -28,24 +28,24 @@ Sensors use CM5 3.3 V. Yapogee receives 5V_MAIN through castellations and makes 
 
 J1 uses vertical AMASS XT60PB-M30.G.Y: pin 1, at the keyed end marked −, is GND; pin 2, at the flat end marked +, is VBAT_RAW. J6 and both camera connectors are also vertical. USB-C J10 and the PJ-102AH bench input J2 remain horizontal. [Connector geometry, sourcing and model limits](../libraries/review/vertical-connectors.md).
 
-The planned Yapogee connection uses 16 castellated interface positions plus three GND anchors. [Pad assignment and mechanical contract](../yapogee-s3/interfaces.md). The daughterboard takes SCLK, CS_N and D0–D3; READY and PA_EN return to the carrier. The host interface is direct 3.3 V GPIO; pad 14 is reserved and unconnected. The carrier must provide a 4.7 kΩ CS_N pull-up to Pi 3V3. This pull-up and the carrier bus routing are not yet captured. Neither endpoint may drive or pull up an unpowered receiver; startup, stop and voltage corners remain to be qualified.
+J13 is the 55 × 43.18 mm Yapogee landing in the former E200 planning bay. Its 28 lands match the module castellations, including twelve extra GND anchors. The footprint omits paste for hand soldering. The SMA clearance corridor is shown on User.Drawings. Confirm the mating cable, wrench access and structural clearance before making the opening on Edge.Cuts. The E200 stays available as a separate placement option. [Module interface](../yapogee-s3/interfaces.md)
 
-The existing CM5 reservations are retained as the starting point for SPI integration. J3 numbers below are module-connector pads, not IO-board header positions. These carrier connections are not yet implemented.
-
-| Signal | CM5 GPIO reservation | CM5 J3 pad | Yapogee castellation |
-| --- | --- | --- | --- |
+| Signal | CM5 GPIO | CM5 J3 pad | Yapogee J1 / carrier J13 pad |
+| --- | ---: | ---: | ---: |
 | SCLK | 11 | 38 | 2 |
 | D0 / MOSI | 10 | 44 | 5 |
 | CS_N | 8 | 39 | 4 |
 | READY | 25 | 41 | 11 |
-| D1–D3 | Pending carrier allocation | Pending | 7, 8, 10 |
-| PA_EN request into Pi | 22, input | 46, routing pending | 13 |
-| Reserved | No connection | — | 14 |
-| 5V_CARRIER | 5V_MAIN | Supply connection pending | 16 |
+| PA request into Pi | 22 | 46 | 13 |
+| 5V_MAIN | — | — | 3 |
+| D1–D3, reserved for quad | — | — | 7, 8, 10 |
+| Reserved | — | — | 14 |
 
-SPI is the baseline transport; the quad data pins are reserved for future implementation. The measured 20 MHz mode-0 PV-SPI bench results belong to the earlier Pico path. Its framing, READY behavior, startup and uncertain-transfer recovery require reconciliation with the ESP32 firmware before treating that result as S3 integration evidence. Keep sensors off this dedicated bus. [Measured SPI result](../../software/flight/spi.md).
+R42 pulls CS_N up to 3V3_CM5 with 4.7 kΩ. The CM5 and Yapogee share ground and use direct 3.3 V I/O. Power the installed Yapogee from 5V_MAIN and keep JP1 open. Coordinate GPIO startup and shutdown to avoid driving an unpowered endpoint.
 
-The Pi controls the RF buck through GPIO17 / J3.50, with its existing 10 kΩ pull-down. Yapogee returns its PA request on castellation 13, planned for GPIO22 / J3.46 as a Pi input. That return route and its firmware are unfinished. Yapogee receives 5V_MAIN so it remains powered while the Pi holds PA power off.
+Single-lane SPI0 is the carrier baseline. Native SPI0 quad needs GPIO0 and GPIO1, which are assigned to CAM1 I²C. A quad implementation needs a different pin or host-peripheral plan and bench validation. [CM5 GPIO mux](https://datasheets.raspberrypi.com/cm5/cm5-datasheet.pdf)
+
+GPIO17 / J3.50 independently controls the switched 5V_RF buck and retains its 10 kΩ pull-down. The PA request is an input to the CM5. Carrier routing and PA control firmware remain open.
 
 The proposed four-pin Molex 0430450418 PA connector reserves 1: 5V_RF, 2: GND, 3: Pi-controlled PA bias/disable, 4: GND. Pin 3 is separate from the request into GPIO22. Local PA circuitry must default off and handle GRF5613 shutdown polarity and bias sequencing. The connector and bias control remain a pin plan. [PA plan](../rf-frontend/README.md). Yapogee uses manual source selection: its USB power bridge is open whenever installed. USB-only power is for preinstallation with the carrier disconnected; USB data requires the carrier on. Local ESP BOOT/RESET and native USB flashing do not control the Pi.
 

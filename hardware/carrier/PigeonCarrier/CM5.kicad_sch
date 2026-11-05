@@ -6455,10 +6455,7 @@
 		(at 119.38 80.01)
 		(uuid "10c1f9ab-0a67-50ee-aa46-95b3e24569b6")
 	)
-	(no_connect
-		(at 58.42 90.17)
-		(uuid "10c53c24-f535-5979-98aa-781d4bab6d51")
-	)
+
 	(no_connect
 		(at 172.72 39.37)
 		(uuid "146b8ad7-bc64-5d6f-93f3-a8171e7f05d3")
@@ -6551,10 +6548,7 @@
 		(at 58.42 128.27)
 		(uuid "4003a49b-9677-58ae-82f3-ff3dbc763f00")
 	)
-	(no_connect
-		(at 119.38 82.55)
-		(uuid "44e3fe54-a71b-5366-9b89-d290c2aab8c3")
-	)
+
 	(no_connect
 		(at 233.68 44.45)
 		(uuid "48acea77-c9a7-5553-81ec-b2acf2fca70b")
@@ -6615,10 +6609,7 @@
 		(at 233.68 90.17)
 		(uuid "738512e7-cac9-57cb-9944-ffba443eecd1")
 	)
-	(no_connect
-		(at 58.42 80.01)
-		(uuid "746ece94-1049-5055-9784-420dd04207e6")
-	)
+
 	(no_connect
 		(at 172.72 138.43)
 		(uuid "8060cc71-843f-5779-a7e6-0d885adf051d")
@@ -6751,10 +6742,7 @@
 		(at 119.38 72.39)
 		(uuid "e1d2a83a-c0cc-5bf7-8799-c4da67c411ce")
 	)
-	(no_connect
-		(at 58.42 87.63)
-		(uuid "ebdede85-86a5-5094-8ed9-ec7b158f90a1")
-	)
+
 	(no_connect
 		(at 172.72 44.45)
 		(uuid "ed2a12a2-b82e-5fb5-b868-bd7cc6f8b125")
@@ -6775,10 +6763,7 @@
 		(at 172.72 130.81)
 		(uuid "f423a090-24c7-5c34-b7ef-fefe4cc331d9")
 	)
-	(no_connect
-		(at 119.38 85.09)
-		(uuid "f7e24bfd-8088-53b4-a328-5d6376954c19")
-	)
+
 	(no_connect
 		(at 119.38 90.17)
 		(uuid "fbb0f179-c662-5e4d-9693-2b905f203a17")
@@ -16678,4 +16663,24 @@
 			)
 		)
 	)
+
+	(wire (pts (xy 58.42 80.01) (xy 55.88 80.01)) (stroke (width 0) (type default)) (uuid "e16bfda6-850e-5452-aad3-8942c4fcabb0"))
+
+	(global_label "YAPOGEE_SCLK" (shape output) (at 55.88 80.01 0) (effects (font (size 0.9 0.9)) (justify right)) (uuid "28b381ca-e825-5fbe-93c0-d3cccbcb9ef0"))
+
+	(wire (pts (xy 119.38 82.55) (xy 121.92 82.55)) (stroke (width 0) (type default)) (uuid "33c53a84-0952-563c-8043-a12aba920711"))
+
+	(global_label "YAPOGEE_CS_N" (shape output) (at 121.92 82.55 180) (effects (font (size 0.9 0.9)) (justify left)) (uuid "31dc50aa-5c65-555d-9da9-4858450a8eb2"))
+
+	(wire (pts (xy 58.42 87.63) (xy 55.88 87.63)) (stroke (width 0) (type default)) (uuid "e64fc26d-c205-5e9c-bea6-53b252ec81de"))
+
+	(global_label "YAPOGEE_D0" (shape output) (at 55.88 87.63 0) (effects (font (size 0.9 0.9)) (justify right)) (uuid "ca2c9ee5-6999-593f-988e-1172949b9364"))
+
+	(wire (pts (xy 119.38 85.09) (xy 121.92 85.09)) (stroke (width 0) (type default)) (uuid "458f19c1-e28d-5fba-a22c-446225cf5158"))
+
+	(global_label "YAPOGEE_READY" (shape input) (at 121.92 85.09 180) (effects (font (size 0.9 0.9)) (justify left)) (uuid "2dc6d157-c4fc-5923-89a7-ad987671d3ff"))
+
+	(wire (pts (xy 58.42 90.17) (xy 55.88 90.17)) (stroke (width 0) (type default)) (uuid "f47e6ff5-489f-5607-8fca-8377ee0d86d8"))
+
+	(global_label "YAPOGEE_PA_REQ" (shape input) (at 55.88 90.17 0) (effects (font (size 0.9 0.9)) (justify right)) (uuid "3bc6afcb-88b7-5f9c-afb3-4a5e390ebc20"))
 )

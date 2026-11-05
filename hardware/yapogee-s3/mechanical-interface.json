@@ -8,8 +8,8 @@
     43.18
   ],
   "module_origin_on_carrier_mm": [
-    74.5,
-    114.23
+    71.0,
+    112.5
   ],
   "pin_contract": [
     {
@@ -716,61 +716,19 @@
     "stock_footprint": "RF_Shielding:Laird_Technologies_BMI-S-206-F_36.83x33.68mm"
   },
   "carrier_cutout": {
-    "status": "Proposal for later carrier integration; no original carrier edits. Replace outline section with three notch edges; do not add a closed rectangle intersecting original outline.",
+    "status": "SMA clearance guide on User.Drawings. Carrier Edge.Cuts opening pending mechanical review.",
     "sma_origin_module_mm": [
       0,
       34.27
     ],
     "sma_mpn": "SMA-J-P-H-ST-EM3",
-    "removed_region_carrier_xy_bounds_mm": [
-      45,
-      142.5,
-      82.5,
-      154.5
+    "guide_bounds_carrier_xy_mm": [
+      42,
+      140.77,
+      79,
+      152.77
     ],
-    "new_edge_points_carrier_mm": [
-      [
-        49.72761890256397,
-        142.5
-      ],
-      [
-        82.5,
-        142.5
-      ],
-      [
-        82.5,
-        154.5
-      ],
-      [
-        48.22792267935437,
-        154.5
-      ]
-    ],
-    "retained_clipped_arc_carrier_mm": {
-      "start": [
-        35.984113,
-        141.287964
-      ],
-      "mid": [
-        43.138713465849165,
-        138.68672042857838
-      ],
-      "end": [
-        49.72761890256397,
-        142.5
-      ]
-    },
-    "retained_clipped_line_carrier_mm": {
-      "start": [
-        48.22792267935437,
-        154.5
-      ],
-      "end": [
-        47.202228,
-        155.525694
-      ]
-    },
-    "clearance_basis": "12mmwide open-to-left-edge corridor for9mmREF connector body and nominal up-to10mmOD SMA nut with1mm lateral clearance. Body extends3.02mmREF belowmodule seating plane. Exact cablehead/strainrelief, enclosure, structural load and futurecarrier routing remain unverified."
+    "clearance_basis": "12 mm provisional corridor for connector body and mating nut. Verify cable head, strain relief, tool access, enclosure and mechanical loading before final milling."
   },
   "usb_placement": {
     "stock_footprint": "PigeonVision:USB_C_Receptacle_GCT_USB4105_GF_A_16P",
@@ -858,7 +816,7 @@
     "The carrier outline is unchanged. Check structural strength, cable head, rounded carrier-notch corners and future copper clearance before integration."
   ],
   "status": "ESP32, USB-C, U.FL and SMA start positions loaded. Shield and outline retained. Other component positions untouched at user request.",
-  "carrier_integration": "Carrier PCB unchanged. Use new matching landing geometry and recheck 55 x 43.18 mm fit; previous carrier origin/opening remain proposals.",
+  "carrier_integration": "J13 is placed at (71.0, 112.5) mm with 0° rotation on the carrier. R42 is the 4.7 kΩ CS_N pull-up. Carrier routing, SMA opening, physical fit and assembly remain pending.",
   "rf_module": {
     "mpn": "ESP32-S3-WROOM-1U-N16R8",
     "center_module_mm": [
