@@ -23,6 +23,16 @@ void check_transport_clock(const std::filesystem::path &path, bool data_only = f
   std::size_t anchor_byte = 0;
   bool anchored = false;
   std::map<int, double> deadlines;
+  struct Pes { std::size_t bytes; unsigned length; };
+  std::map<int, Pes> video_pes;
+  auto check_pes = [&](int pid) {
+    const auto &pes = video_pes.at(pid);
+    assert(pes.bytes >= 6);
+    const auto length = pes.bytes - 6;
+    // Large IDRs need the permitted zero length. Smaller frames must declare
+    // their end so a live demuxer need not wait for the next video PES.
+    assert(pes.length ? pes.length == length : length > 65535);
+  };
   int late_pcr_on_a = 0;
   auto timestamp = [](const unsigned char *p) {
     auto value = std::uint64_t((p[0] >> 1) & 7) * (1ULL << 30) +
@@ -60,12 +70,19 @@ void check_transport_clock(const std::filesystem::path &path, bool data_only = f
       int flags = p[payload + 7] >> 6;
       assert(flags & 2);
       deadlines[pid] = timestamp(p + payload + (flags == 3 ? 14 : 9));
+      if (video_pes.contains(pid))
+        check_pes(pid);
+      video_pes[pid] = {0, unsigned(p[payload + 4]) * 256 + p[payload + 5]};
     }
+    assert(video_pes.contains(pid));
+    video_pes[pid].bytes += 188 - payload;
     if (anchored && deadlines.contains(pid)) {
       double packet_end = anchor_time + double(offset + 188 - anchor_byte) * 8 / 9000000;
       assert(packet_end <= deadlines[pid]);
     }
   }
+  for (const auto &[pid, _] : video_pes)
+    check_pes(pid);
   assert(anchored && deadlines.size() == (data_only ? 0 : 2) && late_pcr_on_a > 10);
 }
 

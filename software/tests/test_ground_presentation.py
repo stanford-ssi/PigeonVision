@@ -350,6 +350,27 @@ def test_retired_session_cannot_resurrect_cache_or_clear_current_pad_reference()
     assert ground.cache.session_id == "one" and ground.should_relay(metadata("session", "one"))
 
 
+def test_reused_directory_basename_does_not_retire_a_new_capture():
+    ground = GroundPresentation()
+    sessions = []
+    for index, basename in enumerate(("slot-0", "slot-1", "slot-0")):
+        ground.accept({"type": "status", "generation": index + 1, "replay": False, "reset": True})
+        session_id = f"session-{index:032x}"
+        session = metadata("session", session_id, clock_origin_ns=(index + 1) * 1000000000,
+                           configuration={"session_dir": f"output/{basename}"})
+        assert ground.cache.accept(session) is True
+        assert ground.should_relay(session)
+        assert ground.cache.session_id == session_id
+        assert ground.cache.accept(metadata("frame", session_id, camera_id="A", pts_us=0)) is True
+        assert ground.should_relay(metadata("health", session_id, pts_us=0))
+        sessions.append(session)
+    for session in sessions[:-1]:
+        assert ground.cache.accept(session) is False
+        assert not ground.should_relay(session)
+        assert not ground.should_relay(metadata("health", session["record"]["session_id"]))
+    assert ground.cache.session_id == sessions[-1]["record"]["session_id"]
+
+
 def test_reordered_records_cannot_switch_viewer_before_session_is_confirmed():
     ground = GroundPresentation()
     ground.accept(metadata("session"))

@@ -32,6 +32,43 @@ frame metadata avoided those drops; maximum queue age was 433 ms. One startup
 camera error per camera remains. Physical sensors and autonomous RP2350 startup
 still need testing. [SPI setup](../flight/spi.md).
 
+## ESP32-S3 cable link
+
+Experimental bench path: CM5 → PV-SPI → ESP32-S3 → attenuated B200 → LeanDVB → viewer.
+Both cameras remain 2064×1552 at 30 fps and 4 Mb/s each; transport is 9 Mb/s.
+The modem uses 2.420 GHz, 5 Msymbol/s, 8PSK 2/3, pilots and 0.35 roll-off.
+B200 reception is 10 MS/s. This is separate from the flight E200 profile below.
+
+| Settings | Observed seconds | Recovered AU/s A / B | TS continuity errors |
+| --- | ---: | ---: | ---: |
+| 20 MHz SPI, fast-drift tracking, RRC 20 | 94 | 23.47 / 24.01 | 140 |
+| 20 MHz SPI, pilot tracking, RRC 20 | 94 | 29.66 / 29.64 | 9 |
+| 16 MHz SPI, pilot tracking, RRC 30 | 130 | 29.71 / 29.96 | 4 |
+
+Use pilot tracking with `--rrc-rej 30`; omit `--fastdrift`. The 124-second
+16 MHz SPI test accepted 106,213 messages with zero short transfers, CRC errors,
+sequence losses or overruns. No Pi queue expiry or receiver sample loss occurred
+in the measured intervals. Rare radio decode bursts remain; these short cable
+tests do not establish range or flight reliability. Frame rates above count
+received encoded access units, rather than screen refreshes.
+
+Board-specific IQ/DC correction reduced the central carrier from approximately
+−23 to −32 dBc. With correction, 112 s at 60 dB attenuation / 40 dB RX gain had
+18 TS continuity errors. At 40 dB attenuation / 20 dB RX gain, 111 s had none,
+no nonzero FEC reports, and about 30 recovered AUs/s per camera. The desired
+ADC level stayed similar. The interference source remains unproven.
+
+Replaying a saved RF disturbance reproduced the same three failed BCH frames
+after carrier notching, stronger LDPC decoding and longer receive filtering.
+With TX fully off, a 120 s capture had no sample gaps, a centered residual spike,
+and no persistent line at +1 MHz. Brief station IDs produce that +1 MHz tone
+at the start and end of a keyed run.
+
+Live browser presentation now uses a bounded 90 ms timestamp buffer. A mocked
+three-frame burst test improved from 10 to 30 presented timestamps per second.
+Recovery, metadata, colour and bootstrap regressions pass; live motion after
+this change still needs checking.
+
 ## E200 receiver
 
 M4 Pro, Pluto/IIO firmware, **12 MS/s receive**, **8 Msymbol/s QPSK 2/3**, pilots,

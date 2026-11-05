@@ -1,0 +1,7 @@
+(footprint "UFL_Jumper_A1PA132025B2_Route19mm_Guide" (version 20260206) (generator "pcbnew") (layer "F.Cu")
+(descr "Drawing-only 19 mm routing guide for A-1PA-132-025B2, specified 25 +/-5 mm between plug mating axes. End markers locate axes, not package keepouts. No bend, height, slack, retention or fit qualification.")
+(attr board_only exclude_from_pos_files exclude_from_bom)
+(property "Reference" "W501" (at 0 -3) (layer "Dwgs.User") (hide yes) (effects (font (size .8 .8) (thickness .12))))
+(property "Value" "UFL_Jumper_A1PA132025B2_Route19mm_Guide" (at 6 14) (layer "Dwgs.User") (hide yes) (effects (font (size .8 .8) (thickness .12))))
+(fp_arc (start 0.000000000 0.000000000) (mid 8.821838246 2.421631004) (end 12.000000000 11.000000000) (stroke (width .18) (type default)) (layer "Dwgs.User"))
+)

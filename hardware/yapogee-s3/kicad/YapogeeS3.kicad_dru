@@ -1,0 +1,68 @@
+(version 1)
+
+# JLC04161H-7628, standard mechanically drilled four-layer board.
+(rule "Through vias only"
+  (constraint disallow micro_via blind_via buried_via))
+
+# USB pair spacing is 0.15 mm; its outer coplanar GND gap is 0.25 mm.
+(rule "USB coplanar ground gap"
+  (condition "(A.hasNetclass('USB90') && B.NetName == 'GND') || (B.hasNetclass('USB90') && A.NetName == 'GND')")
+  (constraint clearance (min 0.25mm)))
+
+(rule "USB differential geometry"
+  (condition "A.hasNetclass('USB90')")
+  (constraint track_width (min 0.235mm) (opt 0.235mm) (max 0.235mm))
+  (constraint diff_pair_gap (min 0.15mm) (opt 0.15mm) (max 0.15mm)))
+
+(rule "RF50 geometry"
+  (condition "A.hasNetclass('RF50')")
+  (constraint track_width (min 0.32mm) (opt 0.32mm) (max 0.32mm)))
+
+(rule "Controlled lines use L1 over L2"
+  (condition "(A.hasNetclass('RF50') || A.hasNetclass('USB90')) && A.Layer != 'F.Cu'")
+  (constraint disallow track))
+
+# The module edge is intentionally milled through its plated contacts.
+(rule "J1 castellated edge pads"
+  (condition "A.Type == 'Pad' && A.memberOfFootprint('J1')")
+  (constraint edge_clearance (min -1mm)))
+
+(rule "SMA drop-in edge pads"
+  (condition "A.Type == 'Pad' && A.memberOfFootprint('J4')")
+  (constraint edge_clearance (min -0.05mm)))
+
+# RF50 coplanar geometry: F.Cu signal 0.32 mm, ground edge 0.25 mm away.
+(rule "RF50 coplanar ground gap"
+  (condition "(A.hasNetclass('RF50') && B.NetName == 'GND') || (B.hasNetclass('RF50') && A.NetName == 'GND')")
+  (constraint clearance (min 0.25mm)))
+
+# JLC distinguishes via drilling from component-hole drilling.
+(rule "JLC via hole spacing"
+  (condition "A.Type == 'Via' && B.Type == 'Via'")
+  (constraint hole_to_hole (min 0.2mm)))
+
+(rule "Component plated-hole annulus"
+  (condition "A.Type == 'Pad' && A.Pad_Type == 'Through-hole'")
+  (constraint annular_width (min 0.15mm)))
+
+# Local gap ceiling at fixed pad pitch. Both compared track objects must fit
+# entirely in the named escape region. Main pair width and gap stay specified.
+(rule "USB-C duplicate pad escape"
+  (condition "A.inDiffPair('/USB') && B.inDiffPair('/USB') && A.enclosedByArea('USB-C duplicate pad escape') && B.enclosedByArea('USB-C duplicate pad escape')")
+  (constraint diff_pair_gap (min 0.15mm) (opt 0.15mm) (max 1.05mm)))
+
+# Local gap ceiling at fixed pad pitch. Both compared track objects must fit
+# entirely in the named escape region. Main pair width and gap stay specified.
+(rule "USB series resistor escape"
+  (condition "A.inDiffPair('/USB') && B.inDiffPair('/USB') && A.enclosedByArea('USB series resistor escape') && B.enclosedByArea('USB series resistor escape')")
+  (constraint diff_pair_gap (min 0.15mm) (opt 0.15mm) (max 0.4mm)))
+
+# Check filled copper against the board's minimum routed conductor width.
+(rule "Minimum copper connection"
+  (constraint connection_width (min 0.127mm)))
+
+# JLC mechanically drilled 0.20 mm vias with 0.45 mm copper lands.
+# Keep the 0.150 mm board default for other via sizes.
+(rule "Compact JLC through via 0.45 / 0.20"
+  (condition "A.Type == 'Via' && A.Via_Type == 'Through' && A.Diameter == 0.45mm && A.Hole == 0.20mm")
+  (constraint annular_width (min 0.125mm)))

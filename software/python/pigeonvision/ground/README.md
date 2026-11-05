@@ -19,6 +19,12 @@ Open `http://127.0.0.1:8768/` in desktop Chrome. Python API:
 `replay=None` distinguishes files from UDP URLs; the async app factory is
 `pigeonvision.ground.server.create_app`.
 
+For native PV transport, `--pes-access-units` removes redundant H.264 parser
+lookahead. It requires one complete access unit per video PES, explicit PTS/DTS
+and no B frames. Generic TS keeps its parser by default; leave this option off
+when access units span PES packets or one PES contains several access units.
+The Python API uses `pes_access_units=True`.
+
 ## Radio input
 
 The M4 Pro MacBook runs radio decoding and the viewer in separate environments.

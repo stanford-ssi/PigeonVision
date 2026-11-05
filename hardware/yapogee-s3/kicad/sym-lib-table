@@ -1,0 +1,6 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "PigeonVision") (type "KiCad") (uri "${KIPRJMOD}/../../libraries/PigeonVision.kicad_sym") (options "") (descr "Shared PigeonVision symbols"))
+  (lib (name "Yapogee") (type "KiCad") (uri "${KIPRJMOD}/Yapogee_IO.kicad_sym") (options "") (descr "Project USB and manual power interface"))
+  (lib (name "Yapogee_Power") (type "KiCad") (uri "${KIPRJMOD}/Yapogee_Power.kicad_sym") (options "") (descr "Power passives and inductor"))
+)

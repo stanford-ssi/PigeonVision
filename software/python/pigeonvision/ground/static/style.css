@@ -157,6 +157,8 @@ select option { background: #15181d; }
 .view-dot { width: 4px; height: 4px; background: var(--selection); border-radius: 50%; flex: none; }
 #view-caption { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .toolbar-actions { display: flex; gap: 7px; margin-left: auto; }
+.playout-control { display: flex; align-items: center; gap: 7px; font: 9px/1.5 var(--mono); color: #b9bec7; }
+.playout-control select { width: 100px; padding: 7px 8px; }
 .toolbar-actions button { display: flex; align-items: center; justify-content: center; gap: 7px; background: rgba(9, 11, 14, .5); border-color: rgba(255, 255, 255, .2); }
 .toolbar-actions button:hover { background: rgba(255, 255, 255, .1); }
 .toolbar-actions svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.2; }
@@ -294,6 +296,7 @@ body[data-audience="true"] .station-toolbar:focus-within { opacity: 1; }
   .event-marker { width: 8px; height: 8px; margin-bottom: 4px; }
   .event-rail::before { top: 4px; left: 4px; right: 4px; }
   .view-caption { display: none; }
+  .playout-control > span { display: none; }
   #pilot-status { font-size: 8px; }
   .ownership-control button { min-height: 32px; padding: 6px 8px; font-size: 10px; }
   .toolbar-actions button { min-height: 32px; padding: 6px 9px; font-size: 10px; }

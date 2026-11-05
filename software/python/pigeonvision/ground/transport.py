@@ -43,8 +43,14 @@ def annexb_nals(data: bytes) -> list[bytes]:
     return [part for part in re.split(b"\x00\x00\x00?\x01", data) if part]
 
 
-def pts_microseconds(pts: int, time_base: Fraction) -> int:
-    return round(Fraction(pts) * time_base * 1_000_000)
+def pts_microseconds(pts: int, time_base: Fraction, reference_us: int | None = None) -> int:
+    timestamp = Fraction(pts) * time_base
+    if reference_us is not None:
+        # libav can mistake a restarted camera clock for a 33-bit TS wrap.
+        # A declared session clock selects the epoch without shifting any PTS.
+        period = Fraction(1 << 33, 90000)
+        timestamp += round((Fraction(reference_us, 1_000_000) - timestamp) / period) * period
+    return round(timestamp * 1_000_000)
 
 
 @dataclass(frozen=True)

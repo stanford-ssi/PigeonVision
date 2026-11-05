@@ -1,0 +1,16 @@
+# 3D asset sources and limitations
+
+`yapogee-s3-models.json` records each original source, license, SHA-256 and measured OCCT bounds. Preserve this file, the manifest and `licenses/` with any redistributed collection. Original upstream STEP headers are retained.
+
+- ESP32-S3-WROOM-1U: exact official Espressif model from commit `dd76561812ab300351234ba6e0ec1295641796f0`, CC-BY-SA 4.0 with the KiCad design exception.
+- WSON, SOT-23 and Bourns SRP5030T: official KiCad 10.0.0 package models. They are nominal/representative bodies, not supplier-certified tolerance envelopes. The SRP5030T body is a package representative for SRP5030TA.
+- RFFC5072A mixer/LO: official KiCad QFN32 model, 5 × 5 × 0.85 mm nominal, 0.5 mm pitch and 3.7 × 3.7 mm exposed pad. Project-local STEP, unit scale and zero transform. Qorvo Rev. E specifies 0.85 ± 0.10 mm height. This is a nominal package model, not exact Qorvo CAD or a tolerance envelope.
+- Mixer output inductors: unchanged official KiCad 0402 model, CC-BY-SA 4.0 with the KiCad design exception. Its nominal 1.0 × 0.5 mm body represents the 1.0 × 0.6 mm Murata LQW15AN7N5G80D; it is not exact manufacturer CAD.
+- Texas DRT-3: official KiCad package model. Its file header grants GPL 3.0 or later with the KiCad design exception; the full GPL text is included.
+- Samtec SMA-J-P-H-ST-EM3: exact configured manufacturer CAD from the [Samtec CADENAS catalog](https://samtec-embedded.customer-domain.samtec.com/3d-cad-models/sso/sma-j-p-h-st-em3-samtec?info=samtec%2Fconnectors%2Frf_interconnects%2F50_ohms%2Fsma_50_ohm%2Fsma_asmtab.prj), exported by CADENAS/PARTsolutions. Original STEP bytes and `CC BY-ND 4.0` header retained; [license](licenses/Samtec_CADENAS_CC-BY-ND-4.0.txt). Offset `(1.5,0,-3.02)` mm and rotation `(-90,0,0)` degrees are applied by KiCad. Native rendering and STEP export checked orientation and seating at top copper. Production tolerances and cable fit remain unverified.
+- Laird frame and the retained legacy Samtec EM3 envelope: original project-authored, simplified nominal geometry dedicated under CC0. These files do not redistribute vendor CAD or drawing artwork. Frame feet/latches and connector threads/rounded profiles are omitted. The SMA footprint now uses the manufacturer model above. Mounting and cutout clearance are unverified.
+
+The generic SOT-23 case used for TLV803E is 1.20 mm high versus TI's 1.12 mm package maximum. It is retained at unit scale and explicitly named representative. These visual models do not establish hardware fit or clearance.
+
+- T1 and U10: original nominal visual models from the [Johanson package drawing](https://www.johansontechnology.com/docs/4499/Balun-2450BL15B0100001E.pdf) and [Qorvo package drawing](https://www.qorvo.com/products/p/SPF5043Z). The driver model includes the wider pin-2 lead. These are not tolerance envelopes.
+- T2 and Y1 use original manufacturer STEP files stored locally and excluded from Git. For a fresh checkout, save [TTM's balun STEP](https://cdn.ttm.com/repository/products/wireless-xinger/balun-transformers/BD1222J50200AHF/BD1222J50200AHF.STEP) here as `TTM_BD1222J50200AHF.STEP`, and extract the STEP from [Abracon's TCXO archive](https://abracon.com/Support/STEP/ATXAIG-H13.STEP.zip) here as `Abracon_ATXAIG-H13.step`. KiCad applies the orientations recorded in the manifest. The CAD bytes are unchanged.

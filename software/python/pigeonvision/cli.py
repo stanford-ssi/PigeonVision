@@ -55,6 +55,7 @@ def parser() -> argparse.ArgumentParser:
         viewer.add_argument("--calibration")
         viewer.add_argument("--record-transport", metavar="PATH", help="Save live received UDP transport to a new .ts file")
         viewer.add_argument("--radio-monitor-url", help="Optional gr-dvbs2rx HTTP monitor; freshness means monitor receipt, not RF or video progress")
+        viewer.add_argument("--pes-access-units", action="store_true", help="Native PV transport only: each video PES is one complete H.264 access unit with explicit PTS/DTS")
         viewer.add_argument("--no-browser", action="store_true")
     report = commands.add_parser("report", help="Summarize measured session evidence and remaining unknowns")
     report.add_argument("session", type=Path)
@@ -132,7 +133,9 @@ def main(argv: list[str] | None = None) -> int:
         elif args.command in ("view", "replay"):
             from .ground import run
             run(args.source, host=args.host, port=args.port, calibration=args.calibration,
-                open_browser=not args.no_browser, replay=True if args.command == "replay" else None, record_transport=args.record_transport, radio_monitor_url=args.radio_monitor_url)
+                open_browser=not args.no_browser, replay=True if args.command == "replay" else None,
+                record_transport=args.record_transport, radio_monitor_url=args.radio_monitor_url,
+                pes_access_units=args.pes_access_units)
         elif args.command == "report":
             from .report import markdown, summarize
             result = summarize(args.session)

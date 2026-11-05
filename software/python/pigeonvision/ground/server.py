@@ -55,8 +55,9 @@ class Receiver:
     """A single demux thread. Queue limits also apply when a browser is slow."""
 
     def __init__(self, source: str, replay: bool | None = None, queue_size: int = 48,
-                 record_transport: str | None = None):
+                 record_transport: str | None = None, pes_access_units: bool = False):
         self.source = source
+        self.pes_access_units = pes_access_units
         self.replay = urlparse(source).scheme not in {"udp", "tcp", "srt"} if replay is None else replay
         if self.replay and not Path(source).is_file():
             raise ValueError(f"Transport file does not exist: {source}")
@@ -93,6 +94,7 @@ class Receiver:
         return {"type": "status", "state": self.state, "source": self.source,
                 "replay": self.replay, "playing": self.playing,
                 "generation": self.generation, "queue_depth": self.messages.qsize(),
+                "pes_access_units": self.pes_access_units,
                 "transport_pts_offset_us": self.transport_pts_offset_us,
                 "transport_recording": self.recorder.status() if self.recorder else None,
                 "first_unit_delay_s": None if self.first_unit_at is None else self.first_unit_at - self.source_opened_at,
@@ -203,8 +205,13 @@ class Receiver:
         self.source_opened_at = time.monotonic()
         self.first_unit_at = None
         self.transport_pts_offset_us = 0
+        options = {"probesize": "262144", "analyzeduration": "1000000"}
+        if self.pes_access_units:
+            # Native PV transport supplies complete AUs and explicit timestamps
+            # per video PES. Parsing them again waits for a future frame.
+            options["fflags"] = "+noparse+nofillin"
         with TsInput(self.source, self.stop_event, self.recorder) as transport, av.open(
-                transport, mode="r", format="mpegts", options={"probesize": "262144", "analyzeduration": "1000000"}) as container:
+                transport, mode="r", format="mpegts", options=options) as container:
             streams = {stream.index: VIDEO_PIDS[stream.id] for stream in container.streams
                        if stream.id in VIDEO_PIDS and stream.type == "video"}
             if not streams and not any(stream.id == METADATA_PID for stream in container.streams):
@@ -218,6 +225,7 @@ class Receiver:
             self._put(self.status(cameras=sorted(streams.values()),
                                   missing_cameras=sorted(set(VIDEO_PIDS.values()) - set(streams.values()))))
             last_pts, step_seen = {}, set()
+            session_id = reference_us = None
 
             def finish_step():
                 if not step_seen:
@@ -262,14 +270,21 @@ class Receiver:
                         if offset is not None:
                             if not isinstance(offset, int):
                                 raise ValueError("Transport PTS offset must be integer microseconds")
-                            if offset != self.transport_pts_offset_us:
+                            ident = record.get("session_id")
+                            changed = session_id is not None and ident is not None and ident != session_id
+                            if ident is not None:
+                                session_id = ident
+                            reference = record.get("pts_us")
+                            reference_us = reference + offset if type(reference) is int else None
+                            if offset != self.transport_pts_offset_us or changed:
                                 self.transport_pts_offset_us = offset
                                 for normalizer in normalizers.values():
                                     normalizer.waiting_for_keyframe = True
                                 last_pts.clear()
                                 step_seen.clear()
                                 anchor_pts = anchor_wall = None
-                                self._put(self.status(reset=True, reason="Applying declared common transport PTS offset"))
+                                self._put(self.status(reset=True, reason="Capture session changed" if changed else
+                                                      "Applying declared common transport PTS offset"))
                         self._put(message)
                     except (ValueError, UnicodeError):
                         self.metrics["metadata_errors"] += 1
@@ -278,7 +293,7 @@ class Receiver:
                     continue
                 index = packet.stream.index
                 name = streams[index]
-                timestamp = pts_microseconds(packet.pts, packet.time_base) - self.transport_pts_offset_us
+                timestamp = pts_microseconds(packet.pts, packet.time_base, reference_us) - self.transport_pts_offset_us
                 if name in last_pts and timestamp <= last_pts[name]:
                     # A backwards clock invalidates the decoder/pairing timeline.
                     self.metrics["timestamp_discontinuities"] += 1
@@ -404,13 +419,13 @@ class ViewerConnection:
 
 def create_app(source: str, *, calibration: str | None = None,
                replay: bool | None = None, record_transport: str | None = None,
-               radio_monitor_url: str | None = None) -> web.Application:
+               radio_monitor_url: str | None = None, pes_access_units: bool = False) -> web.Application:
     app = web.Application(client_max_size=16384)
     if calibration is not None:
         with open(calibration, encoding="utf-8") as handle:
             app[CALIBRATION] = validate_calibration(json.load(handle))
     monitor = RadioMonitor(radio_monitor_url) if radio_monitor_url else None
-    app[RECEIVER] = Receiver(source, replay, record_transport=record_transport)
+    app[RECEIVER] = Receiver(source, replay, record_transport=record_transport, pes_access_units=pes_access_units)
     app[RECEIVER].radio_monitor = monitor
     app[CLIENTS] = set()
 
@@ -531,6 +546,12 @@ def create_app(source: str, *, calibration: str | None = None,
                                     type(value.get("sequence")) is int and value["sequence"] == connection.checkpoint and
                                     connection.ack is not None and not connection.ack.done()):
                                 connection.ack.set_result(None)
+                        elif kind == "request_metadata":
+                            # A viewer can repair lost geometry without replaying
+                            # video, resetting decoders, or changing the source.
+                            cache = presentation.cache
+                            records = [cache.session, *cache.frames.values()] if cache.session else []
+                            enqueue(connection, {"type": "metadata_snapshot", "metadata": records})
                         elif kind == "claim_control":
                             presentation.claim_control(ws)
                             notify_ownership()
@@ -619,9 +640,9 @@ def create_app(source: str, *, calibration: str | None = None,
 def run(source: str, *, host: str = "127.0.0.1", port: int = 8768,
         calibration: str | None = None, open_browser: bool = True,
         replay: bool | None = None, record_transport: str | None = None,
-        radio_monitor_url: str | None = None) -> None:
+        radio_monitor_url: str | None = None, pes_access_units: bool = False) -> None:
     app = create_app(source, calibration=calibration, replay=replay, record_transport=record_transport,
-                     radio_monitor_url=radio_monitor_url)
+                     radio_monitor_url=radio_monitor_url, pes_access_units=pes_access_units)
     if open_browser:
         async def launch(application):
             asyncio.get_running_loop().call_later(.5, webbrowser.open, f"http://{host}:{port}/")

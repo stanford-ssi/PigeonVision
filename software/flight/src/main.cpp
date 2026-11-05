@@ -103,7 +103,7 @@ int main(int argc, char **argv) {
     utsname system{};
     uname(&system);
     pv::Json manifest{{"schema_version", 1},
-                      {"session_id", config.session_dir.filename().string()},
+                      {"session_id", pv::session_id()},
                       {"created_utc", pv::utc_now()},
                       {"clock_origin_ns", origin},
                       {"clock_domain", "CLOCK_BOOTTIME"},
