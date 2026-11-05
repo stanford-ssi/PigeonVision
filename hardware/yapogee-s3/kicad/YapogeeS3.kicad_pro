@@ -65,12 +65,7 @@
           "width": 0.235
         }
       ],
-      "drc_exclusions": [
-        [
-          "starved_thermal|138470000|86550000|cf07323e-53ca-46d4-bd15-901ff37ecfaa|d1c67423-b5c7-48ad-9b04-384aeee39b01|F.Cu",
-          ""
-        ]
-      ],
+      "drc_exclusions": [],
       "meta": {
         "version": 2
       },
@@ -156,7 +151,7 @@
         "min_track_width": 0.127,
         "min_via_annular_width": 0.15,
         "min_via_diameter": 0.4,
-        "solder_mask_to_copper_clearance": 0.0,
+        "solder_mask_to_copper_clearance": 0.005,
         "use_height_for_length_calcs": true
       },
       "teardrop_options": [
