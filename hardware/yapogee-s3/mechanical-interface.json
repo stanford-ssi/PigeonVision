@@ -8,7 +8,7 @@
     43.18
   ],
   "module_origin_on_carrier_mm": [
-    71.0,
+    195.0,
     112.5
   ],
   "pin_contract": [
@@ -716,16 +716,16 @@
     "stock_footprint": "RF_Shielding:Laird_Technologies_BMI-S-206-F_36.83x33.68mm"
   },
   "carrier_cutout": {
-    "status": "SMA clearance guide on User.Drawings. Carrier Edge.Cuts opening pending mechanical review.",
+    "status": "Provisional SMA clearance guide parked off-board with J13 on User.Drawings. Carrier Edge.Cuts opening pending final placement.",
     "sma_origin_module_mm": [
       0,
       34.27
     ],
     "sma_mpn": "SMA-J-P-H-ST-EM3",
     "guide_bounds_carrier_xy_mm": [
-      42,
+      166,
       140.77,
-      79,
+      203,
       152.77
     ],
     "clearance_basis": "12 mm provisional corridor for connector body and mating nut. Verify cable head, strain relief, tool access, enclosure and mechanical loading before final milling."
@@ -816,7 +816,7 @@
     "The carrier outline is unchanged. Check structural strength, cable head, rounded carrier-notch corners and future copper clearance before integration."
   ],
   "status": "ESP32, USB-C, U.FL and SMA start positions loaded. Shield and outline retained. Other component positions untouched at user request.",
-  "carrier_integration": "J13 is placed at (71.0, 112.5) mm with 0° rotation on the carrier. R42 is the 4.7 kΩ CS_N pull-up. Carrier routing, SMA opening, physical fit and assembly remain pending.",
+  "carrier_integration": "J13 is parked off-board at (195.0, 112.5) mm with 0° rotation. Final placement is pending. R42 is the 4.7 kΩ CS_N pull-up. Carrier routing, SMA opening, physical fit and assembly remain pending.",
   "rf_module": {
     "mpn": "ESP32-S3-WROOM-1U-N16R8",
     "center_module_mm": [

@@ -28,7 +28,7 @@ Sensors use CM5 3.3 V. Yapogee receives 5V_MAIN through castellations and makes 
 
 J1 uses vertical AMASS XT60PB-M30.G.Y: pin 1, at the keyed end marked −, is GND; pin 2, at the flat end marked +, is VBAT_RAW. J6 and both camera connectors are also vertical. USB-C J10 and the PJ-102AH bench input J2 remain horizontal. [Connector geometry, sourcing and model limits](../libraries/review/vertical-connectors.md).
 
-J13 is the 55 × 43.18 mm Yapogee landing in the former E200 planning bay. Its 28 lands match the module castellations, including twelve extra GND anchors. The footprint omits paste for hand soldering. The SMA clearance corridor is shown on User.Drawings. Confirm the mating cable, wrench access and structural clearance before making the opening on Edge.Cuts. The E200 stays available as a separate placement option. [Module interface](../yapogee-s3/interfaces.md)
+J13 is the 55 × 43.18 mm Yapogee landing, parked to the right of the carrier pending final placement. Its 28 lands match the module castellations, including twelve extra GND anchors. The footprint omits paste for hand soldering. The provisional SMA clearance guide is parked beside J13 on User.Drawings. Confirm the mating cable, wrench access and structural clearance before making the opening on Edge.Cuts. The E200 stays available as a separate placement option. [Module interface](../yapogee-s3/interfaces.md)
 
 | Signal | CM5 GPIO | CM5 J3 pad | Yapogee J1 / carrier J13 pad |
 | --- | ---: | ---: | ---: |
