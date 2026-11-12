@@ -4526,6 +4526,219 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "PigeonVision:AMASS_XT30UPB_M_G_Y"
+			(pin_names
+				(offset 1.016)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "J"
+				(at 0 2.54 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "XT30UPB-M.G.Y"
+				(at 0 -5.08 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" "PigeonVision:AMASS_XT30UPB-M_1x02_P5.00mm_Vertical_2025"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" "https://www.china-amass.net/uploads/XT30UPB-FM.rar"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "AMASS XT30UPB-M.G.Y vertical PCB male;1 negative/keyed side,2 positive/flat side;5.00mm pitch. 2025V1 finished holes1.8+0.2/-0mm;5.6mm body width and3mm tails. Detailed STEP represents older5.2mm width/2mm tails;not clearance evidence. On existing pull-pin circuit preserve1=PWR_EN,2=GND."
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "MPN" "XT30UPB-M.G.Y"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Manufacturer" "AMASS"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "LCSC Part #" "C428721"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "JLC Part #" "C428721"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Sourcing note" "JLC short MPN XT30UPB-M C428721;manufacturer2025V1 full yellow SKU XT30UPB-M.G.Y. Stock quantity not exposed in public page."
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "AMASS XT vertical power PCB male"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "AMASS_XT30UPB-M_1x02_P5.00mm_Vertical_2025"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "AMASS_XT30UPB_M_G_Y_1_1"
+				(rectangle
+					(start -1.27 1.27)
+					(end 1.27 -3.81)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(rectangle
+					(start -1.27 0.127)
+					(end 0 -0.127)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 -2.413)
+					(end 0 -2.667)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(pin passive line
+					(at -5.08 0 0)
+					(length 3.81)
+					(name "Pin_1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 -2.54 0)
+					(length 3.81)
+					(name "Pin_2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "PigeonVision:BSS138BK,215"
 			(pin_names
 				(offset 0)
@@ -6420,9 +6633,7 @@
 			)
 			(embedded_fonts no)
 		)
-
-	(symbol "PigeonVision:AMASS_XT30UPB_M_G_Y" (pin_names (offset 1.016) (hide yes)) (exclude_from_sim no) (in_bom yes) (on_board yes) (in_pos_files yes) (duplicate_pin_numbers_are_jumpers no) (property "Reference" "J" (at 0 2.54 0) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27)))) (property "Value" "XT30UPB-M.G.Y" (at 0 -5.08 0) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27)))) (property "Footprint" "PigeonVision:AMASS_XT30UPB-M_1x02_P5.00mm_Vertical_2025" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (property "Datasheet" "https://www.china-amass.net/uploads/XT30UPB-FM.rar" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (property "Description" "AMASS XT30UPB-M.G.Y vertical PCB male;1 negative/keyed side,2 positive/flat side;5.00mm pitch. 2025V1 finished holes1.8+0.2/-0mm;5.6mm body width and3mm tails. Detailed STEP represents older5.2mm width/2mm tails;not clearance evidence. On existing pull-pin circuit preserve1=PWR_EN,2=GND." (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (property "ki_keywords" "AMASS XT vertical power PCB male" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (property "ki_fp_filters" "AMASS_XT30UPB-M_1x02_P5.00mm_Vertical_2025" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (symbol "AMASS_XT30UPB_M_G_Y_1_1" (rectangle (start -1.27 1.27) (end 1.27 -3.81) (stroke (width 0.254) (type default)) (fill (type background))) (rectangle (start -1.27 0.127) (end 0 -0.127) (stroke (width 0.1524) (type default)) (fill (type none))) (rectangle (start -1.27 -2.413) (end 0 -2.667) (stroke (width 0.1524) (type default)) (fill (type none))) (pin passive line (at -5.08 0 0) (length 3.81) (name "Pin_1" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27))))) (pin passive line (at -5.08 -2.54 0) (length 3.81) (name "Pin_2" (effects (font (size 1.27 1.27)))) (number "2" (effects (font (size 1.27 1.27)))))) (embedded_fonts no) (property "MPN" "XT30UPB-M.G.Y" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Manufacturer" "AMASS" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "LCSC Part #" "C428721" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "JLC Part #" "C428721" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes))) (property "Sourcing note" "JLC short MPN XT30UPB-M C428721;manufacturer2025V1 full yellow SKU XT30UPB-M.G.Y. Stock quantity not exposed in public page." (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes))))
-)
+	)
 	(text "Overvoltage: 16.14V"
 		(exclude_from_sim no)
 		(at 35.814 64.262 0)
@@ -8120,9 +8331,9 @@
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "1c088efc-1359-4e94-b93e-5aea702a4e3b")
 		(property "Reference" "TP3"
@@ -8328,9 +8539,9 @@
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "20ee9a52-4120-4631-b5e3-09b5b5b83a34")
 		(property "Reference" "TP2"
@@ -8406,9 +8617,9 @@
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "2adc831a-9ae2-4f1e-9b28-54f1b1699c14")
 		(property "Reference" "TP1"
@@ -10249,9 +10460,9 @@
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "797dfa9b-5433-4783-a131-e8d729aa21f2")
 		(property "Reference" "TP6"
@@ -10570,9 +10781,9 @@
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "7c830f17-39a8-4f9a-a473-1fedd644325c")
 		(property "Reference" "TP7"
@@ -10648,9 +10859,9 @@
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "81ad86f6-a998-47d8-b62e-e00cdc0c88ba")
 		(property "Reference" "TP5"
@@ -11629,6 +11840,7 @@
 				)
 			)
 		)
+		(property "LCSC" "C86513" (at 0 0 0) (hide yes) (effects (font (size 1 1))))
 	)
 	(symbol
 		(lib_id "Transistor_FET:CSD18540Q5B")
@@ -11743,6 +11955,7 @@
 				)
 			)
 		)
+		(property "LCSC" "C86513" (at 0 0 0) (hide yes) (effects (font (size 1 1))))
 	)
 	(symbol
 		(lib_id "Connector:TestPoint")
@@ -11750,9 +11963,9 @@
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "a7311f88-1afd-4d4d-8e28-c27f32ee5654")
 		(property "Reference" "TP4"
@@ -14506,7 +14719,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "f61cf456-ff16-4b6d-a227-0f6abe12ab82")
 		(property "Reference" "J6"
@@ -14584,6 +14797,39 @@
 				)
 			)
 		)
+		(property "LCSC Part #" "C428721"
+			(at 44.45 88.9 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "JLC Part #" "C428721"
+			(at 44.45 88.9 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Sourcing note" "JLC short MPN XT30UPB-M C428721;manufacturer2025V1 full yellow SKU XT30UPB-M.G.Y. Stock quantity not exposed in public page."
+			(at 44.45 88.9 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "1b659d96-8d90-474f-a00a-bf759c0e1c83")
 		)
@@ -14598,13 +14844,7 @@
 				)
 			)
 		)
-
-	(property "LCSC Part #" "C428721" (at 44.45 88.9 0) (hide yes) (effects (font (size 1.27 1.27))))
-
-	(property "JLC Part #" "C428721" (at 44.45 88.9 0) (hide yes) (effects (font (size 1.27 1.27))))
-
-	(property "Sourcing note" "JLC short MPN XT30UPB-M C428721;manufacturer2025V1 full yellow SKU XT30UPB-M.G.Y. Stock quantity not exposed in public page." (at 44.45 88.9 0) (hide yes) (effects (font (size 1.27 1.27))))
-)
+	)
 	(sheet
 		(at 78.105 144.78)
 		(size 44.45 22.86)

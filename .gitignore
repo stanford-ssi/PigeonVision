@@ -20,3 +20,7 @@ node_modules/
 /hardware/libraries/3dmodels/AMASS_XT60PB_M_EasyEDA_VisualOnly.step
 /hardware/libraries/3dmodels/AMASS_XT30UPB_M_EasyEDA_Detailed_Legacy_2mmTail.step
 /hardware/libraries/3dmodels/Hirose_FH12-22S-0.5SVA_54_WhiteAppearance.stp
+
+# Yapogee S3 manufacturer STEP downloads retained for local use.
+/hardware/libraries/3dmodels/TTM_BD1222J50200AHF.STEP
+/hardware/libraries/3dmodels/Abracon_ATXAIG-H13.step

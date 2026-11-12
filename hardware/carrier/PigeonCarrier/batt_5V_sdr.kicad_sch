@@ -2765,7 +2765,7 @@
 		)
 		(uuid "bfe26a77-3f63-4e34-a590-fbdf0dac014d")
 	)
-	(text "5.00V Output"
+	(text "4.88 V nominal"
 		(exclude_from_sim no)
 		(at 196.596 91.44 0)
 		(effects
@@ -4899,7 +4899,7 @@
 		)
 	)
 	(symbol
-		(lib_id "PCM_JLCPCB-Resistors:0402,1.5kΩ")
+		(lib_id "PCM_JLCPCB-Resistors:0402,0Ω")
 		(at 170.18 106.68 0)
 		(unit 1)
 		(body_style 1)
@@ -4921,7 +4921,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "1.5kΩ"
+		(property "Value" "0Ω"
 			(at 170.18 106.68 90)
 			(show_name no)
 			(do_not_autoplace yes)
@@ -4942,7 +4942,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010045_UNI-ROYAL-Uniroyal-Elec-0402WGF1501TCE_C25867.pdf"
+		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010216_UNI-ROYAL-Uniroyal-Elec-0402WGF0000TCE_C17168.pdf"
 			(at 170.18 106.68 0)
 			(hide yes)
 			(show_name no)
@@ -4953,7 +4953,7 @@
 				)
 			)
 		)
-		(property "Description" "62.5mW Thick Film Resistors 50V ±100ppm/°C ±1% 1.5kΩ 0402 Chip Resistor - Surface Mount ROHS"
+		(property "Description" "62.5mW Thick Film Resistors 50V ±800ppm/°C ±1% 0Ω 0402 Chip Resistor - Surface Mount ROHS"
 			(at 170.18 106.68 0)
 			(hide yes)
 			(show_name no)
@@ -4964,7 +4964,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C25867"
+		(property "LCSC" "C17168"
 			(at 170.18 106.68 0)
 			(hide yes)
 			(show_name no)
@@ -4975,7 +4975,7 @@
 				)
 			)
 		)
-		(property "Stock" "1178558"
+		(property "Stock" "9510686"
 			(at 170.18 106.68 0)
 			(hide yes)
 			(show_name no)
@@ -5063,7 +5063,7 @@
 				)
 			)
 		)
-		(property "Part" "0402WGF1501TCE"
+		(property "Part" "0402WGF0000TCE"
 			(at 170.18 106.68 0)
 			(hide yes)
 			(show_name no)
@@ -5074,7 +5074,7 @@
 				)
 			)
 		)
-		(property "Resistance" "1.5kΩ"
+		(property "Resistance" "0Ω"
 			(at 170.18 106.68 0)
 			(hide yes)
 			(show_name no)
@@ -5140,7 +5140,7 @@
 				)
 			)
 		)
-		(property "Temperature Coefficient" "±100ppm/°C"
+		(property "Temperature Coefficient" "±800ppm/°C"
 			(at 170.18 106.68 0)
 			(hide yes)
 			(show_name no)
@@ -5151,7 +5151,7 @@
 				)
 			)
 		)
-		(property "MPN" "0402WGF1501TCE"
+		(property "MPN" "0402WGF0000TCE"
 			(at 170.18 106.68 0)
 			(hide yes)
 			(show_name no)

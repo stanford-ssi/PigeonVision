@@ -1,0 +1,12 @@
+Samtec_EM3_NOMINAL_ENVELOPE.step and build_nominal_envelope.py are original,
+simplified nominal geometry generated from factual package dimensions.
+They are not manufacturer CAD and do not reproduce detailed mating geometry.
+
+To the extent copyright or related rights apply to this original script and
+generated nominal geometry, they are dedicated to the public domain under
+CC0 1.0 Universal: https://creativecommons.org/publicdomain/zero/1.0/
+
+The manufacturer and part family identify the intended component; no endorsement
+is claimed. No warranty of mounting fit, mating, cutout clearance or dimensions.
+
+This dedication does not apply to Samtec's drawing or other vendor materials.

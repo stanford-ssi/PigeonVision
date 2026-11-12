@@ -4,5 +4,2404 @@
 	(generator_version "10.0")
 	(uuid "0d703814-ea3c-4272-8e42-586570c6a598")
 	(paper "A4")
-	(lib_symbols)
+	(lib_symbols
+		(symbol "PCM_JLCPCB-Resistors:0402,4.7kΩ"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "R"
+				(at 1.778 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Value" "4.7kΩ"
+				(at 0 0 90)
+				(show_name no)
+				(do_not_autoplace yes)
+				(effects
+					(font
+						(size 0.8 0.8)
+					)
+				)
+			)
+			(property "Footprint" "PCM_JLCPCB:R_0402"
+				(at -1.778 0 90)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010045_UNI-ROYAL-Uniroyal-Elec-0402WGF4701TCE_C25900.pdf"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "62.5mW Thick Film Resistors 50V ±100ppm/°C ±1% 4.7kΩ 0402 Chip Resistor - Surface Mount ROHS"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "LCSC" "C25900"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Stock" "7644059"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Price" "0.004USD"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Process" "SMT"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Minimum Qty" "20"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Attrition Qty" "10"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Class" "Basic Component"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Category" "Resistors,Chip Resistor - Surface Mount"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Manufacturer" "UNI-ROYAL(Uniroyal Elec)"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Part" "0402WGF4701TCE"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Resistance" "4.7kΩ"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Power(Watts)" "62.5mW"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Type" "Thick Film Resistors"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Overload Voltage (Max)" "50V"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Operating Temperature Range" "-55°C~+155°C"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Tolerance" "±1%"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Temperature Coefficient" "±100ppm/°C"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "R_*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "0402,4.7kΩ_0_1"
+				(rectangle
+					(start -1.016 2.54)
+					(end 1.016 -2.54)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "0402,4.7kΩ_1_1"
+				(pin passive line
+					(at 0 3.81 270)
+					(length 1.27)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -3.81 90)
+					(length 1.27)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "PCM_SparkFun-PowerSymbol:GND"
+			(power global)
+			(pin_names
+				(offset 0)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "#PWR"
+				(at 0 -6.35 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "GND"
+				(at 0 -3.81 0)
+				(show_name no)
+				(do_not_autoplace yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+				(at 0 -8.89 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "SparkFun global power"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "GND_0_1"
+				(polyline
+					(pts
+						(xy 0 0) (xy 0 -1.27) (xy 1.27 -1.27) (xy 0 -2.54) (xy -1.27 -1.27) (xy 0 -1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "GND_1_1"
+				(pin power_in line
+					(at 0 0 270)
+					(length 0)
+					(hide yes)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "PigeonVision:YapogeeS3_CarrierLanding_Interface16"
+			(exclude_from_sim no)
+			(in_bom no)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "J"
+				(at -17.78 35.56 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "Yapogee S3 carrier landing"
+				(at -17.78 33.02 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" "PigeonVision:YapogeeS3_CarrierLanding16_55x43p18_P2p54_GND12"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Bare PCB carrier landing; v0.5; 16 logical contacts plus 12 GND anchors, 28 solder lands. Excluded from purchased BOM."
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "YapogeeS3_CarrierLanding_Interface16_0_1"
+				(rectangle
+					(start -17.78 22.86)
+					(end 17.78 -20.32)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+			)
+			(symbol "YapogeeS3_CarrierLanding_Interface16_1_1"
+				(pin passive line
+					(at -12.7 -25.4 90)
+					(length 5.08)
+					(name "GND"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -22.86 15.24 0)
+					(length 5.08)
+					(name "SCLK"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 7.62 27.94 270)
+					(length 5.08)
+					(name "5V_CARRIER"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -22.86 12.7 0)
+					(length 5.08)
+					(name "CS_N"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -22.86 7.62 0)
+					(length 5.08)
+					(name "D0"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "5"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -2.54 -25.4 90)
+					(length 5.08)
+					(name "GND"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "6"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -22.86 5.08 0)
+					(length 5.08)
+					(name "D1"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "7"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -22.86 2.54 0)
+					(length 5.08)
+					(name "D2"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "8"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 2.54 -25.4 90)
+					(length 5.08)
+					(name "GND"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "9"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -22.86 0 0)
+					(length 5.08)
+					(name "D3"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "10"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 22.86 15.24 180)
+					(length 5.08)
+					(name "READY"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "11"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 7.62 -25.4 90)
+					(length 5.08)
+					(name "GND"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "12"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 22.86 12.7 180)
+					(length 5.08)
+					(name "PA_EN"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "13"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -7.62 27.94 270)
+					(length 5.08)
+					(name "RESERVED"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "14"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 12.7 -25.4 90)
+					(length 5.08)
+					(name "GND"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "15"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -7.62 -25.4 90)
+					(length 5.08)
+					(name "GND"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "16"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "power:+3V3"
+			(power global)
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "#PWR"
+				(at 0 -3.81 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "+3V3"
+				(at 0 3.556 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Power symbol creates a global label with name \"+3V3\""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "global power"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "+3V3_0_1"
+				(polyline
+					(pts
+						(xy -0.762 1.27) (xy 0 2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 2.54) (xy 0.762 1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 0) (xy 0 2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "+3V3_1_1"
+				(pin power_in line
+					(at 0 0 90)
+					(length 0)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "power:+5V"
+			(power global)
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "#PWR"
+				(at 0 -3.81 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "+5V"
+				(at 0 3.556 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Power symbol creates a global label with name \"+5V\""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "global power"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "+5V_0_1"
+				(polyline
+					(pts
+						(xy -0.762 1.27) (xy 0 2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 2.54) (xy 0.762 1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 0) (xy 0 2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "+5V_1_1"
+				(pin power_in line
+					(at 0 0 90)
+					(length 0)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "PigeonVision:SN74LVC2G17DBVR"
+        (pin_names (offset 0.508))
+        (exclude_from_sim no) (in_bom yes) (on_board yes) (in_pos_files yes)
+        (duplicate_pin_numbers_are_jumpers no)
+        (property "Reference" "U" (at 5.715 3.81 0)  (effects (font (size 0.9 0.9)) ))
+        (property "Value" "SN74LVC2G17DBVR" (at 5.715 -3.81 0)  (effects (font (size 0.9 0.9)) ))
+        (property "Footprint" "Package_TO_SOT_SMD:SOT-23-6" (at 0 0 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 0.9 0.9)) ))
+(property "Datasheet" "https://www.ti.com/lit/ds/symlink/sn74lvc2g17.pdf" (at 0 0 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 0.9 0.9)) ))
+(property "Description" "Dual Schmitt-trigger buffer with powered-off protection, SOT-23-6" (at 0 0 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 0.9 0.9)) ))
+(property "MPN" "SN74LVC2G17DBVR" (at 0 0 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 0.9 0.9)) ))
+(property "Manufacturer" "Texas Instruments" (at 0 0 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 0.9 0.9)) ))
+(property "LCSC" "C10429" (at 0 0 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 0.9 0.9)) ))
+        (symbol "SN74LVC2G17DBVR_0_1"
+            (rectangle (start -5.08 3.81) (end 5.08 -3.81) (stroke (width 0.254) (type default)) (fill (type background))))
+        (symbol "SN74LVC2G17DBVR_1_1"
+            (pin input line (at -7.62 -1.27 0) (length 2.54) (name "1A" (effects (font (size 0.9 0.9)) )) (number "1" (effects (font (size 0.75 0.75)) )))
+			(pin power_in line (at 0 -6.35 90) (length 2.54) (name "GND" (effects (font (size 0.9 0.9)) )) (number "2" (effects (font (size 0.75 0.75)) )))
+			(pin input line (at -7.62 1.27 0) (length 2.54) (name "2A" (effects (font (size 0.9 0.9)) )) (number "3" (effects (font (size 0.75 0.75)) )))
+			(pin output line (at 7.62 1.27 180) (length 2.54) (name "2Y" (effects (font (size 0.9 0.9)) )) (number "4" (effects (font (size 0.75 0.75)) )))
+			(pin power_in line (at 0 6.35 270) (length 2.54) (name "VCC" (effects (font (size 0.9 0.9)) )) (number "5" (effects (font (size 0.75 0.75)) )))
+			(pin output line (at 7.62 -1.27 180) (length 2.54) (name "1Y" (effects (font (size 0.9 0.9)) )) (number "6" (effects (font (size 0.75 0.75)) )))))
+
+	(symbol "PCM_JLCPCB-Capacitors:0402,100nF,(2)" (pin_numbers (hide yes)) (pin_names (offset 0)) (exclude_from_sim no) (in_bom yes) (on_board yes) (in_pos_files yes) (duplicate_pin_numbers_are_jumpers no) (property "Reference" "C" (at 2.032 1.668 0) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27)) (justify left))) (property "Value" "100nF" (at 2.032 -0.3782 0) (show_name no) (do_not_autoplace no) (effects (font (size 0.8 0.8)) (justify left))) (property "Footprint" "PCM_JLCPCB:C_0402" (at -1.778 0 90) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Samsung-Electro-Mechanics-CL05B104KB54PNC_C307331.pdf" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (property "Description" "50V 100nF X7R ±10% 0402 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (property "LCSC" "C307331" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (property "Stock" "8389599" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (property "Price" "0.008USD" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (property "Process" "SMT" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (property "Minimum Qty" "20" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (property "Attrition Qty" "10" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (property "Class" "Basic Component" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (property "Category" "Capacitors,Multilayer Ceramic Capacitors MLCC - SMD/SMT" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (property "Manufacturer" "Samsung Electro-Mechanics" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (property "Part" "CL05B104KB54PNC" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (property "Voltage Rated" "50V" (at 2.032 -2.0462 0) (show_name no) (do_not_autoplace no) (effects (font (size 0.8 0.8)) (justify left))) (property "Tolerance" "±10%" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (property "Capacitance" "100nF" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (property "Temperature Coefficient" "X7R" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (property "ki_fp_filters" "C_*" (at 0 0 0) (show_name no) (do_not_autoplace no) (hide yes) (effects (font (size 1.27 1.27)))) (symbol "0402,100nF,(2)_0_1" (polyline (pts (xy -1.27 0.635) (xy 1.27 0.635)) (stroke (width 0.254) (type default)) (fill (type none))) (polyline (pts (xy -1.27 -0.635) (xy 1.27 -0.635)) (stroke (width 0.254) (type default)) (fill (type none)))) (symbol "0402,100nF,(2)_1_1" (pin passive line (at 0 3.81 270) (length 3.175) (name "" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27))))) (pin passive line (at 0 -3.81 90) (length 3.175) (name "" (effects (font (size 1.27 1.27)))) (number "2" (effects (font (size 1.27 1.27)))))) (embedded_fonts no))
+)
+	(text "JP1 open when installed"
+		(exclude_from_sim no)
+		(at 116.84 132.08 0)
+		(effects
+			(font
+				(size 1.1 1.1)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "5d586aa3-a471-5869-9bc6-bfabeb68f4ca")
+	)
+	(text "SPI0 single-lane"
+		(exclude_from_sim no)
+		(at 116.84 129.54 0)
+		(effects
+			(font
+				(size 1.1 1.1)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "7e0d00fc-9605-5d00-a7ac-9ff9cb070cfc")
+	)
+	(text "CM5 owns PA enable"
+		(exclude_from_sim no)
+		(at 116.84 134.62 0)
+		(effects
+			(font
+				(size 1.1 1.1)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "a717dcec-29ec-50ba-828b-764bd34ec20c")
+	)
+	(junction
+		(at 115.57 81.28)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "86bf31b9-9cf9-4e98-8434-265fdcc06737")
+	)
+	(no_connect
+		(at 116.84 91.44)
+		(uuid "9fbb6b30-6bba-5344-a521-d41c59806a92")
+	)
+	(no_connect
+		(at 132.08 66.04)
+		(uuid "c55aaefc-4b26-5d84-b15e-de69fc7540dd")
+	)
+	(no_connect
+		(at 116.84 93.98)
+		(uuid "e5561b78-fe51-504c-ac5f-7438e9a06adf")
+	)
+	(wire
+		(pts
+			(xy 162.56 81.28) (xy 165.1 81.28)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "05c39087-0aac-5841-9be7-11ecb241971a")
+	)
+	(wire
+		(pts
+			(xy 116.84 78.74) (xy 114.3 78.74)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0c9dfc30-68a5-508f-803d-39ea161cfe52")
+	)
+	(wire
+		(pts
+			(xy 116.84 86.36) (xy 114.3 86.36)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1880eda1-6a3a-5367-8905-a30dcd45baa6")
+	)
+	(wire
+		(pts
+			(xy 162.56 78.74) (xy 165.1 78.74)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "25bc6b30-18d0-5186-8b6a-3920e1cf9d0a")
+	)
+	(wire
+		(pts
+			(xy 116.84 88.9) (xy 114.3 88.9)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2c3e1c75-f8c0-5991-a462-2adb00b0ad86")
+	)
+	(wire
+		(pts
+			(xy 115.57 72.39) (xy 115.57 81.28)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7d6e4d0f-796a-572d-814e-3d8238797aa8")
+	)
+	(wire
+		(pts
+			(xy 116.84 81.28) (xy 115.57 81.28)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a20b982a-92ab-58e7-a8e4-0920a0666327")
+	)
+	(wire
+		(pts
+			(xy 115.57 81.28) (xy 114.3 81.28)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "eb316d9a-a7f3-414e-af84-c4543de04fd7")
+	)
+	(hierarchical_label "READY"
+		(shape output)
+		(at 198.12 78.74 0)
+		(effects
+			(font
+				(size 0.9 0.9)
+			)
+			(justify left)
+		)
+		(uuid "068827a8-4e81-55cd-8eec-6744ec8feed1")
+	)
+	(hierarchical_label "PA_REQ"
+		(shape output)
+		(at 198.12 81.28 0)
+		(effects
+			(font
+				(size 0.9 0.9)
+			)
+			(justify left)
+		)
+		(uuid "37e57cd3-a00a-5a27-a592-5adc7ae26df8")
+	)
+	(hierarchical_label "SCLK"
+		(shape input)
+		(at 114.3 78.74 180)
+		(effects
+			(font
+				(size 0.9 0.9)
+			)
+			(justify right)
+		)
+		(uuid "4f05ed03-9a90-5b90-8cb7-6c512aa98944")
+	)
+	(hierarchical_label "D1"
+		(shape input)
+		(at 114.3 88.9 180)
+		(effects
+			(font
+				(size 0.9 0.9)
+			)
+			(justify right)
+		)
+		(uuid "62c35289-444e-56ee-b01b-8cd7ff057468")
+	)
+	(hierarchical_label "D0"
+		(shape input)
+		(at 114.3 86.36 180)
+		(effects
+			(font
+				(size 0.9 0.9)
+			)
+			(justify right)
+		)
+		(uuid "9f1349b9-5ea4-5feb-8ab9-96b22fdbd71f")
+	)
+	(hierarchical_label "CS_N"
+		(shape input)
+		(at 114.3 81.28 180)
+		(effects
+			(font
+				(size 0.9 0.9)
+			)
+			(justify right)
+		)
+		(uuid "f6d392c4-b48b-58ce-b131-666d4ba2693f")
+	)
+	(symbol
+		(lib_id "PCM_SparkFun-PowerSymbol:GND")
+		(at 137.16 119.38 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "1f2277ad-7267-592e-bce5-dc716a1179ab")
+		(property "Reference" "#PWR1806"
+			(at 143.51 119.38 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 137.16 123.19 0)
+			(show_name no)
+			(do_not_autoplace yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 137.16 119.38 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 137.16 119.38 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 146.05 119.38 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "802f561d-4535-5757-a092-c1f384da6053")
+		)
+		(instances
+			(project "PigeonCarrier"
+				(path "/6c8da0f4-34cf-43b9-a25b-857048b8016b/3fd690c9-ba8e-46b1-b510-ac104a57139b"
+					(reference "#PWR1806")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "PigeonVision:YapogeeS3_CarrierLanding_Interface16")
+		(at 139.7 93.98 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(in_pos_files no)
+		(dnp no)
+		(uuid "2dfb990e-012f-507d-abe0-252c0809847c")
+		(property "Reference" "J13"
+			(at 138.43 54.61 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "Yapogee S3 carrier landing"
+			(at 138.43 57.15 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "PigeonVision:YapogeeS3_CarrierLanding16_55x43p18_P2p54_GND12"
+			(at 139.7 93.98 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 139.7 93.98 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Bare PCB carrier landing; v0.5; 16 logical contacts plus 12 GND anchors, 28 solder lands. Excluded from purchased BOM."
+			(at 139.7 93.98 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "495c7962-7691-5a7f-9d68-48d970314daf")
+		)
+		(pin "2"
+			(uuid "4417529b-c3c7-54e8-a925-1224d9a9a338")
+		)
+		(pin "16"
+			(uuid "4fb1bd61-b9d8-59b4-b828-4fb117986ecf")
+		)
+		(pin "4"
+			(uuid "79b92b2b-f03b-5148-86e8-57476d23fb68")
+		)
+		(pin "5"
+			(uuid "68b2f8d2-5710-563f-9d61-d9b8b4449a97")
+		)
+		(pin "6"
+			(uuid "a4925fd9-152d-56e8-a640-9e4333bb7ca8")
+		)
+		(pin "7"
+			(uuid "b651486d-eacc-5abb-ab72-6a62565c25c1")
+		)
+		(pin "8"
+			(uuid "d6cffd23-9d6e-5f1a-894c-84525fc8c7da")
+		)
+		(pin "9"
+			(uuid "f10c1b57-4e7a-5fa3-9634-b89ca4d090ee")
+		)
+		(pin "10"
+			(uuid "a8693f71-ac93-53f3-b6b4-960e528a6c84")
+		)
+		(pin "11"
+			(uuid "cbf3f8a6-721e-5dfb-a754-d801e97aa3d9")
+		)
+		(pin "12"
+			(uuid "dc0bdab5-75b6-5e10-92e1-a97b3d037c99")
+		)
+		(pin "13"
+			(uuid "f8135e50-0ddb-5f47-9fd9-99bea7bb7b69")
+		)
+		(pin "14"
+			(uuid "62bb26b6-de63-5a7e-b1e4-df899e348766")
+		)
+		(pin "15"
+			(uuid "8516fa2f-d66b-5b2a-a759-257349ee511e")
+		)
+		(pin "3"
+			(uuid "359aec26-4293-58d0-86a7-ae5ec3bbdecb")
+		)
+		(instances
+			(project "PigeonCarrier"
+				(path "/6c8da0f4-34cf-43b9-a25b-857048b8016b/3fd690c9-ba8e-46b1-b510-ac104a57139b"
+					(reference "J13")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "PCM_SparkFun-PowerSymbol:GND")
+		(at 132.08 119.38 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "34dad4fa-3e56-5835-b7ea-b5460c65c889")
+		(property "Reference" "#PWR18016"
+			(at 138.43 119.38 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 132.08 123.19 0)
+			(show_name no)
+			(do_not_autoplace yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 132.08 119.38 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 132.08 119.38 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 140.97 119.38 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "cf390a2d-c384-5757-a1ae-89d85bf9c8c8")
+		)
+		(instances
+			(project "PigeonCarrier"
+				(path "/6c8da0f4-34cf-43b9-a25b-857048b8016b/3fd690c9-ba8e-46b1-b510-ac104a57139b"
+					(reference "#PWR18016")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "PCM_SparkFun-PowerSymbol:GND")
+		(at 127 119.38 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "4a6fa905-7c0a-5701-b9de-d233f5dd8e02")
+		(property "Reference" "#PWR1801"
+			(at 133.35 119.38 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 127 123.19 0)
+			(show_name no)
+			(do_not_autoplace yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 127 119.38 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 127 119.38 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 135.89 119.38 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "d527b1a9-d2a8-51f4-8e0e-81ac2d03d40d")
+		)
+		(instances
+			(project "PigeonCarrier"
+				(path "/6c8da0f4-34cf-43b9-a25b-857048b8016b/3fd690c9-ba8e-46b1-b510-ac104a57139b"
+					(reference "#PWR1801")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "PCM_SparkFun-PowerSymbol:GND")
+		(at 142.24 119.38 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "58951003-823a-5793-8751-bc9da52a0dee")
+		(property "Reference" "#PWR1809"
+			(at 148.59 119.38 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 142.24 123.19 0)
+			(show_name no)
+			(do_not_autoplace yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 142.24 119.38 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 142.24 119.38 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 151.13 119.38 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "cc8020c6-6cb5-551b-b25b-3a9f4297bc05")
+		)
+		(instances
+			(project "PigeonCarrier"
+				(path "/6c8da0f4-34cf-43b9-a25b-857048b8016b/3fd690c9-ba8e-46b1-b510-ac104a57139b"
+					(reference "#PWR1809")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "PCM_SparkFun-PowerSymbol:GND")
+		(at 152.4 119.38 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "92462b47-f50a-57df-bb49-f287f8f81732")
+		(property "Reference" "#PWR18015"
+			(at 158.75 119.38 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 152.4 123.19 0)
+			(show_name no)
+			(do_not_autoplace yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 152.4 119.38 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 152.4 119.38 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 161.29 119.38 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "981c50c3-2c09-5015-8280-36ecc2e434e0")
+		)
+		(instances
+			(project "PigeonCarrier"
+				(path "/6c8da0f4-34cf-43b9-a25b-857048b8016b/3fd690c9-ba8e-46b1-b510-ac104a57139b"
+					(reference "#PWR18015")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "PCM_JLCPCB-Resistors:0402,4.7kΩ")
+		(at 115.57 68.58 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "a9c362d0-0259-5f5f-b06a-8eaf3cb3b2d4")
+		(property "Reference" "R42"
+			(at 109.982 68.834 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "4.7kΩ"
+			(at 115.57 68.58 90)
+			(show_name no)
+			(do_not_autoplace yes)
+			(effects
+				(font
+					(size 0.8 0.8)
+				)
+			)
+		)
+		(property "Footprint" "PCM_JLCPCB:R_0402"
+			(at 115.57 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010045_UNI-ROYAL-Uniroyal-Elec-0402WGF4701TCE_C25900.pdf"
+			(at 115.57 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "62.5mW Thick Film Resistors 50V ±100ppm/°C ±1% 4.7kΩ 0402 Chip Resistor - Surface Mount ROHS"
+			(at 115.57 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C25900"
+			(at 115.57 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Stock" "7644059"
+			(at 115.57 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Price" "0.004USD"
+			(at 115.57 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Process" "SMT"
+			(at 115.57 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Minimum Qty" "20"
+			(at 115.57 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Attrition Qty" "10"
+			(at 115.57 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Class" "Basic Component"
+			(at 115.57 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Category" "Resistors,Chip Resistor - Surface Mount"
+			(at 115.57 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Manufacturer" "UNI-ROYAL(Uniroyal Elec)"
+			(at 115.57 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Part" "0402WGF4701TCE"
+			(at 115.57 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Resistance" "4.7kΩ"
+			(at 115.57 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Power(Watts)" "62.5mW"
+			(at 115.57 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Type" "Thick Film Resistors"
+			(at 115.57 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Overload Voltage (Max)" "50V"
+			(at 115.57 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Operating Temperature Range" "-55°C~+155°C"
+			(at 115.57 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Tolerance" "±1%"
+			(at 115.57 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Temperature Coefficient" "±100ppm/°C"
+			(at 115.57 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "a834cbfc-0db2-52ca-9286-fc763dc8015d")
+		)
+		(pin "2"
+			(uuid "a0bbcb39-4ade-50a7-ac04-79c87d6e779a")
+		)
+		(instances
+			(project "PigeonCarrier"
+				(path "/6c8da0f4-34cf-43b9-a25b-857048b8016b/3fd690c9-ba8e-46b1-b510-ac104a57139b"
+					(reference "R42")
+					(unit 1)
+				)
+			)
+		)
+		(property "MPN" "0402WGF4701TCE" (at 0 0 0) (hide yes) (effects (font (size 1 1))))
+	)
+	(symbol
+		(lib_id "PCM_SparkFun-PowerSymbol:GND")
+		(at 147.32 119.38 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "c872d8c9-dc00-51be-8e88-2858871f6a92")
+		(property "Reference" "#PWR18012"
+			(at 153.67 119.38 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 147.32 123.19 0)
+			(show_name no)
+			(do_not_autoplace yes)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 147.32 119.38 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 147.32 119.38 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 156.21 119.38 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "475b5d91-285b-5b32-ba2a-88553e702b4d")
+		)
+		(instances
+			(project "PigeonCarrier"
+				(path "/6c8da0f4-34cf-43b9-a25b-857048b8016b/3fd690c9-ba8e-46b1-b510-ac104a57139b"
+					(reference "#PWR18012")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+5V")
+		(at 147.32 66.04 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "caa1eb7a-ea81-502d-a7fb-c05d8fbe0a39")
+		(property "Reference" "#PWR1803"
+			(at 147.32 69.85 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "5V_MAIN"
+			(at 147.32 62.23 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 147.32 66.04 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 147.32 66.04 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+5V\""
+			(at 147.32 66.04 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "8229ba44-5ca1-5f37-a6a4-c22b117362c0")
+		)
+		(instances
+			(project "PigeonCarrier"
+				(path "/6c8da0f4-34cf-43b9-a25b-857048b8016b/3fd690c9-ba8e-46b1-b510-ac104a57139b"
+					(reference "#PWR1803")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 115.57 64.77 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "f9f6079f-e10c-5749-8844-4e2c217b9d91")
+		(property "Reference" "#PWR18021"
+			(at 115.57 68.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "3V3_CM5"
+			(at 115.57 60.96 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 115.57 64.77 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 115.57 64.77 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+3V3\""
+			(at 115.57 64.77 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "4e402cdb-9277-5b33-b925-23c279eb4545")
+		)
+		(instances
+			(project "PigeonCarrier"
+				(path "/6c8da0f4-34cf-43b9-a25b-857048b8016b/3fd690c9-ba8e-46b1-b510-ac104a57139b"
+					(reference "#PWR18021")
+					(unit 1)
+				)
+			)
+		)
+	)
+
+	(symbol (lib_id "PigeonVision:SN74LVC2G17DBVR") (at 185.42 80.01 0) (unit 1) (body_style 1)
+        (exclude_from_sim no) (in_bom yes) (on_board yes) (in_pos_files yes) (dnp no) (uuid "cb123533-5d75-596c-b2c2-dfe2a0355baf")
+        (property "Reference" "U14" (at 191.77 74.93 0)  (effects (font (size 1.05 1.05)) (justify left)))
+(property "Value" "SN74LVC2G17DBVR" (at 191.77 85.09 0)  (effects (font (size 0.9 0.9)) (justify left)))
+(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6" (at 185.42 80.01 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 0.9 0.9)) ))
+(property "Datasheet" "https://www.ti.com/lit/ds/symlink/sn74lvc2g17.pdf" (at 185.42 80.01 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 0.9 0.9)) ))
+(property "Description" "Dual Schmitt-trigger buffer with powered-off protection, SOT-23-6" (at 185.42 80.01 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 0.9 0.9)) ))
+(property "MPN" "SN74LVC2G17DBVR" (at 185.42 80.01 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 0.9 0.9)) ))
+(property "Manufacturer" "Texas Instruments" (at 185.42 80.01 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 0.9 0.9)) ))
+(property "LCSC" "C10429" (at 185.42 80.01 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 0.9 0.9)) ))
+        (pin "1" (uuid "2e6c2ade-8fe0-5962-904d-68ec96d99663")) (pin "2" (uuid "7a14afde-7fb7-55af-be22-6be967cf2c53")) (pin "3" (uuid "b993d8b5-1af2-5bc6-8b19-6139ad1497e2")) (pin "4" (uuid "aa9e3a74-4666-5744-b33f-966121c71291")) (pin "5" (uuid "f469269f-2d9b-5e56-b7a5-bbc1bca2e7d0")) (pin "6" (uuid "7dd010e4-4b42-5a05-b844-5af36ec02bd0"))
+        (instances (project "PigeonCarrier" (path "/6c8da0f4-34cf-43b9-a25b-857048b8016b/3fd690c9-ba8e-46b1-b510-ac104a57139b" (reference "U14") (unit 1)))))
+
+	(symbol (lib_id "PCM_JLCPCB-Capacitors:0402,100nF,(2)") (at 198.12 66.04 0) (unit 1) (body_style 1)
+        (exclude_from_sim no) (in_bom yes) (on_board yes) (in_pos_files yes) (dnp no) (uuid "cc97197e-ec3e-509a-9efd-fa3f1aaf4c46")
+        (property "Reference" "C68" (at 200.66 64.77 0)  (effects (font (size 0.9 0.9)) (justify left)))
+(property "Value" "100nF" (at 200.66 67.31 0)  (effects (font (size 0.9 0.9)) (justify left)))
+(property "Footprint" "PCM_JLCPCB:C_0402" (at 198.12 66.04 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 0.9 0.9)) ))
+(property "Datasheet" "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Samsung-Electro-Mechanics-CL05B104KB54PNC_C307331.pdf" (at 198.12 66.04 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 0.9 0.9)) ))
+(property "Description" "50V 100nF X7R \u00b110% 0402 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS" (at 198.12 66.04 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 0.9 0.9)) ))
+(property "LCSC" "C307331" (at 198.12 66.04 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 0.9 0.9)) ))
+(property "Stock" "8389599" (at 198.12 66.04 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 0.9 0.9)) ))
+(property "Price" "0.008USD" (at 198.12 66.04 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 0.9 0.9)) ))
+(property "Process" "SMT" (at 198.12 66.04 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 0.9 0.9)) ))
+(property "Minimum Qty" "20" (at 198.12 66.04 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 0.9 0.9)) ))
+(property "Attrition Qty" "10" (at 198.12 66.04 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 0.9 0.9)) ))
+(property "Class" "Basic Component" (at 198.12 66.04 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 0.9 0.9)) ))
+(property "Category" "Capacitors,Multilayer Ceramic Capacitors MLCC - SMD/SMT" (at 198.12 66.04 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 0.9 0.9)) ))
+(property "Manufacturer" "Samsung Electro-Mechanics" (at 198.12 66.04 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 0.9 0.9)) ))
+(property "Part" "CL05B104KB54PNC" (at 198.12 66.04 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 0.9 0.9)) ))
+(property "Voltage Rated" "50V" (at 198.12 66.04 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 0.9 0.9)) ))
+(property "Tolerance" "\u00b110%" (at 198.12 66.04 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 0.9 0.9)) ))
+(property "Capacitance" "100nF" (at 198.12 66.04 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 0.9 0.9)) ))
+(property "Temperature Coefficient" "X7R" (at 198.12 66.04 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 0.9 0.9)) ))
+(property "MPN" "CL05B104KB54PNC" (at 198.12 66.04 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 0.9 0.9)) ))
+        (pin "1" (uuid "34640372-bc54-59e5-bfd1-b92638a08a7d")) (pin "2" (uuid "eb8bbf40-e119-5f02-809c-67db3cf5ce5f"))
+        (instances (project "PigeonCarrier" (path "/6c8da0f4-34cf-43b9-a25b-857048b8016b/3fd690c9-ba8e-46b1-b510-ac104a57139b" (reference "C68") (unit 1)))))
+
+	(symbol (lib_id "power:+3V3") (at 185.42 59.69 0) (unit 1) (body_style 1)
+        (exclude_from_sim no) (in_bom yes) (on_board yes) (in_pos_files yes) (dnp no) (uuid "ebe760e7-3f77-5c60-9c23-c4ba8547109c")
+        (property "Reference" "#PWR18022" (at 185.42 63.50 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27)) ))
+(property "Value" "3V3_CM5" (at 185.42 55.88 0)  (effects (font (size 1.27 1.27)) ))
+(property "Footprint" "" (at 185.42 59.69 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27)) ))
+(property "Datasheet" "" (at 185.42 59.69 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27)) ))
+(property "Description" "Power symbol creates a global label with name \"+3V3\"" (at 185.42 59.69 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27)) ))
+        (pin "1" (uuid "02a0b4c5-68ad-5987-947b-20e0f98ede24"))
+        (instances (project "PigeonCarrier" (path "/6c8da0f4-34cf-43b9-a25b-857048b8016b/3fd690c9-ba8e-46b1-b510-ac104a57139b" (reference "#PWR18022") (unit 1)))))
+
+	(symbol (lib_id "PCM_SparkFun-PowerSymbol:GND") (at 198.12 71.12 0) (unit 1) (body_style 1)
+        (exclude_from_sim no) (in_bom yes) (on_board yes) (in_pos_files yes) (dnp no) (uuid "41c14977-a985-528f-b0be-883a5d07febf")
+        (property "Reference" "#PWR18023" (at 204.47 71.12 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27)) ))
+(property "Value" "GND" (at 198.12 74.93 0)  (effects (font (size 1.27 1.27)) ))
+(property "Footprint" "" (at 198.12 71.12 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27)) ))
+(property "Datasheet" "" (at 198.12 71.12 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27)) ))
+(property "Description" "Power symbol creates a global label with name \"GND\" , ground" (at 207.01 71.12 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27)) ))
+        (pin "1" (uuid "bbac555f-1928-5d7b-8b79-66c19aa4d2af"))
+        (instances (project "PigeonCarrier" (path "/6c8da0f4-34cf-43b9-a25b-857048b8016b/3fd690c9-ba8e-46b1-b510-ac104a57139b" (reference "#PWR18023") (unit 1)))))
+
+	(symbol (lib_id "PCM_SparkFun-PowerSymbol:GND") (at 185.42 87.63 0) (unit 1) (body_style 1)
+        (exclude_from_sim no) (in_bom yes) (on_board yes) (in_pos_files yes) (dnp no) (uuid "8a2f8e15-3fc9-50a5-9bfe-fb633df76bd9")
+        (property "Reference" "#PWR18024" (at 191.77 87.63 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27)) ))
+(property "Value" "GND" (at 185.42 91.44 0)  (effects (font (size 1.27 1.27)) ))
+(property "Footprint" "" (at 185.42 87.63 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27)) ))
+(property "Datasheet" "" (at 185.42 87.63 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27)) ))
+(property "Description" "Power symbol creates a global label with name \"GND\" , ground" (at 194.31 87.63 0) (hide yes) (show_name no) (do_not_autoplace no) (effects (font (size 1.27 1.27)) ))
+        (pin "1" (uuid "981b9977-4b97-5e3d-9545-7f15a467762f"))
+        (instances (project "PigeonCarrier" (path "/6c8da0f4-34cf-43b9-a25b-857048b8016b/3fd690c9-ba8e-46b1-b510-ac104a57139b" (reference "#PWR18024") (unit 1)))))
+
+	(label "YAPOGEE_READY" (at 165.1 78.74 0) (effects (font (size 0.9 0.9)) (justify left bottom)) (uuid "f23f2c17-791a-529b-a24d-8b7e1d959fbe"))
+
+	(wire (pts (xy 165.1 78.74) (xy 177.8 78.74)) (stroke (width 0) (type default)) (uuid "4e69cad3-dddf-51a8-8c3e-4328e5a0b14f"))
+
+	(wire (pts (xy 193.04 78.74) (xy 198.12 78.74)) (stroke (width 0) (type default)) (uuid "0eea7a7b-5b1e-5546-9cce-a919b73839a2"))
+
+	(label "YAPOGEE_PA_REQ" (at 165.1 81.28 0) (effects (font (size 0.9 0.9)) (justify left bottom)) (uuid "af3b28eb-7867-50f8-8751-00b99d110491"))
+
+	(wire (pts (xy 165.1 81.28) (xy 177.8 81.28)) (stroke (width 0) (type default)) (uuid "27fd7f6f-bbe1-5600-b2d0-793c199e6299"))
+
+	(wire (pts (xy 193.04 81.28) (xy 198.12 81.28)) (stroke (width 0) (type default)) (uuid "8474b2c9-d606-5506-aeb9-4048e0878b18"))
+
+	(wire (pts (xy 185.42 59.69) (xy 185.42 62.23)) (stroke (width 0) (type default)) (uuid "ce9115c9-e50c-5e8e-8ec5-4b9cb742309d"))
+
+	(wire (pts (xy 185.42 62.23) (xy 185.42 73.66)) (stroke (width 0) (type default)) (uuid "ef64c4c2-56a8-5c12-a429-c7f4cd362e61"))
+
+	(wire (pts (xy 185.42 62.23) (xy 198.12 62.23)) (stroke (width 0) (type default)) (uuid "69848fe0-be29-5622-8166-d0ba54142ec2"))
+
+	(wire (pts (xy 198.12 69.85) (xy 198.12 71.12)) (stroke (width 0) (type default)) (uuid "b2d0ebd8-e0c9-5424-9507-e854ce64308b"))
+
+	(wire (pts (xy 185.42 86.36) (xy 185.42 87.63)) (stroke (width 0) (type default)) (uuid "11c561ef-1607-55e2-bb54-a2d34e444545"))
+
+	(junction (at 185.42 62.23) (diameter 0) (color 0 0 0 0) (uuid "3b005d1d-d163-5e34-8bf6-d3558a416435"))
 )
