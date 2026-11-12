@@ -162,11 +162,27 @@ def drc_rules(source):
 (rule "USB within-pair matching"
  (condition "A.hasNetclass('USB_90R')")
  (constraint skew (max 0.15mm) (within_diff_pairs)))
-# This is the spacing policy for the noncoplanar model, not an impedance
-# simulation. Future connector escape regions need separate layout review.
+# Model spacing for the ordinary differential-pair route.
+# The escape rules below apply only to dense connector and IC fanout.
 (rule "Controlled impedance spacing to unrelated copper"
  (condition "(A.hasNetclass('CSI_100R') || A.hasNetclass('ETH_100R') || A.hasNetclass('USB_90R') || A.hasNetclass('SE_50R')) && !AB.isCoupledDiffPair() && !(A.Type == 'Pad' && B.Type == 'Pad' && A.Parent == B.Parent)")
  (constraint clearance (min 0.5mm)))
+# First tracks at dense parts need 0.20 mm pad clearance.
+# Exempt only an escape against a pad on that same footprint.
+(rule "Controlled impedance footprint escape"
+ (layer "F.Cu")
+ (condition "((A.hasNetclass('CSI_100R') || A.hasNetclass('ETH_100R') || A.hasNetclass('USB_90R') || B.hasNetclass('CSI_100R') || B.hasNetclass('ETH_100R') || B.hasNetclass('USB_90R')) && !AB.isCoupledDiffPair()) && B.Type == 'Pad' && (A.Type == 'Track' || A.Type == 'Arc' || A.Type == 'Via') && ((B.memberOfFootprint('J3') && A.intersectsFrontCourtyard('J3')) || (B.memberOfFootprint('J5') && A.intersectsFrontCourtyard('J5')) || (B.memberOfFootprint('J7') && A.intersectsFrontCourtyard('J7')) || (B.memberOfFootprint('J8') && A.intersectsFrontCourtyard('J8')) || (B.memberOfFootprint('J9') && A.intersectsFrontCourtyard('J9')) || (B.memberOfFootprint('J10') && A.intersectsFrontCourtyard('J10')) || (B.memberOfFootprint('U11') && A.intersectsFrontCourtyard('U11')) || (B.memberOfFootprint('U13') && A.intersectsFrontCourtyard('U13')) || (B.memberOfFootprint('U5') && A.intersectsFrontCourtyard('U5')) || (B.memberOfFootprint('U6') && A.intersectsFrontCourtyard('U6')))")
+ (constraint clearance (min 0.20mm)))
+# 0.40 mm CM5 pad pitch minus 0.15 mm trace width gives 0.25 mm at the neck.
+(rule "CM5 differential pair launch gap"
+ (layer "F.Cu")
+ (condition "(A.hasNetclass('CSI_100R') || A.hasNetclass('ETH_100R')) && (A.intersectsFrontCourtyard('J3') || A.intersectsFrontCourtyard('J5'))")
+ (constraint diff_pair_gap (min 0.15mm) (opt 0.25mm)))
+# High-current switch-node stubs. Keep the top copper path to the inductor short.
+(rule "Buck switch node width"
+ (layer "F.Cu")
+ (condition "A.NetName == 'Net-(U7-SW)' || A.NetName == 'Net-(U9-SW)' || A.NetName == 'Net-(U10-SW)'")
+ (constraint track_width (min 0.20mm) (opt 0.50mm)))
 # END GENERATED CARRIER IMPEDANCE RULES
 '''
 

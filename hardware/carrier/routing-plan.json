@@ -1,16 +1,22 @@
 {
   "frozen": true,
-  "checked": "2026-10-02",
+  "checked": "2026-11-07",
   "calculatorUrl": "https://jlcpcb.com/pcb-impedance-calculator",
-  "selectedStackup": "JLC04161H-3313",
+  "selectedStackup": "JLC06161H-3313",
+  "vendorTemplateAccessId": "caebedc9f5d84bb4b6eddd81268426df",
+  "vendorTemplateChargeFlag": false,
   "boardOrderThicknessCategoryMm": 1.6,
-  "finishedStackupVendorLabel": "1.56mm \u00b110%",
   "outerCopperOz": 1,
   "innerCopperOz": 0.5,
-  "model": "coated noncoplanar microstrip, top signal L1 referenced L2; mirrored bottom L4 referenced L3",
+  "model": "Coated noncoplanar outer microstrip on F.Cu/L2 and B.Cu/L5; asymmetric L3 stripline between L2 and L4 GND.",
   "selectedResults": [
     {
-      "stackup": "JLC04161H-3313",
+      "label": "outer-100-forward",
+      "stackup": "JLC06161H-3313",
+      "signalLayer": 1,
+      "referenceLayers": [
+        2
+      ],
       "targetOhm": 100,
       "mode": "diff",
       "pairGapMm": 0.5,
@@ -30,10 +36,10 @@
         "dCalculateMode": 3,
         "isLinkComputingMode": false,
         "W2LinkW1Incr": 0.5,
-        "ZoTol": 0.5
+        "ZoTol": 0.1
       },
       "result": {
-        "accessId": "424ef460-da9b-48ce-a3d6-33a4b426f997",
+        "accessId": "6a55c3c4-c3bb-4bb9-9a2a-0a625700d7a9",
         "impedance_calc_error_msg": "",
         "impedance_calc_mark": "DiffEdgeCoupledCoatedMicrostrip1B",
         "impedance_calc_result": {
@@ -45,19 +51,18 @@
           "dResultValid": 1
         },
         "impedance_calc_status": 0,
-        "impedance_calc_time": 140,
-        "paramMd5": "13a72f7c9dd48f53fe9bd1a069982b75",
-        "uuid": "b9d8b073-064d-463e-b077-e4553b3ee026"
-      },
-      "kicad_nominal_width_mm": 0.15,
-      "kicad_nominal_pair_gap_mm": 0.5,
-      "solver_ui_rounded_lower_width_mil": 5.9055,
-      "solver_ui_rounded_upper_width_mil": 5.41,
-      "solver_ui_rounded_pair_gap_mil": 19.685,
-      "selection": "selected"
+        "impedance_calc_time": 109,
+        "paramMd5": "4b420565e481490ff34017606ef1022d",
+        "uuid": "37e3222c-68c8-45f6-89b8-f62352976da3"
+      }
     },
     {
-      "stackup": "JLC04161H-3313",
+      "label": "outer-90-forward",
+      "stackup": "JLC06161H-3313",
+      "signalLayer": 1,
+      "referenceLayers": [
+        2
+      ],
       "targetOhm": 90,
       "mode": "diff",
       "pairGapMm": 0.3,
@@ -77,10 +82,10 @@
         "dCalculateMode": 3,
         "isLinkComputingMode": false,
         "W2LinkW1Incr": 0.5,
-        "ZoTol": 0.5
+        "ZoTol": 0.1
       },
       "result": {
-        "accessId": "a192ce7d-cea5-4558-9e4c-192c74305339",
+        "accessId": "93822d80-d37b-4482-be98-27ff2f375360",
         "impedance_calc_error_msg": "",
         "impedance_calc_mark": "DiffEdgeCoupledCoatedMicrostrip1B",
         "impedance_calc_result": {
@@ -92,19 +97,18 @@
           "dResultValid": 1
         },
         "impedance_calc_status": 0,
-        "impedance_calc_time": 94,
-        "paramMd5": "cad8cb76e8726a6d52f9b416a8584881",
-        "uuid": "b9d8b073-064d-463e-b077-e4553b3ee026"
-      },
-      "kicad_nominal_width_mm": 0.175,
-      "kicad_nominal_pair_gap_mm": 0.3,
-      "solver_ui_rounded_lower_width_mil": 6.8898,
-      "solver_ui_rounded_upper_width_mil": 6.39,
-      "solver_ui_rounded_pair_gap_mil": 11.811,
-      "selection": "selected"
+        "impedance_calc_time": 93,
+        "paramMd5": "b1af3b651e3fef053c5bc15f6b918c7c",
+        "uuid": "37e3222c-68c8-45f6-89b8-f62352976da3"
+      }
     },
     {
-      "stackup": "JLC04161H-3313",
+      "label": "outer-50-forward",
+      "stackup": "JLC06161H-3313",
+      "signalLayer": 1,
+      "referenceLayers": [
+        2
+      ],
       "targetOhm": 50,
       "mode": "single",
       "pairGapMm": null,
@@ -122,10 +126,10 @@
         "dCalculateMode": 3,
         "isLinkComputingMode": false,
         "W2LinkW1Incr": 0.5,
-        "ZoTol": 0.5
+        "ZoTol": 0.1
       },
       "result": {
-        "accessId": "6914daf4-366d-4c10-9cb7-85360a6054d9",
+        "accessId": "0bba6758-27dc-44f1-a2bb-9d2e0ab8c3ff",
         "impedance_calc_error_msg": "",
         "impedance_calc_mark": "CoatedMicrostrip1B",
         "impedance_calc_result": {
@@ -137,78 +141,147 @@
           "dResultValid": 1
         },
         "impedance_calc_status": 0,
-        "impedance_calc_time": 47,
-        "paramMd5": "efd06a12da73def055c79e2bd8d9ff4d",
-        "uuid": "b9d8b073-064d-463e-b077-e4553b3ee026"
-      },
-      "kicad_nominal_width_mm": 0.16,
-      "kicad_nominal_pair_gap_mm": null,
-      "solver_ui_rounded_lower_width_mil": 6.2992,
-      "solver_ui_rounded_upper_width_mil": 5.8,
-      "solver_ui_rounded_pair_gap_mil": null,
-      "selection": "selected"
+        "impedance_calc_time": 94,
+        "paramMd5": "d0f8987516bf0c79a9e750b7d12f644a",
+        "uuid": "37e3222c-68c8-45f6-89b8-f62352976da3"
+      }
     }
   ],
-  "alternateUSB": [
+  "innerSelectedResults": [
     {
-      "stackup": "JLC04161H-3313",
-      "targetOhm": 90,
+      "label": "inner-100-forward",
+      "stackup": "JLC06161H-3313",
+      "signalLayer": 3,
+      "referenceLayers": [
+        2,
+        4
+      ],
+      "targetOhm": 100,
       "mode": "diff",
-      "pairGapMm": 0.175,
-      "fixedWidthMm": 0.15,
+      "pairGapMm": 0.3,
+      "fixedWidthMm": 0.125,
       "solve": null,
       "input": {
-        "H1": 3.9134,
-        "Er1": 4.1,
-        "W1": 5.9055,
-        "W2": 5.41,
-        "S1": 6.8898,
-        "T1": 1.6,
-        "C1": 1,
-        "C2": 0.6,
-        "C3": 1,
-        "CEr": 3.8,
+        "H1": 21.6535,
+        "Er1": 4.41,
+        "H2": 4.8819,
+        "Er2": 4.16,
+        "W1": 4.9213,
+        "W2": 4.42,
+        "S1": 11.811,
+        "T1": 0.6,
         "dCalculateMode": 3,
         "isLinkComputingMode": false,
         "W2LinkW1Incr": 0.5,
-        "ZoTol": 0.5
+        "ZoTol": 0.1
       },
       "result": {
-        "accessId": "0398aa28-812e-410c-a9ef-c79978754f7e",
+        "accessId": "f43afe8c-e920-411f-a12f-7692bf300b3f",
         "impedance_calc_error_msg": "",
-        "impedance_calc_mark": "DiffEdgeCoupledCoatedMicrostrip1B",
+        "impedance_calc_mark": "DiffOffsetStripline1B1A",
         "impedance_calc_result": {
           "dCer": 0,
-          "dDelay": 5767.13358407,
-          "dErEff": 2.98924526312,
-          "dImpedance": 90.1983350486,
+          "dDelay": 6876.58146719,
+          "dErEff": 4.24997829887,
+          "dImpedance": 100.437776559,
           "dInductance": 0,
           "dResultValid": 1
         },
         "impedance_calc_status": 0,
-        "impedance_calc_time": 78,
-        "paramMd5": "6e5529fb525ee209c30e3e32ac7f0d6b",
-        "uuid": "b9d8b073-064d-463e-b077-e4553b3ee026"
+        "impedance_calc_time": 46,
+        "paramMd5": "b49b1131b93fa24c0c60cefb5c5994a2",
+        "uuid": "bb9751a1-1312-4f2f-8983-fb9660d7ba64"
+      }
+    },
+    {
+      "label": "inner-90-forward",
+      "stackup": "JLC06161H-3313",
+      "signalLayer": 3,
+      "referenceLayers": [
+        2,
+        4
+      ],
+      "targetOhm": 90,
+      "mode": "diff",
+      "pairGapMm": 0.3,
+      "fixedWidthMm": 0.16,
+      "solve": null,
+      "input": {
+        "H1": 21.6535,
+        "Er1": 4.41,
+        "H2": 4.8819,
+        "Er2": 4.16,
+        "W1": 6.2992,
+        "W2": 5.8,
+        "S1": 11.811,
+        "T1": 0.6,
+        "dCalculateMode": 3,
+        "isLinkComputingMode": false,
+        "W2LinkW1Incr": 0.5,
+        "ZoTol": 0.1
       },
-      "kicad_nominal_width_mm": 0.15,
-      "kicad_nominal_pair_gap_mm": 0.175,
-      "solver_ui_rounded_lower_width_mil": 5.9055,
-      "solver_ui_rounded_upper_width_mil": 5.41,
-      "solver_ui_rounded_pair_gap_mil": 6.8898,
-      "selection": "alternate_not_selected"
+      "result": {
+        "accessId": "76759a30-a437-4e26-97ee-5784156782fa",
+        "impedance_calc_error_msg": "",
+        "impedance_calc_mark": "DiffOffsetStripline1B1A",
+        "impedance_calc_result": {
+          "dCer": 0,
+          "dDelay": 6874.27816932,
+          "dErEff": 4.24713173138,
+          "dImpedance": 89.6495904783,
+          "dInductance": 0,
+          "dResultValid": 1
+        },
+        "impedance_calc_status": 0,
+        "impedance_calc_time": 47,
+        "paramMd5": "9b34f3e729281bea3808d62bc27e66a0",
+        "uuid": "bb9751a1-1312-4f2f-8983-fb9660d7ba64"
+      }
+    },
+    {
+      "label": "inner-50-forward",
+      "stackup": "JLC06161H-3313",
+      "signalLayer": 3,
+      "referenceLayers": [
+        2,
+        4
+      ],
+      "targetOhm": 50,
+      "mode": "single",
+      "pairGapMm": null,
+      "fixedWidthMm": 0.14,
+      "solve": null,
+      "input": {
+        "H1": 21.6535,
+        "Er1": 4.41,
+        "H2": 4.8819,
+        "Er2": 4.16,
+        "W1": 5.5118,
+        "W2": 5.01,
+        "T1": 0.6,
+        "dCalculateMode": 3,
+        "isLinkComputingMode": false,
+        "W2LinkW1Incr": 0.5,
+        "ZoTol": 0.1
+      },
+      "result": {
+        "accessId": "dbae1197-de1e-4267-8ec3-35cbe1512fbd",
+        "impedance_calc_error_msg": "",
+        "impedance_calc_mark": "OffsetStripline1B1A",
+        "impedance_calc_result": {
+          "dCer": 136.214792291,
+          "dDelay": 6868.02266296,
+          "dErEff": 4.23940557581,
+          "dImpedance": 50.4205347118,
+          "dInductance": 346.289375079,
+          "dResultValid": 1
+        },
+        "impedance_calc_status": 0,
+        "impedance_calc_time": 46,
+        "paramMd5": "20f138ec2a799c91c70cb7f33fb44710",
+        "uuid": "bb9751a1-1312-4f2f-8983-fb9660d7ba64"
+      }
     }
-  ],
-  "warnings": [
-    "API nominal model calculation is not fabricated impedance measurement. Request real impedance control and fabricator confirmation/coupon before manufacture.",
-    "Live calculator configurations differ from static help article: taper0.5mil vs0.7mil, maskC1/C3 1.0mil vs1.2mil, coreDk4.42 vsstatic4.6. Exact saved API inputs govern these results.",
-    "0.035mm copper is nominal drawing; finished solver copper0.04064mm is distinct. Do not alter dielectric thickness just to force exact1.600mm total.",
-    "Noncoplanar solver requires surrounding surface copper sufficiently distant; nearby pours need coplanar calculation or spacing verification.",
-    "KiCad class width/gap defaults alone do not enforce fabricated impedance; optional custom geometry/skew rules and continuous reference planes are needed.",
-    "CSI/ETH nominal width0.150mm/gap0.500mm yields99.7274ohm differential; independent50ohm width0.160mm yields49.5236ohm. Differential odd mode is Zdiff/2; isolated single-line impedance is a distinct calculation.",
-    "The wider100ohm pair is0.800mm wide overall. CM5/FFC pad escapes can need short local spacing/width transitions; inspect their reference plane and transition lengths rather than claim constant impedance through the footprints.",
-    "Noncoplanar calculation includes no neighboring surface ground/copper. Widening pair gap weakens mutual coupling; nearby other nets/pours can then disturb the model. Verify spacing to neighboring copper or use the coplanar solver before fabrication.",
-    "KiCad10 Physical Stackup dialog OK sets general board thickness to the sum. General nominal1.6 and exact vendor dielectric/copper are independently parseable, but accepting that dialog can change general thickness.",
-    "Omitting soldermask thickness uses KiCad default0.010mm per side. This is an assumed mechanical display value; KiCad cannot represent all nonuniform C1/C2/C3 coating dimensions in one layer. JLC saved solver inputs remain authoritative for the impedance result."
   ],
   "nominal_physical_stackup_mm": [
     {
@@ -217,7 +290,8 @@
     },
     {
       "layer": "dielectric1",
-      "material": "3313 RC57% 4.2mil",
+      "type": "prepreg",
+      "material": "3313 RC57%",
       "thickness": 0.0994,
       "epsilon_r": 4.1
     },
@@ -227,9 +301,10 @@
     },
     {
       "layer": "dielectric2",
-      "material": "NP-155F core",
-      "thickness": 1.265,
-      "epsilon_r": 4.42
+      "type": "core",
+      "material": "NP-155F",
+      "thickness": 0.55,
+      "epsilon_r": 4.41
     },
     {
       "layer": "In2.Cu",
@@ -237,7 +312,30 @@
     },
     {
       "layer": "dielectric3",
-      "material": "3313 RC57% 4.2mil",
+      "type": "prepreg",
+      "material": "2116 RC54%",
+      "thickness": 0.1088,
+      "epsilon_r": 4.16
+    },
+    {
+      "layer": "In3.Cu",
+      "thickness": 0.0152
+    },
+    {
+      "layer": "dielectric4",
+      "type": "core",
+      "material": "NP-155F",
+      "thickness": 0.55,
+      "epsilon_r": 4.41
+    },
+    {
+      "layer": "In4.Cu",
+      "thickness": 0.0152
+    },
+    {
+      "layer": "dielectric5",
+      "type": "prepreg",
+      "material": "3313 RC57%",
       "thickness": 0.0994,
       "epsilon_r": 4.1
     },
@@ -246,48 +344,44 @@
       "thickness": 0.035
     }
   ],
-  "nominal_copper_dielectric_sum_mm": 1.5642,
+  "nominal_copper_dielectric_sum_mm": 1.5384,
   "CAD_mask_model_thickness_per_side_mm": 0.01524,
-  "CAD_total_with_mask_model_mm": 1.59468,
   "layer_plan": [
     "F.Cu signals and power",
-    "In1.Cu continuous GND",
-    "In2.Cu continuous GND",
-    "B.Cu signals and power"
+    "In1.Cu continuous GND (L2)",
+    "In2.Cu signals and power (L3)",
+    "In3.Cu continuous GND (L4)",
+    "In4.Cu continuous GND (L5)",
+    "B.Cu signals and power (L6)"
   ],
   "finish": "ENIG",
-  "sources": {
-    "calculator": "https://jlcpcb.com/pcb-impedance-calculator",
-    "stackup": "https://jlcpcb.com/impedance",
-    "capabilities": "https://jlcpcb.com/capabilities/pcb-capabilities",
-    "copper_guide": "https://jlcpcb.com/help/article/jlcpcb-copper-weight",
-    "calculator_guide": "https://jlcpcb.com/help/article/user-guide-to-the-jlcpcb-impedance-calculator",
-    "cm5": "https://datasheets.raspberrypi.com/cm5/cm5-datasheet.pdf",
-    "kicad_directive_manual": "https://docs.kicad.org/10.0/en/eeschema/eeschema.html#graphically_assigning_net_classes_in_the_schematic",
-    "kicad_parser": "https://gitlab.com/kicad/code/kicad/-/raw/10.0/eeschema/sch_io/kicad_sexpr/sch_io_kicad_sexpr_parser.cpp",
-    "kicad_writer": "https://gitlab.com/kicad/code/kicad/-/raw/10.0/eeschema/sch_io/kicad_sexpr/sch_io_kicad_sexpr.cpp"
-  },
   "rules": {
     "CSI_and_ETH_within_pair_skew_max_mm": 0.15,
     "requirement_scope": "Each P/N pair independently; no matching of all camera lanes to one another.",
     "USB_within_pair_skew_max_mm": 0.15,
     "unrelated_copper_clearance_min_mm": 0.5,
-    "coupled_diff_pair_exempt_from_unrelated_copper_clearance": true
+    "coupled_diff_pair_exempt_from_unrelated_copper_clearance": true,
+    "routingLayers": [
+      "F.Cu",
+      "In2.Cu",
+      "B.Cu"
+    ],
+    "groundReferenceLayers": [
+      "In1.Cu",
+      "In3.Cu",
+      "In4.Cu"
+    ],
+    "singleEnded50OhmAutomaticNets": [
+      "/CM5/SCLK",
+      "/CM5/D0",
+      "/CM5/D1",
+      "/CM5/CS_N"
+    ]
   },
-  "limitations": [
-    "JLC calculator values are nominal model outputs, not fabricated impedance measurements. Specify controlled impedance and confirm the final stackup with JLC when ordering.",
-    "Signal geometry applies to coated outer-layer microstrip over continuous GND. Do not route over plane gaps.",
-    "Nearby unrelated surface copper is excluded from the solver; keep it at least 0.5 mm away outside connector escapes, or recalculate using a coplanar model.",
-    "Connector and via escapes require review; pair gap/width may need short local transitions. The main routing width is 0.15 mm, and the 0.10 mm global minimum is for reviewed local escapes.",
-    "Nominal drawing outer copper 0.035 mm is distinct from plated copper 0.04064 mm used by the live JLC solver. CAD mask thickness is the solver over-trace model, not a manufacturing measurement.",
-    "Power netclass widths are routing starting values. They do not establish ampacity, voltage drop, or thermal performance.",
-    "SE_50R is reserved for selected future single-ended signals. Its separate 0.16 mm geometry does not apply to the CSI pairs.",
-    "Ground planes are the layer plan; this change does not create or fill PCB zones."
-  ],
   "fabricationRules": {
-    "checked": "2026-10-04",
+    "checked": "2026-11-07",
     "source": "https://jlcpcb.com/capabilities/pcb-capabilities/",
-    "process": "4-layer FR4, 1 oz outer / 0.5 oz inner, ENIG, standard green soldermask, conventional through vias",
+    "process": "6-layer FR4, JLC06161H-3313, 1 oz outer / 0.5 oz inner, ENIG, epoxy-filled and copper-capped mechanical through vias (POFV)",
     "trackWidthAndClearanceMinMm": 0.1,
     "differentNetSmdPadClearanceMinMm": 0.15,
     "impedanceUnrelatedCopperClearanceMm": 0.5,
@@ -316,12 +410,51 @@
     ],
     "silkToPadClearanceMinMm": 0.15,
     "limitations": [
-      "0.10 track/space and 0.50 copper/edge are chosen margins above current JLC multilayer absolute capabilities.",
-      "The 0.10 mm soldermask-web assumption requires green/red/yellow/blue/purple 1 oz; black/white require revisiting the web at >=0.13 mm.",
-      "Existing footprint/pad soldermask overrides remain; narrow or merged openings still require assembly review.",
-      "NPTH milled slots >=1.0 mm and plated milled slots >=0.35 mm with length>=2xwidth require final drill/route-file inspection.",
-      "No micro/blind/buried vias enabled. No placement-dependent escape exceptions were created.",
-      "PCB synchronization, duplicate-reference removal, routing and final DFM remain required."
-    ]
-  }
+      "Specify the exact six-layer stackup and confirm production files/impedance control before fabrication.",
+      "POFV uses epoxy fill and copper caps on through vias; blind, buried and laser microvias are not enabled.",
+      "Use a 0.30 mm minimum drill based on the carrier quote. With a 0.30 mm drill, 0.45 and 0.50 mm lands leave 0.075 and 0.10 mm annular rings, respectively.",
+      "A 0.45 mm circular via land is wider than the stock 0.20 mm CM5 pad and its 0.40 mm pitch. Use a staggered short escape; do not enlarge the connector lands blindly.",
+      "Via-in-pad is geometrically possible in the 0.60 x 1.50 mm camera connector lands; keep clearances and stencil lands intact.",
+      "The existing green-mask assumptions and footprint overrides remain.",
+      "Power trace widths are routing starting values; use outer-layer copper pours for the high-current paths."
+    ],
+    "signalViaDiameterDrillMm": [
+      0.45,
+      0.3
+    ],
+    "compactViaSizesMm": [[0.45, 0.3], [0.5, 0.3]],
+    "viaAnnularRingMinMm": 0.075,
+    "generalViaAnnularRingMinMm": 0.125,
+    "limitsByLayer": {
+      "F.Cu": "outer microstrip",
+      "B.Cu": "outer microstrip",
+      "In2.Cu": "asymmetric stripline"
+    }
+  },
+  "sources": {
+    "calculator": "https://jlcpcb.com/pcb-impedance-calculator",
+    "stackup": "https://jlcpcb.com/impedance",
+    "capabilities": "https://jlcpcb.com/capabilities/pcb-capabilities",
+    "copper_guide": "https://jlcpcb.com/help/article/jlcpcb-copper-weight",
+    "calculator_guide": "https://jlcpcb.com/help/article/user-guide-to-the-jlcpcb-impedance-calculator",
+    "cm5": "https://datasheets.raspberrypi.com/cm5/cm5-datasheet.pdf",
+    "kicad_directive_manual": "https://docs.kicad.org/10.0/en/eeschema/eeschema.html#graphically_assigning_net_classes_in_the_schematic",
+    "kicad_parser": "https://gitlab.com/kicad/code/kicad/-/raw/10.0/eeschema/sch_io/kicad_sexpr/sch_io_kicad_sexpr_parser.cpp",
+    "kicad_writer": "https://gitlab.com/kicad/code/kicad/-/raw/10.0/eeschema/sch_io/kicad_sexpr/sch_io_kicad_sexpr.cpp",
+    "via_in_pad": "https://jlcpcb.com/help/article/via-in-pad-pofv-guide",
+    "via_covering": "https://jlcpcb.com/help/article/pcb-via-covering"
+  },
+  "CAD_total_with_mask_model_mm": 1.56888,
+  "limitations": [
+    "The nominal JLC solver outputs are not fabricated impedance measurements. Request controlled impedance and confirm the exact stackup.",
+    "Outer dielectric thickness is unchanged from the former four-layer 3313 stackup, so outer geometry is unchanged.",
+    "Only F.Cu, In2.Cu (L3), and B.Cu are assigned controlled-impedance signal geometries. L2/L4/L5 remain continuous GND.",
+    "L3 is between 0.55 mm NP-155F (Dk 4.41) above and 0.1088 mm 2116 (Dk 4.16) below. JLC H2 includes the physical 0.0152 mm L3 copper thickness.",
+    "Finished outer model copper 0.04064 mm differs from nominal CAD outer foil 0.035 mm. Inner model copper 0.01524 mm differs slightly from nominal CAD 0.0152 mm.",
+    "The noncoplanar model excludes neighboring same-layer copper. Maintain 0.50 mm clearance outside reviewed launches.",
+    "The existing P/N skew target is 0.15 mm for each pair; this does not equalize all camera lanes.",
+    "Check drill clearances to adjacent pads and vias. POFV does not remove via stubs or make a via transition controlled impedance.",
+    "No PCB routing, footprints, outline, holes, zones, net assignments or placement are changed by the stackup conversion.",
+    "No GND planes are filled by this change. Create continuous GND zones on L2/L4/L5 before evaluating the routed return paths."
+  ]
 }

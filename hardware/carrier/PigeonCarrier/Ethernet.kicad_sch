@@ -2861,7 +2861,7 @@
 		(exclude_from_sim yes)
 		(in_bom yes)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "1daff609-a7f9-4f8e-92e0-a1b8e5d034d5")
 		(property "Reference" "J9"

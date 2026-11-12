@@ -5558,7 +5558,7 @@
 			)
 		)
 		(property "Value" "3V3_CM5"
-			(at 109.22 97.79 90)
+			(at 109.728 97.79 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects

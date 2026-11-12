@@ -66,4 +66,6 @@
 (fp_arc (start 0.000000000 1.000000000) (mid 0.292893219 0.292893219) (end 1.000000000 0.000000000) (stroke (width .05) (type default)) (layer "Dwgs.User"))
 
 	(fp_rect (start -1.35 -1.35) (end 56.35 44.53) (stroke (width .05) (type default)) (fill none) (layer "F.CrtYd"))
+
+	(model "${KIPRJMOD}/../../libraries/3dmodels/YapogeeS3_Rev1_Assembly.step" (offset (xyz 0 0 0)) (scale (xyz 1 1 1)) (rotate (xyz 0 0 0)))
 )

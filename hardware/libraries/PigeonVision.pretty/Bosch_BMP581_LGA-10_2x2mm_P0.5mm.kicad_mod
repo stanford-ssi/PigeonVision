@@ -4,7 +4,7 @@
 	(layer "F.Cu")
 	(descr "Bosch BST-BMP581-DS004-13 Fig32; lands 0.325x0.30 / 0.30x0.325; top view numbering")
 	(tags "BMP581 LGA pressure")
-	(attr smd)
+	(attr smd allow_soldermask_bridges)
 	(property "Reference" "REF**"
 		(at 0 -1.65 0)
 		(layer "F.SilkS") (hide yes)
@@ -55,8 +55,8 @@
 		(layer "F.CrtYd")
 	)
 	(fp_circle
-		(center -1.2 -0.6)
-		(end -1.1 -0.6)
+		(center -1.32 -1.38)
+		(end -1.22 -1.38)
 		(stroke
 			(width 0.12)
 			(type default)
