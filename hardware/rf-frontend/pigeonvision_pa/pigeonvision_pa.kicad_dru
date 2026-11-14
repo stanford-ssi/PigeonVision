@@ -1,0 +1,10 @@
+(version 1)
+# PigeonVision PA custom rules. The EVB184 50 ohm line is grounded coplanar: 0.762 mm trace with a
+# 0.508 mm (20 mil) gap to the top-layer ground pour. Keep that gap on the NEW pieces of RF line too.
+(rule rf_line_to_pour_gap
+  (constraint clearance (min 0.508mm))
+  (condition "A.NetClass == 'SE_50' && B.Type == 'Zone' && B.Layer == 'F.Cu'"))
+# JLCPCB 4-layer: 0.5 mm between holes of different nets, same-net vias may be closer (thermal grid under U1)
+(rule hole_to_hole_diff_net
+  (constraint hole_to_hole (min 0.5mm))
+  (condition "A.Net != B.Net"))
